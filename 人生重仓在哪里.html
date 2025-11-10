@@ -1,0 +1,869 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>长三角 · 珠三角 · 成渝：到底重仓哪里？</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    /* ========== 全局 ========== */
+    :root {
+      --bg-main: #020617;
+      --glass: rgba(15, 23, 42, 0.92);
+      --glass-soft: rgba(15, 23, 42, 0.86);
+      --border-glass: rgba(148, 163, 184, 0.6);
+      --shadow-strong: 0 32px 80px rgba(0, 0, 0, 0.75);
+
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --accent-blue:   #38bdf8;
+      --accent-pink:   #fb7185;
+      --accent-gold:   #facc15;
+      --accent-green:  #22c55e;
+      --accent-purple: #a855f7;
+      --accent-orange: #fb923c;
+      --accent-cyan:   #22d3ee;
+
+      --radius-xl: 28px;
+      --radius-lg: 20px;
+      --blur-strong: 32px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, #0f172a 0, #020617 55%),
+        radial-gradient(circle at 100% 100%, #1d2440 0, #020617 55%);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      padding: 32px 12px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1120px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* 背景发光球 */
+    .page::before,
+    .page::after {
+      content: "";
+      position: fixed;
+      border-radius: 999px;
+      filter: blur(110px);
+      opacity: 0.9;
+      z-index: -1;
+    }
+    .page::before {
+      width: 360px;
+      height: 360px;
+      background: radial-gradient(circle, rgba(56, 189, 248, 0.65), transparent);
+      top: -80px;
+      left: -40px;
+    }
+    .page::after {
+      width: 420px;
+      height: 420px;
+      background: radial-gradient(circle, rgba(244, 114, 182, 0.55), transparent);
+      bottom: -120px;
+      right: -60px;
+    }
+
+    .shell {
+      backdrop-filter: blur(var(--blur-strong));
+      -webkit-backdrop-filter: blur(var(--blur-strong));
+      background: linear-gradient(
+          135deg,
+          rgba(148, 163, 184, 0.28),
+          rgba(15, 23, 42, 0.92)
+        );
+      border-radius: 32px;
+      border: 1px solid rgba(148, 163, 184, 0.55);
+      box-shadow: var(--shadow-strong);
+      padding: 26px 26px 30px;
+    }
+
+    @media (min-width: 960px) {
+      .shell {
+        padding: 32px 36px 40px;
+      }
+    }
+
+    /* ========== 彩色文字风格 ========== */
+    .title-gradient-main {
+      font-size: clamp(26px, 3vw, 32px);
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background-image: linear-gradient(
+        120deg,
+        #38bdf8,
+        #a855f7,
+        #f97316,
+        #22c55e,
+        #facc15
+      );
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .title-gradient-sub {
+      font-size: 14px;
+      color: #cbd5f5;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      background-image: linear-gradient(90deg, #22d3ee, #818cf8);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .highlight-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.3), transparent 55%),
+                  linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 0.4));
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: rgba(226, 232, 240, 0.98);
+    }
+
+    .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #f97316, #a855f7);
+      box-shadow: 0 0 10px rgba(248, 250, 252, 0.6);
+    }
+
+    .colorful-pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 14px;
+    }
+
+    .pill {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 600;
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.6);
+      white-space: nowrap;
+    }
+    .pill-blue    { color: #e0f2fe; background: radial-gradient(circle at 0 0, rgba(56,189,248,.45), rgba(15,23,42,.9)); }
+    .pill-pink    { color: #ffe4f1; background: radial-gradient(circle at 0 0, rgba(244,114,182,.45), rgba(15,23,42,.9)); }
+    .pill-gold    { color: #fef9c3; background: radial-gradient(circle at 0 0, rgba(250,204,21,.45), rgba(15,23,42,.9)); }
+    .pill-green   { color: #dcfce7; background: radial-gradient(circle at 0 0, rgba(34,197,94,.45), rgba(15,23,42,.9)); }
+    .pill-purple  { color: #f3e8ff; background: radial-gradient(circle at 0 0, rgba(168,85,247,.45), rgba(15,23,42,.9)); }
+    .pill-orange  { color: #ffedd5; background: radial-gradient(circle at 0 0, rgba(249,115,22,.45), rgba(15,23,42,.9)); }
+
+    .text-soft {
+      color: var(--text-soft);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .text-accent-blue   { color: var(--accent-blue); }
+    .text-accent-pink   { color: var(--accent-pink); }
+    .text-accent-gold   { color: var(--accent-gold); }
+    .text-accent-green  { color: var(--accent-green); }
+    .text-accent-purple { color: var(--accent-purple); }
+    .text-accent-orange { color: var(--accent-orange); }
+
+    /* ========== 折叠卡片（核心交互） ========== */
+    .section {
+      margin-top: 22px;
+    }
+
+    details.card {
+      margin-top: 14px;
+      border-radius: var(--radius-lg);
+      background: var(--glass-soft);
+      border: 1px solid var(--border-glass);
+      box-shadow: 0 14px 40px rgba(15, 23, 42, 0.8);
+      overflow: hidden;
+      backdrop-filter: blur(26px);
+      -webkit-backdrop-filter: blur(26px);
+      transition: border 0.25s ease, box-shadow 0.25s ease, transform 0.18s ease;
+    }
+
+    details.card[open] {
+      border-color: rgba(248, 250, 252, 0.7);
+      box-shadow: 0 22px 60px rgba(15, 23, 42, 0.95);
+      transform: translateY(-2px);
+    }
+
+    details.card summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      user-select: none;
+    }
+
+    details.card summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .summary-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      border: 1px solid rgba(248, 250, 252, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .badge-blue   { background: linear-gradient(120deg, rgba(56,189,248,.25), rgba(15,23,42,.8));  color:#e0f2fe;}
+    .badge-pink   { background: linear-gradient(120deg, rgba(244,114,182,.25), rgba(15,23,42,.8)); color:#ffe4f1;}
+    .badge-gold   { background: linear-gradient(120deg, rgba(250,204,21,.2), rgba(15,23,42,.8));  color:#fef9c3;}
+    .badge-green  { background: linear-gradient(120deg, rgba(34,197,94,.25), rgba(15,23,42,.8));  color:#dcfce7;}
+    .badge-purple { background: linear-gradient(120deg, rgba(168,85,247,.3), rgba(15,23,42,.8));  color:#f3e8ff;}
+
+    .summary-title {
+      font-size: 14px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    .summary-sub {
+      font-size: 11px;
+      color: var(--text-soft);
+      white-space: nowrap;
+    }
+
+    .summary-text-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .summary-desc {
+      font-size: 11px;
+      color: #9ca3af;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* 展开图标 */
+    .summary-arrow {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      color: #e5e7eb;
+      background: radial-gradient(circle at 0 0, rgba(148, 163, 184, 0.25), rgba(15, 23, 42, 0.9));
+      transition: transform 0.18s ease;
+    }
+
+    details[open] .summary-arrow {
+      transform: rotate(90deg);
+    }
+
+    .card-body {
+      padding: 0 16px 14px 16px;
+      border-top: 1px solid rgba(148, 163, 184, 0.45);
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .card-body p {
+      margin-top: 8px;
+    }
+
+    .card-body ul {
+      margin-top: 6px;
+      padding-left: 16px;
+    }
+
+    .card-body li + li {
+      margin-top: 4px;
+    }
+
+    .tag-row {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .micro-tag {
+      font-size: 10px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      color: #cbd5f5;
+      white-space: nowrap;
+    }
+
+    .micro-tag.blue   { border-color: rgba(56,189,248,0.8);   color:#e0f2fe;}
+    .micro-tag.pink   { border-color: rgba(244,114,182,0.8);  color:#ffe4f1;}
+    .micro-tag.gold   { border-color: rgba(250,204,21,0.9);   color:#fef9c3;}
+    .micro-tag.green  { border-color: rgba(34,197,94,0.8);    color:#dcfce7;}
+    .micro-tag.purple { border-color: rgba(168,85,247,0.9);   color:#f3e8ff;}
+    .micro-tag.orange { border-color: rgba(249,115,22,0.9);   color:#ffedd5;}
+
+    /* ========== 思维导图 ========== */
+    .mindmap {
+      margin-top: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 900px) {
+      .mindmap {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    .mind-node {
+      position: relative;
+      padding: 10px 10px 10px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.08), rgba(15, 23, 42, 0.98));
+      box-shadow: 0 10px 26px rgba(15, 23, 42, 0.85);
+      font-size: 12px;
+    }
+
+    .mind-node-title {
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .mind-node ul {
+      margin-top: 4px;
+      padding-left: 14px;
+    }
+
+    .mind-node li {
+      margin-top: 3px;
+      color: #cbd5f5;
+    }
+
+    /* ========== 金句 ========== */
+    .quote-grid {
+      margin-top: 10px;
+      display: grid;
+      gap: 10px;
+    }
+
+    @media (min-width: 800px) {
+      .quote-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .quote-card {
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.95),
+        rgba(30, 64, 175, 0.85)
+      );
+      padding: 10px 12px 12px;
+      font-size: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .quote-card::before {
+      content: "“";
+      position: absolute;
+      font-size: 52px;
+      color: rgba(148, 163, 184, 0.25);
+      top: -18px;
+      left: 6px;
+      pointer-events: none;
+    }
+
+    .quote-text {
+      margin-left: 14px;
+      color: #e5e7eb;
+    }
+
+    .quote-tag {
+      margin-top: 6px;
+      font-size: 11px;
+      color: #cbd5f5;
+      opacity: 0.9;
+    }
+
+    /* ========== 页脚小字 ========== */
+    .footer-note {
+      margin-top: 16px;
+      font-size: 11px;
+      color: #6b7280;
+      text-align: right;
+    }
+
+    /* 响应式微调 */
+    @media (max-width: 640px) {
+      details.card summary {
+        padding: 12px 12px;
+      }
+      .card-body {
+        padding: 0 12px 12px 12px;
+      }
+      .shell {
+        padding: 20px 16px 24px;
+        border-radius: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="shell">
+      <!-- 顶部标题区 -->
+      <header>
+        <div class="title-gradient-sub">MAC 级毛玻璃 · 区域重仓决策卡</div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;margin-bottom:10px;">
+          <div>
+            <h1 class="title-gradient-main">
+              长三角 · 珠三角 · 成渝<br>到底该把人生重仓在哪里？
+            </h1>
+            <p class="text-soft" style="margin-top:8px;max-width:620px;">
+              <span class="text-accent-gold">一句话结论：</span>
+              <span class="text-accent-blue">长三角看“层层皆可致富”，</span>
+              <span class="text-accent-pink">珠三角看“全球制造 + 出海”，</span>
+              <span class="text-accent-green">成渝看“国家战略腹地的复制粘贴红利”。</span>
+            </p>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px;min-width:180px;">
+            <div class="highlight-chip">
+              <span class="dot"></span>
+              <span>POLICY &amp; STRATEGY · 顶级区域政策视角</span>
+            </div>
+            <div class="colorful-pill-row" style="justify-content:flex-end;">
+              <span class="pill pill-blue">长三角 · 一体化 · 产业集群</span>
+              <span class="pill pill-pink">珠三角 · 大湾区 · 世界级湾区</span>
+              <span class="pill pill-green">成渝 · 战略腹地 · 复制粘贴红利</span>
+              <span class="pill pill-gold">重仓城市 ≈ 重仓你的人生</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- 总览速读 -->
+      <section class="section">
+        <details class="card" open>
+          <summary>
+            <div class="summary-left">
+              <span class="badge badge-blue">OVERVIEW</span>
+              <div class="summary-text-wrap">
+                <span class="summary-title text-accent-gold">一眼看懂三大区域：谁更适合你？</span>
+                <span class="summary-desc">
+                  用 30 秒把几万字直播内容压缩成可落地的决策提示。
+                </span>
+              </div>
+            </div>
+            <div class="summary-arrow">›</div>
+          </summary>
+          <div class="card-body">
+            <p>
+              <span class="text-accent-blue">■ 长三角：</span>
+              <span class="text-accent-purple">一体化发展</span> + 
+              <span class="text-accent-gold">制造业集群</span>，
+              从上海到苏浙皖<strong>“层层皆有机会”</strong>，适合想在产业链上找到稳定位置的人。
+            </p>
+            <p>
+              <span class="text-accent-pink">■ 珠三角（大湾区）：</span>
+              关键是<strong class="text-accent-orange">“世界级湾区 + 全球供应链枢纽”</strong>，
+              适合做外贸、出海、电商、先进制造、金融科技的人。
+            </p>
+            <p>
+              <span class="text-accent-green">■ 成渝：</span>
+              被定位为<strong class="text-accent-gold">国家战略腹地 + 第四极</strong>，
+              核心逻辑是“东部产业复制粘贴 + 安全备份”，适合压注未来增量、看重性价比的人。
+            </p>
+            <div class="tag-row">
+              <span class="micro-tag blue">想赚稳定钱 → 长三角</span>
+              <span class="micro-tag orange">想冲一把 → 珠三角</span>
+              <span class="micro-tag green">想卡位未来 → 成渝</span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- 板块 1：长三角 -->
+      <section class="section">
+        <details class="card">
+          <summary>
+            <div class="summary-left">
+              <span class="badge badge-gold">YANGTZE DELTA</span>
+              <div class="summary-text-wrap">
+                <span class="summary-title text-accent-blue">长三角：一体化的“立体财富电梯”</span>
+                <span class="summary-desc">
+                  从上海到苏浙皖，一体化不是口号，是重新洗牌的起点。
+                </span>
+              </div>
+            </div>
+            <div class="summary-arrow">›</div>
+          </summary>
+          <div class="card-body">
+            <p>
+              <span class="text-accent-gold">金句：</span>
+              <strong class="text-accent-blue">“在长三角，你选的不是一座城市，而是一整个‘成长阶梯’。”</strong>
+            </p>
+            <ul>
+              <li>
+                <span class="text-accent-purple">一体化的真实含义：</span>
+                过去各市“各自为战、产业同质化”，现在是
+                <strong>打通基础设施 + 公共服务 + 产业协同</strong>，形成真正的<span class="text-accent-gold">“一片城市”</span>。
+              </li>
+              <li>
+                <span class="text-accent-green">上海在做什么？</span>
+                把化工、传统机械等
+                <span class="text-accent-orange">旧产业外溢给苏北 &amp; 安徽</span>，
+                自己主攻<strong>集成电路、生物医药、人工智能等“三大先导产业”</strong>。
+              </li>
+              <li>
+                <span class="text-accent-pink">二线核心城市：</span>
+                <strong>合肥、南京、苏州、杭州、宁波</strong>等，都在走差异化路线：
+                新能源、硬科技、数字经济、海洋经济……<br>
+                <span class="text-accent-gold">→ 适合中高端产业人才 + 创业者。</span>
+              </li>
+              <li>
+                <span class="text-accent-blue">三四线城市：</span>
+                把自己变成<span class="text-accent-green">“配套城市”</span>，
+                围着核心城市做新能源配套、高端制造配套、港口供应链配套。<br>
+                <span class="text-accent-gold">→ 适合想要生活成本低、但要产业链红利的人。</span>
+              </li>
+              <li>
+                <span class="text-accent-orange">圈外城市的风险：</span>
+                没有纳入长三角一体化的，既享受不到红利，还可能变成
+                <strong class="text-accent-pink">“生育子宫 + 人口输出地”</strong>。
+              </li>
+            </ul>
+            <div class="tag-row">
+              <span class="micro-tag blue">一体化</span>
+              <span class="micro-tag gold">产业集群</span>
+              <span class="micro-tag green">配套城市机会</span>
+              <span class="micro-tag purple">上海产业置换</span>
+              <span class="micro-tag orange">圈内 vs 圈外</span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- 板块 2：珠三角 / 大湾区 -->
+      <section class="section">
+        <details class="card">
+          <summary>
+            <div class="summary-left">
+              <span class="badge badge-pink">GREATER BAY AREA</span>
+              <div class="summary-text-wrap">
+                <span class="summary-title text-accent-pink">珠三角：世界级湾区，冲在全球价值链上</span>
+                <span class="summary-desc">
+                  这里比的是“全球竞争力”，而不是省内排名。
+                </span>
+              </div>
+            </div>
+            <div class="summary-arrow">›</div>
+          </summary>
+          <div class="card-body">
+            <p>
+              <span class="text-accent-gold">金句：</span>
+              <strong class="text-accent-pink">“大湾区不是在问：你比隔壁市强多少，而是在问：你能在全球链条上站到哪一格？”</strong>
+            </p>
+            <ul>
+              <li>
+                <span class="text-accent-blue">关键词不是“一体化”，而是“湾区建设”。</span><br>
+                中央没有强行要求大湾区像长三角那样全面拆墙，
+                <strong class="text-accent-orange">原有格局基本定型，新城市想突围难度极大。</strong>
+              </li>
+              <li>
+                <span class="text-accent-purple">真正的主战场：</span>
+                <strong class="text-accent-blue">深圳 + 广州 + 内湾港口城市</strong>，
+                再叠加前海、横琴、南沙等“新平台”，围绕
+                <span class="text-accent-green">国际航运中心 + 全球供应链节点</span>做文章。
+              </li>
+              <li>
+                <span class="text-accent-green">深圳的角色：</span>
+                典型的<span class="text-accent-gold">“全球制造 + 科创引擎”</span>，
+                外贸体量、创新能力、财政实力都支撑它用更高价格抢人、抢项目。
+              </li>
+              <li>
+                <span class="text-accent-orange">“线上的繁荣，线外的边缘化”：</span>
+                内湾一线越成功，带来的往往是
+                <strong class="text-accent-pink">湾区外城市进一步被边缘化</strong>，
+                一些城市的经济增速已经出现<strong>“零头增长”</strong>。
+              </li>
+              <li>
+                <span class="text-accent-blue">对个人意味着什么？</span><br>
+                外贸、电商、出海、供应链、金融科技、高端制造：
+                <span class="text-accent-green">→ 越靠近内湾和枢纽，你的人生杠杆越大。</span>
+              </li>
+            </ul>
+            <div class="tag-row">
+              <span class="micro-tag pink">世界级湾区</span>
+              <span class="micro-tag blue">全球供应链</span>
+              <span class="micro-tag green">内湾一线</span>
+              <span class="micro-tag orange">线内繁荣 · 线外压力</span>
+              <span class="micro-tag purple">深圳强动力</span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- 板块 3：成渝 / 战略腹地 -->
+      <section class="section">
+        <details class="card">
+          <summary>
+            <div class="summary-left">
+              <span class="badge badge-green">CHENGYU HUB</span>
+              <div class="summary-text-wrap">
+                <span class="summary-title text-accent-green">成渝：国家战略腹地，复制粘贴的未来增量</span>
+                <span class="summary-desc">
+                  新一轮“逆全球化”里最重要的安全备份和产业备份。
+                </span>
+              </div>
+            </div>
+            <div class="summary-arrow">›</div>
+          </summary>
+          <div class="card-body">
+            <p>
+              <span class="text-accent-gold">金句：</span>
+              <strong class="text-accent-green">“成渝是中国经济的‘第四极’，更是东部产业的‘硬盘备份’。”</strong>
+            </p>
+            <ul>
+              <li>
+                <span class="text-accent-blue">从“西部大开发”到“战略腹地”： </span>
+                不再是“大水漫灌式开发”，而是有选择地复制
+                <strong>关键产业链、关键科研平台、关键基础设施</strong>到成渝。
+              </li>
+              <li>
+                <span class="text-accent-purple">“复制粘贴”的含义：</span>
+                不只是工厂搬迁，而是
+                <span class="text-accent-gold">科研项目、科创平台、高端制造、就业机会、财政资源</span>整体跟着转移。
+              </li>
+              <li>
+                <span class="text-accent-green">“成渝 + 绵阳 + 交通节点城”：</span>
+                成都 + 重庆 双核驱动，<strong>绵阳做军工 &amp; 硬科技</strong>，
+                广元、资阳、合川等节点城市承接
+                <span class="text-accent-blue">物流枢纽 + 供应链分拨</span>。
+              </li>
+              <li>
+                <span class="text-accent-orange">机会在哪里？</span><br>
+                想降成本、又想享受国家战略红利的产业，会越来越倾向成渝：
+                <span class="text-accent-gold">高端制造、新能源、军工配套、数字经济等</span>。
+              </li>
+              <li>
+                <span class="text-accent-pink">对个人的含义：</span>
+                <strong>同一家企业，同一条产业链，</strong>
+                放在东部可能是“卷到窒息”，放在成渝可能变成“增长 + 性价比”的组合。
+              </li>
+            </ul>
+            <div class="tag-row">
+              <span class="micro-tag green">国家战略腹地</span>
+              <span class="micro-tag gold">第四极</span>
+              <span class="micro-tag blue">产业备份</span>
+              <span class="micro-tag purple">军工 &amp; 科创</span>
+              <span class="micro-tag orange">成本优势</span>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- 思维导图 -->
+      <section class="section">
+        <details class="card">
+          <summary>
+            <div class="summary-left">
+              <span class="badge badge-purple">MIND MAP</span>
+              <div class="summary-text-wrap">
+                <span class="summary-title text-accent-purple">思维导图：从“选城市”升级为“选赛道 + 选角色”</span>
+                <span class="summary-desc">
+                  把复杂判断拆成三个问题：区域 · 产业 · 自己。
+                </span>
+              </div>
+            </div>
+            <div class="summary-arrow">›</div>
+          </summary>
+          <div class="card-body">
+            <div class="mindmap">
+              <div class="mind-node">
+                <div class="mind-node-title text-accent-blue">① 先选大区域</div>
+                <ul>
+                  <li><span class="text-accent-gold">稳健上升：</span>长三角一体化 + 制造业集群</li>
+                  <li><span class="text-accent-pink">高杠杆冲刺：</span>大湾区全球供应链 + 出海</li>
+                  <li><span class="text-accent-green">未来增量：</span>成渝战略腹地 + 复制粘贴红利</li>
+                </ul>
+              </div>
+
+              <div class="mind-node">
+                <div class="mind-node-title text-accent-orange">② 再选产业赛道</div>
+                <ul>
+                  <li><span class="text-accent-purple">硬科技：</span>集成电路、智能制造、新能源</li>
+                  <li><span class="text-accent-blue">数字 &amp; 出海：</span>跨境电商、供应链金融、平台经济</li>
+                  <li><span class="text-accent-green">高级蓝领：</span>自动化、数控、运维、设备调试</li>
+                </ul>
+              </div>
+
+              <div class="mind-node">
+                <div class="mind-node-title text-accent-gold">③ 最后看自己的位置</div>
+                <ul>
+                  <li><span class="text-accent-blue">你是第几梯队的人才？</span>博士 / 硕士 / 本科 / 高级技工</li>
+                  <li><span class="text-accent-green">你更适合哪里？</span>研发 · 产品 · 运营 · 销售 · 管理 · 技术工人</li>
+                  <li><span class="text-accent-pink">你要什么组合？</span>收入 / 成长 / 家庭 / 成本 / 城市气质</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- 金句区 -->
+      <section class="section">
+        <details class="card">
+          <summary>
+            <div class="summary-left">
+              <span class="badge badge-gold">QUOTES</span>
+              <div class="summary-text-wrap">
+                <span class="summary-title text-accent-gold">金句精选：帮你“一锤定音”的几句话</span>
+                <span class="summary-desc">
+                  真正改变决策的，往往是一句戳破幻想的话。
+                </span>
+              </div>
+            </div>
+            <div class="summary-arrow">›</div>
+          </summary>
+          <div class="card-body">
+            <div class="quote-grid">
+              <div class="quote-card">
+                <div class="quote-text">
+                  <span class="text-accent-gold">“你把自己的人生，重仓在了哪座城市，就把未来二三十年的机会成本，押在了哪里。”</span>
+                </div>
+                <div class="quote-tag">— 区域选择 ≈ 人生定价</div>
+              </div>
+
+              <div class="quote-card">
+                <div class="quote-text">
+                  <span class="text-accent-blue">“普遍发展时代已经结束，接下来是<strong>不对称发展 + 集中红利</strong>的时代。”</span>
+                </div>
+                <div class="quote-tag">— 不能再用老眼光看未来</div>
+              </div>
+
+              <div class="quote-card">
+                <div class="quote-text">
+                  <span class="text-accent-pink">“在错误的城市拼十年，不如在对的城市拼三年。”</span>
+                </div>
+                <div class="quote-tag">— 选对赛道比埋头苦干更重要</div>
+              </div>
+
+              <div class="quote-card">
+                <div class="quote-text">
+                  <span class="text-accent-green">“普通人所谓的‘命好’，本质上是：刚好站在了时代趋势正确的一边。”</span>
+                </div>
+                <div class="quote-tag">— 趋势，就是普通人的最大杠杆</div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <!-- 专家视角点评 -->
+      <section class="section">
+        <details class="card">
+          <summary>
+            <div class="summary-left">
+              <span class="badge badge-blue">EXPERT VIEW</span>
+              <div class="summary-text-wrap">
+                <span class="summary-title text-accent-blue">专家视角：从政策到个人决策的三条建议</span>
+                <span class="summary-desc">
+                  站在区域发展政策专家的视角，给普通人的落地建议。
+                </span>
+              </div>
+            </div>
+            <div class="summary-arrow">›</div>
+          </summary>
+          <div class="card-body">
+            <p>
+              作为长期研究<strong class="text-accent-gold">长三角 · 珠三角 · 成渝</strong>区域政策与预算的分析者，我更关心三个问题：
+              <span class="text-accent-blue">国家想把增量放在哪里？</span>
+              <span class="text-accent-green">产业链打算怎么重排？</span>
+              <span class="text-accent-pink">普通人有多少跟随的窗口期？</span>
+            </p>
+            <ul>
+              <li>
+                <span class="text-accent-gold">建议一：先看“被明确点名”的区域，再看城市。</span><br>
+                被写进规划、反复被提及的区域（如长三角一体化、大湾区建设、成渝双城经济圈）
+                <strong class="text-accent-green">一定优先于没有被点名的模糊区域</strong>。
+                政策的注意力在哪里，财政和资源就会跟到哪里。
+              </li>
+              <li>
+                <span class="text-accent-blue">建议二：别迷信省会，优先看“都市圈 + 产业带”。</span><br>
+                很多省会的任务是<strong class="text-accent-purple">“安全 + 稳定 + 管理”</strong>，
+                而不是“增长 + 创新”。
+                <span class="text-accent-gold">真正有机会的是：围绕核心城市的都市圈、产业带、交通节点城。</span>
+              </li>
+              <li>
+                <span class="text-accent-pink">建议三：把自己放进产业链画布，而不是行政地图。</span><br>
+                问自己三个问题：<br>
+                ① 我的技能在产业链的哪一段最值钱？<br>
+                ② 这段产业链，在哪个区域最有未来？<br>
+                ③ 我能不能接受为趋势迁一次城、换一次赛道？<br>
+                能做到这三点的人，<strong class="text-accent-green">基本都能在区域红利里分一杯羹</strong>。
+              </li>
+            </ul>
+            <p style="margin-top:8px;" class="text-soft">
+              最后一句话送给你：
+              <span class="text-accent-gold">“看懂趋势，是成年人对自己负责的开始。”</span>
+              而区域，就是所有趋势中，最容易被忽略、却最影响一生的那个。
+            </p>
+          </div>
+        </details>
+      </section>
+
+      <div class="footer-note">
+        · 以上为精炼内容卡，可嵌入直播落地页 / 课程介绍页使用 ·
+      </div>
+    </section>
+  </main>
+</body>
+</html>

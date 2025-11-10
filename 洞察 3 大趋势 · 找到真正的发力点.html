@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>秋季十日谈核心干货 · 职业 / 转行决策版</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at top left, #ffe9f0 0%, #e6f3ff 40%, #e9fff4 80%, #fdf5ff 100%);
+      --glass-bg: rgba(255, 255, 255, 0.18);
+      --glass-border: rgba(255, 255, 255, 0.55);
+      --glass-shadow: 0 24px 60px rgba(15, 23, 42, 0.25);
+      --radius-xl: 26px;
+      --transition-fast: 0.22s ease-out;
+      --text-main: #0f172a;
+      --accent-pink: #ff6fb1;
+      --accent-blue: #4f9dff;
+      --accent-purple: #a855f7;
+      --accent-green: #22c55e;
+      --accent-gold: #fbbf24;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "PingFang SC", "Microsoft YaHei", sans-serif;
+      background: var(--bg-gradient);
+      color: var(--text-main);
+      padding: 32px 16px 40px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1120px;
+    }
+
+    .header {
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 14px;
+      border-radius: 999px;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2));
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      font-size: 12px;
+      backdrop-filter: blur(16px);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: conic-gradient(from 180deg, #34d399, #22c55e, #22d3ee, #38bdf8, #a855f7, #fb7185, #fbbf24, #34d399);
+      box-shadow: 0 0 12px rgba(59, 130, 246, 0.8);
+    }
+
+    .title {
+      margin-top: 12px;
+      font-size: 30px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: linear-gradient(120deg, #f97316, #facc15, #22c55e, #34d399, #22d3ee, #3b82f6, #a855f7, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      margin-top: 8px;
+      font-size: 14px;
+      color: #475569;
+    }
+
+    /* Glass card + 折叠交互 */
+
+    .glass-card {
+      position: relative;
+      background: var(--glass-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--glass-border);
+      box-shadow: var(--glass-shadow);
+      backdrop-filter: blur(22px) saturate(1.4);
+      -webkit-backdrop-filter: blur(22px) saturate(1.4);
+      margin-bottom: 18px;
+      overflow: hidden;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px 10px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .card-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .window-dots {
+      display: inline-flex;
+      gap: 6px;
+    }
+
+    .window-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      box-shadow: 0 0 8px rgba(15, 23, 42, 0.3);
+    }
+
+    .window-dot.red { background: #ff5f57; }
+    .window-dot.yellow { background: #febc2e; }
+    .window-dot.green { background: #28c840; }
+
+    .card-title {
+      font-size: 16px;
+      font-weight: 700;
+      background: linear-gradient(120deg, #22c55e, #06b6d4, #6366f1, #ec4899);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .card-tag {
+      font-size: 11px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: linear-gradient(120deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.5));
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: #0369a1;
+      font-weight: 600;
+    }
+
+    .chevron {
+      font-size: 16px;
+      transition: transform var(--transition-fast);
+      color: #64748b;
+    }
+
+    .glass-card.collapsed .chevron {
+      transform: rotate(-90deg);
+    }
+
+    .card-body {
+      padding: 0 18px 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.6);
+      max-height: 1200px;
+      opacity: 1;
+      transform: translateY(0);
+      transition: max-height 0.28s ease-out, opacity 0.22s ease-out, transform 0.22s ease-out;
+    }
+
+    .glass-card.collapsed .card-body {
+      max-height: 0;
+      opacity: 0;
+      transform: translateY(-4px);
+      padding-top: 0;
+      padding-bottom: 0;
+      border-top-color: transparent;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 8px;
+      margin-bottom: 6px;
+      font-size: 11px;
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(255, 255, 255, 0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+    }
+
+    .pill-dot.pink { background: var(--accent-pink); }
+    .pill-dot.blue { background: var(--accent-blue); }
+    .pill-dot.purple { background: var(--accent-purple); }
+    .pill-dot.green { background: var(--accent-green); }
+    .pill-dot.gold { background: var(--accent-gold); }
+
+    /* 文字排版 */
+
+    p {
+      font-size: 13px;
+      line-height: 1.6;
+      margin: 6px 0;
+    }
+
+    .text-soft {
+      color: #64748b;
+    }
+
+    .text-strong {
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .text-gradient-1 {
+      background: linear-gradient(120deg, #f97316, #facc15, #22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .text-gradient-2 {
+      background: linear-gradient(120deg, #22c55e, #22d3ee, #6366f1);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .text-gradient-3 {
+      background: linear-gradient(120deg, #a855f7, #ec4899, #f97316);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    h3 {
+      font-size: 14px;
+      margin: 10px 0 4px;
+      font-weight: 700;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+      margin: 4px 0 6px;
+    }
+
+    li {
+      font-size: 13px;
+      line-height: 1.5;
+      margin-bottom: 4px;
+      position: relative;
+      padding-left: 16px;
+    }
+
+    li::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 0.55em;
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: radial-gradient(circle, #22c55e 0%, #3b82f6 50%, #a855f7 100%);
+      box-shadow: 0 0 6px rgba(37, 99, 235, 0.6);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin: 6px 0 2px;
+    }
+
+    .chip {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px dashed rgba(148, 163, 184, 0.7);
+      background: rgba(255, 255, 255, 0.85);
+    }
+
+    .highlight-box {
+      margin-top: 8px;
+      padding: 8px 10px;
+      border-radius: 18px;
+      background: linear-gradient(135deg, rgba(244, 244, 245, 0.9), rgba(236, 252, 203, 0.9));
+      border: 1px solid rgba(190, 242, 100, 0.9);
+      font-size: 12px;
+    }
+
+    .highlight-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #4d7c0f;
+      margin-bottom: 3px;
+    }
+
+    .checklist li::before {
+      background: radial-gradient(circle, #22c55e 0%, #22c55e 40%, #22c55e 100%);
+      box-shadow: 0 0 4px rgba(34, 197, 94, 0.7);
+    }
+
+    /* 思维导图 */
+
+    .mindmap {
+      position: relative;
+      padding: 14px 6px 10px 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .mind-center {
+      flex: 1 1 160px;
+      min-width: 160px;
+      max-width: 220px;
+      align-self: center;
+    }
+
+    .mind-center-node {
+      padding: 12px 14px;
+      border-radius: 999px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 800;
+      background: radial-gradient(circle at top left, #f97316, #facc15, #22c55e, #3b82f6, #a855f7);
+      color: white;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.35);
+    }
+
+    .mind-branches {
+      flex: 3 1 260px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+    }
+
+    .mind-column {
+      flex: 1 1 180px;
+      position: relative;
+      padding-left: 14px;
+    }
+
+    .mind-column::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      bottom: 6px;
+      width: 2px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom, #22c55e, #22d3ee, #6366f1, #ec4899);
+      opacity: 0.8;
+    }
+
+    .mind-node-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .mind-node-title.education {
+      color: #f97316;
+    }
+    .mind-node-title.industry {
+      color: #2563eb;
+    }
+    .mind-node-title.city {
+      color: #16a34a;
+    }
+
+    .mind-node-pill {
+      display: inline-block;
+      margin-bottom: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+    }
+
+    .mind-sublist {
+      margin-top: 3px;
+    }
+
+    .mind-sublist li {
+      font-size: 11px;
+      margin-bottom: 2px;
+      padding-left: 14px;
+    }
+
+    .mind-sublist li::before {
+      width: 5px;
+      height: 5px;
+      left: 2px;
+      background: radial-gradient(circle, #e11d48 0%, #ec4899 60%, #f97316 100%);
+    }
+
+    /* 响应式 */
+
+    @media (max-width: 768px) {
+      body {
+        padding: 18px 10px 26px;
+      }
+      .title {
+        font-size: 24px;
+      }
+      .glass-card {
+        border-radius: 22px;
+      }
+      .card-header {
+        padding: 10px 14px 6px;
+      }
+      .card-body {
+        padding: 0 14px 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- 顶部标题 -->
+    <header class="header">
+      <div class="badge">
+        <span class="badge-dot"></span>
+        <span style="background:linear-gradient(120deg,#22c55e,#22d3ee,#6366f1);-webkit-background-clip:text;background-clip:text;color:transparent;">
+          秋季十日谈 · 第八场
+        </span>
+        <span style="color:#ef4444;font-weight:600;">职业 / 转行决策提炼版</span>
+      </div>
+      <h1 class="title">洞察 3 大趋势 · 找到真正的发力点</h1>
+      <p class="subtitle">基于罗振宇 × 马江波对话 · 只保留与你决策相关的关键信息</p>
+    </header>
+
+    <!-- 导航 / 总览 -->
+    <section class="glass-card" id="overview">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="window-dots">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div>
+            <div class="card-title">0. 一屏看懂：这篇总结能帮你什么？</div>
+            <div class="pill-row">
+              <div class="pill">
+                <span class="pill-dot pink"></span>转行方向判断
+              </div>
+              <div class="pill">
+                <span class="pill-dot.blue pill-dot blue"></span>选专业 / 再学习
+              </div>
+              <div class="pill">
+                <span class="pill-dot purple"></span>选行业 & 城市
+              </div>
+              <div class="pill">
+                <span class="pill-dot green"></span>避坑：学历 / 专业 / 城市
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="chevron">⌄</div>
+      </div>
+      <div class="card-body">
+        <h3 class="text-gradient-1">这份骨架只做一件事：</h3>
+        <p>
+          把原直播里所有<strong class="text-strong">“和你人生决策直接相关”</strong>的部分拎出来，
+          按职业 / 转行的视角重排，去掉情绪、故事和寒暄，只留：
+        </p>
+        <ul>
+          <li><span class="text-gradient-2">趋势判断：</span>教育、产业、城市各自在往哪儿走？</li>
+          <li><span class="text-gradient-3">决策点：</span>对你个人意味着什么？哪些选择值得加码 / 立刻放弃？</li>
+          <li><span style="color:#0ea5e9;">行动建议：</span>如果你现在就要转行 / 升级，该先动哪三步？</li>
+        </ul>
+
+        <div class="highlight-box">
+          <div class="highlight-title">总原则 · 一句记住</div>
+          <p>
+            <span class="text-gradient-1 text-strong">趋势决定命运</span> → 
+            <span class="text-gradient-2 text-strong">选择决定成败</span> → 
+            <span class="text-gradient-3 text-strong">努力只是在好选择基础上提高成功概率</span>。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 职业决策金句 -->
+    <section class="glass-card" id="core-quotes">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="window-dots">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div>
+            <div class="card-title">1. 职业 / 转行决策的核心金句</div>
+            <div class="pill-row">
+              <div class="pill"><span class="pill-dot gold"></span>用来反复校准自己</div>
+              <div class="pill"><span class="pill-dot blue"></span>每条都能落成一个决策问题</div>
+            </div>
+          </div>
+        </div>
+        <div class="chevron">⌄</div>
+      </div>
+      <div class="card-body">
+        <ul>
+          <li>
+            <span class="text-gradient-1 text-strong">学历贬值是全球大趋势</span>，不是短期经济下行的问题，
+            本质是<strong>大学生供给扩张远超岗位增速</strong>。
+          </li>
+          <li>
+            未来 20 年内，中国<strong>大学生供大于求的格局难以逆转</strong>，
+            大致要到 <span style="color:#f97316;font-weight:600;">2038–2045</span> 以后才可能缓和。
+          </li>
+          <li>
+            对普通家庭来说：教育仍然重要，但<strong>“孤注一掷押学历”是高风险行为</strong>。
+          </li>
+          <li>
+            <span class="text-gradient-2 text-strong">科技是未来唯一能批量制造新富人的主线</span>，
+            其余大部分传统行业，只适合“安全退出或慢慢收缩”，不适合作为你 10–20 年的主赛道。
+          </li>
+          <li>
+            白领（尤其通用管理、文职）会持续被压缩，
+            <span style="color:#10b981;font-weight:600;">高技能蓝领 + 科技相关岗位</span>迎来结构性机会。
+          </li>
+          <li>
+            城市选择不是选行政级别，而是选<strong>“有增量 + 愿意把增量分给年轻人”</strong>的城市。
+          </li>
+          <li>
+            中年转型首要目标不是“翻盘”，而是<strong>守住安全底线，再去摸高</strong>。
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 趋势一：教育与学历 -->
+    <section class="glass-card" id="trend-education">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="window-dots">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div>
+            <div class="card-title">2. 趋势一：教育与学历 · 什么时候读，读什么，才不亏？</div>
+            <div class="pill-row">
+              <div class="pill"><span class="pill-dot pink"></span>学历贬值的底层逻辑</div>
+              <div class="pill"><span class="pill-dot blue"></span>哪些专业还值得读研</div>
+              <div class="pill"><span class="pill-dot.green pill-dot green"></span>高级蓝领路线</div>
+            </div>
+          </div>
+        </div>
+        <div class="chevron">⌄</div>
+      </div>
+      <div class="card-body">
+        <h3 class="text-gradient-2">2.1 学历贬值：不是“教育没用了”，而是性价比变了</h3>
+        <p>
+          马江波的判断：<strong>“学历贬值”是结构性、长期的</strong>，背后有三个关键原因：
+        </p>
+        <ul>
+          <li>社会财富和资源积累越来越多，<span style="color:#f97316;">家庭资源的杠杆效应大于单一学历杠杆</span>。</li>
+          <li>中国高等教育扩招太猛：本科、研究生人数在二十多年间分别增长数倍到十几倍。</li>
+          <li>大学培养的是“白领 / 中产后备军”，但经济结构对这部分人的需求没有同步扩大。</li>
+        </ul>
+        <div class="highlight-box">
+          <div class="highlight-title">对决策的直接含义</div>
+          <p>
+            <span class="text-strong">教育仍然是普通人最重要的向上通道之一</span>，但已经从“稳赚不赔”变成了
+            <span style="color:#e11d48;font-weight:600;">高风险投资品</span>。  
+            读不读、何时读、读什么，必须算<strong>投入 / 回报 / 时间成本</strong>。
+          </p>
+        </div>
+
+        <h3 class="text-gradient-1">2.2 读研 / 继续读书，什么时候“划算”？</h3>
+        <p>他提出一个关键概念：<strong style="color:#0ea5e9;">“学历敏感型专业”</strong>。</p>
+        <ul>
+          <li>同一个专业，本科 → 硕士 → 博士，<strong>收入梯度非常明显</strong>，且岗位门槛卡学历。</li>
+          <li>例如：部分 AI、芯片、低空经济等新兴工科方向，博士非常值钱。</li>
+          <li>相反，如果本硕博收入差距不大，或者岗位根本不看重学历，就属于<strong>“学历不敏感专业”</strong>。</li>
+        </ul>
+        <div class="highlight-box">
+          <div class="highlight-title">可直接执行的判断规则</div>
+          <ul class="checklist">
+            <li>先查你所在（或计划转入）专业：本、硕、博的平均起薪差距是否 <strong>&gt; 50%</strong>？</li>
+            <li>岗位 JD 里，是否明确要求“硕士 / 博士”作为准入门槛？</li>
+            <li>是则 ✅：更适合读研；否则 ❌：读研多半是“延迟就业 + 消耗家庭资源”。</li>
+          </ul>
+        </div>
+
+        <h3 class="text-gradient-3">2.3 文科 / 传统理工科：哪里容易踩坑？</h3>
+        <p>直播里一个重要提醒：</p>
+        <ul>
+          <li>问题不在“文科 vs 理科”，而在于<strong>“旧学科 vs 新学科”</strong>。</li>
+          <li>大量传统理工科（如部分材料、环境、土木相关）在新技术和新工艺冲击下，<strong>需求大幅下降</strong>，甚至比很多文科还难就业。</li>
+          <li>很多文科专业，若能与 AI、数据、区域国别、安全等方向交叉，反而机会增多。</li>
+        </ul>
+        <div class="chip-row">
+          <div class="chip" style="color:#f97316;">旧学科单独存在 → 高风险</div>
+          <div class="chip" style="color:#10b981;">新兴 / 交叉学科 → 优先考虑</div>
+          <div class="chip" style="color:#6366f1;">AI × 法学 / 传媒 / 艺术 → 有潜力</div>
+        </div>
+
+        <h3 class="text-gradient-2">2.4 普通家庭的教育策略</h3>
+        <ul>
+          <li>目标从“冲顶名校”改为：<strong>确保不掉到底线</strong>（至少本科学历），然后慎重选专业。</li>
+          <li>在 985/211 的边缘分数段死磕，往往是<strong>高投入、低回报</strong>的区间。</li>
+          <li>如果读研：优先上“学历敏感型专业”，否则不要凭情绪上头。</li>
+        </ul>
+
+        <h3 class="text-gradient-1">2.5 “高级蓝领”路线：被严重低估的上升通道</h3>
+        <p>
+          对于学习成绩一般、家庭资源有限的人，马江波<strong class="text-strong">非常明确地给出另一条路</strong>：
+        </p>
+        <ul>
+          <li>紧挨产业集群的大专 / 职业技术大学（特别是江浙、广东、成渝等区域）；</li>
+          <li>对接具体产业链的技术工种（机器人运维、低空经济运维、高端制造技工等）；</li>
+          <li>随着科技产业扩张，<span style="color:#22c55e;font-weight:600;">高级蓝领的收入 & 稳定性会显著上升</span>。</li>
+        </ul>
+        <div class="highlight-box">
+          <div class="highlight-title">给“普通家庭普通孩子”的一句实话</div>
+          <p>
+            <span class="text-strong">与其在冷门本科专业里艰难求职，不如在对口产业集群里做一名高级蓝领。</span><br/>
+            对大多数人来说，这是更现实、更有确定性的“逆袭路线”。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 趋势二：产业与职业路径 -->
+    <section class="glass-card" id="trend-industry">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="window-dots">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div>
+            <div class="card-title">3. 趋势二：产业与职业路径 · 科技为王，高级服务上升，白领被压缩</div>
+            <div class="pill-row">
+              <div class="pill"><span class="pill-dot.blue pill-dot blue"></span>科技是唯一大增量</div>
+              <div class="pill"><span class="pill-dot purple"></span>两条红利路径</div>
+              <div class="pill"><span class="pill-dot green"></span>中年转型思路</div>
+            </div>
+          </div>
+        </div>
+        <div class="chevron">⌄</div>
+      </div>
+      <div class="card-body">
+        <h3 class="text-gradient-2">3.1 三波造富浪潮已过，下一波只剩科技</h3>
+        <ul>
+          <li>过去三波：外贸、房地产、互联网 —— 已经从“造富主战场”变成“守成战场”。</li>
+          <li>未来 20–30 年，中国的主线是：<strong class="text-strong">科技突围 + 产业升级</strong>。</li>
+          <li>这同时是：大国博弈的需求 + 经济高质量发展的唯一解。</li>
+        </ul>
+        <div class="highlight-box">
+          <div class="highlight-title">一句话版总结</div>
+          <p>
+            <span class="text-gradient-2 text-strong">只有科技，能大规模、批量地产生新一代企业家和新中产。</span><br/>
+            其他大部分传统行业，只适合“稳着做、慢慢退”，不再适合作为你未来 10–20 年的主赛道。
+          </p>
+        </div>
+
+        <h3 class="text-gradient-3">3.2 普通人能搭上的两条红利路径</h3>
+        <p>不需要人人都去搞原创科研，但每个人都可以靠近这两条主线：</p>
+        <ul>
+          <li>
+            <strong style="color:#3b82f6;">路径 A：科创产业链</strong><br/>
+            👉 投身科技相关岗位：AI、低空经济、新能源、生物医药、高端制造等。<br/>
+            👉 用你的专业 + 行业经验，向科技企业靠拢（哪怕是职能岗）。
+          </li>
+          <li>
+            <strong style="color:#10b981;">路径 B：服务消费 / 体验经济</strong><br/>
+            👉 服务于有钱人 & 有闲人：银发经济、康复、心理服务、教育陪伴、文旅、赛事等。<br/>
+            👉 这些领域本质上属于“持续复购”的服务消费，是未来最大内需。
+          </li>
+        </ul>
+
+        <h3 class="text-gradient-1">3.3 职业结构的重排：谁被替代，谁更稀缺？</h3>
+        <ul>
+          <li>
+            <strong>被持续压缩的：</strong>  
+            通用白领、低门槛文职、标准化管理岗位、简单内容生产岗位（传统平面设计、基础程序员、流水线编辑等）。
+          </li>
+          <li>
+            <strong>持续增值的：</strong>  
+            高端技术、复杂工程、深度复合型人才、高级服务（情绪价值 + 复杂问题解决）。
+          </li>
+          <li>
+            <strong>被忽视的杀伤力：</strong> 不是未来式 AI，而是
+            <span style="color:#ef4444;font-weight:600;">“成熟技术的系统优化 + 工艺重构”</span>：
+            <ul class="mind-sublist">
+              <li>移动支付 + 网上银行 → 大量网点 & 柜员消失</li>
+              <li>建筑业从“现场现浇” → “装配式搭积木” → 一大批传统工人失业</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3 class="text-gradient-2">3.4 科技产业的三类红利人群</h3>
+        <ul>
+          <li><strong>战略科学家 / 顶级科研人员</strong>：国家重点扶持，数量极少。</li>
+          <li><strong>卓越工程师 / 技术落地者</strong>：将科研成果变成产品与产业。</li>
+          <li><strong>高技能蓝领</strong>：负责规模化生产和维护，是最后一层红利接收者。</li>
+        </ul>
+        <p class="text-soft">
+          对大多数人来说，现实的可达路径是后两类：<span style="color:#22c55e;">工程师 + 高级蓝领</span>，
+          或者作为职能 / 市场 / 服务角色嵌入这些行业。
+        </p>
+
+        <h3 class="text-gradient-3">3.5 中年转型：先保命，再追梦</h3>
+        <p>马江波对中年人的建议非常务实：</p>
+        <ul>
+          <li>
+            <strong style="color:#e11d48;">不要以“翻盘”作为第一目标</strong>，而是：
+            <span class="text-strong">先垫底线，再谋增量</span>。
+          </li>
+          <li>
+            先问自己：未来 3–5 年，<strong>我最大的风险是什么</strong>？  
+            被裁？被技术淘汰？行业整体下行？—— 先对症下药。
+          </li>
+          <li>
+            能转：优先从<strong>传统行业 → 相近但更有前景的行业 / 企业</strong>，而不是完全跨行。
+          </li>
+          <li>
+            转不过去：让自己成为本行业<strong>最后一批被替代的人</strong>（尽可能贴近最新技术 & 新业务）。</li>
+          <li>
+            选企业时优先：<strong>现金流稳定的公司</strong>，而不是纸面上利润高但随时可能爆雷的。
+          </li>
+        </ul>
+        <div class="highlight-box">
+          <div class="highlight-title">电梯比喻 · 用在你自己的决策上</div>
+          <p>
+            <span class="text-strong">宁可在上升电梯的角落，也不要站在下行电梯的中央。</span><br/>
+            你的工作内容、所在行业、所在城市，至少要满足一个条件：<br/>
+            <span style="color:#22c55e;font-weight:600;">整体在往上走</span>，而不是靠你一个人的努力硬抗大势。
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 趋势三：城市与空间选择 -->
+    <section class="glass-card" id="trend-city">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="window-dots">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div>
+            <div class="card-title">4. 趋势三：城市与空间选择 · 选对人生“重仓地”</div>
+            <div class="pill-row">
+              <div class="pill"><span class="pill-dot gold"></span>看增量，不看牌子</div>
+              <div class="pill"><span class="pill-dot blue"></span>产业 & 人口双飞轮</div>
+              <div class="pill"><span class="pill-dot green"></span>区域大方向</div>
+            </div>
+          </div>
+        </div>
+        <div class="chevron">⌄</div>
+      </div>
+      <div class="card-body">
+        <h3 class="text-gradient-2">4.1 城市选择本质上是“买城市的期权”</h3>
+        <p>
+          你的工作、房子、伴侣、孩子教育，大概率都绑定在同一座城市上，  
+          等于把自己的人生<strong class="text-strong">重仓压在这座城市未来的发展曲线上</strong>。
+        </p>
+        <ul>
+          <li>如果城市产业能持续扩张、基础设施持续完善、公共服务持续优化 → 你的资产会自然升值。</li>
+          <li>如果城市长期“无增量甚至收缩” → 你再努力，也只是在下行通道里挣扎。</li>
+        </ul>
+
+        <h3 class="text-gradient-1">4.2 选城市的两个硬标准</h3>
+        <ul>
+          <li>
+            <strong>1）产业集聚 & 高端产业涌现</strong><br/>
+            有清晰主导产业，有战略性新兴产业（数字、科技、先进制造等），且在扩张中。
+          </li>
+          <li>
+            <strong>2）人口持续净流入</strong><br/>
+            特别是年轻人和高校毕业生愿意来、愿意留下。  
+            人口 = 消费力 + 生产力，高端人才 = 高端消费力 + 高端生产力。
+          </li>
+        </ul>
+
+        <h3 class="text-gradient-3">4.3 区域选择：大方向先选对</h3>
+        <p>在直播中，重点提到的未来资源倾斜区域：</p>
+        <ul>
+          <li><strong style="color:#2563eb;">东部沿海经济大省</strong>：被明确要求“挑大梁”，产业和政策红利密集。</li>
+          <li><strong style="color:#22c55e;">成渝地区</strong>：国家战略腹地，是西部的重要增长极。</li>
+          <li>其他大部分区域：整体更多是“跟着走”，很难成为长期的高增量洼地。</li>
+        </ul>
+        <p class="text-soft">
+          同时，他也提醒：<span style="color:#ef4444;font-weight:600;">中国大量城市其实是收缩型城市</span>，  
+          人口和产业在慢慢流出，适合“养老 / 低成本生活”，不太适合作为年轻人的长期主战场。
+        </p>
+
+        <h3 class="text-gradient-2">4.4 城市 × 产业 × 专业：四维匹配</h3>
+        <p>一个非常关键的思路：</p>
+        <ul>
+          <li>不要只匹配“专业 & 学校”，而是同时匹配：<br/>
+            <span class="text-strong">专业 – 学校 – 产业 – 城市</span> 四条线。
+          </li>
+          <li>未来大学和所在城市的产业结合度会越来越高：  
+            很多学校招生、专业设置，都是为本地产业服务的。</li>
+          <li>
+            这意味着：同样的专业，在不同城市的就业结果，<strong>差别会非常大</strong>。
+          </li>
+        </ul>
+        <div class="highlight-box">
+          <div class="highlight-title">你可以立刻做的小练习</div>
+          <ul class="checklist">
+            <li>列出你所在 / 打算去的城市的主导产业（越具体越好）。</li>
+            <li>问自己：我的背景 / 技能，和这些产业的<strong>最近交集</strong>在哪里？</li>
+            <li>如果交集极少：这座城市对你来说，可能只是“生活地”，而不是“事业地”。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- 思维导图 -->
+    <section class="glass-card" id="mindmap-section">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="window-dots">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div>
+            <div class="card-title">5. 思维导图 · 从趋势到你的职业决策</div>
+            <div class="pill-row">
+              <div class="pill"><span class="pill-dot purple"></span>一眼看全逻辑</div>
+              <div class="pill"><span class="pill-dot.gold pill-dot gold"></span>方便你自己往下扩展</div>
+            </div>
+          </div>
+        </div>
+        <div class="chevron">⌄</div>
+      </div>
+      <div class="card-body">
+        <div class="mindmap">
+          <div class="mind-center">
+            <div class="mind-center-node">
+              职业 / 转行决策<br/>
+              三大趋势思维导图
+            </div>
+          </div>
+          <div class="mind-branches">
+            <!-- 教育 -->
+            <div class="mind-column">
+              <div class="mind-node-title education">教育 & 学历</div>
+              <div class="mind-node-pill">学历贬值 · 供大于求</div>
+              <ul class="mind-sublist">
+                <li>看“学历敏感型专业”再决定读研</li>
+                <li>旧学科（传统理工 / 冷门文科）风险上升</li>
+                <li>新兴 / 交叉学科 + AI 更有弹性</li>
+                <li>普通家庭孩子：高级蓝领是现实上升路径</li>
+              </ul>
+            </div>
+            <!-- 产业 -->
+            <div class="mind-column">
+              <div class="mind-node-title industry">产业 & 职业路径</div>
+              <div class="mind-node-pill">科技唯一大增量</div>
+              <ul class="mind-sublist">
+                <li>路径 A：科创产业链（AI、低空、新能源…）</li>
+                <li>路径 B：服务消费（银发、康复、赛事…）</li>
+                <li>白领被压缩，高级蓝领 & 工程师上升</li>
+                <li>中年转型：先垫底线，再谋高点</li>
+              </ul>
+            </div>
+            <!-- 城市 -->
+            <div class="mind-column">
+              <div class="mind-node-title city">城市 & 空间选择</div>
+              <div class="mind-node-pill">选人生“重仓地”</div>
+              <ul class="mind-sublist">
+                <li>看产业集聚 + 人口净流入</li>
+                <li>优先东部经济大省 & 成渝等高增量区域</li>
+                <li>警惕收缩型城市：适合养老不适合打拼</li>
+                <li>专业 – 学校 – 产业 – 城市 四维匹配</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 行动清单 -->
+    <section class="glass-card" id="action-plan">
+      <div class="card-header">
+        <div class="card-header-left">
+          <div class="window-dots">
+            <span class="window-dot red"></span>
+            <span class="window-dot yellow"></span>
+            <span class="window-dot green"></span>
+          </div>
+          <div>
+            <div class="card-title">6. 立刻可用的 7 步行动清单（职业 / 转行版）</div>
+            <div class="pill-row">
+              <div class="pill"><span class="pill-dot.green pill-dot green"></span>为自己做一次系统“体检”</div>
+              <div class="pill"><span class="pill-dot pink"></span>3 个月内能完成</div>
+            </div>
+          </div>
+        </div>
+        <div class="chevron">⌄</div>
+      </div>
+      <div class="card-body">
+        <ul class="checklist">
+          <li>写下你现在所在的：行业 / 城市 / 岗位，分别判断是在<strong>上升电梯还是下行电梯</strong>。</li>
+          <li>把自己的专业 / 技能按“学历敏感 or 不敏感”分一类，思考是否还要继续砸时间读研。</li>
+          <li>在你熟悉的行业里，找出<strong>最接近科技 / 高级服务</strong>的 1–2 种岗位，列出差距。</li>
+          <li>用“专业 – 学校 – 产业 – 城市”四维框架，重评你现在的城市是否值得长期重仓。</li>
+          <li>如果你已经是中年：先写出未来 3 年最大的风险（失业 / 被替代 / 行业下行），再对症做“防守策略”。</li>
+          <li>挑一个你最看得懂、又有科技 / 服务潜力的方向，立刻开始 <span class="text-strong">3 个月小项目</span>（实习、兼职、线上协作都行）。</li>
+          <li>每 3 个月复盘一次：趋势变了吗？我离“上升电梯”更近了一点吗？需要微调什么选择？</li>
+        </ul>
+        <p class="text-soft">
+          你完全可以把上面这份 HTML 当作自己的“长期决策仪表盘”，  
+          后续只要你有新的信息或想法，就在每个小节下继续往里加内容就行。
+        </p>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // 折叠交互
+    document.querySelectorAll('.glass-card').forEach(card => {
+      const header = card.querySelector('.card-header');
+      header.addEventListener('click', () => {
+        card.classList.toggle('collapsed');
+      });
+    });
+  </script>
+</body>
+</html>
