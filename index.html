@@ -1,33 +1,206 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <meta charset="UTF-8">
-<title>全部文件索引</title>
+<title>📌 我的全部 HTML 文件列表（按时间 & 分类筛选）</title>
 
 <body>
 <h2>📌 我的全部 HTML 文件列表（自动生成｜GitHub API）</h2>
-<p>上传新文件后这里会自动显示，无需任何维护。</p>
+<p>
+  说明：时间为该文件最近一次提交时间（基本等同于上传/更新时间）。<br>
+  你可以按「分类 + 日期」筛选，并一键复制当前筛选结果所有网址。
+</p>
 
-<ul id="list"></ul>
+<h3>🔍 筛选条件</h3>
+<label>
+  分类：
+  <select id="categoryFilter">
+    <option value="all">全部</option>
+  </select>
+</label>
+
+&nbsp;&nbsp;
+
+<label>
+  日期：
+  <input type="date" id="dateFilter">
+</label>
+
+<button id="clearFilterBtn">清空筛选</button>
+
+<h3>🧾 明细表：日期 ｜ 分类 ｜ 文件名（可点击） ｜ 完整网址</h3>
+<table border="1" cellpadding="6" cellspacing="0" style="border-collapse:collapse;max-width:1100px;">
+  <thead>
+    <tr>
+      <th>日期</th>
+      <th>分类</th>
+      <th>文件名</th>
+      <th>完整网址</th>
+    </tr>
+  </thead>
+  <tbody id="table-body"></tbody>
+</table>
+
+<h3>📋 一键复制当前筛选结果的所有网址</h3>
+<p>例如只想要 2025-11-13 那天上传的所有链接：选好日期后点下面按钮即可。</p>
+<textarea id="urlBox" rows="8" style="width:100%;max-width:1100px;"></textarea>
+<br>
+<button onclick="copyUrls()">复制当前筛选结果的网址到剪贴板</button>
 
 <script>
-// 使用 GitHub API 读取仓库文件列表
-fetch("https://api.github.com/repos/chenbaiqiang30/my-page/contents/")
-  .then(res => res.json())
-  .then(files => {
-    const ul = document.getElementById("list");
-    files
-      .filter(f => f.name.endsWith(".html") && f.name !== "index.html")
-      .forEach(f => {
-        const li = document.createElement("li");
-        li.innerHTML = `<a href="${f.name}">${f.name}</a>`;
-        ul.appendChild(li);
-      });
-  })
-  .catch(err => {
-    document.getElementById("list").innerHTML =
-      "<li>❌ 加载失败，请刷新重试</li>";
-    console.error(err);
+const OWNER = "chenbaiqiang30";
+const REPO  = "my-page";
+const API_CONTENTS = `https://api.github.com/repos/${OWNER}/${REPO}/contents/`;
+const API_COMMITS  = `https://api.github.com/repos/${OWNER}/${REPO}/commits?per_page=1&path=`;
+
+let allItems = [];
+let currentCategory = "all";
+let currentDate = "";
+
+// 更细的分类规则（优先判断人物）
+function guessCategory(name) {
+  const n = decodeURIComponent(name);
+  if (/马江博/.test(n)) return "人物·马江博";
+  if (/何刚/.test(n))   return "人物·何刚";
+  if (/段永平/.test(n)) return "人物·段永平";
+
+  if (/投资|风向|finance|business|trend|经济|风标/.test(n)) return "投资/商业";
+  if (/AI|智能|agent|prompt|代码|编程|innovation|模式3\.0/i.test(n)) return "AI/技术";
+  if (/教育|学习|school|课程|重置/.test(n)) return "教育/学习";
+  if (/自媒|内容|创作|视频|漫剧|音乐|短视频|直播/.test(n)) return "内容/自媒体";
+
+  return "其他";
+}
+
+function formatDate(iso) {
+  const d = new Date(iso);
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${y}-${m}-${day}`;
+}
+
+async function loadFiles() {
+  const res = await fetch(API_CONTENTS);
+  const files = await res.json();
+
+  // 只要 html 文件，排除 index.html
+  const htmlFiles = files.filter(f =>
+    f.name.endsWith(".html") && f.name !== "index.html"
+  );
+
+  // 给每个文件查最近提交时间
+  const withDates = await Promise.all(
+    htmlFiles.map(async f => {
+      const r = await fetch(API_COMMITS + encodeURIComponent(f.path));
+      const commits = await r.json();
+      const dateIso = commits[0]?.commit?.author?.date || null;
+      const date = dateIso ? formatDate(dateIso) : "";
+      const category = guessCategory(f.name);
+      return {
+        name: f.name,
+        path: f.path,
+        date,
+        category,
+        fullUrl: window.location.origin + window.location.pathname + f.name
+      };
+    })
+  );
+
+  // 按时间倒序排序（最新在上）
+  withDates.sort((a, b) => {
+    if (!a.date) return 1;
+    if (!b.date) return -1;
+    return new Date(b.date) - new Date(a.date);
   });
+
+  allItems = withDates;
+
+  // 初始化分类下拉（自动根据实际文件生成）
+  initCategoryOptions();
+  // 首次渲染
+  renderTableAndUrls();
+}
+
+function initCategoryOptions() {
+  const select = document.getElementById("categoryFilter");
+  const cats = new Set(allItems.map(i => i.category));
+  [...cats].sort().forEach(cat => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    select.appendChild(opt);
+  });
+
+  select.addEventListener("change", () => {
+    currentCategory = select.value;
+    renderTableAndUrls();
+  });
+
+  const dateInput = document.getElementById("dateFilter");
+  dateInput.addEventListener("change", () => {
+    currentDate = dateInput.value;
+    renderTableAndUrls();
+  });
+
+  document.getElementById("clearFilterBtn").addEventListener("click", () => {
+    currentCategory = "all";
+    currentDate = "";
+    select.value = "all";
+    dateInput.value = "";
+    renderTableAndUrls();
+  });
+}
+
+function renderTableAndUrls() {
+  const tbody = document.getElementById("table-body");
+  const urlBox = document.getElementById("urlBox");
+  tbody.innerHTML = "";
+  urlBox.value = "";
+
+  // 根据当前筛选条件过滤
+  let items = allItems.filter(item => {
+    const matchCat = (currentCategory === "all" || item.category === currentCategory);
+    const matchDate = (!currentDate || item.date === currentDate);
+    return matchCat && matchDate;
+  });
+
+  const linesForCopy = [];
+
+  items.forEach(item => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${item.date}</td>
+      <td>${item.category}</td>
+      <td><a href="${item.name}" target="_blank">${item.name}</a></td>
+      <td><a href="${item.fullUrl}" target="_blank">${item.fullUrl}</a></td>
+    `;
+    tbody.appendChild(tr);
+
+    // 复制用：只要网址（你要导表时一般只关心这个）
+    linesForCopy.push(item.fullUrl);
+  });
+
+  urlBox.value = linesForCopy.join("\n");
+}
+
+function copyUrls() {
+  const box = document.getElementById("urlBox");
+  box.select();
+  box.setSelectionRange(0, 99999);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(box.value).then(() => {
+      alert("✅ 已复制当前筛选结果的全部网址，可以粘贴到多维表格了！");
+    }).catch(() => {
+      document.execCommand("copy");
+      alert("✅ 已复制当前筛选结果的全部网址，可以粘贴到多维表格了！");
+    });
+  } else {
+    document.execCommand("copy");
+    alert("✅ 已复制当前筛选结果的全部网址，可以粘贴到多维表格了！");
+  }
+}
+
+loadFiles();
 </script>
 
 </body>
