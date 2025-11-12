@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>2025下半年 · 三大投资风向标｜发散提炼精华交互报告</title>
+<style>
+  :root{
+    --bg-deep:#070815;
+    --card-bg:rgba(20,22,40,0.55);
+    --glass:blur(14px) saturate(140%);
+    --stroke:rgba(255,255,255,0.08);
+    --text:#E7E9FF;
+    --muted:#A9B0D9;
+    --neon:#FFD166;         /* 霓虹金边 */
+    --neon-2:#8A2BE2;       /* 星辰紫 */
+    --neon-3:#00D1FF;       /* 霓虹蓝 */
+    --ok:#39FF88;
+    --warn:#FFC857;
+    --risk:#FF6B6B;
+    --accent-grad:linear-gradient(120deg,#7A5FFF 0%,#3FD6FF 40%,#8A2BE2 100%);
+    --title-grad:conic-gradient(from 90deg,#8A2BE2,#00D1FF,#8A2BE2);
+    --gold-grad:linear-gradient(135deg,#FFE799 0%,#FFD166 35%,#FFB703 70%,#FFE799 100%);
+  }
+
+  /* 全局与背景 */
+  html,body{height:100%}
+  body{
+    margin:0;
+    color:var(--text);
+    background: radial-gradient(1200px 800px at 20% -10%, rgba(88,0,255,0.20), transparent 60%),
+                radial-gradient(900px 700px at 120% 10%, rgba(0,195,255,0.18), transparent 60%),
+                var(--bg-deep);
+    font-family: ui-sans-serif, "PingFang SC","Hiragino Sans GB","Microsoft YaHei",Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+    letter-spacing:.2px;
+  }
+  canvas#floatDots{
+    position:fixed;inset:0;z-index:0;pointer-events:none;
+    filter: blur(0.5px) saturate(120%);
+    opacity:.9;
+  }
+
+  /* 顶部标题 & 进度条 */
+  .topbar{
+    position:sticky;top:0;z-index:1000;
+    backdrop-filter:var(--glass);
+    background:linear-gradient(180deg, rgba(10,12,26,.8), rgba(10,12,26,.3) 70%, transparent);
+    border-bottom:1px solid var(--stroke);
+  }
+  .progress{
+    height:4px;background:rgba(255,255,255,.08);
+  }
+  .progress__bar{
+    height:100%;
+    background:linear-gradient(90deg,#8A2BE2,#00D1FF,#8A2BE2);
+    width:0%;
+    box-shadow:0 0 20px rgba(0,209,255,.55);
+    transition:width .08s linear;
+  }
+  .hero{
+    display:flex;align-items:center;gap:16px;justify-content:space-between;
+    padding:14px 20px 18px 20px;
+  }
+  .hero__title{
+    font-weight:800;line-height:1.15;
+    font-size: clamp(20px, 3.4vw, 36px);
+    background:var(--title-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+    letter-spacing:.6px;
+    animation: glow 3.5s ease-in-out infinite;
+    text-shadow: 0 0 24px rgba(138,43,226,.25), 0 0 44px rgba(0,209,255,.18);
+  }
+  @keyframes glow{
+    0%,100%{filter:drop-shadow(0 0 0px rgba(0,209,255,.0))}
+    50%{filter:drop-shadow(0 0 10px rgba(0,209,255,.35))}
+  }
+  .hero__sub{
+    color:var(--muted);font-size:12px;margin-top:4px
+  }
+
+  /* 顶部操作区：BGM / 全部展开 / 主题 */
+  .actions{
+    display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+  }
+  .btn{
+    position:relative;
+    border:none;cursor:pointer;padding:10px 14px;border-radius:16px;
+    color:#1a1200;background:var(--gold-grad);
+    box-shadow:0 6px 20px rgba(255,209,102,.25), inset 0 1px 0 rgba(255,255,255,.5);
+    font-weight:700;font-size:12px;letter-spacing:.4px;
+    transition:transform .15s ease, filter .2s ease;
+  }
+  .btn:hover{transform:translateY(-1px);filter:saturate(110%)}
+  .btn--ghost{
+    color:var(--text); background:rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.05);
+  }
+
+  /* 容器与侧栏导航 */
+  .wrap{display:grid;grid-template-columns: 240px 1fr;gap:18px;max-width:1400px;margin:24px auto;padding:0 18px;position:relative;z-index:1}
+  .sidenav{
+    position:sticky;top:84px;align-self:start;
+    backdrop-filter:var(--glass);
+    background:rgba(12,14,28,.45);
+    border:1px solid var(--stroke);
+    border-radius:18px;padding:14px;
+    box-shadow: 0 12px 34px rgba(0,0,0,.35);
+  }
+  .sidenav h4{margin:2px 0 10px 6px;font-size:12px;color:var(--muted);font-weight:700;letter-spacing:.8px}
+  .sidenav a{
+    display:block;padding:10px 12px;margin:6px 0;border-radius:12px;text-decoration:none;color:#CFE8FF;
+    background:rgba(255,255,255,.02);border:1px solid rgba(255,255,255,.06);
+    font-size:13px;
+  }
+  .sidenav a.active{
+    background: rgba(0,209,255,.10);
+    border-color: rgba(0,209,255,.35);
+    box-shadow: 0 0 18px rgba(0,209,255,.25);
+    color:white;
+  }
+
+  /* 卡片与折叠 */
+  .section{scroll-margin-top:88px}
+  .card{
+    background:var(--card-bg);
+    backdrop-filter:var(--glass);
+    border:1px solid var(--stroke);
+    border-radius:22px;
+    padding:18px 18px 10px 18px;margin:16px 0 22px 0;
+    box-shadow: 0 10px 40px rgba(0,0,0,.35);
+  }
+  .card .head{
+    display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:10px
+  }
+  .h2{
+    font-size: clamp(18px, 2.2vw, 24px);font-weight:900;letter-spacing:.4px;
+    background:var(--accent-grad);-webkit-background-clip:text;background-clip:text;color:transparent;
+  }
+  details{
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:16px;margin:12px 0; overflow:hidden;
+    background:rgba(255,255,255,.03);
+  }
+  summary{
+    list-style:none; cursor:pointer; padding:14px 16px; position:relative;
+    font-weight:800; letter-spacing:.3px;
+    background:linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.01));
+  }
+  summary::-webkit-details-marker{display:none}
+  .tag{
+    display:inline-block; margin-left:10px; font-size:11px; padding:6px 10px; border-radius:999px;
+    background:rgba(0,209,255,.12); border:1px solid rgba(0,209,255,.35); color:#E8FBFF; font-weight:700
+  }
+  .content{padding:12px 16px 16px 16px; color:#dfe7ff}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .pill{display:inline-block;padding:6px 10px;border-radius:12px;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.04);font-size:12px;margin:4px 6px 4px 0}
+
+  /* 五彩文字工具类 */
+  .rainbow{background:linear-gradient(90deg,#FF6B6B,#FFD166,#39FF88,#3FD6FF,#C77DFF);-webkit-background-clip:text;background-clip:text;color:transparent;font-weight:900}
+  .gold{background:var(--gold-grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .blue{color:#9FE6FF}.purple{color:#D0B3FF}.green{color:#8BFFBD}.pink{color:#FFB3DE}.orange{color:#FFD7A3}
+
+  /* 思维导图（简洁 SVG） */
+  .mindmap{
+    width:100%;height:380px;border-radius:16px;border:1px dashed rgba(255,255,255,.12);
+    background:linear-gradient(180deg, rgba(255,255,255,.02), transparent);
+  }
+
+  /* 小提示/徽章 */
+  .hint{font-size:12px;color:var(--muted)}
+
+  /* 页脚 */
+  footer{opacity:.8;color:var(--muted);text-align:center;padding:30px 10px}
+
+  @media (max-width: 980px){
+    .wrap{grid-template-columns: 1fr}
+    .sidenav{position:static;order:2}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="floatDots"></canvas>
+
+<!-- 顶部条：标题 + 进度条 + 操作按钮 -->
+<div class="topbar">
+  <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+  <div class="hero">
+    <div>
+      <div class="hero__title">2025下半年 · 三大投资风向标｜<span class="gold">发散提炼 · 精华交互报告</span></div>
+      <div class="hero__sub">版式：video-transcript-html · 毛玻璃 · 霓虹金边 · 深邃电子 BGM</div>
+    </div>
+    <div class="actions">
+      <button class="btn" id="toggleAll">全部展开</button>
+      <button class="btn btn--ghost" id="collapseAll">全部收起</button>
+      <button class="btn" id="playBgm">▶︎ 播放 BGM</button>
+      <audio id="bgm" loop src="bgm_deep_electro.mp3" preload="auto"></audio>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <!-- 侧边导航 -->
+  <nav class="sidenav" id="sidenav">
+    <h4>章节导航</h4>
+    <a href="#sec0">封面与总览</a>
+    <a href="#sec1">风向标① 全球</a>
+    <a href="#sec2">风向标② 国内</a>
+    <a href="#sec3">风向标③ 市场结构</a>
+    <a href="#sec4">行动剧本（资产配置）</a>
+    <a href="#sec5">风险清单与对冲</a>
+    <a href="#sec6">思维导图</a>
+  </nav>
+
+  <!-- 正文 -->
+  <main>
+    <!-- 封面/总览 -->
+    <section class="section card" id="sec0">
+      <div class="head">
+        <div class="h2">总览 · 三个<span class="rainbow">风向标</span>与核心判断</div>
+        <span class="tag">精华提炼</span>
+      </div>
+      <div class="content">
+        <div class="grid-2">
+          <div>
+            <p><span class="gold">结论一：</span>2025 下半场的核心变量是 <b>全球流动性再均衡</b> 与 <b>AI 资本开支持续化</b> 的叠加，带来“<span class="blue">科技—能源—上游材料</span>”链条的周期错位机会。</p>
+            <p><span class="gold">结论二：</span>国内政策组合拳从“宽财政+结构性货币”转向“更可验证的落地”，<b>以旧换新、设备更新、产业政策</b>兑现度决定超额收益。</p>
+            <p><span class="gold">结论三：</span>市场结构由“单核抱团”过渡到“<b>盈利扩散</b>”，风格在 <span class="purple">高股息/红利</span> 与 <span class="green">成长制造</span> 间更均衡，<span class="pink">交易拥挤切换</span>频率上升。</p>
+          </div>
+          <div>
+            <div class="pill">全球流动性拐点</div>
+            <div class="pill">AI 设备—算力—应用三级共振</div>
+            <div class="pill">能源与电力资本开支回升</div>
+            <div class="pill">国内落地验收年</div>
+            <div class="pill">盈利面扩散</div>
+            <div class="pill">拥挤与切换管理</div>
+            <p class="hint">说明：本报告基于你提供的「完整版提炼内容」做二次发散、结构重组与策略化表达；每节均含【原文线索】【隐含逻辑】【投资启示】【策略建议】。</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 风向标① 全球 -->
+    <section class="section card" id="sec1">
+      <div class="head">
+        <div class="h2">风向标① · 全球（流动性 × AI CAPEX × 能源）</div>
+        <span class="tag">Global</span>
+      </div>
+
+      <details open>
+        <summary>① 原文线索</summary>
+        <div class="content">
+          <ul>
+            <li>全球主要央行进入“<b>通胀目标—增长韧性</b>”的新平衡博弈；</li>
+            <li>AI 资本开支：从数据中心基建延伸到 <b>电力、配电、冷却、光模块、存储</b> 全链路；</li>
+            <li>油气与电力侧 CAPEX 回升，新能源与传统能源“<span class="orange">并行而非替代</span>”。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>② 隐含逻辑</summary>
+        <div class="content">
+          <ul>
+            <li>若降通胀—稳增长进入“温和宽松”，<span class="blue">长久期资产估值</span>缓和；</li>
+            <li>AI 不是单一板块，而是“<b>电—算—连—存—用</b>”的跨行业投资周期；</li>
+            <li>能源供给与电力弹性不足，<span class="warn">电价约束</span>将反哺“高效用能/储能/配电设备/涡轮—压缩—换热”。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>③ 投资启示</summary>
+        <div class="content">
+          <ul>
+            <li><b>算力与数据中心链</b>：GPU/加速卡→高密机柜→液冷→光互连→高带宽存储；</li>
+            <li><b>电力与用能效率</b>：超高效变压器、配电柜、IGBT、储能 PCS、冷却系统；</li>
+            <li><b>能源双线</b>：油服/天然气管网改造 与 新能源发电/储能并举的“增量 + 提效”。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>④ 策略建议</summary>
+        <div class="content">
+          <ul>
+            <li><span class="gold">配置：</span>核心 20–30% 放在“电—算—连—冷—存”的<strong>二线环节</strong>（光模块/液冷/电力设备/连接器）；</li>
+            <li><span class="gold">择时：</span>用<b>订单/在手合同/扩产投产</b>作为领先指标，回撤分批；</li>
+            <li><span class="gold">对冲：</span>跟踪美债收益率与电价指数，超阈值时降低久期、增加现金/期权保护。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 风向标② 国内 -->
+    <section class="section card" id="sec2">
+      <div class="head">
+        <div class="h2">风向标② · 国内（政策落地 × 制造升级 × 消费修复）</div>
+        <span class="tag">China</span>
+      </div>
+
+      <details open>
+        <summary>① 原文线索</summary>
+        <div class="content">
+          <ul>
+            <li>“以旧换新”“设备更新”“专项再贷款”进入按月验收与绩效评估；</li>
+            <li>制造升级聚焦 <b>高端装备、工业自动化、节能提效、智能仓储</b> 等可量化改造；</li>
+            <li>分行业“结构性复苏”，必选修复先于可选，出海仍是重要变量。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>② 隐含逻辑</summary>
+        <div class="content">
+          <ul>
+            <li>“<b>政策 → 订单 → 产能 → 利润</b>”传导链条更看重<b>兑现率</b>而非口号；</li>
+            <li>设备投资与自动化改造优先增厚<b>现金流与 ROIC</b>，龙头“以大带小”；</li>
+            <li>消费侧需“以价换量 + 渠道创新”，利润修复滞后于收入修复。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>③ 投资启示</summary>
+        <div class="content">
+          <ul>
+            <li><b>高端装备/工控/自动化改造</b>：伺服、运动控制、机器人（含特种场景）、视觉与质检；</li>
+            <li><b>节能提效与环保</b>：高效电机、变频、余热回收、工厂级能源管理；</li>
+            <li><b>供应链出海</b>：东南亚/中东产能布局、渠道本地化服务能力。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>④ 策略建议</summary>
+        <div class="content">
+          <ul>
+            <li><span class="gold">筛选框架：</span>跟踪“<b>中标/订单/在手合同/交付节点</b>”+ 现金流改善；</li>
+            <li><span class="gold">风格：</span>“高股息/红利”打底，<b>制造成长</b>择机加码，控制换手；</li>
+            <li><span class="gold">节奏：</span>以季报与项目验收为窗口，<b>错峰布局</b>避免拥挤交易。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 风向标③ 市场结构 -->
+    <section class="section card" id="sec3">
+      <div class="head">
+        <div class="h2">风向标③ · 市场结构（盈利扩散 × 风格均衡 × 拥挤切换）</div>
+        <span class="tag">Market</span>
+      </div>
+
+      <details open>
+        <summary>① 原文线索</summary>
+        <div class="content">
+          <ul>
+            <li>盈利从头部向二线扩散，“单核抱团”松动；</li>
+            <li>高股息/红利与成长制造轮动加强；</li>
+            <li>活跃资金更重“事件驱动 + 短节奏”，切换更频繁。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>② 隐含逻辑</summary>
+        <div class="content">
+          <ul>
+            <li>当盈利面扩展时，<b>估值与业绩</b>双维度的“<span class="green">性价比分层</span>”更重要；</li>
+            <li>拥挤度需要量化监控（资金占比、换手、隐含波动），超阈值即降权；</li>
+            <li>红利并非防守，而是“<b>现金流可验证</b>”的进攻底座。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>③ 投资启示</summary>
+        <div class="content">
+          <ul>
+            <li><b>红利底仓</b>：电力公用、油运、部分资源、通信运营等高分红资产；</li>
+            <li><b>制造成长</b>：工控、自动化、汽车智能化零部件、储能与配电设备；</li>
+            <li><b>科技链</b>：数据中心二线环节（液冷/光模块/线缆/连接器/电源管理）。</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>④ 策略建议</summary>
+        <div class="content">
+          <ul>
+            <li><span class="gold">结构：</span>红利 35–45%（底仓） + 制造成长 25–35% + 科技链 15–25% + 机动 5–10%；</li>
+            <li><span class="gold">风控：</span>为每个子仓设定<b>拥挤度阈值</b>与<b>回撤阈值</b>，动态降权；</li>
+            <li><span class="gold">择时：</span>围绕财报/项目验收/招标节奏做“事件驱动 + 分段加减”。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 行动剧本 -->
+    <section class="section card" id="sec4">
+      <div class="head">
+        <div class="h2">行动剧本 · 资产配置与执行</div>
+        <span class="tag">Playbook</span>
+      </div>
+
+      <details open>
+        <summary>① 配置框架（示例区间）</summary>
+        <div class="content grid-2">
+          <div>
+            <ul>
+              <li><b>红利/高股息：</b>35–45%（电力公用、油运、资源红利、通信运营）</li>
+              <li><b>制造升级：</b>25–35%（工控/自动化/高效电机/节能改造/机器人）</li>
+              <li><b>科技二线：</b>15–25%（液冷/配电/光模块/连接器/高密机柜）</li>
+              <li><b>机动仓位：</b>5–10%（事件驱动/战术对冲）</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><b>币种 & 区域：</b>多币种对冲，关注中东/东盟/印度—中东—欧洲走廊相关标的</li>
+              <li><b>产品形态：</b>指数 + 行业 ETF + 主题 + α（自下而上精选）</li>
+              <li><b>节奏：</b>月度/季度再平衡，重大事件前后做 T 型微调</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>② 执行清单（Checklist）</summary>
+        <div class="content">
+          <ul>
+            <li>跟踪：<b>在手订单、产能扩产、项目验收、现金流</b> 四要素；</li>
+            <li>阈值化：为每子仓设 <span class="ok">+10% 加码触发</span> / <span class="risk">-8% 减仓触发</span>；</li>
+            <li>择时：财报—招标—投产三点定式 + 回撤分批；</li>
+            <li>对冲：波动率飙升时，用期权/反向 ETF 做“限时降噪”。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 风险与对冲 -->
+    <section class="section card" id="sec5">
+      <div class="head">
+        <div class="h2">风险清单 · 触发条件与对冲路径</div>
+        <span class="tag">Risk</span>
+      </div>
+
+      <details open>
+        <summary>① 核心风险</summary>
+        <div class="content grid-2">
+          <div>
+            <ul>
+              <li>全球通胀再起 → 利率回弹抑制估值</li>
+              <li>电力与能源瓶颈 → AI CAPEX 链条推迟</li>
+              <li>政策执行与验收不及预期 → 订单兑现率下降</li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li>拥挤交易导致的<b>快速踩踏</b></li>
+              <li>地缘与供给链扰动</li>
+              <li>汇率波动与外需走弱</li>
+            </ul>
+          </div>
+        </div>
+      </details>
+
+      <details>
+        <summary>② 对冲与减敏</summary>
+        <div class="content">
+          <ul>
+            <li>利率风险：降低久期、增配红利/现金流强资产、择机做利率对冲；</li>
+            <li>能源约束：增配油服/电力红利，布局储能与节能提效标的；</li>
+            <li>执行风险：持仓围绕“订单—验收—现金流”滚动打分，分数下穿即降权；</li>
+            <li>拥挤风险：设置资金占比/换手/IV 阈值，超线降权或切至指数仓。</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- 思维导图 -->
+    <section class="section card" id="sec6">
+      <div class="head">
+        <div class="h2">思维导图 · 2025 下半场逻辑总览</div>
+        <span class="tag">Mindmap</span>
+      </div>
+      <div class="content">
+        <svg class="mindmap" viewBox="0 0 1200 480">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3.5" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#8A2BE2"/>
+              <stop offset="100%" stop-color="#00D1FF"/>
+            </linearGradient>
+          </defs>
+
+          <!-- 中心 -->
+          <rect x="510" y="200" rx="14" ry="14" width="180" height="80" fill="url(#g1)" opacity="0.85" filter="url(#glow)"/>
+          <text x="600" y="248" text-anchor="middle" fill="#0b0d18" font-weight="900">2025H2 · 三风向标</text>
+
+          <!-- 左：全球 -->
+          <line x1="510" y1="240" x2="300" y2="200" stroke="#00D1FF" stroke-width="2.5" opacity=".8"/>
+          <rect x="170" y="160" rx="12" ry="12" width="220" height="80" fill="rgba(0,209,255,.12)" stroke="#00D1FF"/>
+          <text x="280" y="190" text-anchor="middle" fill="#CFE8FF" font-weight="800">全球：流动性 × AI CAPEX × 能源</text>
+          <text x="280" y="210" text-anchor="middle" fill="#9FE6FF" font-size="12">电-算-连-冷-存 / 油气与电力并行</text>
+
+          <!-- 右：国内 -->
+          <line x1="690" y1="240" x2="900" y2="200" stroke="#8A2BE2" stroke-width="2.5" opacity=".8"/>
+          <rect x="900" y="160" rx="12" ry="12" width="220" height="80" fill="rgba(138,43,226,.12)" stroke="#8A2BE2"/>
+          <text x="1010" y="190" text-anchor="middle" fill="#EAD9FF" font-weight="800">国内：政策落地 × 制造升级</text>
+          <text x="1010" y="210" text-anchor="middle" fill="#D0B3FF" font-size="12">订单-产能-验收-现金流</text>
+
+          <!-- 下：市场结构 -->
+          <line x1="600" y1="280" x2="600" y2="380" stroke="#FFD166" stroke-width="2.5" opacity=".8"/>
+          <rect x="480" y="380" rx="12" ry="12" width="240" height="70" fill="rgba(255,209,102,.12)" stroke="#FFD166"/>
+          <text x="600" y="410" text-anchor="middle" fill="#FFEEC2" font-weight="800">市场：盈利扩散 × 风格均衡</text>
+          <text x="600" y="430" text-anchor="middle" fill="#FFE799" font-size="12">红利底仓 + 制造成长 + 科技二线</text>
+        </svg>
+        <p class="hint">提示：导图为总览关系图，可据此拆分 PPT/长图；若需更复杂的节点与连线我可续作高级版 SVG/Canvas 版本。</p>
+      </div>
+    </section>
+
+    <footer>© 2025 发散提炼 · 交互报告 | 主题：星辰蓝紫 × 霓虹金边 · 深邃电子 BGM</footer>
+  </main>
+</div>
+
+<script>
+/* 滚动进度条 */
+const progressBar = document.getElementById('progressBar');
+const onScroll = () => {
+  const scrollTop = window.scrollY || document.documentElement.scrollTop;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  const pct = Math.min(100, Math.max(0, (scrollTop / docHeight) * 100));
+  progressBar.style.width = pct + '%';
+};
+document.addEventListener('scroll', onScroll);
+
+/* BGM 控制 */
+const bgm = document.getElementById('bgm');
+const playBtn = document.getElementById('playBgm');
+let playing = false;
+playBtn.addEventListener('click', () => {
+  if(!playing){ bgm.play(); playing = true; playBtn.textContent = '⏸︎ 暂停 BGM'; }
+  else{ bgm.pause(); playing = false; playBtn.textContent = '▶︎ 播放 BGM'; }
+});
+
+/* 全部展开/收起 */
+const btnOpen = document.getElementById('toggleAll');
+const btnClose = document.getElementById('collapseAll');
+const allDetails = () => Array.from(document.querySelectorAll('details'));
+btnOpen.addEventListener('click', () => allDetails().forEach(d => d.open = true));
+btnClose.addEventListener('click', () => allDetails().forEach(d => d.open = false));
+
+/* 浮动导航高亮 */
+const nav = document.getElementById('sidenav');
+const links = Array.from(nav.querySelectorAll('a'));
+const sections = links.map(a => document.querySelector(a.getAttribute('href')));
+const sp = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    const idx = sections.indexOf(e.target);
+    if(idx >= 0){
+      const l = links[idx];
+      if(e.isIntersecting){ links.forEach(x=>x.classList.remove('active')); l.classList.add('active'); }
+    }
+  });
+},{ rootMargin: '-40% 0px -55% 0px', threshold: 0.01 });
+sections.forEach(sec => sec && sp.observe(sec));
+
+/* 漂浮光点背景 */
+const c = document.getElementById('floatDots');
+const ctx = c.getContext('2d');
+let W,H, dots=[];
+const R = () => Math.random();
+function resize(){
+  W = c.width = window.innerWidth; H = c.height = window.innerHeight;
+  dots = Array.from({length: Math.min(160, Math.floor(W*H/12000))}, () => ({
+    x: R()*W, y: R()*H, r: 0.5 + R()*1.8,
+    vx: (R()-0.5)*0.35, vy:(R()-0.5)*0.35,
+    a: 0.35 + R()*0.4, c: R()<.5 ? 'rgba(0,209,255,' : 'rgba(138,43,226,'
+  }));
+}
+window.addEventListener('resize', resize); resize();
+function tick(){
+  ctx.clearRect(0,0,W,H);
+  for(const p of dots){
+    p.x += p.vx; p.y += p.vy;
+    if(p.x < -10) p.x = W+10; if(p.x > W+10) p.x = -10;
+    if(p.y < -10) p.y = H+10; if(p.y > H+10) p.y = -10;
+    ctx.beginPath();
+    ctx.fillStyle = p.c + p.a + ')';
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fill();
+  }
+  requestAnimationFrame(tick);
+}
+tick();
+</script>
+</body>
+</html>

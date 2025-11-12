@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>「熊太行：2025 下半场 · 10 个职场发展建议」苹果玻璃风交互页</title>
+<style>
+  :root{
+    --bg:#0b1220;
+    --glass:rgba(255,255,255,.08);
+    --glass-2:rgba(255,255,255,.06);
+    --text:#d6e2ff;           /* 非纯白 */
+    --muted:#98a7c2;
+    --accent-1:#8bd1ff;
+    --accent-2:#7af0c0;
+    --accent-3:#e9b764;
+    --accent-4:#c68bfa;
+    --gold:#d4af37;
+    --danger:#ff6e7f;
+    --ok:#6af0a7;
+    --shadow:0 20px 60px rgba(0,0,0,.45), inset 0 0 1px rgba(255,255,255,.05);
+    --radius:22px;
+    --radius-sm:16px;
+    --blur:18px;
+    --speed:420ms;
+    --bezier:cubic-bezier(.2,.8,.2,1);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0;background:radial-gradient(1200px 1200px at 10% -10%,#1a2240 0%,var(--bg) 38%, #060a14 100%);
+    color:var(--text); font:16px/1.6 "SF Pro Display","HarmonyOS Sans","Inter",system-ui,-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    overflow-x:hidden;
+  }
+  /* 动态漂浮光点背景 */
+  .particles{position:fixed;inset:0;pointer-events:none;z-index:0}
+  .particle{position:absolute;border-radius:50%;filter:blur(6px);opacity:.35;animation:float var(--t) linear infinite}
+  @keyframes float{to{transform:translate3d(var(--x),var(--y),0) scale(var(--s)) rotate(360deg);opacity:.12}}
+  /* 通用玻璃卡片 */
+  .card{
+    position:relative;background:linear-gradient(180deg,var(--glass),var(--glass-2));
+    border:1px solid rgba(255,255,255,.08); border-radius:var(--radius); backdrop-filter:blur(var(--blur));
+    box-shadow:var(--shadow); padding:22px; z-index:1;
+  }
+  .grid{display:grid;gap:18px}
+  .grid.cols-3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid.cols-2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  @media (max-width:1100px){.grid.cols-3{grid-template-columns:1fr 1fr}}
+  @media (max-width:780px){.grid.cols-3,.grid.cols-2{grid-template-columns:1fr}}
+  /* 顶部 Hero */
+  .hero{
+    position:relative; padding:48px 20px 24px; z-index:1; max-width:1200px; margin:0 auto;
+  }
+  .hero .title{
+    font-size:clamp(28px,3.4vw,48px); line-height:1.15; font-weight:800; letter-spacing:.3px; margin:10px 0 12px;
+    background:conic-gradient(from 160deg,#67d1ff,#7af0c0,#e9b764,#c68bfa,#67d1ff); 
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    text-shadow:0 0 30px rgba(124,220,255,.18);
+  }
+  .hero .subtitle{
+    color:var(--muted); font-size:14px; letter-spacing:.4px
+  }
+  /* 顶部导航与操作 */
+  .topbar{
+    position:sticky; top:10px; z-index:5; display:flex; gap:10px; justify-content:center; flex-wrap:wrap; padding:6px 10px;
+  }
+  .btn{
+    --bgc:rgba(255,255,255,.06);
+    display:inline-flex; align-items:center; gap:9px; border-radius:999px; padding:10px 14px; 
+    border:1px solid rgba(255,255,255,.1); background:linear-gradient(180deg,var(--bgc),rgba(255,255,255,.03));
+    backdrop-filter:blur(10px); color:var(--text); font-weight:600; letter-spacing:.2px; cursor:pointer;
+    transition:transform var(--speed) var(--bezier), box-shadow var(--speed) var(--bezier), border-color var(--speed) var(--bezier), background var(--speed) var(--bezier);
+    box-shadow:0 10px 28px rgba(0,0,0,.25), inset 0 0 0 1px rgba(255,255,255,.04);
+  }
+  .btn:hover{transform:translateY(-1px); box-shadow:0 14px 36px rgba(0,0,0,.32), inset 0 0 0 1px rgba(255,255,255,.06)}
+  .btn.gold{--bgc:rgba(212,175,55,.15); border-color:rgba(212,175,55,.45); color:#ffe9a8; text-shadow:0 0 20px rgba(212,175,55,.3)}
+  .btn.ghost{color:var(--accent-1); border-color:rgba(139,209,255,.55); --bgc:rgba(139,209,255,.16)}
+  .btn.accent{color:#bca8ff; border-color:rgba(198,139,250,.5); --bgc:rgba(198,139,250,.16)}
+  .btn.danger{color:#ffb3be; border-color:rgba(255,110,127,.5); --bgc:rgba(255,110,127,.15)}
+  .badge{
+    font-size:12px; padding:6px 10px; border:1px dashed rgba(255,255,255,.2); border-radius:999px; color:#a6ffc8; background:rgba(122,240,192,.08);
+  }
+  /* 折叠区块 */
+  details.glass{
+    border-radius:var(--radius); background:linear-gradient(180deg,var(--glass),var(--glass-2)); 
+    border:1px solid rgba(255,255,255,.08); box-shadow:var(--shadow); overflow:hidden; position:relative;
+    transition:border-color var(--speed) var(--bezier), transform var(--speed) var(--bezier);
+  }
+  details.glass[open]{border-color:rgba(212,175,55,.6); transform:translateY(-1px)}
+  summary{
+    list-style:none; cursor:pointer; display:flex; align-items:center; gap:12px; padding:18px 20px; user-select:none;
+    color:#ffe7a8; font-weight:700; letter-spacing:.3px
+  }
+  summary::-webkit-details-marker{display:none}
+  .chev{width:16px;height:16px;border:2px solid var(--gold);border-left-color:transparent;border-top-color:transparent;transform:rotate(-45deg); transition:transform var(--speed) var(--bezier)}
+  details[open] .chev{transform:rotate(135deg)}
+  .content{padding:0 22px 18px 22px;color:var(--text)}
+  .rainbow{background:linear-gradient(90deg,#7af0c0,#8bd1ff,#e9b764,#c68bfa,#7af0c0);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .note{color:#a8b7d7}
+  /* 关键金句/提示条 */
+  .quote{
+    padding:14px 16px; border-left:4px solid var(--gold); background:linear-gradient(90deg,rgba(212,175,55,.16),rgba(212,175,55,.06));
+    border-radius:10px; color:#ffe7b1; box-shadow:inset 0 0 0 1px rgba(212,175,55,.2);
+  }
+  /* 微型图表卡 */
+  .stat{
+    display:flex; gap:14px; align-items:center; justify-content:space-between; padding:14px; border-radius:16px;
+    background:linear-gradient(180deg,rgba(139,209,255,.1),rgba(139,209,255,.06)); border:1px solid rgba(139,209,255,.35);
+  }
+  .stat .k{font-size:22px;font-weight:800;color:#9fe2ff}
+  .stat canvas{width:120px;height:40px;display:block;filter:drop-shadow(0 4px 12px rgba(123,240,192,.25))}
+  /* 交互工具栏 */
+  .tools{display:flex; gap:10px; flex-wrap:wrap}
+  .search{flex:1; min-width:240px; display:flex; border-radius:999px; overflow:hidden; border:1px solid rgba(139,209,255,.35); background:rgba(139,209,255,.12)}
+  .search input{flex:1;padding:12px 14px;border:0;outline:0;background:transparent;color:var(--text)}
+  .pill{padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.16);font-size:12px;color:#9fe2ff;background:rgba(155,217,255,.1)}
+  /* Transcript 区 */
+  .trans-wrap{display:grid;grid-template-columns:360px 1fr; gap:16px}
+  @media (max-width:1100px){.trans-wrap{grid-template-columns:1fr}}
+  .trans-src textarea{
+    width:100%;min-height:280px;border-radius:var(--radius-sm); padding:14px; border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.04); color:#bfe7ff; resize:vertical
+  }
+  .trans-list{display:flex;flex-direction:column;gap:10px; max-height:520px; overflow:auto; padding-right:4px}
+  .line{
+    padding:12px 14px;border-radius:14px;background:linear-gradient(180deg,rgba(198,139,250,.14),rgba(198,139,250,.06));
+    border:1px solid rgba(198,139,250,.28); transition:background var(--speed) var(--bezier), transform var(--speed) var(--bezier)
+  }
+  .line:hover{transform:translateX(2px)}
+  .ts{font-weight:800;color:#f9d587}
+  mark{background:linear-gradient(90deg,rgba(122,240,192,.22),rgba(139,209,255,.24)); color:#e4faff; padding:0 .22em; border-radius:6px}
+  /* 思维导图（SVG） */
+  .mind{width:100%;height:420px;border-radius:var(--radius); background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,.03)); border:1px solid rgba(255,255,255,.1)}
+  /* 页脚提示 */
+  .foot{text-align:center;color:#7ab8ff;font-size:12px;opacity:.8;padding:16px 0 70px}
+  /* 进场动画 */
+  .reveal{opacity:0;transform:translateY(10px);animation:reveal var(--speed) var(--bezier) forwards}
+  @keyframes reveal{to{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+  <!-- 背景漂浮光点（运行时注入） -->
+  <div class="particles" id="particles"></div>
+
+  <!-- 顶部操作条 -->
+  <div class="topbar">
+    <span class="badge">色彩字体 · 金色折叠 · 顶级玻璃风</span>
+    <button class="btn gold" data-action="expand-all">全部展开</button>
+    <button class="btn ghost" data-action="collapse-all">全部收起</button>
+    <button class="btn accent" data-jump="#mindmap">跳到思维导图</button>
+    <button class="btn danger" data-jump="#transcript">跳到逐字稿工具</button>
+  </div>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="card reveal" style="padding:28px">
+      <div class="subtitle">直播精华 · <span class="rainbow">AI 时代职场方法论</span></div>
+      <h1 class="title">熊太行：<span class="rainbow">2025 下半场</span> · 10 个职场发展建议（精炼 & 可展开）</h1>
+      <div class="tools" style="margin-top:8px">
+        <div class="search">
+          <input id="kw" placeholder="在本页搜索关键词（如：NPD、交易、外包、同盟…）" />
+          <button class="btn ghost" style="border-radius:0 999px 999px 0" id="doSearch">搜索</button>
+        </div>
+        <span class="pill">绝不使用纯白字体</span>
+        <span class="pill">可交互 · 可筛选 · 可折叠</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 数据概览 + 微型图表 -->
+  <section class="grid cols-3" style="max-width:1200px;margin:16px auto;padding:0 20px">
+    <div class="card reveal">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="rainbow" style="font-size:14px;font-weight:800;letter-spacing:.3px">核心结构</div>
+          <div style="font-size:22px;font-weight:800;margin-top:4px;color:#bfe7ff">10 条建议 · 3 组工具箱</div>
+          <div class="note">小团队趋势 / 交易与对质 / 情绪与气场</div>
+        </div>
+        <div class="stat">
+          <div>
+            <div style="font-size:12px;color:#9fe2ff;letter-spacing:.3px">可落地句式</div>
+            <div class="k">12+</div>
+          </div>
+          <canvas class="spark" data-points="4,6,5,7,9,8,10,12"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="quote">
+        金句：<b>“领导不怕你讨价还价，他怕你一言不发。”</b><br>
+        用“开价→换补偿→写回执”三步，替代沉默内耗。
+      </div>
+    </div>
+    <div class="card reveal">
+      <div class="quote" style="border-left-color:#7af0c0; background:linear-gradient(90deg,rgba(122,240,192,.18),rgba(122,240,192,.06))">
+        金句：<b>“好学生的轻对抗：明确表达感受。”</b><br>
+        例：<em>“你这样说让我很不舒服，我们按流程走。”</em>
+      </div>
+    </div>
+  </section>
+
+  <!-- 10 个建议（可折叠） -->
+  <section style="max-width:1200px;margin:10px auto;padding:0 20px" id="advice">
+    <div class="grid cols-2">
+      <!-- 1 -->
+      <details class="glass reveal" open>
+        <summary><span class="chev"></span><span class="rainbow">01 · 迎接小团队时代</span></summary>
+        <div class="content">
+          <ul>
+            <li>公司更“轻”：“几人公司 / 一人工作室 / 外包协作”增加。</li>
+            <li><b>沟通决定胜败</b>：少层级、多角色，信息透明与“写回执”很关键。</li>
+            <li><mark>路径建议</mark>：大厂仍可选，但“小团队更快显功力”。</li>
+          </ul>
+          <div class="quote">策略：用 <b>“我会 / 我来试试 / 我顺手就做了”</b> 三句话，快速占位任务。</div>
+        </div>
+      </details>
+      <!-- 2 -->
+      <details class="glass reveal" open>
+        <summary><span class="chev"></span><span class="rainbow">02 · 自雇与外包的微管理</span></summary>
+        <div class="content">
+          <ul>
+            <li>先给“成长前景”而非职位承诺：<em>“我带你做到接近我的水准。”</em></li>
+            <li>经验可视化：模板、清单、范例库。</li>
+            <li>七分安抚三分敲打：边界清晰 + 目标明确。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 3 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">03 · 一专多能：多工具操作者</span></summary>
+        <div class="content">
+          <ul>
+            <li><b>我会</b>：提前备账号与权限（如配音 / 剪辑 / 图模 / 自动化）。</li>
+            <li><b>我来试试</b>：迁移类学习 + 快速 Demo。</li>
+            <li><b>我顺手就做了</b>：减少环节，换取“隐形接触权”。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 4 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">04 · NPD 领导的识别与避险</span></summary>
+        <div class="content">
+          <ul>
+            <li>警惕 <b>越界讨好</b> 与 <b>隐私过度分享</b>。</li>
+            <li>橄榄枝≠护身符：拒做“信息供给者”。</li>
+            <li><mark>稳态攻略</mark>：只谈流程与事实；所有承诺写入工单。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 5 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">05 · 中年上升：与更年轻的领导共事</span></summary>
+        <div class="content">
+          <ul>
+            <li>主动“<b>定期短汇报</b>”与“<b>适度表忠</b>”。</li>
+            <li>赞美对事：赞“判断 / 协调 / 远近结合”。</li>
+            <li>建议对事不对人：避免价值评判用词。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 6 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">06 · 交易意识：万事皆可谈</span></summary>
+        <div class="content">
+          <div class="quote">三步：<b>表达事实</b> → <b>提出诉求</b> → <b>记录达成</b>（邮件/IM 回执）。</div>
+          <ul>
+            <li>领导不怕你开价，怕你沉默。</li>
+            <li>用“替代补偿”替换“受害者叙事”。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 7 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">07 · 小白也能赢的“对质权”</span></summary>
+        <div class="content">
+          <ul>
+            <li>遇“小报告”先定性：<b>事实不符</b> / <b>动机可疑</b> / <b>流程缺失</b>。</li>
+            <li>请求当面三方对质；当场复述案情给“旁观者”。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 8 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">08 · 冲突轻对抗：清晰表达感受</span></summary>
+        <div class="content">
+          <ul>
+            <li>句式：<em>“你这样让我很不舒服，我们按流程处理。”</em></li>
+            <li>吵架目的：<b>展示对方不稳定</b>，而非情绪取胜。</li>
+            <li>坐着沟通、慢速复述、邀请旁证。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 9 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">09 · 用“互吹”替代办公室八卦</span></summary>
+        <div class="content">
+          <ul>
+            <li>赞美无伤、能结盟：外形管理 / 工具熟练 / 交付稳定。</li>
+            <li>提问引导：<em>“这套模板可分享吗？”</em></li>
+            <li>守口如瓶：不传内部敏感；需要时用“高阶放风”≠日常八卦。</li>
+          </ul>
+        </div>
+      </details>
+      <!-- 10 -->
+      <details class="glass reveal">
+        <summary><span class="chev"></span><span class="rainbow">10 · 小局聚会：2–4 人的“加油站”</span></summary>
+        <div class="content">
+          <ul>
+            <li>从小桌开始：共读/共做/共评，信息密度最高。</li>
+            <li>没话可说就“服务场”：添菜、倒水、做记录。</li>
+            <li>会后：要点纪要 + 待办分工 + 下次议题。</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <!-- 思维导图 -->
+  <section style="max-width:1200px;margin:18px auto;padding:0 20px" id="mindmap">
+    <div class="card reveal" style="padding:18px 18px 10px">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+        <h3 class="rainbow" style="margin:0;font-size:20px;font-weight:900">思维导图 · 10 建议一图览</h3>
+        <div style="display:flex;gap:8px">
+          <button class="btn ghost" id="recenter">居中</button>
+          <button class="btn accent" id="shuffle">随机布局</button>
+        </div>
+      </div>
+      <svg class="mind" id="mind" viewBox="0 0 1000 420" preserveAspectRatio="xMidYMid slice"></svg>
+    </div>
+  </section>
+
+  <!-- 逐字稿处理工具（video-transcript-html） -->
+  <section style="max-width:1200px;margin:18px auto;padding:0 20px" id="transcript">
+    <div class="card reveal">
+      <h3 class="rainbow" style="margin:0 0 6px;font-size:20px;font-weight:900">逐字稿工具 · video-transcript-html</h3>
+      <div class="note" style="margin-bottom:10px">
+        将带时间戳的文本粘贴左侧（如 <code>[00:07:47]hello…</code>），点击<strong>一键生成</strong>，右侧得到可点击的精美段落。支持关键词高亮与筛选。
+      </div>
+      <div class="trans-wrap">
+        <div class="trans-src">
+          <textarea id="src" spellcheck="false" placeholder="在此粘贴带时间戳的逐字稿（示例已填好，替换即可）">[00:07:47] hello 大家好，今天聊 AI 时代的小团队趋势与沟通胜负。
+[00:09:45] 第一条建议：迎接小团队，外包协作增多，沟通与回执是底线。
+[00:20:50] 这门课程为“好学生心态”给出冲突应对：明确表达感受是轻对抗。
+[00:27:42] 三句话接任务：“我会 / 我来试试 / 我顺手就做了”。
+[00:40:30] 识别 NPD 领导，警惕越界讨好与过度隐私分享，回到流程和证据。
+[01:07:16] 给年轻领导的建议对事不对人；定期短汇报与适当“表忠”。
+[01:28:39] 对质权：要求三方当面澄清，将案情复述给旁观者建立共识。
+[01:40:48] 冲突目的不是吵赢，而是让不稳定一面暴露给旁观者。
+[01:54:26] 用“互吹”替代办公室八卦，建立互惠与同盟。
+[02:05:17] 组织 2–4 人小桌复盘，形成“职场加油站”。</textarea>
+          <div style="display:flex;gap:8px; margin-top:10px">
+            <button class="btn gold" id="gen">一键生成</button>
+            <button class="btn ghost" id="clear">清空</button>
+          </div>
+        </div>
+        <div>
+          <div class="tools" style="margin-bottom:8px">
+            <div class="search" style="min-width:200px">
+              <input id="filter" placeholder="筛选关键词（如：NPD / 交易 / 对质…）">
+              <button class="btn accent" style="border-radius:0 999px 999px 0" id="doFilter">筛选</button>
+            </div>
+            <button class="btn danger" id="clearFilter">清空筛选</button>
+          </div>
+          <div class="trans-list" id="list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="foot">© 2025 · 交互版精炼稿 · 彩色字体 + 金色折叠 + 玻璃风美学</div>
+
+<script>
+/* ===== 漂浮光点背景 ===== */
+(function makeParticles(){
+  const wrap = document.getElementById('particles');
+  const colors = ['#7af0c0','#8bd1ff','#e9b764','#c68bfa'];
+  const n = 26;
+  for(let i=0;i<n;i++){
+    const p = document.createElement('div');
+    const size = 8 + Math.random()*22;
+    const c = colors[i%colors.length];
+    p.className='particle';
+    p.style.width=size+'px'; p.style.height=size+'px';
+    p.style.left=(Math.random()*100)+'%';
+    p.style.top=(Math.random()*100)+'%';
+    p.style.background=c;
+    p.style.setProperty('--t', (18+Math.random()*22)+'s');
+    p.style.setProperty('--x', (Math.random()*260-130)+'px');
+    p.style.setProperty('--y', (Math.random()*260-130)+'px');
+    p.style.setProperty('--s', (0.8+Math.random()*0.8).toFixed(2));
+    wrap.appendChild(p);
+  }
+})();
+
+/* ===== 微型图表（无外部库）===== */
+document.querySelectorAll('canvas.spark').forEach(cv=>{
+  const ctx = cv.getContext('2d');
+  const pts = (cv.dataset.points||'').split(',').map(x=>+x.trim()).filter(Boolean);
+  const w = cv.width, h=cv.height;
+  ctx.clearRect(0,0,w,h);
+  if(!pts.length) return;
+  const max = Math.max(...pts), min = Math.min(...pts);
+  const pad = 6, step = (w - pad*2) / (pts.length-1);
+  ctx.lineWidth=2;
+  ctx.strokeStyle="#8bd1ff";
+  ctx.beginPath();
+  pts.forEach((v,i)=>{
+    const x = pad + i*step;
+    const y = h - pad - ( (v-min)/(max-min||1) )*(h-pad*2);
+    i?ctx.lineTo(x,y):ctx.moveTo(x,y);
+  });
+  ctx.stroke();
+  // fill area
+  const grad=ctx.createLinearGradient(0,0,0,h);
+  grad.addColorStop(0,"rgba(139,209,255,.28)");
+  grad.addColorStop(1,"rgba(139,209,255,0)");
+  ctx.lineTo(w-pad,h-pad);
+  ctx.lineTo(pad,h-pad);
+  ctx.closePath();
+  ctx.fillStyle=grad; ctx.fill();
+});
+
+/* ===== 顶部按钮行为 ===== */
+document.querySelectorAll('[data-action="expand-all"]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('details.glass').forEach(d=>d.open=true);
+});
+document.querySelectorAll('[data-action="collapse-all"]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('details.glass').forEach(d=>d.open=false);
+});
+document.querySelectorAll('[data-jump]').forEach(b=>b.onclick=()=>{
+  const id = b.getAttribute('data-jump');
+  const el = document.querySelector(id);
+  if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+});
+/* 页内搜索高亮 */
+const doSearch = ()=>{
+  const q = document.getElementById('kw').value.trim();
+  // 清理旧高亮
+  document.querySelectorAll('#advice .content mark').forEach(m=>{
+    const p=m.parentNode; p.replaceChild(document.createTextNode(m.textContent), m);
+    p.normalize();
+  });
+  if(!q) return;
+  const walker = document.createTreeWalker(document.getElementById('advice'),NodeFilter.SHOW_TEXT,null,false);
+  const re = new RegExp(q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'),'gi');
+  let node;
+  while(node = walker.nextNode()){
+    const text = node.nodeValue; if(!text.trim()) continue;
+    if(re.test(text)){
+      const span = document.createElement('span');
+      span.innerHTML = text.replace(re, m=>`<mark>${m}</mark>`);
+      node.parentNode.replaceChild(span,node);
+    }
+  }
+};
+document.getElementById('doSearch').onclick=doSearch;
+
+/* ===== 思维导图（轻量 SVG 力导）===== */
+const topics = [
+  "小团队时代","外包微管理","多工具操作者","NPD避险",
+  "年轻领导共事","交易意识","对质权","轻对抗",
+  "互吹结盟","小局加油站"
+];
+const links = [
+  [0,1],[0,2],[0,9],[2,5],[3,6],[3,7],[5,6],[7,6],[8,9],[1,5],[4,5],[4,8]
+];
+const svg = document.getElementById('mind');
+const W=1000,H=420, cx=W/2, cy=H/2;
+let nodes = topics.map((t,i)=>({
+  id:i, t, x: cx + (Math.cos(i)*180) + (Math.random()*60-30),
+  y: cy + (Math.sin(i)*120) + (Math.random()*40-20),
+  vx:0, vy:0, m: 1.2
+}));
+const groupLinks = links.map(([a,b])=>({a,b}));
+function drawMind(){
+  svg.innerHTML='';
+  // lines
+  groupLinks.forEach(l=>{
+    const a=nodes[l.a], b=nodes[l.b];
+    const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',a.x); line.setAttribute('y1',a.y);
+    line.setAttribute('x2',b.x); line.setAttribute('y2',b.y);
+    line.setAttribute('stroke','rgba(139,209,255,.55)');
+    line.setAttribute('stroke-width','1.6');
+    line.setAttribute('opacity','.9');
+    svg.appendChild(line);
+  });
+  // center node
+  const c=document.createElementNS('http://www.w3.org/2000/svg','g');
+  const r=36;
+  const circle=document.createElementNS('http://www.w3.org/2000/svg','circle');
+  circle.setAttribute('cx',cx); circle.setAttribute('cy',cy); circle.setAttribute('r',r);
+  circle.setAttribute('fill','url(#gld)');
+  circle.setAttribute('stroke','rgba(212,175,55,.7)');
+  circle.setAttribute('stroke-width','2');
+  c.appendChild(circle);
+  const label=document.createElementNS('http://www.w3.org/2000/svg','text');
+  label.setAttribute('x',cx); label.setAttribute('y',cy+5);
+  label.setAttribute('text-anchor','middle');
+  label.setAttribute('fill','#ffe7a8');
+  label.setAttribute('font-size','12'); label.setAttribute('font-weight','800');
+  label.textContent='2025 下半场';
+  c.appendChild(label);
+  svg.appendChild(defsGradient()); svg.appendChild(c);
+  // nodes
+  nodes.forEach(n=>{
+    const g=document.createElementNS('http://www.w3.org/2000/svg','g');
+    const dot=document.createElementNS('http://www.w3.org/2000/svg','circle');
+    dot.setAttribute('cx',n.x); dot.setAttribute('cy',n.y); dot.setAttribute('r',14);
+    dot.setAttribute('fill','url(#node)');
+    dot.setAttribute('stroke','rgba(255,255,255,.22)');
+    dot.setAttribute('stroke-width','1');
+    g.appendChild(dot);
+    const t=document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x',n.x); t.setAttribute('y',n.y-22);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('fill','#bfe7ff');
+    t.setAttribute('font-size','12'); t.setAttribute('font-weight','800');
+    t.textContent=n.t;
+    g.appendChild(t);
+    svg.appendChild(g);
+  });
+}
+function defsGradient(){
+  const defs=document.createElementNS('http://www.w3.org/2000/svg','defs');
+  const g1=document.createElementNS('http://www.w3.org/2000/svg','radialGradient');
+  g1.id='gld'; g1.innerHTML=`
+    <stop offset="0%" stop-color="rgba(212,175,55,.9)"/>
+    <stop offset="100%" stop-color="rgba(212,175,55,.18)"/>`;
+  const g2=document.createElementNS('http://www.w3.org/2000/svg','radialGradient');
+  g2.id='node'; g2.innerHTML=`
+    <stop offset="0%" stop-color="#8bd1ff"/>
+    <stop offset="100%" stop-color="rgba(139,209,255,.1)"/>`;
+  defs.appendChild(g1); defs.appendChild(g2); return defs;
+}
+function tick(){
+  // simple force: center pull + link springs + mild repulsion
+  nodes.forEach(n=>{
+    // pull to ring
+    const dx = cx - n.x, dy = cy - n.y;
+    n.vx += dx*0.0009; n.vy += dy*0.0009;
+  });
+  groupLinks.forEach(l=>{
+    const a=nodes[l.a], b=nodes[l.b];
+    const dx=b.x-a.x, dy=b.y-a.y; const dist=Math.hypot(dx,dy)||1;
+    const target=170; const k=(dist-target)*0.0012;
+    const nx=dx/dist, ny=dy/dist;
+    a.vx += nx*k; a.vy += ny*k; b.vx -= nx*k; b.vy -= ny*k;
+  });
+  // repulsion
+  for(let i=0;i<nodes.length;i++){
+    for(let j=i+1;j<nodes.length;j++){
+      const a=nodes[i], b=nodes[j]; const dx=b.x-a.x, dy=b.y-a.y, d2=dx*dx+dy*dy;
+      if(d2<140*140){
+        const f=0.0008/Math.max(d2,200);
+        a.vx -= dx*f; a.vy -= dy*f; b.vx += dx*f; b.vy += dy*f;
+      }
+    }
+  }
+  // integrate + damp
+  nodes.forEach(n=>{
+    n.vx*=0.95; n.vy*=0.95; n.x+=n.vx*12; n.y+=n.vy*12;
+    n.x=Math.max(70, Math.min(W-70, n.x));
+    n.y=Math.max(70, Math.min(H-40, n.y));
+  });
+  drawMind(); requestAnimationFrame(tick);
+}
+drawMind(); requestAnimationFrame(tick);
+document.getElementById('recenter').onclick=()=>{
+  nodes = nodes.map((n,i)=>({...n, x: cx + Math.cos(i)*180, y: cy + Math.sin(i)*110}));
+};
+document.getElementById('shuffle').onclick=()=>{
+  nodes.forEach(n=>{ n.x = 100+Math.random()*(W-200); n.y = 70+Math.random()*(H-140);});
+};
+
+/* ===== Transcript 解析 ===== */
+const src = document.getElementById('src');
+const list = document.getElementById('list');
+const timeRE=/^\[(\d{2}):(\d{2}):(\d{2})\]\s*(.+)$/;
+function parseTranscript(text){
+  const lines = text.split(/\n+/).map(s=>s.trim()).filter(Boolean);
+  return lines.map(line=>{
+    const m = line.match(timeRE);
+    if(!m) return null;
+    const hh=+m[1], mm=+m[2], ss=+m[3];
+    return {t: hh*3600+mm*60+ss, ts:`${m[1]}:${m[2]}:${m[3]}`, content:m[4]};
+  }).filter(Boolean);
+}
+function renderTranscript(arr, keyword=''){
+  list.innerHTML='';
+  const re = keyword ? new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g,'\\$&'), 'gi') : null;
+  arr.forEach(({ts,content})=>{
+    const div=document.createElement('div');
+    div.className='line';
+    const txt = re ? content.replace(re, m=>`<mark>${m}</mark>`) : content;
+    div.innerHTML = `<div class="ts">⏱ ${ts}</div><div>${txt}</div>`;
+    list.appendChild(div);
+  });
+}
+let parsed = parseTranscript(src.value);
+renderTranscript(parsed);
+
+document.getElementById('gen').onclick=()=>{
+  parsed = parseTranscript(src.value);
+  renderTranscript(parsed, document.getElementById('filter').value.trim());
+}
+document.getElementById('clear').onclick=()=>{ src.value=''; list.innerHTML=''; }
+document.getElementById('doFilter').onclick=()=>{
+  renderTranscript(parsed, document.getElementById('filter').value.trim());
+}
+document.getElementById('clearFilter').onclick=()=>{
+  document.getElementById('filter').value=''; renderTranscript(parsed);
+}
+
+/* ===== 进场 reveal ===== */
+document.querySelectorAll('.reveal').forEach((el,i)=>{
+  el.style.animationDelay = (i*60)+'ms';
+});
+</script>
+</body>
+</html>
