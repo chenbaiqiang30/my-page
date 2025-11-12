@@ -4,28 +4,29 @@
 <title>全部文件索引</title>
 
 <body>
-<h2>📌 我的全部 HTML 文件列表（自动生成）</h2>
-<p>每次上传新文件会自动出现在下面，无需任何维护。</p>
+<h2>📌 我的全部 HTML 文件列表（自动生成｜GitHub API）</h2>
+<p>上传新文件后这里会自动显示，无需任何维护。</p>
 
 <ul id="list"></ul>
 
 <script>
-// 自动列出当前目录所有 HTML 文件
-fetch(".")
-  .then(res => res.text())
-  .then(html => {
-    const parser = new DOMParser();
-    const doc = parser.parseFromString(html, "text/html");
-    const links = [...doc.querySelectorAll("a")]
-      .map(a => a.getAttribute("href"))
-      .filter(href => href.endsWith(".html") && href !== "index.html");
-
+// 使用 GitHub API 读取仓库文件列表
+fetch("https://api.github.com/repos/chenbaiqiang30/my-page/contents/")
+  .then(res => res.json())
+  .then(files => {
     const ul = document.getElementById("list");
-    links.forEach(file => {
-      const li = document.createElement("li");
-      li.innerHTML = `<a href="${file}">${file}</a>`;
-      ul.appendChild(li);
-    });
+    files
+      .filter(f => f.name.endsWith(".html") && f.name !== "index.html")
+      .forEach(f => {
+        const li = document.createElement("li");
+        li.innerHTML = `<a href="${f.name}">${f.name}</a>`;
+        ul.appendChild(li);
+      });
+  })
+  .catch(err => {
+    document.getElementById("list").innerHTML =
+      "<li>❌ 加载失败，请刷新重试</li>";
+    console.error(err);
   });
 </script>
 
