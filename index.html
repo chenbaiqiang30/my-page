@@ -1,11 +1,33 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <title>你好，世界！</title>
-</head>
+<html lang="zh-CN">
+<meta charset="UTF-8">
+<title>全部文件索引</title>
+
 <body>
-  <h1>网页成功发布！🎉</h1>
-  <p>这是你用 GitHub Pages 创建的第一个页面。</p>
+<h2>📌 我的全部 HTML 文件列表（自动生成）</h2>
+<p>每次上传新文件会自动出现在下面，无需任何维护。</p>
+
+<ul id="list"></ul>
+
+<script>
+// 自动列出当前目录所有 HTML 文件
+fetch(".")
+  .then(res => res.text())
+  .then(html => {
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(html, "text/html");
+    const links = [...doc.querySelectorAll("a")]
+      .map(a => a.getAttribute("href"))
+      .filter(href => href.endsWith(".html") && href !== "index.html");
+
+    const ul = document.getElementById("list");
+    links.forEach(file => {
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="${file}">${file}</a>`;
+      ul.appendChild(li);
+    });
+  });
+</script>
+
 </body>
 </html>
