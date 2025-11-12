@@ -1,0 +1,1444 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>智能体工作流实战课程 · 高奢玻璃风五彩笔记</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-gradient: radial-gradient(circle at 0% 0%, #1e293b 0, #020617 55%, #000000 100%);
+      --glass-bg: rgba(15, 23, 42, 0.92);
+      --glass-soft: rgba(15, 23, 42, 0.96);
+      --border-soft: rgba(148, 163, 184, 0.7);
+
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-orange: #f59e0b;
+      --accent-gold: #fbbf24;
+
+      /* 静态五彩字调色板 */
+      --c1: #f97316;
+      --c2: #facc15;
+      --c3: #22c55e;
+      --c4: #38bdf8;
+      --c5: #a855f7;
+      --c6: #ec4899;
+
+      /* 动态渐变 */
+      --rainbow-gradient: linear-gradient(
+        120deg,
+        #ff6b6b,
+        #f97316,
+        #facc15,
+        #22c55e,
+        #38bdf8,
+        #6366f1,
+        #a855f7,
+        #ec4899,
+        #ff6b6b
+      );
+
+      --radius-xl: 26px;
+      --shadow-soft: 0 22px 55px rgba(15, 23, 42, 0.95);
+      --transition-fast: 0.18s ease-out;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-gradient);
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", system-ui,
+        -system-ui, "Segoe UI", Roboto, sans-serif;
+      padding: 32px 16px 64px;
+      display: flex;
+      justify-content: center;
+      font-size: 15px;
+      line-height: 1.7;
+      color: #e5e7eb;
+    }
+
+    .app {
+      max-width: 1120px;
+      width: 100%;
+    }
+
+    /* ========= 动态渐变文字（标题 / 标签等） ========= */
+    .logo-text-main,
+    .logo-text-sub,
+    .eyebrow,
+    .hero-title,
+    .hero-stat-label,
+    .hero-stat-value,
+    .section-title,
+    .mini-card-title,
+    .lane-title,
+    .mindmap-core-title,
+    .callout-badge,
+    .todo-title,
+    .summary-title {
+      background-image: var(--rainbow-gradient);
+      background-size: 220% 220%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: rainbowShift 10s linear infinite;
+      text-shadow: 0 0 14px rgba(56, 189, 248, 0.55);
+    }
+
+    @keyframes rainbowShift {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* ========= 静态随机五彩字（正文） ========= */
+    section p {
+      text-shadow: 0 0 10px rgba(15, 23, 42, 0.9);
+    }
+
+    section p:nth-of-type(6n + 1) { color: var(--c1); }
+    section p:nth-of-type(6n + 2) { color: var(--c2); }
+    section p:nth-of-type(6n + 3) { color: var(--c3); }
+    section p:nth-of-type(6n + 4) { color: var(--c4); }
+    section p:nth-of-type(6n + 5) { color: var(--c5); }
+    section p:nth-of-type(6n + 6) { color: var(--c6); }
+
+    li {
+      text-shadow: 0 0 8px rgba(15, 23, 42, 0.9);
+    }
+
+    li:nth-child(6n + 1) { color: var(--c3); }
+    li:nth-child(6n + 2) { color: var(--c4); }
+    li:nth-child(6n + 3) { color: var(--c5); }
+    li:nth-child(6n + 4) { color: var(--c6); }
+    li:nth-child(6n + 5) { color: var(--c1); }
+    li:nth-child(6n + 6) { color: var(--c2); }
+
+    .callout,
+    .note,
+    .todo-card li {
+      text-shadow: 0 0 8px rgba(15, 23, 42, 0.9);
+    }
+
+    /* ======== 小窗口（Chip / Tag / Badge）颜色，改成可见的五彩静态字 ======== */
+    .chip,
+    .badge,
+    .summary-tag,
+    .todo-badge {
+      color: #e5e7eb;
+      text-shadow: 0 0 6px rgba(15, 23, 42, 0.9);
+    }
+
+    .chip:nth-of-type(1) { color: var(--c4); }
+    .chip:nth-of-type(2) { color: var(--c6); }
+
+    .badge:nth-of-type(1) { color: var(--c4); }
+    .badge:nth-of-type(2) { color: var(--c5); }
+
+    .summary-tag { color: var(--c3); }
+
+    .todo-badge { color: var(--c2); }
+
+    /* ========= 顶部导航 ========= */
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      gap: 16px;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-badge {
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle at 30% 0%, #fefce8, #facc15 48%, #854d0e 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0b1120;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: 0 0 32px rgba(250, 204, 21, 0.9);
+      border: 1px solid rgba(250, 204, 21, 0.9);
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background:
+        radial-gradient(circle at 0 0, rgba(148, 163, 184, 0.3), rgba(15, 23, 42, 0.95));
+      backdrop-filter: blur(18px);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chip span.dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #22c55e;
+      box-shadow: 0 0 12px rgba(34, 197, 94, 0.95);
+    }
+
+    /* ========= Hero ========= */
+    .hero {
+      position: relative;
+      padding: 30px 26px 22px;
+      border-radius: 34px;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(56, 189, 248, 0.24), transparent 60%),
+        radial-gradient(circle at 100% 0%, rgba(168, 85, 247, 0.2), transparent 55%),
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.92));
+      backdrop-filter: blur(30px);
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      box-shadow: 0 32px 70px rgba(15, 23, 42, 0.98);
+      overflow: hidden;
+      margin-bottom: 26px;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      background:
+        radial-gradient(circle at 10% -10%, rgba(250, 204, 21, 0.2), transparent 55%),
+        radial-gradient(circle at 110% 0%, rgba(56, 189, 248, 0.22), transparent 60%);
+      opacity: 0.95;
+      pointer-events: none;
+      mix-blend-mode: screen;
+      animation: heroGlow 12s ease-in-out infinite alternate;
+    }
+
+    @keyframes heroGlow {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-18px, 14px, 0);
+      }
+    }
+
+    .hero-grid {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+      gap: 30px;
+    }
+
+    @media (max-width: 880px) {
+      .hero-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .eyebrow {
+      font-size: 12px;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: clamp(27px, 3.3vw, 34px);
+      font-weight: 700;
+      letter-spacing: 0.01em;
+      line-height: 1.25;
+      margin-bottom: 12px;
+    }
+
+    .hero-subtitle {
+      font-size: 15px;
+      line-height: 1.8;
+      max-width: 520px;
+      margin-bottom: 18px;
+    }
+
+    .hero-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 18px;
+    }
+
+    .pill {
+      font-size: 12px;
+      padding: 5px 11px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.96);
+      backdrop-filter: blur(18px);
+      color: #e5e7eb;
+      text-shadow: 0 0 8px rgba(15, 23, 42, 0.9);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .btn {
+      border-radius: 999px;
+      padding: 9px 18px;
+      font-size: 14px;
+      border: none;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+        background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+      white-space: nowrap;
+      position: relative;
+      overflow: hidden;
+      color: #0b1120;
+    }
+
+    .btn::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: radial-gradient(circle at 0 0, rgba(248, 250, 252, 0.4), transparent 70%);
+      opacity: 0;
+      transition: opacity 0.25s ease-out, transform 0.25s ease-out;
+      mix-blend-mode: screen;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #fbbf24, #f97316, #a855f7);
+      box-shadow: 0 12px 40px rgba(248, 250, 252, 0.2);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px) scale(1.01);
+      box-shadow: 0 20px 55px rgba(248, 250, 252, 0.32);
+    }
+
+    .btn-ghost {
+      background: rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      color: #e5e7eb;
+    }
+
+    .btn-ghost:hover {
+      transform: translateY(-1px);
+      border-color: #fbbf24;
+      box-shadow: 0 10px 30px rgba(15, 23, 42, 0.9);
+    }
+
+    .btn:hover::before {
+      opacity: 1;
+      transform: translate3d(10px, 8px, 0);
+    }
+
+    .btn span {
+      background: none;
+      -webkit-background-clip: border-box;
+      color: inherit;
+      text-shadow: none;
+    }
+
+    .hero-mini-panel {
+      padding: 16px 14px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.2), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      backdrop-filter: blur(26px);
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 11px;
+      font-size: 13px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-mini-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 120% -10%, rgba(148, 163, 184, 0.18), transparent 60%);
+      opacity: 0.9;
+      pointer-events: none;
+    }
+
+    @media (max-width: 480px) {
+      .hero-mini-panel {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .hero-stat {
+      padding: 9px 9px;
+      border-radius: 18px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.8);
+    }
+
+    .hero-stat-label {
+      font-size: 12px;
+      margin-bottom: 4px;
+    }
+
+    .hero-stat-value {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    /* ========= 通用板块 ========= */
+    .section {
+      margin-bottom: 26px;
+    }
+
+    .section-header {
+      margin-bottom: 12px;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .section-title span.index {
+      font-size: 12px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.26), rgba(15, 23, 42, 0.98));
+      margin-right: 8px;
+      box-shadow: 0 0 16px rgba(56, 189, 248, 0.7);
+      color: #e5e7eb;
+    }
+
+    .section-desc {
+      font-size: 13px;
+      max-width: 460px;
+    }
+
+    .glass-card {
+      background: var(--glass-bg);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-soft);
+      backdrop-filter: blur(26px);
+      box-shadow: var(--shadow-soft);
+      padding: 18px 20px;
+    }
+
+    .glass-grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .glass-grid-3 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+      }
+    }
+
+    .mini-card {
+      border-radius: 22px;
+      padding: 13px 13px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.18), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      font-size: 14px;
+      line-height: 1.75;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .mini-card::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 120% -10%, rgba(248, 250, 252, 0.09), transparent 60%);
+      opacity: 1;
+      pointer-events: none;
+    }
+
+    .mini-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background: linear-gradient(120deg, rgba(56, 189, 248, 0.3), transparent 40%, rgba(168, 85, 247, 0.3));
+      opacity: 0;
+      transform: translate3d(-40%, 0, 0);
+      transition: opacity 0.35s ease-out, transform 0.35s ease-out;
+      mix-blend-mode: screen;
+    }
+
+    .mini-card:hover::before {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
+
+    .mini-card-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      background: rgba(15, 23, 42, 0.96);
+      margin-bottom: 7px;
+    }
+
+    .badge-dot-blue,
+    .badge-dot-purple,
+    .badge-dot-orange {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+    }
+
+    .badge-dot-blue {
+      background: var(--accent-blue);
+      box-shadow: 0 0 10px rgba(56, 189, 248, 0.9);
+    }
+
+    .badge-dot-purple {
+      background: var(--accent-purple);
+      box-shadow: 0 0 10px rgba(168, 85, 247, 0.9);
+    }
+
+    .badge-dot-orange {
+      background: var(--accent-orange);
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.95);
+    }
+
+    .tagline {
+      font-size: 13px;
+      margin-top: 4px;
+    }
+
+    /* ========= 折叠区 ========= */
+    details {
+      border-radius: 22px;
+      margin-bottom: 10px;
+      background:
+        radial-gradient(circle at 0 0, rgba(148, 163, 184, 0.22), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      overflow: hidden;
+      backdrop-filter: blur(22px);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.9);
+      transition: box-shadow 0.3s ease-out, border-color 0.3s ease-out;
+      position: relative;
+    }
+
+    details::before {
+      content: "";
+      position: absolute;
+      inset: -60%;
+      background: radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.25), transparent 60%);
+      opacity: 0;
+      transition: opacity 0.35s ease-out;
+      mix-blend-mode: screen;
+      pointer-events: none;
+    }
+
+    details[open] {
+      box-shadow: 0 24px 60px rgba(15, 23, 42, 0.98);
+      border-color: rgba(129, 140, 248, 0.95);
+    }
+
+    details[open]::before {
+      opacity: 1;
+      animation: foldGlow 6s ease-in-out infinite alternate;
+    }
+
+    @keyframes foldGlow {
+      0% {
+        transform: translate3d(0, 0, 0);
+      }
+      100% {
+        transform: translate3d(-12px, 8px, 0);
+      }
+    }
+
+    summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 11px 15px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      user-select: none;
+      position: relative;
+      overflow: hidden;
+      color: #e5e7eb;
+    }
+
+    summary::-webkit-details-marker {
+      display: none;
+    }
+
+    summary::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, rgba(56, 189, 248, 0.18), transparent, rgba(168, 85, 247, 0.18));
+      opacity: 0.4;
+      mix-blend-mode: screen;
+    }
+
+    summary::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      bottom: -1px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(56, 189, 248, 0.9), rgba(250, 204, 21, 0.9), transparent);
+      opacity: 0.7;
+    }
+
+    details:hover summary::before {
+      opacity: 0.8;
+    }
+
+    .summary-left {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .summary-title {
+      font-weight: 500;
+    }
+
+    .summary-tag {
+      font-size: 12px;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      background: rgba(15, 23, 42, 0.96);
+    }
+
+    .summary-icon {
+      position: relative;
+      z-index: 1;
+      font-size: 18px;
+      transition: transform var(--transition-fast);
+    }
+
+    details[open] .summary-icon {
+      transform: rotate(90deg) scale(1.05);
+    }
+
+    .details-body {
+      padding: 0 15px 13px 15px;
+      font-size: 14px;
+      line-height: 1.8;
+      border-top: 1px solid rgba(30, 64, 175, 0.8);
+      background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.98), rgba(15, 23, 42, 0.94));
+    }
+
+    .details-columns {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 8px;
+    }
+
+    @media (max-width: 780px) {
+      .details-columns {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    ul {
+      padding-left: 18px;
+      margin-top: 4px;
+    }
+
+    li {
+      margin-bottom: 4px;
+    }
+
+    /* ========= 思维导图 ========= */
+    .mindmap {
+      position: relative;
+      padding: 16px 12px 14px;
+      border-radius: 26px;
+      background:
+        radial-gradient(circle at 0 0, rgba(56, 189, 248, 0.2), transparent 60%),
+        radial-gradient(circle at 100% 0, rgba(248, 250, 252, 0.12), transparent 65%),
+        var(--glass-soft);
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      overflow: hidden;
+      font-size: 14px;
+    }
+
+    .mindmap-core {
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .mindmap-core-title {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 16px;
+      border-radius: 999px;
+      background: linear-gradient(115deg, #fbbf24, #f97316, #a855f7);
+      color: #111827;
+      font-weight: 600;
+      box-shadow: 0 14px 38px rgba(248, 250, 252, 0.25);
+      border: 1px solid rgba(248, 250, 252, 0.7);
+    }
+
+    .mindmap-lanes {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 11px;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 980px) {
+      .mindmap-lanes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .mindmap-lanes {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .lane {
+      border-radius: 18px;
+      padding: 9px 10px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px dashed rgba(148, 163, 184, 0.9);
+    }
+
+    .lane-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .lane ul {
+      padding-left: 17px;
+    }
+
+    /* ========= 评论 & 行动清单 ========= */
+    .note {
+      font-size: 14px;
+      line-height: 1.8;
+    }
+
+    .callout {
+      border-radius: 20px;
+      padding: 11px 13px;
+      background: linear-gradient(135deg, rgba(15, 118, 110, 0.4), rgba(15, 23, 42, 0.98));
+      border: 1px solid rgba(45, 212, 191, 0.8);
+      font-size: 14px;
+      line-height: 1.8;
+      margin-bottom: 8px;
+      box-shadow: 0 18px 40px rgba(15, 23, 42, 0.9);
+    }
+
+    .todo-list {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 11px;
+      font-size: 14px;
+    }
+
+    @media (max-width: 960px) {
+      .todo-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      .todo-list {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .todo-card {
+      border-radius: 20px;
+      padding: 11px 12px;
+      background: rgba(15, 23, 42, 0.98);
+      border: 1px solid rgba(148, 163, 184, 0.9);
+      box-shadow: 0 16px 40px rgba(15, 23, 42, 0.9);
+    }
+
+    .todo-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .todo-badge {
+      display: inline-flex;
+      padding: 3px 7px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid rgba(148, 163, 184, 0.85);
+      margin-bottom: 4px;
+      background: rgba(15, 23, 42, 0.96);
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <!-- 顶部栏 -->
+    <header class="top-bar">
+      <div class="logo">
+        <div class="logo-badge">W</div>
+        <div>
+          <div class="logo-text-main">Workflow Glass Notes</div>
+          <div class="logo-text-sub">Coze 智能体 · 工作流实战 · 飞书云文档集成</div>
+        </div>
+      </div>
+      <div class="chip-row">
+        <div class="chip">
+          <span class="dot"></span>
+          学习主题：<span>智能体工作流 &amp; 插件</span>
+        </div>
+        <div class="chip">
+          ⏱ 课程时长：<span>约 90 分钟口述内容</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero -->
+    <section class="hero" id="top">
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">WAY TO AGI · COZE WORKFLOW</div>
+          <h1 class="hero-title">
+            从「死磕比赛」到「日常自动化」：智能体工作流实战全景拆解
+          </h1>
+          <p class="hero-subtitle">
+            这份笔记基于课程《智能体工作流实战：从基础搭建到飞书云文档集成》，
+            把长篇直播讲解压缩为一套可实操的
+            工作流思维框架 + Coze 搭建步骤 + 飞书集成范式。
+          </p>
+
+          <div class="hero-pills">
+            <span class="pill">🎯 目标：把「工作流」变成可复用的思维方式</span>
+            <span class="pill">🧠 核心：顺序 / 分支 / 循环 三大逻辑</span>
+            <span class="pill">🗂 实战：公众号文章 → 提炼 → 飞书云文档</span>
+          </div>
+
+          <div class="hero-actions">
+            <a href="#summary" class="btn btn-primary">
+              <span>先看 3 个关键结论</span> <span>↘</span>
+            </a>
+            <a href="#mindmap" class="btn btn-ghost">
+              <span>查看思维导图</span>
+            </a>
+          </div>
+        </div>
+
+        <aside class="hero-mini-panel">
+          <div class="hero-stat">
+            <div class="hero-stat-label">课程主线</div>
+            <div class="hero-stat-value">从「为什么需要工作流」到「能跑的飞书自动化」</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">技术栈</div>
+            <div class="hero-stat-value">Coze 智能体 · 插件 · 工作流 · 飞书云文档</div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">核心理念</div>
+            <div class="hero-stat-value">
+              先想清楚做什么 再讨论怎么做
+            </div>
+          </div>
+          <div class="hero-stat">
+            <div class="hero-stat-label">难点提醒</div>
+            <div class="hero-stat-value">逻辑流程 &gt; 节点细节 &gt; 数据结构</div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- 1. 核心总结 -->
+    <section class="section" id="summary">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="index">01</span>课程核心结论 · 一屏看完
+        </h2>
+        <p class="section-desc">
+          不按时间线复述，而是直接抽出这堂课真正「值回票价」的 3 个认知升级。
+        </p>
+      </div>
+
+      <div class="glass-card glass-grid-3">
+        <article class="mini-card">
+          <div class="badge">
+            <span class="badge-dot-blue"></span>
+            认知升级
+          </div>
+          <div class="mini-card-title">工作流 ≠ 花哨流程，而是「规划能力」的外化</div>
+          <p>
+            单一大模型 + 提示词，只能解决
+            「一个问题，一次对话」。
+            真正的智能体，要能处理
+            多步骤、多角色、多轮数据——
+            这就必须有工作流来规划：谁先做、谁后做、什么时候分支、何时循环、哪里要人审。
+          </p>
+        </article>
+
+        <article class="mini-card">
+          <div class="badge">
+            <span class="badge-dot-purple"></span>
+            结构抓手
+          </div>
+          <div class="mini-card-title">世界上所有流程，逃不开三种逻辑</div>
+          <p>
+            课程把工作流拆成三块：
+            顺序（先做 A 再做 B）、
+            分支（按条件/并行分路）、
+            循环（迭代优化或批量处理）。
+            只要先用这三块把业务画成草图，再去选节点，就不会被节点列表吓到。
+          </p>
+        </article>
+
+        <article class="mini-card">
+          <div class="badge">
+            <span class="badge-dot-orange"></span>
+            实战范式
+          </div>
+          <div class="mini-card-title">从「复制公众号」到「一条链接自动归档」</div>
+          <p>
+            示例工作流：用户只需要给一条公众号链接，
+            流程自动完成
+            链接解析 → 内容提炼 → 生成标签 → 写入飞书云文档。
+            这是一个典型的
+            「个人知识流入系统」原型，
+            随时可以改造成：周报生成、学习卡片、企业知识库输入口。
+          </p>
+        </article>
+      </div>
+    </section>
+
+    <!-- 2. 课程结构 & 知识点 -->
+    <section class="section" id="structure">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="index">02</span>课程主线 &amp; 知识地图（可折叠）
+        </h2>
+        <p class="section-desc">
+          把冗长口述拆成 4 个模块：为什么学 · 学什么 · 怎么搭 · 怎么进阶。
+        </p>
+      </div>
+
+      <div class="glass-card">
+        <!-- 模块一 -->
+        <details open>
+          <summary>
+            <div class="summary-left">
+              <span class="summary-title">模块一：为什么智能体必须要有「工作流」？</span>
+              <span class="summary-tag">认知篇 · 场景驱动</span>
+            </div>
+            <span class="summary-icon">›</span>
+          </summary>
+          <div class="details-body">
+            <div class="details-columns">
+              <div>
+                <strong>讲师给出的 5 个典型痛点：</strong>
+                <ul>
+                  <li>内容生产链很长：标题 / 正文 / 封面 / 标签，全靠复制提示词、来回切模型。</li>
+                  <li>客服机器人用单一模型：容易幻觉、答非所问，知识库一长就「谁都不听」。</li>
+                  <li>大模型「失忆」：今天设好人设，明天对话就忘，必须要有外部记忆与状态管理。</li>
+                  <li>高风险场景（金融、医疗、合规）：不能允许 AI「自动发送未经审核的邮件/批复」。</li>
+                  <li>大规模批处理（1 千～100 万条数据）：中途失败、上下文漂移，人工重跑非常痛苦。</li>
+                </ul>
+              </div>
+              <div>
+                <strong>因此，工作流要解决的是：</strong>
+                <ul>
+                  <li>把一次性的聪明，变成稳定可复用的流程。</li>
+                  <li>把「模型思考」升级为「模型 + 工具 + 审核 + 存储」的组织智能。</li>
+                  <li>让 AI 不只是「聊天」，而是真正上手干活：调用 API、写表格、发文档。</li>
+                  <li>在关键节点插入 Human in the loop（人类在环路），控制风险。</li>
+                </ul>
+                <p class="tagline">
+                  👉 一句话：工作流不是为了「更炫」，而是为了在现实业务里「敢用」。
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- 模块二 -->
+        <details>
+          <summary>
+            <div class="summary-left">
+              <span class="summary-title">模块二：工作流由什么组成？（三层结构）</span>
+              <span class="summary-tag">结构篇 · 打开黑盒</span>
+            </div>
+            <span class="summary-icon">›</span>
+          </summary>
+          <div class="details-body">
+            <div class="details-columns">
+              <div>
+                <strong>1. 节点细节（Node）</strong>
+                <ul>
+                  <li>每个节点都是一个「螺丝钉」或「乐高砖」：完成一件小事。</li>
+                  <li>大模型节点：选模型 + 系统提示词 + 用户提示词 + 输入/输出变量。</li>
+                  <li>插件节点：被封装好的小工作流，如「链接读取」「飞书云文档」「多维表」。</li>
+                  <li>文本处理、变量、代码节点：用来改造数据形态。</li>
+                </ul>
+              </div>
+              <div>
+                <strong>2. 逻辑流程（Flow）</strong>
+                <ul>
+                  <li>业务流（你眼睛看到的那条线）：开始 → 处理 → 审核 → 输出。</li>
+                  <li>数据流（真正重要）：变量在各个节点之间如何传递、变形、合并。</li>
+                  <li>核心抓手：顺序 · 分支 · 循环 三种结构的组合。</li>
+                </ul>
+
+                <strong>3. 数据结构（Data）</strong>
+                <ul>
+                  <li>变量类型：字符串 string、布尔 bool、对象 object、数组 array 等。</li>
+                  <li>命名习惯：有语义，见名知意（url / content / title / tag_list …）。</li>
+                  <li>推荐做法：先用最简单的 string 跑通，再逐步结构化。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- 模块三 -->
+        <details>
+          <summary>
+            <div class="summary-left">
+              <span class="summary-title">模块三：实战案例 · 公众号 → 提炼 → 飞书云文档</span>
+              <span class="summary-tag">实操篇 · 顺序工作流</span>
+            </div>
+            <span class="summary-icon">›</span>
+          </summary>
+          <div class="details-body">
+            <div class="details-columns">
+              <div>
+                <strong>业务目标：</strong>
+                <ul>
+                  <li>输入：一条公众号文章链接。</li>
+                  <li>过程：
+                    <ol>
+                      <li>解析链接内容；</li>
+                      <li>用大模型提炼 &amp; 标注；</li>
+                      <li>在飞书云文档中，按固定文件夹自动建文档。</li>
+                    </ol>
+                  </li>
+                  <li>输出：一份带标题、概述、标签的笔记文档，存入指定飞书文件夹。</li>
+                </ul>
+
+                <strong>流程概览（顺序结构）：</strong>
+                <ul>
+                  <li>Start：用户输入 URL。</li>
+                  <li>插件 · 链接读取：获取 data.content + data.title。</li>
+                  <li>大模型节点：根据系统提示词提炼概述 &amp; 标签。</li>
+                  <li>飞书云文档插件：创建文档，写入内容。</li>
+                  <li>End：把结果反馈给用户（含标题/摘要/存储成功提示）。</li>
+                </ul>
+              </div>
+              <div>
+                <strong>关键实现细节：</strong>
+                <ul>
+                  <li>开始节点：
+                    <ul>
+                      <li>变量名从 input 改为 <code>url</code>，更清晰。</li>
+                      <li>类型设置为 string。</li>
+                    </ul>
+                  </li>
+                  <li>链接读取插件：
+                    <ul>
+                      <li>input.url → 链接读取.url。</li>
+                      <li>输出中，<code>data.content</code> 是文章正文，<code>data.title</code> 是公众号标题。</li>
+                    </ul>
+                  </li>
+                  <li>大模型节点：
+                    <ul>
+                      <li>系统提示词：设定「公众号提炼助手」，输出 150 字概述 + 3 个标签。</li>
+                      <li>用户提示词：填 <code>{plugin.data.content}</code>，而不是原始 URL。</li>
+                      <li>输出变量：如 <code>summary_output</code>。</li>
+                    </ul>
+                  </li>
+                  <li>飞书云文档插件：
+                    <ul>
+                      <li>授权：单独授权（用户各自连自己的飞书）。</li>
+                      <li>folder_token：在飞书中创建「我的阅读库」文件夹，复制链接或 token。</li>
+                      <li>title：使用 <code>读取链接.data.title</code>。</li>
+                      <li>content：使用大模型输出；若加上原 URL，可以用「文本处理节点」先拼接。</li>
+                    </ul>
+                  </li>
+                </ul>
+                <p class="tagline">
+                  🌱 这是一个「最小可用」工作流，后续可以挂知识库、多维表、定时触发等。
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- 模块四 -->
+        <details>
+          <summary>
+            <div class="summary-left">
+              <span class="summary-title">模块四：进阶思路 · 从个人阅读器到知识系统</span>
+              <span class="summary-tag">进阶篇 · 从例子走向体系</span>
+            </div>
+            <span class="summary-icon">›</span>
+          </summary>
+          <div class="details-body">
+            <div class="details-columns">
+              <div>
+                <strong>在本例基础上，讲师实际做了什么？</strong>
+                <ul>
+                  <li>把飞书云文档改成飞书多维表存储，字段包括：
+                    <ul>
+                      <li>标题 / 来源公众号 / 链接</li>
+                      <li>分类 / 标签</li>
+                      <li>摘要 / 推荐语 / 是否强推</li>
+                    </ul>
+                  </li>
+                  <li>增加「周报」工作流：按日期区间从多维表里捞出一周阅读记录，用大模型生成「本周重点 + 推荐阅读清单」。</li>
+                  <li>把智能体发布到：
+                    <ul>
+                      <li>飞书：在聊天里发链接，自动归档；</li>
+                      <li>公众号 / 微信客服：对外提供「智能阅读助手」能力。</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <strong>抽象出的「个人知识操作系统」套路：</strong>
+                <ul>
+                  <li>入口统一：所有外部信息统一通过「一条链接」进入系统。</li>
+                  <li>加工标准化：统一结构：标题 + 摘要 + 标签 + 推荐语 + 源链接。</li>
+                  <li>存储结构化：存入知识库 / 多维表，便于筛选、统计、二次创作。</li>
+                  <li>输出多形态：云文档、日报、周报、知识卡片、图文脚本，都从同一数据源长出。</li>
+                </ul>
+                <p class="tagline">
+                  🧩 你完全可以把这个模板迁移到：课程笔记、项目复盘、客户调研、舆情监控……任何重复出现的信息流。
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </section>
+
+    <!-- 3. 思维导图 -->
+    <section class="section" id="mindmap">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="index">03</span>思维导图：这堂课到底在「教什么」？
+        </h2>
+        <p class="section-desc">
+          一张脑图，把从「比赛经验」到「插件生态」的要点串在一起，方便二次设计自己的工作流。
+        </p>
+      </div>
+
+      <details open>
+        <summary>
+          <div class="summary-left">
+            <span class="summary-title">展开 / 收起 · 思维导图主视图</span>
+            <span class="summary-tag">结构一览</span>
+          </div>
+          <span class="summary-icon">›</span>
+        </summary>
+        <div class="details-body">
+          <div class="mindmap">
+            <div class="mindmap-core">
+              <div class="mindmap-core-title">
+                智能体工作流实战：从 Coze 到飞书
+              </div>
+            </div>
+
+            <div class="mindmap-lanes">
+              <div class="lane">
+                <div class="lane-title">A. 起点：动机与目标</div>
+                <ul>
+                  <li>参与智能体比赛 → 发现工作流是拉开差距的关键。</li>
+                  <li>课程目标：
+                    <ul>
+                      <li>让新手真正「过坎」，敢自己搭工作流。</li>
+                      <li>让老手建立共用的流程语言和结构。</li>
+                    </ul>
+                  </li>
+                  <li>第一性问题：「你到底想用 Coze 解决什么现实问题？」</li>
+                </ul>
+              </div>
+
+              <div class="lane">
+                <div class="lane-title">B. 核心概念三层</div>
+                <ul>
+                  <li><strong>1. 大模型基座</strong>
+                    <ul>
+                      <li>提示词工程：人设、约束、输入输出格式。</li>
+                      <li>模型选择：不同任务选不同模型（推理 / 文本 / 视觉）。</li>
+                    </ul>
+                  </li>
+                  <li><strong>2. 规划层（工作流）</strong>
+                    <ul>
+                      <li>拆任务 → 排顺序 → 设条件 → 设计循环。</li>
+                      <li>插人类审核，保证可控。</li>
+                    </ul>
+                  </li>
+                  <li><strong>3. 组织智能（多智能体协同）</strong>
+                    <ul>
+                      <li>多个智能体各司其职：客服 / 研究 / 运营 / 审核。</li>
+                      <li>用工作流做「调度中心」。</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="lane">
+                <div class="lane-title">C. 三大流程逻辑</div>
+                <ul>
+                  <li><strong>顺序逻辑</strong>：一步步排队执行，简单清晰，适合新手。</li>
+                  <li><strong>分支逻辑</strong>：
+                    <ul>
+                      <li>条件路由：根据用户类型 / 问题类型走不同路径。</li>
+                      <li>并行处理：类似 GPU，一次性干多件事，提高效率。</li>
+                    </ul>
+                  </li>
+                  <li><strong>循环逻辑</strong>：
+                    <ul>
+                      <li>批量处理：遍历列表、Excel、数据库。</li>
+                      <li>迭代优化：生成 → 审核 → 重写，直到满足退出条件。</li>
+                      <li>风险：死循环 / 自指嵌套 → 要设计好退出条件。</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="lane">
+                <div class="lane-title">D. Coze 实战步骤</div>
+                <ul>
+                  <li>1）在 Coze 控制台创建智能体（对话流 or 自主规划模式）。</li>
+                  <li>2）创建工作流：命名（英文+下划线），添加 Start / End。</li>
+                  <li>3）插入大模型节点：配置提示词、变量映射。</li>
+                  <li>4）测试：每搭完一小段就试运行，避免「一次搭太大崩掉」。</li>
+                  <li>5）逐步引入插件：链接读取、飞书云文档、多维表等。</li>
+                  <li>6）再发布：飞书、微信、API、Coze 商店。</li>
+                </ul>
+              </div>
+
+              <div class="lane">
+                <div class="lane-title">E. 插件生态与最佳实践</div>
+                <ul>
+                  <li>优先选择：官方插件（稳定、维护好）。</li>
+                  <li>学会看：
+                    <ul>
+                      <li>插件介绍页：能做什么、有哪些工具。</li>
+                      <li>示例返回：从 JSON 里找 content / title / image 等字段。</li>
+                    </ul>
+                  </li>
+                  <li>授权策略：
+                    <ul>
+                      <li>单独授权：终端用户各自连自己的飞书/钉钉。</li>
+                      <li>共享授权：所有流程写入同一个企业账号。</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+
+              <div class="lane">
+                <div class="lane-title">F. 学习方法与作业</div>
+                <ul>
+                  <li>讲师强调：「真正的学习一定在动手，不在说明书里」。</li>
+                  <li>建议：
+                    <ul>
+                      <li>把 Coze 工作流当成「练习场」，随手建一个测试智能体。</li>
+                      <li>每次起一个新工作流前，先写清楚：输入是什么 → 中间有哪些转换 → 哪些步骤要人审 → 最终落在哪些系统。</li>
+                    </ul>
+                  </li>
+                  <li>课后作业（节选）：
+                    <ul>
+                      <li>自己搭一个「公众号阅读 → 飞书云文档」工作流。</li>
+                      <li>再给它加上多维表 / 周报生成等扩展任务。</li>
+                    </ul>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 4. 专家视角评论 -->
+    <section class="section" id="review">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="index">04</span>作为 Coze 智能体专家，对课程内容 &amp; 附件的一些看法
+        </h2>
+        <p class="section-desc">
+          从「课程设计」和「实际可落地性」两个角度，给出评价和可直接改进的方向。
+        </p>
+      </div>
+
+      <details open>
+        <summary>
+          <div class="summary-left">
+            <span class="summary-title">展开 / 收起 · 专家点评</span>
+            <span class="summary-tag">课程复盘 &amp; 优化建议</span>
+          </div>
+          <span class="summary-icon">›</span>
+        </summary>
+        <div class="details-body">
+          <div class="glass-card">
+            <div class="callout">
+              <div class="callout-badge">整体评价</div>
+              <p>
+                这堂课做得很好的一点，是没有把工作流讲成「工具教程」，
+                而是不断把你拉回到「真正的业务问题」上：你想解决什么、为什么要自动化、哪里必须有人审。
+                对想认真把 Coze 用到项目里的同学，这种视角比「教会每个按钮」重要得多。
+              </p>
+            </div>
+
+            <div class="details-columns">
+              <div class="note">
+                <strong>👍 非常值得保留和复用的设计：</strong>
+                <ul>
+                  <li>以真实使用场景起步，而非从菜单开始讲。</li>
+                  <li>先讲三种流程结构，再对照实战例子，给出「通用工作流语法」。</li>
+                  <li>示例选择非常聪明：公众号 → 飞书，人人可用。</li>
+                  <li>大量强调命名、测试、小步前进，这些细节决定你能不能把复杂自动化坚持做下去。</li>
+                </ul>
+              </div>
+
+              <div class="note">
+                <strong>🔧 作为实战工作流，我会建议再补的几个关键点：</strong>
+                <ul>
+                  <li>明确输出结构，要求大模型按 JSON/Markdown 标准输出字段，方便二次处理。</li>
+                  <li>增加基础错误处理 &amp; 重试机制，避免插件静默失败。</li>
+                  <li>为「高风险步骤」设计人工审核节点，让管理员可以随时开关。</li>
+                  <li>在课程附件里补一张「典型业务 → 建议插件组合」对照表，降低迁移难度。</li>
+                </ul>
+              </div>
+            </div>
+
+            <div style="margin-top: 16px;" class="note">
+              <strong>📌 对你后续做 Coze 智能体的实用建议：</strong>
+              <ul>
+                <li>先把这套「公众号 → 飞书」流程彻底吃透，再只改三样：输入源、加工逻辑、落地方。</li>
+                <li>为自己准备一个「工作流 Sketch 模板」：每次起一个新工作流前，先写清楚：输入是什么 → 中间有哪些转换 → 哪些步骤要人审 → 最终落在哪些系统。</li>
+                <li>多把 Coze 当「操作系统」，想到一个重复任务就问自己：这个能不能变成「节点 + 流程 + 插件」组合？</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+
+    <!-- 5. 行动清单 -->
+    <section class="section" id="todo">
+      <div class="section-header">
+        <h2 class="section-title">
+          <span class="index">05</span>行动清单：现在就可以动手的小练习
+        </h2>
+        <p class="section-desc">
+          不需要再看说明书，直接用这堂课的范式，在 Coze 里做出属于你的第一个「可复用工作流」。
+        </p>
+      </div>
+
+      <details open>
+        <summary>
+          <div class="summary-left">
+            <span class="summary-title">展开 / 收起 · 行动路线图</span>
+            <span class="summary-tag">从入门到进阶</span>
+          </div>
+          <span class="summary-icon">›</span>
+        </summary>
+        <div class="details-body">
+          <div class="glass-card">
+            <div class="todo-list">
+              <div class="todo-card">
+                <div class="todo-badge">Step 1 · 30 分钟</div>
+                <div class="todo-title">复刻课程示例工作流</div>
+                <ul>
+                  <li>在 Coze 新建一个「阅读收集器」智能体。</li>
+                  <li>按课程步骤：Start → 链接读取 → 大模型 → 飞书云文档 → End。</li>
+                  <li>至少用 3 篇自己常看的公众号文章做试运行。</li>
+                </ul>
+              </div>
+
+              <div class="todo-card">
+                <div class="todo-badge">Step 2 · 30–60 分钟</div>
+                <div class="todo-title">为自己定制输出结构</div>
+                <ul>
+                  <li>在大模型提示词中，固定输出字段：标题 / 摘要 / 3–5 个标签 / 一句话推荐。</li>
+                  <li>用文本处理节点，把「链接 + 摘要 + 标签」拼到一起写入文档。</li>
+                  <li>检查飞书里的成品是否符合你未来想要的「知识卡片」样式。</li>
+                </ul>
+              </div>
+
+              <div class="todo-card">
+                <div class="todo-badge">Step 3 · 进阶</div>
+                <div class="todo-title">扩展为「周报生成器」</div>
+                <ul>
+                  <li>把存储目标从云文档切换到飞书多维表。</li>
+                  <li>新增一个工作流：按时间筛选出一周阅读记录，用大模型生成「本周重点 + 推荐阅读清单」。</li>
+                  <li>考虑是否要加入「评分」字段，让 AI 只选 8 分以上的内容进入周报。</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </details>
+    </section>
+  </main>
+</body>
+</html>
