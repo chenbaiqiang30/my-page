@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <title>网站分类 | A1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: #0d1117;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+      color: #e6edf3;
+    }
+
+    .glass {
+      backdrop-filter: blur(14px) saturate(160%);
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      margin: 25px auto;
+      width: 90%;
+      max-width: 900px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 32px;
+      color: #7cc7ff;
+    }
+
+    h2 {
+      color: #ffdd7c;
+    }
+
+    a {
+      color: #8ae2ff;
+      text-decoration: none;
+      display: block;
+      padding: 6px 0;
+    }
+  </style>
+
+  <script>
+    async function loadCategories() {
+      const res = await fetch("rename-map.json");
+      const mapping = await res.json();
+
+      const categories = {
+        "财经 Finance": [],
+        "AI 人工智能": [],
+        "趋势 Trends": [],
+        "商业 Business": [],
+        "教育 Education": [],
+        "其他 Others": [],
+      };
+
+      const rules = {
+        "finance": "财经 Finance",
+        "budget": "财经 Finance",
+        "税": "财经 Finance",
+        "AI": "AI 人工智能",
+        "智能": "AI 人工智能",
+        "prompt": "AI 人工智能",
+        "趋势": "趋势 Trends",
+        "未来": "趋势 Trends",
+        "商业": "商业 Business",
+        "business": "商业 Business",
+        "教育": "教育 Education",
+      };
+
+      for (const file in mapping) {
+        const newName = mapping[file];
+        let cat = "其他 Others";
+        for (const key in rules) {
+          if (newName.includes(key)) {
+            cat = rules[key];
+            break;
+          }
+        }
+        categories[cat].push(newName);
+      }
+
+      const container = document.getElementById("cats");
+
+      Object.keys(categories).forEach(cat => {
+        const box = document.createElement("div");
+        box.className = "glass";
+
+        const title = document.createElement("h2");
+        title.textContent = cat;
+        box.appendChild(title);
+
+        categories[cat].forEach(f => {
+          const link = document.createElement("a");
+          link.href = f;
+          link.textContent = f.replace(".html", "");
+          box.appendChild(link);
+        });
+
+        container.appendChild(box);
+      });
+    }
+
+    window.onload = loadCategories;
+  </script>
+</head>
+
+<body>
+  <h1>📁 网站文章分类</h1>
+  <div id="cats"></div>
+</body>
+
+</html>
