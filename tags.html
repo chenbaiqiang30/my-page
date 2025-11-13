@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>标签 Tags | A1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      background: #0d1117;
+      padding: 0;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont;
+      color: #e6edf3;
+    }
+
+    .glass {
+      backdrop-filter: blur(14px) saturate(160%);
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 18px;
+      padding: 25px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      margin: 25px auto;
+      width: 90%;
+      max-width: 900px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 6px 12px;
+      margin: 5px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #ffdd7c;
+      font-size: 15px;
+    }
+
+    a {
+      color: #8ae2ff;
+      text-decoration: none;
+      display: inline-block;
+      margin: 6px 0;
+    }
+  </style>
+
+  <script>
+    async function loadTags() {
+      const res = await fetch("rename-map.json");
+      const mapping = await res.json();
+
+      const tags = {};
+
+      function extractTags(filename) {
+        return filename
+          .replace(".html", "")
+          .split(/[_\-]/)
+          .filter(w => w.length >= 2);
+      }
+
+      for (const file in mapping) {
+        const newName = mapping[file];
+        const tgs = extractTags(newName);
+
+        tgs.forEach(t => {
+          if (!tags[t]) tags[t] = [];
+          tags[t].push(newName);
+        });
+      }
+
+      const tagBox = document.getElementById("tag-list");
+      const linkBox = document.getElementById("tag-links");
+
+      Object.keys(tags).forEach(t => {
+        const span = document.createElement("span");
+        span.className = "tag";
+        span.textContent = t;
+        tagBox.appendChild(span);
+
+        const card = document.createElement("div");
+        card.className = "glass";
+
+        const title = document.createElement("h2");
+        title.textContent = "#" + t;
+        card.appendChild(title);
+
+        tags[t].forEach(f => {
+          const link = document.createElement("a");
+          link.href = f;
+          link.textContent = f.replace(".html", "");
+          card.appendChild(link);
+          card.appendChild(document.createElement("br"));
+        });
+
+        linkBox.appendChild(card);
+      });
+    }
+
+    window.onload = loadTags;
+  </script>
+</head>
+
+<body>
+  <h1 style="text-align:center;color:#7cc7ff;">🏷 标签系统 Tags</h1>
+  <div class="glass" id="tag-list"></div>
+  <div id="tag-links"></div>
+</body>
+</html>
