@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<title>AI 智能网址导航旗舰版 · 自动扫描 GitHub + 自动分类 + 一键复制</title>
+<title>AI 智能网址导航旗舰版 · 自动扫描 GitHub + 智能分类 + 一键复制</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -52,7 +52,29 @@ h1 {
 }
 
 /* -------------------------------------------------------
-   主要布局
+   导航按钮
+-------------------------------------------------------- */
+.nav {
+    text-align:center;
+    margin-top:10px;
+}
+button {
+    background: #00c2ff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 8px;
+}
+button:hover { background: #4cdfff; }
+.copy-all { background:#ffc107; }
+.copy-all:hover { background:#ffda47; }
+
+/* -------------------------------------------------------
+   主布局
 -------------------------------------------------------- */
 .container {
     display: flex;
@@ -73,10 +95,6 @@ h1 {
 /* -------------------------------------------------------
    折叠组件
 -------------------------------------------------------- */
-.section {
-    margin-bottom: 30px;
-}
-
 .section-title {
     font-size: 20px;
     padding: 12px 0;
@@ -106,32 +124,26 @@ textarea {
 }
 
 /* -------------------------------------------------------
-   按钮
+   搜索栏
 -------------------------------------------------------- */
-button {
-    background: #00c2ff;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 8px;
-    font-size: 14px;
-    color: #000;
-    font-weight: bold;
-    cursor: pointer;
-    margin-right: 10px;
+.search-box{
+    width: 100%;
+    padding: 12px;
+    background: #0d1117;
+    border: 1px solid #263041;
+    color: #e6e6e6;
+    border-radius: 10px;
+    margin-top: 15px;
 }
-button:hover { background: #4cdfff; }
-
-.copy-all { background: #ffc107; }
-.copy-all:hover { background: #ffda47; }
 
 /* -------------------------------------------------------
-   瀑布流网址卡片
+   瀑布流卡片
 -------------------------------------------------------- */
 .link-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
     gap: 16px;
-    margin-top: 20px;
+    padding:20px;
 }
 
 .link-card {
@@ -147,59 +159,42 @@ button:hover { background: #4cdfff; }
 .link-card:hover {
     background: rgba(255,255,255,0.12);
 }
-.search-box{
-    width: 100%;
-    padding: 12px;
-    background: #0d1117;
-    border: 1px solid #263041;
-    color: #e6e6e6;
-    border-radius: 10px;
-    margin-top: 15px;
-}
-
-/* -------------------------------------------------------
-   导航栏
--------------------------------------------------------- */
-.nav {
-    text-align:center;
-    margin-top:10px;
-}
-.nav button {
-    margin: 0 8px;
-}
 </style>
 </head>
 
 <body>
 
+<!-- 背景光点 -->
 <div class="bg-dots"></div>
 <script>
 for(let i=0;i<50;i++){
-    const n=document.createElement("span");
-    n.style.left=Math.random()*100+"%";
-    n.style.top=Math.random()*100+"%";
-    n.style.animationDuration = (5+Math.random()*10)+"s";
-    document.querySelector(".bg-dots").appendChild(n);
+    const dot=document.createElement("span");
+    dot.style.left=Math.random()*100+"%";
+    dot.style.top=Math.random()*100+"%";
+    dot.style.animationDuration=(5+Math.random()*10)+"s";
+    document.querySelector(".bg-dots").appendChild(dot);
 }
 </script>
 
 <h1>AI 智能网址导航 · 旗舰完全体</h1>
 
+<!-- 顶部按钮 -->
 <div class="nav">
-    <button onclick="copyAllURLs()" class="copy-all">复制所有网址</button>
+    <button class="copy-all" onclick="copyAllURLs()">复制所有网址</button>
     <button onclick="exportCSV()">导出 CSV</button>
     <button onclick="clearAll()">清空所有</button>
 </div>
 
+<!-- GitHub 扫描输入框 -->
 <div style="text-align:center; margin-top:20px;">
-    <input id="repoInput" placeholder="输入 GitHub 仓库名，例如：chenbaiqiang30/my-page"
+    <input id="repoInput" placeholder="例如：chenbaiqiang30/my-page"
            style="width:60%; padding:10px; border-radius:10px; border:1px solid #444; background:#0d1117; color:#fff;">
     <button onclick="loadFromGitHub()">自动扫描 GitHub</button>
 </div>
 
+<!-- 主三栏布局 -->
 <div class="container">
 
-    <!-- 左：马江博 -->
     <div class="card">
         <div class="section-title" onclick="toggle('mb')">马江博相关（0） ▼</div>
         <div class="section-content" id="mb">
@@ -208,7 +203,6 @@ for(let i=0;i<50;i++){
         </div>
     </div>
 
-    <!-- 中：政策 & 投资 & AI（智能分类） -->
     <div class="card">
         <div class="section-title" onclick="toggle('autoSort')">AI / 政策 / 投资 自动分类（0） ▼</div>
         <div class="section-content" id="autoSort">
@@ -217,7 +211,6 @@ for(let i=0;i<50;i++){
         </div>
     </div>
 
-    <!-- 右：其他 -->
     <div class="card">
         <div class="section-title" onclick="toggle('other')">其他（0） ▼</div>
         <div class="section-content" id="other">
@@ -225,42 +218,44 @@ for(let i=0;i<50;i++){
             <textarea id="otherBox"></textarea>
         </div>
     </div>
+
 </div>
 
 <!-- 搜索框 -->
 <div style="padding:20px;">
-    <input class="search-box" id="searchBox" placeholder="搜索所有网址（实时过滤）" oninput="filterLinks()">
+    <input class="search-box" id="searchBox" placeholder="搜索所有网址…" oninput="filterLinks()">
 </div>
 
-<!-- 瀑布流展示 -->
+<!-- 瀑布流卡片 -->
 <div class="link-grid" id="linkGrid"></div>
 
 <script>
 /* ----------------- 折叠 ------------------- */
 function toggle(id){
-    const x=document.getElementById(id);
-    x.style.display = (x.style.display==="block")?"none":"block";
+    const el=document.getElementById(id);
+    el.style.display = (el.style.display==="block")?"none":"block";
 }
 
-/* ----------------- 一键复制某栏 ------------------- */
+/* ----------------- 一键复制某类 ------------------- */
 function copyArea(id){
     const t=document.getElementById(id);
     navigator.clipboard.writeText(t.value);
-    alert("已复制");
+    alert("已复制本类！");
 }
 
 /* ----------------- 自动统计数量 ------------------- */
 function updateCounts(){
-    const sets=[
+    const items = [
         ["mbBox","马江博相关"],
-        ["autoBox","AI / 政策 / 投资"],
+        ["autoBox","AI / 政策 / 投资 自动分类"],
         ["otherBox","其他"]
     ];
-    const titles=document.querySelectorAll(".section-title");
 
-    sets.forEach((s,i)=>{
-        const lines=document.getElementById(s[0]).value.trim().split("\n").filter(x=>x.trim()!="");
-        titles[i].innerHTML=`${s[1]}（${lines.length}） ▼`;
+    const titles = document.querySelectorAll(".section-title");
+
+    items.forEach((item,i)=>{
+        const count = document.getElementById(item[0]).value.split("\n").filter(x=>x.trim()!="").length;
+        titles[i].innerHTML = `${item[1]}（${count}） ▼`;
     });
 }
 
@@ -273,15 +268,15 @@ function clearAll(){
     renderCards();
 }
 
-/* ----------------- 合并全部 ------------------- */
+/* ----------------- 合并所有 ------------------- */
 function collectAll(){
     return mbBox.value + "\n" + autoBox.value + "\n" + otherBox.value;
 }
 
-/* ----------------- 复制所有网址 ------------------- */
+/* ----------------- 复制全部 ------------------- */
 function copyAllURLs(){
     navigator.clipboard.writeText(collectAll());
-    alert("全部网址已复制！");
+    alert("所有网址已复制！");
 }
 
 /* ----------------- CSV 导出 ------------------- */
@@ -290,45 +285,43 @@ function exportCSV(){
     let csv="url\n"+arr.join("\n");
     const blob=new Blob([csv],{type:'text/csv'});
     const url=URL.createObjectURL(blob);
-
     const a=document.createElement("a");
     a.href=url;
     a.download="links.csv";
     a.click();
 }
 
-/* ----------------- 自动分类逻辑 ------------------- */
-const MB_KEYS=["马江博","十日谈","政策","趋势","马老师"];
-const AI_KEYS=["AI","智能","算法","GPT","模型"];
-const POLICY_KEYS=["政策","规划","五年计划"];
-const INVEST_KEYS=["投资","风向标","经济","大重估"];
+/* ----------------- 智能分类关键字 ------------------- */
+const MB_KEYS=["马江博","十日谈","趋势","马老师"];
+const AI_KEYS=["AI","智能","算法","GPT","模型","代码"];
+const POLICY_KEYS=["政策","规划","五年计划","两会"];
+const INVEST_KEYS=["投资","经济","风向标","资产","大重估"];
 
-function smartSort(url){
+function classify(url){
     if(MB_KEYS.some(k=>url.includes(k))) return "mb";
-    if(AI_KEYS.some(k=>url.includes(k)) ||
-       POLICY_KEYS.some(k=>url.includes(k)) ||
-       INVEST_KEYS.some(k=>url.includes(k))) return "auto";
+    if(AI_KEYS.some(k=>url.includes(k))) return "auto";
+    if(POLICY_KEYS.some(k=>url.includes(k))) return "auto";
+    if(INVEST_KEYS.some(k=>url.includes(k))) return "auto";
     return "other";
 }
 
-/* ----------------- 扫描 GitHub Pages ------------------- */
+/* ----------------- 扫描 GitHub 仓库 ------------------- */
 async function loadFromGitHub(){
     const repo=document.getElementById("repoInput").value.trim();
     if(!repo){ alert("请填写仓库名"); return; }
 
     const api=`https://api.github.com/repos/${repo}/contents`;
-
     const res=await fetch(api);
     const list=await res.json();
 
-    list.forEach(f=>{
-        if(f.name.endsWith(".html")){
-            const url=`https://${repo.split("/")[0]}.github.io/${repo.split("/")[1]}/${f.name}`;
+    list.forEach(file=>{
+        if(file.name.endsWith(".html")){
+            const url = `https://${repo.split("/")[0]}.github.io/${repo.split("/")[1]}/${file.name}`;
+            const type=classify(url);
 
-            const type=smartSort(url);
-            if(type==="mb") mbBox.value+=url+"\n";
-            else if(type==="auto") autoBox.value+=url+"\n";
-            else otherBox.value+=url+"\n";
+            if(type==="mb") mbBox.value+= url+"\n";
+            else if(type==="auto") autoBox.value+= url+"\n";
+            else otherBox.value+= url+"\n";
         }
     });
 
@@ -336,29 +329,35 @@ async function loadFromGitHub(){
     renderCards();
 }
 
-/* ----------------- 渲染瀑布流卡片 ------------------- */
+/* --------------------------------------------------------
+   渲染卡片（⭐ 搜索修复版：每次都执行 filterLinks）
+--------------------------------------------------------- */
 function renderCards(){
     const grid=document.getElementById("linkGrid");
     grid.innerHTML="";
 
-    collectAll()
-        .split("\n")
-        .filter(x=>x.trim()!="")
-        .forEach(url=>{
-            const div=document.createElement("div");
-            div.className="link-card";
-            div.innerHTML=url;
-            grid.appendChild(div);
-        });
+    const urls = collectAll().split("\n").filter(x=>x.trim()!="");
+
+    urls.forEach(url=>{
+        const div=document.createElement("div");
+        div.className="link-card";
+        div.dataset.url = url.toLowerCase();
+        div.innerText=url;
+        grid.appendChild(div);
+    });
+
+    // ★ 搜索修复：渲染完成后刷新过滤
+    filterLinks();
 }
 
-/* ----------------- 搜索过滤 ------------------- */
+/* ----------------- 搜索过滤（完全修复版） ------------------- */
 function filterLinks(){
     const q=document.getElementById("searchBox").value.trim().toLowerCase();
     const cards=document.querySelectorAll(".link-card");
 
-    cards.forEach(c=>{
-        c.style.display = c.innerText.toLowerCase().includes(q) ? "block" : "none";
+    cards.forEach(card=>{
+        const text = card.dataset.url;
+        card.style.display = text.includes(q) ? "block" : "none";
     });
 }
 
