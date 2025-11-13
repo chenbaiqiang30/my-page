@@ -2,188 +2,370 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>小超の内容导航站</title>
+<title>AI 智能网址导航旗舰版 · 自动扫描 GitHub + 自动分类 + 一键复制</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- 字体 & 样式 -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-    body {
-        margin:0;
-        font-family:"Inter",sans-serif;
-        background:#0d0f16;
-        color:#e9ecf5;
-    }
-    header {
-        backdrop-filter:blur(12px);
-        background:rgba(20,22,35,0.6);
-        border-bottom:1px solid rgba(255,255,255,0.08);
-        position:sticky;
-        top:0;
-        z-index:10;
-        padding:14px 28px;
-        display:flex;
-        gap:26px;
-        font-size:15px;
-        font-weight:600;
-    }
-    header a {
-        color:#e9eeff;
-        text-decoration:none;
-    }
-    h1{
-        margin:30px auto 10px auto;
-        max-width:1200px;
-        padding:0 20px;
-        font-size:26px;
-        font-weight:600;
-    }
+/* -------------------------------------------------------
+   顶级视觉：全局暗色 | 毛玻璃 | 动态光点背景
+-------------------------------------------------------- */
+body {
+    margin: 0;
+    padding: 0;
+    background: #000a14;
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", sans-serif;
+    color: #e6e6e6;
+    overflow-x: hidden;
+}
 
-    /* 卡片 */
-    .grid{
-        max-width:1200px;
-        margin:20px auto 50px auto;
-        display:grid;
-        gap:18px;
-        grid-template-columns:repeat(auto-fill,minmax(320px,1fr));
-        padding:0 20px;
-    }
-    .card{
-        padding:22px;
-        border-radius:18px;
-        background:rgba(35,38,55,0.65);
-        border:1px solid rgba(255,255,255,0.06);
-        backdrop-filter:blur(14px);
-        transition:0.25s;
-    }
-    .card:hover{
-        transform:translateY(-4px);
-        box-shadow:0 0 18px rgba(90,220,255,0.3);
-    }
-    .card-title{
-        font-size:20px;
-        font-weight:600;
-        background:linear-gradient(90deg,#78c7ff,#e3b0ff);
-        -webkit-background-clip:text;
-        color:transparent;
-    }
-    .card a{
-        color:#9cd3ff;
-        text-decoration:none;
-        font-size:14px;
-    }
+/* 漂浮光点背景 */
+.bg-dots span {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    background: rgba(0, 180, 255, 0.6);
+    border-radius: 50%;
+    animation: floatDots 10s linear infinite;
+    pointer-events: none;
+    filter: blur(2px);
+}
+@keyframes floatDots {
+    from { transform: translateY(100vh) scale(1); opacity: 1; }
+    to   { transform: translateY(-120vh) scale(0.2); opacity: 0; }
+}
 
-    /* 文本框样式 */
-    textarea {
-        width:100%;
-        min-height:160px;
-        border-radius:12px;
-        background:rgba(0,0,0,0.35);
-        border:1px solid rgba(255,255,255,0.25);
-        color:#e9f4ff;
-        padding:10px;
-        font-size:13px;
-        resize:vertical;
-    }
-    .copy-btn{
-        padding:6px 14px;
-        border-radius:999px;
-        border:none;
-        cursor:pointer;
-        font-size:12px;
-        font-weight:600;
-    }
+/* -------------------------------------------------------
+   顶级标题（太阳光追踪渐变）
+-------------------------------------------------------- */
+h1 {
+    text-align: center;
+    font-size: 38px;
+    padding: 40px 0 20px 0;
+    background: linear-gradient(120deg, #00c8ff, #79e3ff, #009dff);
+    -webkit-background-clip: text;
+    color: transparent;
+    animation: shineTitle 6s linear infinite;
+}
+@keyframes shineTitle {
+    from { filter: brightness(1); }
+    to   { filter: brightness(1.7); }
+}
+
+/* -------------------------------------------------------
+   主要布局
+-------------------------------------------------------- */
+.container {
+    display: flex;
+    gap: 25px;
+    padding: 30px;
+}
+
+.card {
+    flex: 1;
+    padding: 20px;
+    border-radius: 18px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.15);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 0 25px rgba(0,0,0,0.5);
+}
+
+/* -------------------------------------------------------
+   折叠组件
+-------------------------------------------------------- */
+.section {
+    margin-bottom: 30px;
+}
+
+.section-title {
+    font-size: 20px;
+    padding: 12px 0;
+    cursor: pointer;
+    color: #7ccaff;
+    display: flex;
+    justify-content: space-between;
+}
+
+.section-content {
+    display: none;
+    margin-top: 10px;
+}
+
+/* 文本框 */
+textarea {
+    width: 100%;
+    height: 350px;
+    background: #0d1117;
+    color: #c9d1d9;
+    border: 1px solid #263041;
+    font-size: 14px;
+    border-radius: 12px;
+    padding: 12px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+/* -------------------------------------------------------
+   按钮
+-------------------------------------------------------- */
+button {
+    background: #00c2ff;
+    border: none;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #000;
+    font-weight: bold;
+    cursor: pointer;
+    margin-right: 10px;
+}
+button:hover { background: #4cdfff; }
+
+.copy-all { background: #ffc107; }
+.copy-all:hover { background: #ffda47; }
+
+/* -------------------------------------------------------
+   瀑布流网址卡片
+-------------------------------------------------------- */
+.link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill,minmax(280px,1fr));
+    gap: 16px;
+    margin-top: 20px;
+}
+
+.link-card {
+    padding: 16px;
+    border-radius: 14px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    backdrop-filter: blur(12px);
+    word-break: break-all;
+    color: #82d0ff;
+    font-size: 14px;
+}
+.link-card:hover {
+    background: rgba(255,255,255,0.12);
+}
+.search-box{
+    width: 100%;
+    padding: 12px;
+    background: #0d1117;
+    border: 1px solid #263041;
+    color: #e6e6e6;
+    border-radius: 10px;
+    margin-top: 15px;
+}
+
+/* -------------------------------------------------------
+   导航栏
+-------------------------------------------------------- */
+.nav {
+    text-align:center;
+    margin-top:10px;
+}
+.nav button {
+    margin: 0 8px;
+}
 </style>
 </head>
 
 <body>
 
-<header>
-    <a href="index.html">首页</a>
-    <a href="categories.html">分类</a>
-    <a href="tags.html">标签</a>
-    <a href="search.html">搜索</a>
-    <a href="rss.xml">RSS订阅</a>
-</header>
+<div class="bg-dots"></div>
+<script>
+for(let i=0;i<50;i++){
+    const n=document.createElement("span");
+    n.style.left=Math.random()*100+"%";
+    n.style.top=Math.random()*100+"%";
+    n.style.animationDuration = (5+Math.random()*10)+"s";
+    document.querySelector(".bg-dots").appendChild(n);
+}
+</script>
 
-<h1>📚 小超导航站 · 全部文章</h1>
+<h1>AI 智能网址导航 · 旗舰完全体</h1>
 
-<!-- 🔗 一键复制所有文章网址 -->
-<div style="max-width:1200px;margin:20px auto;padding:20px;border-radius:16px;
-     background:rgba(20,22,35,0.8);border:1px solid rgba(120,220,255,0.25);
-     backdrop-filter:blur(18px);">
-
-  <div style="font-size:16px;font-weight:600;margin-bottom:12px;">
-    📎 一键导出所有文章网址（马江博 / 其他）
-  </div>
-
-  <div style="display:flex;gap:20px;flex-wrap:wrap;">
-    <!-- 马江博 -->
-    <div style="flex:1 1 45%;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span>马江博相关</span>
-        <button class="copy-btn" onclick="copyUrls('mjb-urls')" style="background:#7cf3ff;color:#00131a;">复制</button>
-      </div>
-      <textarea id="mjb-urls" readonly placeholder="加载中……"></textarea>
-    </div>
-
-    <!-- 其他所有 -->
-    <div style="flex:1 1 45%;">
-      <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
-        <span>其他所有</span>
-        <button class="copy-btn" onclick="copyUrls('other-urls')" style="background:#ffd76f;color:#291a00;">复制</button>
-      </div>
-      <textarea id="other-urls" readonly placeholder="加载中……"></textarea>
-    </div>
-  </div>
-
+<div class="nav">
+    <button onclick="copyAllURLs()" class="copy-all">复制所有网址</button>
+    <button onclick="exportCSV()">导出 CSV</button>
+    <button onclick="clearAll()">清空所有</button>
 </div>
 
-<!-- 卡片区域 -->
-<div class="grid" id="cards"></div>
+<div style="text-align:center; margin-top:20px;">
+    <input id="repoInput" placeholder="输入 GitHub 仓库名，例如：chenbaiqiang30/my-page"
+           style="width:60%; padding:10px; border-radius:10px; border:1px solid #444; background:#0d1117; color:#fff;">
+    <button onclick="loadFromGitHub()">自动扫描 GitHub</button>
+</div>
+
+<div class="container">
+
+    <!-- 左：马江博 -->
+    <div class="card">
+        <div class="section-title" onclick="toggle('mb')">马江博相关（0） ▼</div>
+        <div class="section-content" id="mb">
+            <button onclick="copyArea('mbBox')">复制本类</button>
+            <textarea id="mbBox"></textarea>
+        </div>
+    </div>
+
+    <!-- 中：政策 & 投资 & AI（智能分类） -->
+    <div class="card">
+        <div class="section-title" onclick="toggle('autoSort')">AI / 政策 / 投资 自动分类（0） ▼</div>
+        <div class="section-content" id="autoSort">
+            <button onclick="copyArea('autoBox')">复制本类</button>
+            <textarea id="autoBox"></textarea>
+        </div>
+    </div>
+
+    <!-- 右：其他 -->
+    <div class="card">
+        <div class="section-title" onclick="toggle('other')">其他（0） ▼</div>
+        <div class="section-content" id="other">
+            <button onclick="copyArea('otherBox')">复制本类</button>
+            <textarea id="otherBox"></textarea>
+        </div>
+    </div>
+</div>
+
+<!-- 搜索框 -->
+<div style="padding:20px;">
+    <input class="search-box" id="searchBox" placeholder="搜索所有网址（实时过滤）" oninput="filterLinks()">
+</div>
+
+<!-- 瀑布流展示 -->
+<div class="link-grid" id="linkGrid"></div>
 
 <script>
-// 复制功能
-function copyUrls(id){
-    const el=document.getElementById(id);
-    el.select();
-    navigator.clipboard.writeText(el.value).then(()=>alert("已复制，可贴到多维表格！"));
+/* ----------------- 折叠 ------------------- */
+function toggle(id){
+    const x=document.getElementById(id);
+    x.style.display = (x.style.display==="block")?"none":"block";
 }
 
-// 自动读取 rename-map.json 并生成卡片 + 文本框数据
-async function init(){
-    const res = await fetch("rename-map.json?_=" + Date.now());
-    const map = await res.json();
+/* ----------------- 一键复制某栏 ------------------- */
+function copyArea(id){
+    const t=document.getElementById(id);
+    navigator.clipboard.writeText(t.value);
+    alert("已复制");
+}
 
-    const cards = document.getElementById("cards");
-    cards.innerHTML = "";
+/* ----------------- 自动统计数量 ------------------- */
+function updateCounts(){
+    const sets=[
+        ["mbBox","马江博相关"],
+        ["autoBox","AI / 政策 / 投资"],
+        ["otherBox","其他"]
+    ];
+    const titles=document.querySelectorAll(".section-title");
 
-    let mjbList = [];
-    let otherList = [];
+    sets.forEach((s,i)=>{
+        const lines=document.getElementById(s[0]).value.trim().split("\n").filter(x=>x.trim()!="");
+        titles[i].innerHTML=`${s[1]}（${lines.length}） ▼`;
+    });
+}
 
-    const base = location.origin + location.pathname.replace("index.html","");
+/* ----------------- 清空所有 ------------------- */
+function clearAll(){
+    mbBox.value="";
+    autoBox.value="";
+    otherBox.value="";
+    updateCounts();
+    renderCards();
+}
 
-    Object.entries(map).forEach(([oldName,newName])=>{
-        if(!newName || ["index.html","categories.html","tags.html","rss.xml"].includes(newName)) return;
+/* ----------------- 合并全部 ------------------- */
+function collectAll(){
+    return mbBox.value + "\n" + autoBox.value + "\n" + otherBox.value;
+}
 
-        const url = base + newName;
-        const isMJB = oldName.includes("马江博");
+/* ----------------- 复制所有网址 ------------------- */
+function copyAllURLs(){
+    navigator.clipboard.writeText(collectAll());
+    alert("全部网址已复制！");
+}
 
-        if(isMJB) mjbList.push(url); else otherList.push(url);
+/* ----------------- CSV 导出 ------------------- */
+function exportCSV(){
+    const arr=collectAll().split("\n").filter(x=>x.trim()!="");
+    let csv="url\n"+arr.join("\n");
+    const blob=new Blob([csv],{type:'text/csv'});
+    const url=URL.createObjectURL(blob);
 
-        // 生成卡片
-        cards.innerHTML += `
-        <div class="card">
-            <div class="card-title">${oldName.replace(".html","")}</div>
-            <a href="${url}">打开文章 →</a>
-        </div>`;
+    const a=document.createElement("a");
+    a.href=url;
+    a.download="links.csv";
+    a.click();
+}
+
+/* ----------------- 自动分类逻辑 ------------------- */
+const MB_KEYS=["马江博","十日谈","政策","趋势","马老师"];
+const AI_KEYS=["AI","智能","算法","GPT","模型"];
+const POLICY_KEYS=["政策","规划","五年计划"];
+const INVEST_KEYS=["投资","风向标","经济","大重估"];
+
+function smartSort(url){
+    if(MB_KEYS.some(k=>url.includes(k))) return "mb";
+    if(AI_KEYS.some(k=>url.includes(k)) ||
+       POLICY_KEYS.some(k=>url.includes(k)) ||
+       INVEST_KEYS.some(k=>url.includes(k))) return "auto";
+    return "other";
+}
+
+/* ----------------- 扫描 GitHub Pages ------------------- */
+async function loadFromGitHub(){
+    const repo=document.getElementById("repoInput").value.trim();
+    if(!repo){ alert("请填写仓库名"); return; }
+
+    const api=`https://api.github.com/repos/${repo}/contents`;
+
+    const res=await fetch(api);
+    const list=await res.json();
+
+    list.forEach(f=>{
+        if(f.name.endsWith(".html")){
+            const url=`https://${repo.split("/")[0]}.github.io/${repo.split("/")[1]}/${f.name}`;
+
+            const type=smartSort(url);
+            if(type==="mb") mbBox.value+=url+"\n";
+            else if(type==="auto") autoBox.value+=url+"\n";
+            else otherBox.value+=url+"\n";
+        }
     });
 
-    document.getElementById("mjb-urls").value = mjbList.join("\n");
-    document.getElementById("other-urls").value = otherList.join("\n");
+    updateCounts();
+    renderCards();
 }
 
-init();
+/* ----------------- 渲染瀑布流卡片 ------------------- */
+function renderCards(){
+    const grid=document.getElementById("linkGrid");
+    grid.innerHTML="";
+
+    collectAll()
+        .split("\n")
+        .filter(x=>x.trim()!="")
+        .forEach(url=>{
+            const div=document.createElement("div");
+            div.className="link-card";
+            div.innerHTML=url;
+            grid.appendChild(div);
+        });
+}
+
+/* ----------------- 搜索过滤 ------------------- */
+function filterLinks(){
+    const q=document.getElementById("searchBox").value.trim().toLowerCase();
+    const cards=document.querySelectorAll(".link-card");
+
+    cards.forEach(c=>{
+        c.style.display = c.innerText.toLowerCase().includes(q) ? "block" : "none";
+    });
+}
+
+/* 实时更新 */
+document.querySelectorAll("textarea").forEach(t=>{
+    t.addEventListener("input", ()=>{ updateCounts(); renderCards(); });
+});
 </script>
 
 </body>
