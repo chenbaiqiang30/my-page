@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>组织提效核心方法论 - 卫哲</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow-light: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --shadow-heavy: 0 15px 45px rgba(31, 38, 135, 0.25);
+            --method-color: #e53e3e;
+            --data-color: #3182ce;
+            --quote-color: #38a169;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background-attachment: fixed;
+            line-height: 1.8;
+            color: #2d3748;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: var(--shadow-light);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            color: #4a5568;
+            margin-bottom: 10px;
+        }
+
+        .author-info {
+            margin-top: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .author-info h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .author-info ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .author-info li {
+            padding: 8px 0;
+            color: #4a5568;
+            font-size: 1.05em;
+        }
+
+        .author-info li:before {
+            content: "✦ ";
+            color: #667eea;
+            margin-right: 10px;
+        }
+
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .mindmap-title {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 50px;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            gap: 60px;
+            flex-wrap: wrap;
+        }
+
+        .mindmap-center {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 35px 45px;
+            border-radius: 50%;
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: center;
+            min-width: 200px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            position: relative;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            flex: 1;
+            max-width: 900px;
+        }
+
+        .mindmap-branch {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 20px;
+            border: 2px solid var(--glass-border);
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .mindmap-branch:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: var(--shadow-heavy);
+            border-color: #667eea;
+        }
+
+        .mindmap-branch-title {
+            font-weight: 700;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .mindmap-branch-items {
+            list-style: none;
+        }
+
+        .mindmap-branch-items li {
+            padding: 10px 0;
+            padding-left: 25px;
+            position: relative;
+            color: #4a5568;
+            font-size: 1.05em;
+        }
+
+        .mindmap-branch-items li:before {
+            content: "→";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
+            transition: all 0.3s ease;
+        }
+
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px rgba(31, 38, 135, 0.3);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-icon {
+            font-size: 2.5em;
+            margin-right: 15px;
+        }
+
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            flex: 1;
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .section-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section-preview {
+            color: #718096;
+            font-style: italic;
+            margin-top: 10px;
+            padding: 15px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section-content {
+            max-height: 5000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+            opacity: 0;
+        }
+
+        .key-point {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            padding: 25px;
+            border-radius: 18px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .key-point:before {
+            content: "💡";
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2em;
+            opacity: 0.3;
+        }
+
+        .key-point h4 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .key-point ul {
+            margin-left: 20px;
+        }
+
+        .key-point li {
+            margin: 12px 0;
+            line-height: 1.8;
+        }
+
+        .method {
+            color: var(--method-color);
+            font-weight: 700;
+            background: rgba(229, 62, 62, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .data {
+            color: var(--data-color);
+            font-weight: 700;
+            background: rgba(49, 130, 206, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .quote {
+            color: var(--quote-color);
+            font-style: italic;
+            font-weight: 600;
+            background: rgba(56, 161, 105, 0.1);
+            padding: 2px 8px;
+            border-radius: 6px;
+        }
+
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(245, 87, 108, 0.1), rgba(240, 147, 251, 0.1));
+            padding: 25px;
+            border-radius: 18px;
+            margin: 25px 0;
+            border-left: 5px solid #f5576c;
+            position: relative;
+        }
+
+        .expert-comment:before {
+            content: "👨‍💼";
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2em;
+            opacity: 0.3;
+        }
+
+        .expert-comment h5 {
+            color: #f5576c;
+            margin-bottom: 12px;
+            font-size: 1.15em;
+        }
+
+        .case-study {
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1));
+            padding: 25px;
+            border-radius: 18px;
+            margin: 25px 0;
+            border-left: 5px solid #4facfe;
+        }
+
+        .case-study h5 {
+            color: #4facfe;
+            margin-bottom: 12px;
+            font-size: 1.15em;
+        }
+
+        .formula-box {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: 700;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .formula-box:before {
+            content: "";
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .action-list {
+            list-style: none;
+            counter-reset: action-counter;
+        }
+
+        .action-list li {
+            counter-increment: action-counter;
+            position: relative;
+            padding: 20px 20px 20px 70px;
+            margin: 15px 0;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.7));
+            border-radius: 15px;
+            border-left: 5px solid #667eea;
+            box-shadow: var(--shadow-light);
+            transition: all 0.3s ease;
+        }
+
+        .action-list li:hover {
+            transform: translateX(5px);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .action-list li:before {
+            content: counter(action-counter);
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary-gradient);
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1));
+            padding: 25px;
+            border-radius: 18px;
+            margin: 25px 0;
+            border: 2px solid #f59e0b;
+            position: relative;
+        }
+
+        .highlight-box:before {
+            content: "⭐";
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 2em;
+        }
+
+        .summary-box {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .summary-title {
+            font-size: 2em;
+            font-weight: 700;
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 60px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-heavy);
+        }
+
+        .footer-content {
+            color: #4a5568;
+            font-size: 1.1em;
+            line-height: 2;
+        }
+
+        .footer-highlight {
+            font-size: 1.3em;
+            font-weight: 700;
+            background: var(--primary-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin: 15px 0;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a202c 0%, #2d3748 50%, #4a5568 100%);
+        }
+
+        body.dark-mode .header,
+        body.dark-mode .section,
+        body.dark-mode .mindmap-container,
+        body.dark-mode .summary-box,
+        body.dark-mode .footer,
+        body.dark-mode .theme-toggle {
+            background: rgba(26, 32, 44, 0.95);
+            color: #e2e8f0;
+        }
+
+        body.dark-mode .section-content,
+        body.dark-mode .key-point ul,
+        body.dark-mode .action-list li,
+        body.dark-mode .section-preview,
+        body.dark-mode .expert-comment,
+        body.dark-mode .case-study,
+        body.dark-mode .highlight-box,
+        body.dark-mode .author-info,
+        body.dark-mode .mindmap-branch {
+            color: #e2e8f0;
+            background: rgba(45, 55, 72, 0.8);
+        }
+
+        body.dark-mode .mindmap-branch-items li {
+            color: #e2e8f0;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .section {
+                padding: 25px;
+            }
+
+            .mindmap {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .mindmap-branches {
+                width: 100%;
+            }
+
+            .theme-toggle {
+                top: 10px;
+                right: 10px;
+                padding: 10px 20px;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .theme-toggle {
+                display: none;
+            }
+
+            .section {
+                page-break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+
+    <div class="container">
+        <div class="header">
+            <h1>组织提效核心方法论</h1>
+            <div class="subtitle">存量经济时代的生存法则</div>
+            
+            <div class="author-info">
+                <h3>关于讲师 - 卫哲</h3>
+                <ul>
+                    <li>嘉御资本创始人</li>
+                    <li>阿里巴巴前CEO(5年)</li>
+                    <li>百安居中国区前CEO(5年)</li>
+                    <li>14年投资生涯,投资100+企业,30+IPO,5家千亿市值公司</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">🧠 核心方法论导图</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">
+                    组织提效<br>三大支柱
+                </div>
+                <div class="mindmap-branches">
+                    <div class="mindmap-branch">
+                        <div class="mindmap-branch-title">📊 效率指标</div>
+                        <ul class="mindmap-branch-items">
+                            <li>第一效率指标</li>
+                            <li>人效/坪效/设备利用率</li>
+                            <li>跟自己比→跟次高比→跟同行比</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="mindmap-branch-title">🏗️ 资产效率</div>
+                        <ul class="mindmap-branch-items">
+                            <li>先关窗(防止新闲置)</li>
+                            <li>再捡纸(释放已闲置)</li>
+                            <li>消灭淡季</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="mindmap-branch-title">👥 组织根基</div>
+                        <ul class="mindmap-branch-items">
+                            <li>招聘:跨两级,新人不招新人</li>
+                            <li>培训:两新(新人+新干部)</li>
+                            <li>考核:高频+非业绩因素</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="mindmap-branch-title">🎯 干部培养</div>
+                        <ul class="mindmap-branch-items">
+                            <li>M1坚定自己培养</li>
+                            <li>团队分(输出干部)</li>
+                            <li>轮岗机制</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="mindmap-branch-title">🏢 组织结构</div>
+                        <ul class="mindmap-branch-items">
+                            <li>官兵比例1:7-9</li>
+                            <li>创始人到员工≤3级</li>
+                            <li>审批到三不过四</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="mindmap-branch-title">⏰ 领导效率</div>
+                        <ul class="mindmap-branch-items">
+                            <li>消灭碎片化时间</li>
+                            <li>时间分配规划</li>
+                            <li>跨级了解,逐级布置</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-grid">
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">🎯</span>
+                    <h2 class="section-title">核心理念:效率为王</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    存量经济时代,效率要压倒一切,尤其要压倒曾经最喜欢的增速和规模...
+                </div>
+                <div class="section-content">
+                    <div class="formula-box">
+                        效率 > 增长速度 > 规模
+                    </div>
+
+                    <div class="key-point">
+                        <h4>新周期的两组关键关系</h4>
+                        <ul>
+                            <li><span class="method">增长vs效率</span>:<span class="quote">像开车比油耗,不只比速度</span></li>
+                            <li><span class="method">规模vs效益</span>:存量经济下大车不一定能装满</li>
+                        </ul>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 核心洞察</h5>
+                        <p><span class="quote">没有效率的增长是加速自杀</span>。那些倒下的超级独角兽,不是缺钱,而是没有效率地追求增长,消耗了加好的油。</p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 案例:互联网二手车</h5>
+                        <p>月成交<span class="data">3万辆</span>车,<span class="data">100个</span>网点,<span class="data">1万名</span>员工 → 人均月成交<span class="data">3辆</span></p>
+                        <p>传统黄牛人均月成交<span class="data">6-9辆</span>,效率反而更高,无法颠覆行业</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>企业存在的两个关键点:</strong>
+                        <ol>
+                            <li>创造<span class="method">可衡量的用户价值</span>(多快好省)</li>
+                            <li>用<span class="method">可持续的效率</span>创造价值</li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">📊</span>
+                    <h2 class="section-title">第一效率指标</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    创始人是公司第一效率责任人,必须找到并设立第一核心效率指标...
+                </div>
+                <div class="section-content">
+                    <div class="key-point">
+                        <h4>如何找到第一效率指标?</h4>
+                        <p><span class="method">占用资金最多的科目</span> = 第一效率指标</p>
+                        <ul>
+                            <li><span class="method">人力成本最大</span> → <span class="data">人效</span>(人均营收/GMV/支付额)</li>
+                            <li><span class="method">租金成本最大</span> → <span class="data">坪效</span>(每平米产出)</li>
+                            <li><span class="method">固定资产最大</span> → <span class="data">设备利用率</span>(开工率)</li>
+                            <li><span class="method">应收账款最大</span> → <span class="data">周转天数</span></li>
+                            <li><span class="method">营销费用最大</span> → <span class="data">ROI</span>(投入产出比)</li>
+                        </ul>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 阿里巴巴三大业务指标</h5>
+                        <ul>
+                            <li><strong>B2B</strong>:人均年创造<span class="data">100万</span>营收</li>
+                            <li><strong>淘宝</strong>:人均年创造<span class="data">1亿</span>GMV</li>
+                            <li><strong>支付宝</strong>:人均年创造<span class="data">10亿</span>支付额</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>设立标准的三种方法:</strong>
+                        <ol class="action-list">
+                            <li><span class="data">自己跟过去比</span> - <span class="quote">今天的最好成绩是明天的最低标准</span></li>
+                            <li><span class="data">内部可比部门比</span> - 去掉最高分,用次高效率做标准</li>
+                            <li><span class="data">跟同行比</span> - 在第一效率指标上碾压同行</li>
+                        </ol>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>⚠️ 关键提醒</h5>
+                        <p>颠覆一个行业需要:<span class="method">用户体验碾压</span> + <span class="method">效率指标碾压</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">🏗️</span>
+                    <h2 class="section-title">资产效率提升</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    先关窗再捡纸,防止产生新的闲置资源,核心方法是消灭淡季...
+                </div>
+                <div class="section-content">
+                    <div class="formula-box">
+                        先关窗(防止新闲置) → 再捡纸(释放已闲置)
+                    </div>
+
+                    <div class="key-point">
+                        <h4>提升次序不能错</h4>
+                        <ol class="action-list">
+                            <li><span class="method">关窗</span>:防止产生新的闲置资源(审视扩产能/库存/新增投资)</li>
+                            <li><span class="method">释放闲置</span>:消灭淡季,让淡季不淡</li>
+                        </ol>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>为什么<span class="method">淡季不淡</span>比旺季更旺更重要?</strong>
+                        <ul>
+                            <li>旺季=同行的旺季=成本高+价格低=不赚钱</li>
+                            <li>淡季=资源闲置=已付成本浪费</li>
+                            <li><span class="quote">淡季产生的毛利几乎就是净利</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 案例1:百安居消灭梅雨季</h5>
+                        <p><strong>行业认知</strong>:梅雨季是淡季,不能装修</p>
+                        <p><strong>用户真相</strong>:只有刷油漆受影响,其他工序不受影响</p>
+                        <p><strong>解决方案</strong>:梅雨季大促销除油漆外的所有建材,梅雨后刷油漆</p>
+                        <p><strong>结果</strong>:成功消灭淡季</p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 案例2:锅圈食汇的四季平衡</h5>
+                        <p><strong>原业务</strong>:火锅(秋冬旺季)</p>
+                        <p><strong>新业务</strong>:烧烤(夏天旺季)</p>
+                        <p><strong>结果</strong>:消灭一年四季的淡季</p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 案例3:格乐利雅的工作日利用</h5>
+                        <p><strong>原业务</strong>:婚礼堂(周末旺)</p>
+                        <p><strong>新业务</strong>:商务活动+生日宴(工作日)</p>
+                        <p><strong>结果</strong>:消灭一周的淡季</p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 案例4:沪上阿姨的早晨时段</h5>
+                        <p><strong>原业务</strong>:奶茶(11点后)</p>
+                        <p><strong>新业务</strong>:咖啡(8-11点)</p>
+                        <p><strong>投入</strong>:几千块咖啡机</p>
+                        <p><strong>结果</strong>:消灭一天的淡季,快速回本</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 核心洞察</h5>
+                        <p>创始人心中没有淡季,才可能推动团队实现<span class="quote">淡季不淡</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">👥</span>
+                    <h2 class="section-title">组织根基:招聘篇</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    员工流失率高的核心原因是招聘就招错了人,要做对招聘的三件事...
+                </div>
+                <div class="section-content">
+                    <div class="formula-box">
+                        员工流失率高 = 招聘源头出错
+                    </div>
+
+                    <div class="key-point">
+                        <h4>做对招聘的三件事</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第一:不轻易下放招聘权</strong>
+                        <ul>
+                            <li><span class="method">新人不能招新人</span>(不了解公司标准)</li>
+                            <li><span class="method">至少跨两级招聘</span>(创始人面试下下级)</li>
+                            <li><span class="data">阿里规则</span>:新高管入职后,先观战<span class="data">3次</span>学习,被监督面试<span class="data">3次</span>,约<span class="data">1个月</span>后才能单飞</li>
+                            <li><span class="quote">财权可以放,招聘权不能轻易放</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 卫哲加入阿里的经历</h5>
+                        <p><strong>财权</strong>:无上限(充分信任)</p>
+                        <p><strong>人权</strong>:不能自己招人</p>
+                        <p><strong>原因</strong>:不了解阿里标准,会用百安居标准招人</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第二:关注专业能力以外的"味道"</strong>
+                        <ul>
+                            <li>每家公司都有自己的<span class="method">文化味道</span></li>
+                            <li>迪卡侬:每人会一项体育运动</li>
+                            <li>老板电器:每人会做菜</li>
+                            <li>泡泡玛特:招自己的粉丝</li>
+                            <li>设计开放式问题:<span class="quote">你这辈子吃过最大的苦是什么?</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>⚠️ 反面案例</h5>
+                        <p>候选人认为最大的苦是"上海到无锡坐<span class="data">2小时</span>绿皮火车" → 不适合需要吃苦的销售岗位</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第三:做好人才地级差</strong>
+                        <p><span class="quote">平凡的人能做非凡的事</span></p>
+                        <ul>
+                            <li><span class="method">基层升两级</span>:月薪1万的岗位,从月薪<span class="data">3-4千</span>的人里招(翻两番有干劲)</li>
+                            <li><span class="method">高层降两级</span>:引进精英,降待遇看是否真看好公司</li>
+                            <li>卫哲加入阿里:年薪从<span class="data">百万美元</span>降到<span class="data">百万人民币</span></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">🎓</span>
+                    <h2 class="section-title">组织根基:培训与考核</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    培训核心抓"两新",有培训必有考核,有考核必有淘汰...
+                </div>
+                <div class="section-content">
+                    <div class="key-point">
+                        <h4>培训要点</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>培训核心:抓住<span class="method">"两新"</span></strong>
+                        <ol class="action-list">
+                            <li><span class="data">新人</span>:最重要的培训对象</li>
+                            <li><span class="data">新干部</span>:外来新干部(重中之重) + 新晋升M1(新班长)</li>
+                        </ol>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>培训三原则</strong>
+                        <ul>
+                            <li>舍得拿<span class="method">最好的业务骨干</span>当教官</li>
+                            <li><span class="quote">培训要像实战,演习不能像演戏</span></li>
+                            <li>培训强度和难度要<span class="method">超越实战</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 阿里工程师培训</h5>
+                        <p><strong>项目</strong>:<span class="data">88小时</span>魔鬼训练</p>
+                        <p><strong>内容</strong>:真实历史代码找bug,连续写代码修代码</p>
+                        <p><strong>强度</strong>:超过双11连续<span class="data">48-72小时</span>不眠不休</p>
+                        <p><strong>配套</strong>:身边支张行军床,困了眯一会继续</p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 阿里销售培训</h5>
+                        <p><strong>正常节奏</strong>:<span class="data">7:30</span>晨会 → <span class="data">8:00</span>上街 → <span class="data">19:30</span>回来 → <span class="data">20:00</span>总结</p>
+                        <p><strong>培训节奏</strong>:<span class="data">6:00</span>起床 → <span class="data">6:30</span>晨会 → <span class="data">7:30</span>上街 → <span class="data">20:30</span>回来 → <span class="data">21:00</span>总结 → <span class="data">22:00</span>熄灯</p>
+                        <p><strong>内容</strong>:真实客户最尖锐的问题</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 核心理念</h5>
+                        <p><span class="quote">有培训必有考核,有考核必有淘汰</span></p>
+                        <p>阿里在培训期和见习期淘汰<span class="data">30%</span>,让不适合的人尽早认识到,避免浪费时间</p>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>考核三要素</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>要素一:考核频率</strong>
+                        <ul>
+                            <li><span class="method">一年一次 = 完全失去意义</span></li>
+                            <li>阿里当时:<span class="data">一年4次</span></li>
+                            <li>嘉御资本:<span class="data">一年2次</span></li>
+                            <li>发展快的部门考核频率应该更高</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>要素二:考官设置</strong>
+                        <ul>
+                            <li><span class="method">一对一考核最没效果</span></li>
+                            <li>推荐:<span class="data">One over One Plus HR</span></li>
+                            <li>考官组成:直属上级 + 上级的上级 + HR</li>
+                            <li>好处:避免黑箱操作 + 提前发现人才 + 间接考核中层</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>要素三:考核项目设计</strong>
+                        <p><span class="quote">你想要什么就考核什么,你考核什么就能得到什么</span></p>
+                        <p><strong>考核比例</strong>:<span class="data">业绩因素50%</span> + <span class="data">非业绩因素50%</span></p>
+                        <p><strong>非业绩三要素</strong>:</p>
+                        <ol class="action-list">
+                            <li><span class="method">团队分</span>:能否向外输出干部?输出干部后业绩是否还能保持?</li>
+                            <li><span class="method">策略分</span>:是否完成公司战略转型目标?(如客户结构调整)</li>
+                            <li><span class="method">价值观分</span>:是否符合公司文化和风气要求?</li>
+                        </ol>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 团队分案例</h5>
+                        <p><strong>江苏大区</strong>:业绩<span class="data">1亿</span> + 输出<span class="data">3个</span>区域经理 → 奖金系数<span class="data">1.3倍</span></p>
+                        <p><strong>浙江大区</strong>:业绩<span class="data">1亿</span> + 丢失<span class="data">2个</span>干部 → 奖金系数<span class="data">0.8倍</span></p>
+                        <p>同样业绩,最终可差<span class="data">3倍</span></p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 策略分案例</h5>
+                        <p><strong>战略目标</strong>:从依赖大客户转型到中小企业</p>
+                        <p><strong>浙江大区</strong>:业绩<span class="data">1亿</span> + 中小客户占比从<span class="data">10%→40%</span> → 策略系数<span class="data">1.5倍</span></p>
+                        <p><strong>江苏大区</strong>:业绩<span class="data">1亿</span> + 中小客户占比仍是<span class="data">10%</span> → 策略系数<span class="data">0.5倍</span></p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>⏰ 创始人时间分配</h5>
+                        <p>卫哲在阿里担任CEO时,每年在组织根基三板斧上花费:</p>
+                        <ul>
+                            <li>面试:<span class="data">8小时/周</span></li>
+                            <li>培训:<span class="data">2小时/周</span></li>
+                            <li>考核:<span class="data">50小时/次 × 4次/年</span></li>
+                            <li>合计:<span class="data">约800小时/年</span> = <span class="data">100个工作日</span></li>
+                        </ul>
+                        <p><span class="quote">这是最重要的事,把它们做好,别的事就没有那么多了</span></p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">🎯</span>
+                    <h2 class="section-title">干部培养与输出</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    干部有三个来源,M1坚定自己培养,高效组织的成果是能否高效输出干部...
+                </div>
+                <div class="section-content">
+                    <div class="key-point">
+                        <h4>干部三个来源</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第一类:坚定不移自己培养</strong>
+                        <ul>
+                            <li><span class="method">横坐标(级别)</span>:<span class="data">M1必须100%自己培养</span></li>
+                            <li>原因1:不给员工机会会失去希望</li>
+                            <li>原因2:M1需求量大但便宜,猎头没兴趣</li>
+                            <li>原因3:<span class="quote">对直接主管不满意是员工离职最集中原因</span></li>
+                            <li>阿里做法:系统封死M1外招功能</li>
+                            <li><span class="method">纵坐标(岗位)</span>:人才储备好或外招不适应的岗位</li>
+                        </ul>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 黄埔军校的启示</h5>
+                        <p>真正的黄埔军校不直接培养将军,从黄埔毕业的是<span class="data">班长和排长</span></p>
+                        <p>公司的"黄埔军校"就是培养<span class="method">M1</span>,凭实战成长为M6才能成为将军</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第二类:坚定不移外部引进</strong>
+                        <ul>
+                            <li>专业岗位:CFO、法律总顾问等</li>
+                            <li>原因:必须经历社会和其他岗位锻炼,内部培养耗时极长</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第三类:阶段性外部引进,最终自己培养</strong>
+                        <ul>
+                            <li>阶段性:<span class="data">最多2-3年</span></li>
+                            <li>案例:阿里云初期从微软/IBM引进,<span class="data">3年</span>后全部自己培养</li>
+                        </ul>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>如何培养新干部?</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>核心:明确哪些是<span class="method">员工不需要做,干部要做的事</span></strong>
+                        <ul>
+                            <li>主持会议(员工是参会者)</li>
+                            <li>分配任务(员工是接受者)</li>
+                            <li>主动招聘(员工被动参与)</li>
+                            <li>问题员工谈话(员工可能不理解)</li>
+                        </ul>
+                        <p>把这些任务提炼成模块,在晋升前逐个培养</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 培养路径</h5>
+                        <p>M1培训扎实 → M2几乎不需培训(任务相同,只是管理对象从员工变干部)</p>
+                        <p>M2到M5:基本不用培训</p>
+                        <p>M5到合伙人/VP:需要再培训(像军官晋升将军需上国防大学)</p>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>组织建设成果:设团队分</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>团队分机制</strong>
+                        <ul>
+                            <li>每一级干部都要有<span class="method">团队分</span></li>
+                            <li>M1想晋升必须考察:能否再培养出M1?</li>
+                            <li>能向团队外输出干部 → 团队分加分</li>
+                            <li>输出干部后业绩不降 → 额外加分</li>
+                            <li><span class="quote">让培养人才成为全公司的事,不只是老板的事</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>轮岗机制</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>轮岗时间节奏</strong>
+                        <ul>
+                            <li><span class="data">第1年</span>:不轮(完整年度)</li>
+                            <li><span class="data">第2年</span>:要考虑轮</li>
+                            <li><span class="data">第3年</span>:非轮不可</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>轮岗方式</strong>
+                        <ul>
+                            <li><span class="method">横着轮</span>:同岗位换区域/产品(销售换区域,还是管销售)</li>
+                            <li><span class="method">竖着轮</span>:换职能(销售→营销→研发,换位思考)</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>特殊机制:"援藏援疆"</strong>
+                        <ul>
+                            <li>针对困难部门/困难区域</li>
+                            <li>政策1:<span class="method">给容错率</span></li>
+                            <li>政策2:<span class="method">做得好快速晋升通道</span></li>
+                            <li>目的:引导干部勇挑重担,让困难部门翻身</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">🏢</span>
+                    <h2 class="section-title">避免大公司病</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    大公司病与公司大小无关,没有富贵命先得富贵病,要严控两个比例...
+                </div>
+                <div class="section-content">
+                    <div class="expert-comment">
+                        <h5>⚠️ 关键认知</h5>
+                        <p>大公司病与所有制无关,国企/外企/民企都可能得</p>
+                        <p><span class="quote">很多公司还不大,就染上了"大"公司病</span></p>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>避免大公司病:两个严控</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>严控一:官兵比例</strong>
+                        <ul>
+                            <li><span class="method">最佳比例</span>:<span class="data">1:7</span>(保底) 到 <span class="data">1:9</span>(理想)</li>
+                            <li>一个干部带<span class="data">7-9个</span>员工</li>
+                            <li>反面案例:副总裁只带<span class="data">3个</span>总监,总监只带<span class="data">2个</span>经理</li>
+                            <li>人力资源总监必须能直接拿出公司"官兵比例"数字</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>严控二:创始人到一线员工的层级</strong>
+                        <ul>
+                            <li><span class="quote">每多一个层级,公司都要掉一层皮</span></li>
+                            <li>100-200人发展很好 → 1000人失控 = 层级过多</li>
+                            <li>创始人到员工中间出现<span class="data">2级或以上</span>就开始出问题</li>
+                            <li>不同部门层级可以不一样(重要部门保持<span class="data">只隔1层</span>)</li>
+                        </ul>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 传话游戏的启示</h5>
+                        <p>传话游戏:中间隔的人越多,传话越走样</p>
+                        <p>隔<span class="data">1个</span>人 → 不会走样</p>
+                        <p>隔<span class="data">2个</span>以上 → 开始出问题</p>
+                        <p><strong>应用</strong>:下情上达,层次多就出问题</p>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>避免官僚主义:控制端与审批端</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第一:风险的高效控制</strong>
+                        <p>根据风险大小,<span class="method">只控一类</span>:</p>
+                        <ul>
+                            <li><span class="data">事前控制</span>:重大风险事项</li>
+                            <li><span class="data">事中控制</span>:按预算执行的事项</li>
+                            <li><span class="data">事后控制</span>:小风险事项(出差报销等)</li>
+                        </ul>
+                        <p><span class="quote">避免秋后算账:事前审过的事,事后还要再审一遍</span></p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 出差报销的最佳实践</h5>
+                        <p><strong>方法</strong>:只定政策,事后抽查</p>
+                        <p><strong>好处</strong>:不耽误事前效率,小成本发现人品问题</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>第二:简化审批流程</strong>
+                        <p><span class="method">到三不过四</span>:审批人最多<span class="data">不超过4个</span></p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 卫哲在阿里的发现</h5>
+                        <p><strong>问题</strong>:某流程有<span class="data">13个</span>审批人</p>
+                        <p><strong>分析</strong>:出问题只有<span class="data">2人</span>负责(第1个提交人+最后1个批准人)</p>
+                        <p><strong>数据洞察</strong>:</p>
+                        <ul>
+                            <li>部分中层干部全年<span class="data">0个</span>驳回</li>
+                            <li>审批停留时间只有<span class="data">27秒</span>(2-3千字报告)</li>
+                        </ul>
+                        <p><strong>结论</strong>:要么岗位不需要,要么没责任心</p>
+                        <p><strong>解决</strong>:用数据说话,让干部主动优化流程</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 核心原则</h5>
+                        <p>审批人多并不能分散风险,反而<span class="quote">没人承担责任</span></p>
+                        <p><span class="data">4人以内</span>审批,责任明确</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">📅</span>
+                    <h2 class="section-title">会议与报告提效</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    搬掉文山,填掉会海,设计会议频率和报告制度,让组织高效运转...
+                </div>
+                <div class="section-content">
+                    <div class="key-point">
+                        <h4>如何开好会:会前-会中-会后</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>会前:必须有议程</strong>
+                        <ul>
+                            <li>提前告知议程,不靠现场临时发挥</li>
+                            <li>重大事项要开<span class="method">预备会议</span></li>
+                            <li>避免大会上第一次知道"还要做这个事"</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>会中:四个关键点</strong>
+                        <ol class="action-list">
+                            <li><span class="method">统一记录会议纪要</span>(不是参会人各记各的,由CEO或主持人签发)</li>
+                            <li><span class="method">创始人最后发言</span>(多提问,少回答)</li>
+                            <li><span class="method">轮流做庄</span>(主持人轮换,汇报顺序轮换,避免"垃圾时间"部门)</li>
+                            <li><span class="method">表扬团队</span>(每次开会至少表扬一次,不能只训)</li>
+                        </ol>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>会后:督办闭环</strong>
+                        <ul>
+                            <li>下次会议第一议程:对照上次会议纪要检查</li>
+                            <li>形成闭环,确保执行</li>
+                        </ul>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>设计会议频率和目的</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>会议频率</strong>
+                        <ul>
+                            <li>相对固定的频率和时间</li>
+                            <li>团队围绕同一时间准备,<span class="method">同频共振</span></li>
+                            <li>避免老板随便一喊忙乱所有部门</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>会议三种目的</strong>
+                        <ol class="action-list">
+                            <li><span class="method">决策会</span>:要做出决定(如投委会投票)</li>
+                            <li><span class="method">协调会</span>:事已定,执行中协调部门间配合</li>
+                            <li><span class="method">务虚会</span>:产品会/战略会,不在公司开也可以</li>
+                        </ol>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>会议人员</strong>
+                        <ul>
+                            <li>相对固定的出席人员</li>
+                            <li>可适当增加旁听人员</li>
+                            <li>区分规定动作和自选动作</li>
+                        </ul>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>报告制度:公司的仪表盘</h4>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 仪表盘类比</h5>
+                        <p>开车需要仪表盘(车速/油耗/发动机温度)</p>
+                        <p>公司需要报告制度(效率指标/部门状态/风险预警)</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>报告频率</strong>
+                        <ul>
+                            <li><span class="method">固定频率</span>:日报/周报/月报/季报</li>
+                            <li>不同频率看不同内容</li>
+                            <li><span class="quote">频率很重要,团队同频共振,效率节奏感最强</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>报告内容:三大体系</strong>
+                        <ol class="action-list">
+                            <li><span class="method">财务报表</span>:给股东看(滞后指标)</li>
+                            <li><span class="method">客户健康度报告</span>:投诉率/退货率/续费率/使用频率(领先指标)</li>
+                            <li><span class="method">员工/团队健康度报告</span>:流失率/空缺时长/轮岗状况/收入变化</li>
+                        </ol>
+                        <p><span class="quote">客户和员工健康度比财务指标更重要,因为财务是滞后的</span></p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>统一报告口径</strong>
+                        <ul>
+                            <li>人力资源报的人工成本 ≠ 财务报的人工成本</li>
+                            <li>营销部门报的费用 ≠ 财务报的营销费用</li>
+                            <li>销售收入/复购率/退货率等多套口径</li>
+                            <li><span class="method">必须统一口径</span>,否则扯皮不断,亮点被淹没</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">👔</span>
+                    <h2 class="section-title">高效领导力</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    好领导要做到四件事,掌握好领导之术,创始人是公司的大脑...
+                </div>
+                <div class="section-content">
+                    <div class="formula-box">
+                        动之以情 → 晓之以理 → 诱之以利 → 绳之以法
+                    </div>
+
+                    <div class="key-point">
+                        <h4>好领导之道:四个词的次序不能变</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>完整路径</strong>
+                        <ol class="action-list">
+                            <li><span class="method">动之以情</span>:创业初期,讲感情,能共情(同学/家人一起创业)</li>
+                            <li><span class="method">晓之以理</span>:"理"是理想,描绘蓝图和方向(马云:让天下没有难做的生意)</li>
+                            <li><span class="method">诱之以利</span>:到达理想后,利益要到位</li>
+                            <li><span class="method">绳之以法</span>:有底线,突破就得绳之以法</li>
+                        </ol>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>⚠️ 次序错误的后果</h5>
+                        <ul>
+                            <li>先绳之以法 → 一片白色恐怖</li>
+                            <li>先诱之以利 → 引来利益之徒</li>
+                        </ul>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 领导力vs领导权</h5>
+                        <p><strong>领导力</strong>:动之以情 + 晓之以理</p>
+                        <p><strong>领导权</strong>:诱之以利 + 绳之以法</p>
+                        <p><span class="quote">公司扩张后诱之以利、绳之以法用得多,创始人领导力可能下降</span></p>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>好领导之理:四件事</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <ol class="action-list">
+                            <li><span class="method">解决</span>下级无法解决的问题(拿不下的客户/不会写的代码)</li>
+                            <li><span class="method">教授</span>下级无法掌握的能力(不只解决,还要教会)</li>
+                            <li><span class="method">承担</span>下级无法承担的责任(主动"背锅",不甩锅)</li>
+                            <li><span class="method">想到</span>下级无法想到的激励(了解期待,给出超预期)</li>
+                        </ol>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>好领导之术:四个可直接用的方法</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>术一:<span class="method">跨级了解情况,逐级布置任务</span></strong>
+                        <p><strong>常见误区</strong>:</p>
+                        <ul>
+                            <li>逐级了解逐级布置(信息损耗)</li>
+                            <li>跨级了解跨级布置(架空中层)</li>
+                            <li><span class="data">最危险</span>:逐级了解,跨级布置(中层不知情突然被要求执行)</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>术二:开会最后发言 + 每次至少表扬一次</strong>
+                        <ul>
+                            <li>chairman = 主席 = 主持会议的人</li>
+                            <li>领导更多是会议发起人和主持人,不是主讲人</li>
+                            <li><span class="quote">管理团队像带孩子,不能光靠训</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>术三:不要成为公司唯一的问题发现者和解决者</strong>
+                        <ul>
+                            <li>反面:老板出差回来说"我不在这些问题就没人发现和解决"</li>
+                            <li>这不是骄傲,而是<span class="method">特别危险</span></li>
+                            <li>理想:团队既能发现问题,又能解决问题</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>术四:会提问,不直接给答案</strong>
+                        <ul>
+                            <li>像教孩子算术:直接给答案,孩子永远学不好</li>
+                            <li>通过提问,引导团队自己找到答案</li>
+                            <li><strong>好处1</strong>:团队有成就感(答案是自己提出的)</li>
+                            <li><strong>好处2</strong>:执行更坚决(不是老板命令)</li>
+                            <li><strong>好处3</strong>:不会向老板甩锅(做错了也是自己的决定)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <span class="section-icon">⏰</span>
+                    <h2 class="section-title">创始人时间管理</h2>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="section-preview">
+                    时间管理大于财富管理,消灭碎片化时间,做好时间分配规划和闭环管理...
+                </div>
+                <div class="section-content">
+                    <div class="formula-box">
+                        时间管理 > 财富管理
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 核心理念</h5>
+                        <p><span class="quote">理财不见得越理越多,但理时间一定越理越多</span></p>
+                        <p>做好时间管理,可以从一个人生中理出<span class="data">三个人生</span>的时间</p>
+                    </div>
+
+                    <div class="key-point">
+                        <h4>时间管理两个建议</h4>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>建议一:<span class="method">消灭碎片化时间</span></strong>
+                        <p>不是"利用碎片化时间",而是"消灭碎片化时间"</p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 卫哲在伦敦商学院的选择</h5>
+                        <p><strong>背景</strong>:读书+上班,两地往返</p>
+                        <p><strong>三个选择</strong>:</p>
+                        <ul>
+                            <li>方案1:开车,不堵车<span class="data">45分钟</span>,堵车<span class="data">1小时20分</span></li>
+                            <li>方案2:火车+地铁,<span class="data">1小时</span></li>
+                            <li>方案3:慢车,<span class="data">1.5小时</span>,但出发地是始发站</li>
+                        </ul>
+                        <p><strong>选择</strong>:方案3</p>
+                        <p><strong>原因</strong>:前两种会形成碎片化时间(开车/换乘),慢车虽慢但可以完整利用</p>
+                        <p><strong>结果</strong>:伦敦商学院的书就在来回慢车上读完</p>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>消灭碎片化行为</strong>
+                        <ul>
+                            <li>刷微信/抖音 = 碎片化行为</li>
+                            <li>如果真想刷,就<span class="method">认认真真刷1小时</span>,然后再干别的事</li>
+                            <li>避免走走停停的碎片化消耗</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>建议二:<span class="method">时间分配规划和闭环管理</span></strong>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 百安居CEO的启示</h5>
+                        <p><strong>问题</strong>:卫哲看起来比管全球的英国CEO还忙</p>
+                        <p><strong>指出</strong>:"David,你的时间没有计划和闭环管理"</p>
+                        <p><strong>危害</strong>:</p>
+                        <ul>
+                            <li>浪费你的人生</li>
+                            <li><span class="quote">创始人时间指向决定团队时间分配</span></li>
+                            <li>创始人时间花错,整个团队都会花错时间</li>
+                        </ul>
+                    </div>
+
+                    <div class="highlight-box">
+                        <strong>时间管理方法</strong>
+                        <ol class="action-list">
+                            <li><span class="method">季度初规划</span>:写下未来一季度在不同事情上愿意花的时间比例</li>
+                            <li><span class="method">交给助理</span>:助理每天记录真实花费时间</li>
+                            <li><span class="method">季度末对照</span>:看规划vs实际的偏差</li>
+                            <li><span class="method">过程提醒</span>:助理阶段性提醒"XX时间还剩XX小时,还有X周"</li>
+                        </ol>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 卫哲第一次测试结果</h5>
+                        <p><strong>规划</strong>:门店巡视<span class="data">10天</span>/季,供应商<span class="data">20天</span>/季,培训招聘<span class="data">15天</span>/季...</p>
+                        <p><strong>实际</strong>:季度末拿出报告,与规划南辕北辙</p>
+                        <p><strong>原因</strong>:季度初规划是理性正确的,但执行中被事推着走,完全偏离</p>
+                    </div>
+
+                    <div class="case-study">
+                        <h5>📌 卫哲现在的时间管理</h5>
+                        <p><strong>规划</strong>:讲课每季度合计不超过<span class="data">8小时</span></p>
+                        <p><strong>执行</strong>:助理看季度时长,超了就只能安排下季度</p>
+                        <p><strong>方式</strong>:助理不决定见谁/讲什么,只提醒时间剩余,让创始人自主选择最值得的事</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <h5>💡 自我管理</h5>
+                        <p>创业者都是孤独的,需要两个"自我":</p>
+                        <ul>
+                            <li><span class="method">自我激励</span>:团队需要你激励,创始人只有自我激励</li>
+                            <li><span class="method">自我约束</span>:董事会和投资人很难天天约束创始人</li>
+                        </ul>
+                        <p><span class="quote">做好时间管理和情绪状态管理,是保持创始人高效状态的核心</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="summary-box">
+            <h2 class="summary-title">🎯 核心要点总结</h2>
+            
+            <div class="key-point">
+                <h4>一、效率指标体系</h4>
+                <ul>
+                    <li>找到<span class="method">第一效率指标</span>(占用资金最多的科目)</li>
+                    <li>设立标准:自己比→次高比→同行比</li>
+                    <li>创始人是<span class="method">第一效率责任人</span></li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>二、资产效率提升</h4>
+                <ul>
+                    <li>先关窗(防止新闲置)再捡纸(释放已闲置)</li>
+                    <li>核心方法:<span class="method">消灭淡季</span></li>
+                    <li>消灭年/周/日的淡季,<span class="quote">淡季不淡比旺季更旺更重要</span></li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>三、组织根基三板斧</h4>
+                <ul>
+                    <li><strong>招聘</strong>:新人不招新人,跨<span class="data">两级</span>招聘,关注"味道",人才地级差</li>
+                    <li><strong>培训</strong>:抓"两新",超实战强度,有培训必有考核淘汰</li>
+                    <li><strong>考核</strong>:高频考核,<span class="data">One over One Plus HR</span>,业绩<span class="data">50%</span>+非业绩<span class="data">50%</span></li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>四、干部培养</h4>
+                <ul>
+                    <li><span class="method">M1坚定自己培养</span>,外招系统封死</li>
+                    <li>设<span class="method">团队分</span>,能否输出干部</li>
+                    <li>轮岗机制:第<span class="data">1年</span>不轮,第<span class="data">2年</span>考虑,第<span class="data">3年</span>必轮</li>
+                    <li>"援藏援疆":给容错率+快速晋升通道</li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>五、避免大公司病</h4>
+                <ul>
+                    <li>官兵比例:<span class="data">1:7-9</span></li>
+                    <li>创始人到员工层级控制</li>
+                    <li>审批<span class="method">到三不过四</span></li>
+                    <li>风险控制:只控一类(事前/事中/事后)</li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>六、会议与报告</h4>
+                <ul>
+                    <li>会前有议程,会中统一纪要+最后发言+轮流做庄,会后督办闭环</li>
+                    <li>设计会议<span class="method">频率</span>和目的(决策/协调/务虚)</li>
+                    <li>报告三体系:财务+<span class="method">客户健康度</span>+<span class="method">员工健康度</span></li>
+                    <li>统一报告口径</li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>七、领导力</h4>
+                <ul>
+                    <li>领导之道:动之以情→晓之以理→诱之以利→绳之以法</li>
+                    <li>领导之理:解决问题+教授能力+承担责任+想到激励</li>
+                    <li>领导之术:跨级了解逐级布置,最后发言,不做唯一问题解决者,会提问不给答案</li>
+                </ul>
+            </div>
+
+            <div class="key-point">
+                <h4>八、时间管理</h4>
+                <ul>
+                    <li><span class="method">消灭碎片化时间</span>(不是利用,是消灭)</li>
+                    <li>时间分配规划:季度初规划→助理记录→过程提醒→季度末对照</li>
+                    <li><span class="quote">创始人时间指向决定团队时间分配</span></li>
+                    <li>自我激励+自我约束</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer">
+            <div class="footer-content">
+                <span class="footer-highlight">存量经济时代,效率为王</span>
+                <p>没有效率的增长是加速自杀</p>
+                <p>用可持续的效率创造可衡量的用户价值</p>
+                <span class="footer-highlight">今天的最好成绩是明天的最低标准</span>
+                <p style="margin-top: 30px; color: #667eea; font-weight: 600;">
+                    一个高效的人生一定是精彩的人生<br>
+                    一个高效的企业一定是能穿越周期的企业
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleSection(header) {
+            const content = header.nextElementSibling.nextElementSibling;
+            const preview = header.nextElementSibling;
+            
+            content.classList.toggle('collapsed');
+            header.classList.toggle('collapsed');
+            
+            if (content.classList.contains('collapsed')) {
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const button = document.querySelector('.theme-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                button.textContent = '☀️ 切换主题';
+            } else {
+                button.textContent = '🌓 切换主题';
+            }
+        }
+
+        // 初始化:所有预览都隐藏
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.section-preview').forEach(preview => {
+                preview.style.display = 'none';
+            });
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

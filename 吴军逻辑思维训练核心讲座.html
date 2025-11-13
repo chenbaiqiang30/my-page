@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吴军·逻辑思维训练 - 核心讲座笔记</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --light-bg: #f8fafc;
+            --dark-bg: #0f172a;
+            --light-text: #1e293b;
+            --dark-text: #f1f5f9;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--light-text);
+            padding: 20px;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: var(--dark-text);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 24px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .header {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        body.dark-mode .header p {
+            color: #a0aec0;
+        }
+
+        .meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.95em;
+            color: #999;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.3);
+        }
+
+        .btn-toggle {
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        body.dark-mode .btn-toggle {
+            background: rgba(99, 102, 241, 0.2);
+        }
+
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        @media (max-width: 1024px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        .main {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .section {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        .section-header {
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+        }
+
+        .section-header h2 {
+            font-size: 1.5em;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header .toggle-icon {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .section.collapsed .section-header .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            padding: 25px;
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+
+        .section.collapsed .section-content {
+            max-height: 0;
+            padding: 0 25px;
+            overflow: hidden;
+        }
+
+        .subsection {
+            margin-bottom: 25px;
+        }
+
+        .subsection:last-child {
+            margin-bottom: 0;
+        }
+
+        .subsection-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--secondary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subsection-content {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        body.dark-mode .subsection-content {
+            color: #cbd5e1;
+        }
+
+        .highlight-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: #dc2626;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .highlight-info {
+            background: rgba(59, 130, 246, 0.15);
+            color: #1d4ed8;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .highlight-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: #047857;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .highlight-quote {
+            background: rgba(139, 92, 246, 0.1);
+            color: #6d28d9;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-style: italic;
+        }
+
+        .example {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-size: 0.95em;
+        }
+
+        .example strong {
+            color: var(--primary);
+        }
+
+        .key-point {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(99, 102, 241, 0.1));
+            border-left: 4px solid var(--success);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        .key-point strong {
+            color: var(--success);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .mind-map {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .mind-map {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        .mind-map h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3em;
+        }
+
+        .mind-map-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
+            border-left: 4px solid var(--primary);
+            border-radius: 8px;
+            font-size: 0.95em;
+            color: #555;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        body.dark-mode .mind-map-item {
+            color: #cbd5e1;
+        }
+
+        .mind-map-item:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.1));
+            transform: translateX(5px);
+        }
+
+        .mind-map-item.level-1 {
+            font-weight: 700;
+            font-size: 1em;
+            border-color: var(--secondary);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.05));
+        }
+
+        .mind-map-item.level-2 {
+            margin-left: 20px;
+            font-size: 0.9em;
+        }
+
+        .insight-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .insight-box {
+            background: rgba(30, 41, 59, 0.95);
+            border-color: rgba(148, 163, 184, 0.2);
+        }
+
+        .insight-box h3 {
+            color: var(--warning);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .insight-item {
+            padding: 10px 0;
+            font-size: 0.95em;
+            color: #555;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            line-height: 1.6;
+        }
+
+        body.dark-mode .insight-item {
+            color: #cbd5e1;
+            border-bottom-color: rgba(148, 163, 184, 0.2);
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+
+        .list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .list li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        body.dark-mode .list li {
+            color: #cbd5e1;
+        }
+
+        .list li:before {
+            content: "→";
+            position: absolute;
+            left: 8px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .list.numbered li {
+            list-style: none;
+            padding-left: 40px;
+        }
+
+        .list.numbered li:before {
+            content: attr(data-number);
+            position: absolute;
+            left: 0;
+            width: 30px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            color: #999;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .mode-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--success);
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
+
+        .print-friendly {
+            page-break-inside: avoid;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .controls, .sidebar {
+                display: none;
+            }
+            .section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🧠 吴军·逻辑思维训练核心讲座</h1>
+            <p>系统性学习逻辑推理方法，提升判断力与解决问题能力</p>
+            <div class="meta">
+                <div class="meta-item">📅 讲座时间：2024年3月19日</div>
+                <div class="meta-item">👨‍🏫 讲师：吴军（硅谷投资人、计算机科学家）</div>
+                <div class="meta-item">📚 课程：逻辑思维训练50讲</div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-toggle" onclick="toggleAllSections()">
+                    📖 展开/收起全部
+                </button>
+                <button class="btn btn-toggle" onclick="toggleDarkMode()">
+                    🌓 深色模式
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <div class="main">
+                <!-- Section 1: Course Introduction -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>📌 课程核心目标与价值</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">🎯 三大核心目标</div>
+                            <div class="subsection-content">
+                                <div class="key-point">
+                                    <strong>目标1：清晰表达自己的想法</strong><br>
+                                    通过学习演绎推理和归纳推理，能够在工作汇报、日常沟通中表达得更加清晰有逻辑。
+                                </div>
+                                <div class="key-point">
+                                    <strong>目标2：识别他人的逻辑漏洞</strong><br>
+                                    学会识别常见的逻辑谬误（诉诸权威、诉诸大众、二元对立等），不被他人的似是而非的论证所误导。
+                                </div>
+                                <div class="key-point">
+                                    <strong>目标3：解决未知问题的能力</strong><br>
+                                    面对没有做过的新事物时，通过逻辑拆解找到正确的路径和解决方案。
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">💎 为什么要学逻辑思维？</div>
+                            <ul class="list">
+                                <li><span class="highlight-success">底层能力</span> - 哪都用得着，而且是越强越好</li>
+                                <li><span class="highlight-success">非理科专属</span> - 文科生同样需要，不是数学能力问题</li>
+                                <li><span class="highlight-success">终身适用</span> - 无论学生、员工、管理者都能受益</li>
+                                <li><span class="highlight-success">避免智商税</span> - 有基本逻辑常识可以避免很多被骗</li>
+                            </ul>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">👥 特别适用人群</div>
+                            <div class="subsection-content">
+                                <strong>家长：</strong> 培养孩子从小的逻辑思维，赢在起跑线<br>
+                                <strong>管理者：</strong> 带领团队一起学习，提高团队的沟通效率<br>
+                                <strong>职场人士：</strong> 提升汇报清晰度、谈判能力、决策质量<br>
+                                <strong>产品经理/程序员：</strong> 特别需要逻辑推理的岗位<br>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 2: Deductive Reasoning -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>🔗 演绎推理：从前提到结论</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">核心定义</div>
+                            <div class="example">
+                                <strong>演绎推理：</strong>从一些已知的前提出发，通过逻辑推导得到结论。<br>
+                                最简单的例子：<br>
+                                • 所有人都会死（前提1）<br>
+                                • 苏格拉底是人（前提2）<br>
+                                • 因此，苏格拉底会死（结论）
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">📚 几何学与逻辑思维的联系</div>
+                            <div class="subsection-content">
+                                中学几何学看似无用，实际上教的就是演绎推理能力。几何课本虽然厚重，但所有内容都来自于<span class="highlight-info">5条公理和5条公设</span>。学好几何就是学会了：
+                            </div>
+                            <ul class="list">
+                                <li>如何从基本前提出发进行推导</li>
+                                <li>如何将大问题拆解成小问题</li>
+                                <li>如何找到问题的逻辑链条</li>
+                            </ul>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">🚀 实际应用案例：马斯克造火箭</div>
+                            <div class="example">
+                                <strong>问题：</strong>制造火箭需要什么？<br><br>
+                                <strong>逻辑拆解：</strong><br>
+                                ✓ 需要发动机（喷气原理）<br>
+                                ✓ 需要材料和燃料<br>
+                                ✓ 需要符合空气动力学设计<br>
+                                ✓ 需要组织和成本计算<br>
+                                ✓ 这些都是已知领域<br><br>
+                                <strong>结果：</strong>24岁的马斯克用7个人，花相对不多的钱，发射了第一颗卫星。这不是创新能力强，而是<span class="highlight-info">逻辑思维好</span>。
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">💡 关键洞察：答案蕴含在前提中</div>
+                            <div class="key-point">
+                                <strong>整个逻辑推理的答案都蕴含在你的基本前提里。</strong><br>
+                                当你面对新问题时，问题的答案往往已经隐含在已知条件中。你要做的就是一步步拆解，找到正确的推导路径。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 3: Inductive Reasoning -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>📊 归纳推理：从现象到规律</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">核心定义</div>
+                            <div class="example">
+                                <strong>归纳推理：</strong>从多个个别事实出发，总结出普遍规律。<br>
+                                这是<span class="highlight-info">经验</span>形成的方式。
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">经验 vs 经历的区别</div>
+                            <div class="subsection-content">
+                                <strong>经历：</strong>做过很多事情<br>
+                                <strong>经验：</strong>从做过的事情中总结出规律<br><br>
+                                有人工作10年，每次还是从头开始；有人工作2年，却能不断进步。<span class="highlight-danger">差的就是有没有从经历中总结出经验</span>。
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">⚠️ 归纳推理的陷阱</div>
+                            <div class="key-point">
+                                <strong>规律会改变环境</strong><br>
+                                当统计规律被大众认知并应用后，整个环境就改变了，原来的规律可能就失效了。
+                            </div>
+
+                            <div class="example">
+                                <strong>真实案例：汽车刹车灯</strong><br><br>
+                                1980年代美国做实验发现：加装中央刹车灯能减少<span class="highlight-danger">50%</span>的追尾事故<br><br>
+                                结果：要求所有新车都装上中央刹车灯<br><br>
+                                实际效果：追尾事故只减少了<span class="highlight-danger">5%</span><br><br>
+                                原因：<br>
+                                • 开始时只有少数车有这个灯，特别显眼<br>
+                                • 所有车都装上后，大家习以为常<br>
+                                • 这个功能的警告作用大幅下降
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">从小到大 vs 从大到小的规律失效</div>
+                            <div class="example">
+                                <strong>案例1：基金管理规律失效</strong><br>
+                                • 小规模时，某个投资方法效果显著<br>
+                                • 资金量大时，同样的方法效果大幅下降<br>
+                                • 原因：大资金容易影响市场，左手和右手在交易<br><br>
+                                <strong>案例2：学巴菲特投资失败</strong><br>
+                                • 巴菲特体量大，能控制公司治理<br>
+                                • 小散户体量小，对公司经营没有话语权<br>
+                                • 同样的投资方法，在不同体量下效果完全不同
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">🎯 正确应用规律的条件</div>
+                            <div class="key-point">
+                                <strong>必须满足对等条件</strong><br>
+                                很多人只看结果，没看条件。张三的孩子这样做成功了，你的孩子条件完全不同（智力、性格、家庭背景）。
+                            </div>
+
+                            <ul class="list">
+                                <li><strong>个体vs群体的对比无意义</strong> - 你和某大学学生平均水平比较毫无意义</li>
+                                <li><strong>合适的对比</strong> - 你所在高中这一届vs上一届的成绩</li>
+                                <li><strong>条件相似才能对比</strong> - 规律应用必须确保条件对等</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 4: Common Logical Fallacies -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>❌ 常见逻辑谬误识别指南</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">1️⃣ 诉诸权威的谬误</div>
+                            <div class="example">
+                                <strong>定义：</strong>不给出合理论证，而是依赖权威背书<br><br>
+                                <strong>真实案例：</strong>伊丽莎白·霍尔姆斯（一滴血验血技术）<br>
+                                • 斯坦福天才学生的身份<br>
+                                • 获得奥巴马、基辛格等名人背书<br>
+                                • 公司估值一度达300亿美元<br>
+                                • 最后被证实是完全骗局<br><br>
+                                <strong>关键问题：</strong>这些背书他的人对生物学一无所知，却能给出权威意见
+                            </div>
+
+                            <div class="key-point">
+                                <strong>防范方法：</strong><br>
+                                • 结论的正确与否与权威背书无关<br>
+                                • 要看有没有合理的论证逻辑<br>
+                                • 警惕"所谓专家"实际上不懂该领域
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">2️⃣ 诉诸大众的谬误</div>
+                            <div class="example">
+                                <strong>定义：</strong>用"大家都这么说"作为论据<br><br>
+                                <strong>典型表现：</strong>"常言道..."、"俗话说..."、"所有人都这么做"<br><br>
+                                <strong>问题所在：</strong>大众说的话不一定对，做的事不一定对
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">3️⃣ 概念前后不一致</div>
+                            <div class="example">
+                                <strong>案例：关于互联网增长的报道</strong><br><br>
+                                <strong>报道说法：</strong>"互联网增长很可观"<br>
+                                <strong>论据：</strong>网游增长快、在线支付增长快<br><br>
+                                <strong>逻辑问题：</strong><br>
+                                • 网游和在线支付只是互联网的一部分<br>
+                                • 偷换了概念：从"部分"代表"整体"<br>
+                                • 忽视了短视频、电商、门户网站等其他领域
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">4️⃣ 诉诸怜悯的谬误</div>
+                            <div class="example">
+                                <strong>典型场景：学生对老师</strong><br><br>
+                                学生说："老师，如果你不让我及格，我就无法毕业，人生就完了"<br><br>
+                                <strong>逻辑谬误：</strong><br>
+                                • 他无法毕业有多个原因，不仅仅是这一门课<br>
+                                • 及格与否应该基于是否达到要求，而不是基于后果<br>
+                                • 利用同情心来绕过逻辑<br><br>
+                                <strong>生活中常见：</strong>"你不帮我做这件事，天就塌下来了"
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">5️⃣ 循环论证</div>
+                            <div class="example">
+                                <strong>典型例子：偏心的家长</strong><br><br>
+                                • 前提假设：我家孩子是好孩子<br>
+                                • 事实：孩子打了人<br>
+                                • 错误逻辑：我家好孩子怎么可能打人，所以肯定不是他打的<br>
+                                • 结论：他没打人，所以他是好孩子<br><br>
+                                用结论来支持前提，形成循环论证<br><br>
+                                <strong>正确做法：</strong>如果孩子打了人，他在这件事上就不是"好孩子"
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">6️⃣ 简单二元对立</div>
+                            <div class="example">
+                                <strong>谬误表现：</strong>把不该对立的事情对立起来<br><br>
+                                <strong>案例1：企业发展</strong><br>
+                                • 硅谷公司追求"小而美"而非"做大做强"<br>
+                                • 有人问："难道要做小做弱吗？"<br>
+                                • 谬误：不强调"大"就等于要"小"<br>
+                                • 真相：可以是小而精，是高质量<br><br>
+                                <strong>案例2：教育</strong><br>
+                                • 不上好大学就没前途<br>
+                                • 上普通大学也可能成功，上好大学也可能失败<br>
+                                • 中间有很多可能性
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">7️⃣ 语言过载谬误</div>
+                            <div class="example">
+                                <strong>定义：</strong>用大量似是而非、高深莫测的词汇来迷惑人<br><br>
+                                <strong>判断标准：</strong><br>
+                                • 真正的知识用简单语言讲<br>
+                                • 虚假的观点用复杂语言包装<br><br>
+                                <strong>具体例子：</strong><br>
+                                • 不说"企业"，要说"市场主体"<br>
+                                • 用专有名词显得高大上，其实就是常识<br>
+                                • 希特勒的《我的奋斗》充满这种语言过载
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 5: Judgment and Decision Making -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>🎯 提升判断力的逻辑方法</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">核心原则：结果导向的思维</div>
+                            <div class="key-point">
+                                <strong>最好的结果有两个标准：</strong><br>
+                                1. 可重复成功 - 每次做都成功<br>
+                                2. 叠加进步 - 在原有基础上不断进步
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">投资决策案例分析</div>
+                            <div class="example">
+                                <strong>问题：一块钱一股vs一百块钱一股的股票，哪个更容易翻倍？</strong><br><br>
+                                <strong>大多数人的错误判断：</strong>一块钱的容易翻倍<br><br>
+                                <strong>正确逻辑分析：</strong><br>
+                                • 一百块钱的股票多年维持在这个价位，说明公司表现稳定<br>
+                                • 一块钱的股票可能是因为公司已经烂透了<br>
+                                • 烂公司翻倍的概率<span class="highlight-danger">极低</span><br><br>
+                                <strong>类比：</strong><br>
+                                两个学生参加全区考试<br>
+                                • 甲：平时考90分<br>
+                                • 乙：平时不及格<br>
+                                派谁代表学校去参加比赛？肯定派甲<br><br>
+                                <strong>结论：</strong>大概率输家难以翻身，赢家容易继续赢
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">股市技术指标的悖论</div>
+                            <div class="example">
+                                <strong>现象：</strong>很多人用技术指标炒股，效果各50%<br><br>
+                                <strong>根本原因：</strong>当一个技术指标被大家都使用时，市场已经"price in"了这个指标<br><br>
+                                <strong>逻辑推导：</strong><br>
+                                • 只要有一个人发现了这个规律<br>
+                                • 别人也能看到<br>
+                                • 市场会立即反应<br>
+                                • 原来有效的指标就失效了
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">⚠️ 三大常见投资误区</div>
+                            <div class="key-point">
+                                <strong>误区1：选个股就输了</strong><br>
+                                当你决定选一只个股时，大概率已经比市场表现差，因为市场是高效的
+                            </div>
+                            
+                            <div class="key-point">
+                                <strong>误区2：没有企业能永远快速增长</strong><br>
+                                即使谷歌每年增长20%，也支撑不起无限增长。最终取决于整个行业增速。
+                            </div>
+                            
+                            <div class="key-point">
+                                <strong>误区3：拿不住好股票</strong><br>
+                                • 能在低点买入好股票的人很多<br>
+                                • 但几乎没人能在最高点卖出<br>
+                                • 往往涨了几年就因为怕太贵而卖掉了
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 6: Real World Applications -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>🌍 逻辑思维在工作中的实践应用</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">案例1：帮日本公司NEC进入中国市场（23岁）</div>
+                            <div class="example">
+                                <strong>问题：</strong>知名外企在中国没有市场认知，如何打开局面？<br><br>
+                                <strong>逻辑拆解过程：</strong><br>
+                                ✓ 需要组织一个大发布会<br>
+                                ✓ 工业界要参加 → 联系相关行业协会<br>
+                                ✓ 学术界要参加 → 邀请半导体领域专家<br>
+                                ✓ 媒体要参加 → 电视、报纸等多种媒体<br>
+                                ✓ 政府要参加 → 各部委官员<br><br>
+                                <strong>具体规划：</strong><br>
+                                • 中国有多少个部委？都需要邀请代表<br>
+                                • 司局长层面？处长层面？<br>
+                                • 是否需要部长级别的大咖？<br>
+                                • 是否需要付费公关支持？<br>
+                                • 场地选择？餐饮标准？<br><br>
+                                <strong>结果：</strong>虽然很复杂，但这是<span class="highlight-info">可拆解的问题</span>
+                            </div>
+
+                            <div class="key-point">
+                                <strong>核心洞察：</strong><br>
+                                这个项目对23岁的年轻人来说是全新的，甚至看起来没有头绪。但通过逻辑拆解，就能把这个大问题变成一个个小问题，逐个解决。这才是做事能力的体现。
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">案例2：通信沟通中的逻辑陷阱</div>
+                            <div class="example">
+                                <strong>场景：部门沟通中被"套路"</strong><br><br>
+                                <strong>自己的观点：</strong>"我们需要增加曝光"<br>
+                                <strong>对方的反驳：</strong>"一小时的曝光增加只有千分之五，还不如你回去提高转化率"<br><br>
+                                <strong>当时的感受：</strong>觉得对方说得有道理，立刻败下阵来<br><br>
+                                <strong>学完逻辑思维后的反思：</strong><br>
+                                这就是<span class="highlight-danger">"转移焦点"的逻辑谬误</span><br>
+                                • 我在讨论A（曝光）<br>
+                                • 对方给我扯到了B（转化率）<br>
+                                • 把话题转移了<br>
+                                • 导致我的原始观点被遗忘<br><br>
+                                <strong>应该的回应：</strong>"曝光和转化率是两个不同的问题，不能用一个替代另一个"
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">核心问题识别：标题党</div>
+                            <div class="example">
+                                <strong>观察结果：</strong>互联网上一多半的新闻报道，<span class="highlight-danger">标题和内容不一致</span><br><br>
+                                <strong>逻辑分析：</strong>这说明什么？<br>
+                                • 要么是作者比较笨<br>
+                                • 要么是刻意误导<br><br>
+                                第二种可能性更大<br><br>
+                                <strong>防范方法：</strong><br>
+                                • 看到标题党就值得怀疑<br>
+                                • 仔细读内容，看是否支持标题<br>
+                                • 这是最基本的逻辑不一致检验
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 7: Key Insights -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>💡 核心洞察与学习要点</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">从知识到智慧的转化</div>
+                            <div class="key-point">
+                                <strong>知识 ≠ 智慧</strong><br>
+                                • 知识多的人不一定有智慧<br>
+                                • 智慧是正确判断和解决问题的能力<br>
+                                • 需要掌握<span class="highlight-info">把现有知识应用到新问题的能力</span>
+                            </div>
+
+                            <div class="key-point">
+                                <strong>从知识到智慧需要两步：</strong><br>
+                                <strong>第一步：构建知识体系</strong><br>
+                                不要只学知识点，要建立知识体系。比如学编程时，不是只学一种语言，而是理解问题如何转化为数学问题，数学问题如何用编程语言实现。<br><br>
+                                <strong>第二步：回炉重铸</strong><br>
+                                学完课程后，把过去经历的事情用新方法重新审视一遍。看看哪些报道有逻辑漏洞，哪些论证是有效的。
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">过程比结果更重要</div>
+                            <div class="key-point">
+                                <strong>中国教育的欠缺：过度强调结果，忽视过程</strong><br>
+                                • 学生追求标准答案<br>
+                                • 忽略了获得答案的过程<br>
+                                • 这导致很多学生能蒙对答案，但无法真正解决问题
+                            </div>
+
+                            <div class="key-point">
+                                <strong>为什么过程重要？</strong><br>
+                                • 错误的论证→得不到持续成功<br>
+                                • 正确的过程→失败了能找出原因，成功了能重复<br>
+                                • 不重视过程的人→失败了还不知道为什么失败
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">逻辑思维的边界</div>
+                            <div class="key-point">
+                                <strong>逻辑不是万能的</strong><br>
+                                • 情感问题不用逻辑解决<br>
+                                • 孩子需要的是关注，不是逻辑<br>
+                                • 但工作问题、判断问题、学习问题都需要逻辑
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">关于年龄与思维</div>
+                            <div class="key-point">
+                                <strong>思维的年龄 ≠ 生理年龄</strong><br>
+                                • 有人25岁思维已经固化（老）<br>
+                                • 有人55岁还在不断改变认知（年轻）<br>
+                                • 关键是<span class="highlight-success">有没有愿意改变</span><br><br>
+                                吴军自己的例子：35岁从学术界转向工业界，45岁从工业界转向投资领域。每个转变都在改变思维方式。
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">三思而行的真正含义</div>
+                            <div class="example">
+                                <strong>"三思而行"不是犹豫不决，而是：</strong><br><br>
+                                用逻辑推理能力，把要做的事情在脑子里预演一遍<br>
+                                • 这样能大幅提高成功率<br>
+                                • 避免很多不必要的错误<br>
+                                • 这正是逻辑思维的价值所在
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Section 8: Study Guidance -->
+                <div class="section print-friendly">
+                    <div class="section-header" onclick="toggleSection(this)">
+                        <h2>📚 学习建议与实践指南</h2>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="section-content">
+                        <div class="subsection">
+                            <div class="subsection-title">课程结构概览</div>
+                            <div class="example">
+                                <strong>第一部分：演绎推理（基础）</strong><br>
+                                • 基本单元拆分<br>
+                                • 逻辑关系明确<br>
+                                • 推理链条<br>
+                                • 复杂推理进阶<br><br>
+                                <strong>第二部分：常见逻辑谬误（保护）</strong><br>
+                                • 如何避免二元思维<br>
+                                • 为什么要避免感情用事<br>
+                                • 网络争吵的逻辑根源<br>
+                                • 如何识别骗子的逻辑漏洞<br><br>
+                                <strong>第三部分：归纳推理（应用）</strong><br>
+                                • 信息有效性保证<br>
+                                • 有效信息辨别<br>
+                                • 数据对比与处理<br>
+                                • 经验总结与应用
+                            </div>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">十大应用场景</div>
+                            <ul class="list numbered">
+                                <li data-number="1">日常沟通 - 表达得更清晰</li>
+                                <li data-number="2">工作汇报 - 让领导听得懂</li>
+                                <li data-number="3">商务谈判 - 不被对方带跑</li>
+                                <li data-number="4">团队管理 - 做出更好的决策</li>
+                                <li data-number="5">信息甄别 - 辨别网络信息真假</li>
+                                <li data-number="6">新知识学习 - 学习能力提升</li>
+                                <li data-number="7">新事物应对 - 面对陌生问题找到突破口</li>
+                                <li data-number="8">投资决策 - 更理性的判断</li>
+                                <li data-number="9">育儿教育 - 培养孩子的逻辑思维</li>
+                                <li data-number="10">人生规划 - 更清晰的思考未来</li>
+                            </ul>
+                        </div>
+
+                        <div class="subsection">
+                            <div class="subsection-title">学习方法论</div>
+                            <div class="key-point">
+                                <strong>推荐学习方式：</strong><br>
+                                1. 系统学习 - 不要看碎片化内容<br>
+                                2. 结合实例 - 不是只学原理<br>
+                                3. 即时应用 - 学完立即应用到生活中<br>
+                                4. 定期复盘 - 把过去的经历用新方法重新审视
+                            </div>
+
+                            <div class="key-point">
+                                <strong>特别建议：</strong><br>
+                                • 家长可以和孩子一起学<br>
+                                • 管理者可以组织团队学<br>
+                                • 看到新闻报道时练习识别逻辑漏洞<br>
+                                • 回想工作中的"战斗"，看看哪里输在逻辑上
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <!-- Mind Map -->
+                <div class="mind-map">
+                    <h3>🧠 思维导图</h3>
+                    
+                    <div class="mind-map-item level-1">📊 逻辑思维两大体系</div>
+                    <div class="mind-map-item level-2">演绎推理：从前提→结论</div>
+                    <div class="mind-map-item level-2">归纳推理：从现象→规律</div>
+                    
+                    <div class="mind-map-item level-1">⚠️ 七大逻辑谬误</div>
+                    <div class="mind-map-item level-2">诉诸权威</div>
+                    <div class="mind-map-item level-2">诉诸大众</div>
+                    <div class="mind-map-item level-2">概念偷换</div>
+                    <div class="mind-map-item level-2">诉诸怜悯</div>
+                    <div class="mind-map-item level-2">循环论证</div>
+                    <div class="mind-map-item level-2">二元对立</div>
+                    <div class="mind-map-item level-2">语言过载</div>
+                    
+                    <div class="mind-map-item level-1">🎯 三大核心目标</div>
+                    <div class="mind-map-item level-2">清晰表达</div>
+                    <div class="mind-map-item level-2">识别漏洞</div>
+                    <div class="mind-map-item level-2">解决问题</div>
+                    
+                    <div class="mind-map-item level-1">💡 应用领域</div>
+                    <div class="mind-map-item level-2">工作决策</div>
+                    <div class="mind-map-item level-2">投资判断</div>
+                    <div class="mind-map-item level-2">信息甄别</div>
+                    <div class="mind-map-item level-2">人生规划</div>
+                </div>
+
+                <!-- Key Insights -->
+                <div class="insight-box">
+                    <h3>✨ 核心要点速记</h3>
+                    <div class="insight-item">
+                        <strong>• 答案蕴含在前提中</strong><br>
+                        <small>所有逻辑推理的答案都已在已知条件中</small>
+                    </div>
+                    <div class="insight-item">
+                        <strong>• 规律会改变环境</strong><br>
+                        <small>当规律被认知应用后，环境改变，规律失效</small>
+                    </div>
+                    <div class="insight-item">
+                        <strong>• 过程比结果重要</strong><br>
+                        <small>能蒙对答案≠真正解决问题</small>
+                    </div>
+                    <div class="insight-item">
+                        <strong>• 思维年龄≠生理年龄</strong><br>
+                        <small>关键是有没有愿意改变认知</small>
+                    </div>
+                    <div class="insight-item">
+                        <strong>• 知识≠智慧</strong><br>
+                        <small>智慧是应用知识解决问题的能力</small>
+                    </div>
+                </div>
+            </aside>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>
+                <span class="mode-indicator"></span>
+                <strong>吴军·逻辑思维训练50讲 · 学习笔记</strong><br>
+                这份笔记汇总了吴军老师开学直播的核心内容<br>
+                建议结合完整课程系统学习以获得最佳效果 📚
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Section
+        function toggleSection(header) {
+            const section = header.closest('.section');
+            section.classList.toggle('collapsed');
+        }
+
+        // Toggle All Sections
+        function toggleAllSections() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            
+            sections.forEach(section => {
+                if (allCollapsed) {
+                    section.classList.remove('collapsed');
+                } else {
+                    section.classList.add('collapsed');
+                }
+            });
+        }
+
+        // Dark Mode Toggle
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // Load Dark Mode Preference
+        document.addEventListener('DOMContentLoaded', function() {
+            if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark-mode');
+            }
+        });
+
+        // Smooth Scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+
+        // Keyboard Shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey || e.metaKey) {
+                if (e.key === 'k') {
+                    e.preventDefault();
+                    toggleAllSections();
+                }
+                if (e.key === 'd') {
+                    e.preventDefault();
+                    toggleDarkMode();
+                }
+            }
+        });
+    </script>
+</body>
+</html>

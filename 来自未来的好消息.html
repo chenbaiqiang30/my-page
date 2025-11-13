@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>未来趋势洞察 · 毛玻璃折叠卡片页</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:radial-gradient(circle at top,#181b27 0,#050509 55%,#020308 100%);
+      color:#e8ddff;
+      -webkit-font-smoothing:antialiased;
+      padding:32px 14px 64px;
+    }
+    a{color:inherit;text-decoration:none;}
+
+    /* 漂浮光点背景 */
+    .floating-lights{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+      overflow:hidden;
+    }
+    .light-dot{
+      position:absolute;
+      width:220px;
+      height:220px;
+      border-radius:999px;
+      background:radial-gradient(circle,rgba(255,255,255,0.16),transparent 70%);
+      filter:blur(6px);
+      opacity:0.45;
+      animation:float 18s ease-in-out infinite alternate;
+    }
+    .light-dot:nth-child(1){top:-60px;left:-40px;animation-duration:22s;}
+    .light-dot:nth-child(2){top:45%;right:-80px;animation-duration:26s;}
+    .light-dot:nth-child(3){bottom:-80px;left:14%;animation-duration:30s;}
+    .light-dot:nth-child(4){top:15%;right:35%;animation-duration:24s;opacity:.28;}
+
+    @keyframes float{
+      0%{transform:translate3d(0,0,0) scale(1);opacity:.35;}
+      100%{transform:translate3d(40px,-30px,0) scale(1.2);opacity:.6;}
+    }
+
+    /* 文字彩色系统（避免纯白） */
+    .txt-gold{color:#ffd76b;}
+    .txt-cyan{color:#7fe6ff;}
+    .txt-pink{color:#ff8fd8;}
+    .txt-lime{color:#c8ff6b;}
+    .txt-violet{color:#caa6ff;}
+    .txt-orange{color:#ffb46b;}
+
+    /* 布局 */
+    .page{
+      max-width:1120px;
+      margin:0 auto;
+    }
+
+    .hero{
+      position:relative;
+      margin-bottom:26px;
+      padding:26px 22px 26px;
+      border-radius:26px;
+      background:radial-gradient(circle at top left,rgba(255,255,255,0.18),rgba(7,8,20,0.96));
+      background-blend-mode:soft-light;
+      border:1px solid rgba(255,255,255,0.18);
+      box-shadow:0 26px 68px rgba(0,0,0,0.76);
+      backdrop-filter:blur(26px);
+    }
+    .hero-eyebrow{
+      font-size:13px;
+      letter-spacing:.18em;
+      text-transform:uppercase;
+      color:#9ed0ff;
+      margin-bottom:8px;
+    }
+    .hero-title{
+      font-size:32px;
+      line-height:1.25;
+      letter-spacing:.04em;
+      font-weight:720;
+      background:linear-gradient(120deg,#ffe59c,#ffc9f3,#a3e7ff,#e0ffb3);
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+      margin-bottom:12px;
+    }
+    .hero-sub{
+      font-size:15px;
+      color:#ffe6b3;
+      opacity:.96;
+      margin-bottom:6px;
+    }
+    .hero-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:8px;
+      font-size:12px;
+      color:#a5d8ff;
+      opacity:.9;
+    }
+    .chip{
+      padding:3px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.28);
+      background:radial-gradient(circle at top left,rgba(255,255,255,0.18),rgba(3,7,18,0.92));
+      box-shadow:0 0 0 1px rgba(0,0,0,0.5);
+    }
+
+    .section-title{
+      margin:18px 2px 10px;
+      font-size:18px;
+      color:#ffde8f;
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+    .section-title span{
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.22);
+      background:linear-gradient(135deg,rgba(255,255,255,0.12),rgba(0,0,0,0.46));
+      color:#e3f2ff;
+    }
+
+    /* 折叠卡片 */
+    .speaker-card{
+      position:relative;
+      margin-top:14px;
+      border-radius:26px;
+      background:radial-gradient(circle at top left,rgba(255,255,255,0.12),rgba(4,6,18,0.96));
+      border:1px solid rgba(255,255,255,0.12);
+      box-shadow:0 20px 60px rgba(0,0,0,0.88);
+      overflow:hidden;
+      backdrop-filter:blur(24px);
+      transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;
+    }
+    .speaker-card:hover{
+      transform:translateY(-2px);
+      box-shadow:0 26px 70px rgba(0,0,0,0.95);
+      border-color:rgba(255,255,255,0.26);
+    }
+    .speaker-header{
+      width:100%;
+      border:0;
+      outline:0;
+      background:linear-gradient(135deg,rgba(255,255,255,0.08),rgba(0,0,0,0.86));
+      padding:16px 22px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      cursor:pointer;
+      color:inherit;
+    }
+    .speaker-left{
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    .pill-index{
+      width:30px;
+      height:30px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.44);
+      background:radial-gradient(circle at top,#fff0c2,#f7ba61);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:15px;
+      font-weight:700;
+      color:#5c3900;
+      box-shadow:0 8px 18px rgba(0,0,0,0.9);
+    }
+    .speaker-text{
+      text-align:left;
+    }
+    .speaker-name{
+      font-size:16px;
+      font-weight:700;
+      letter-spacing:.06em;
+      color:#ffdf8f;
+    }
+    .speaker-tagline{
+      font-size:12px;
+      color:#a4d8ff;
+      opacity:.9;
+      margin-top:3px;
+    }
+    .speaker-meta{
+      display:flex;
+      flex-wrap:wrap;
+      gap:6px;
+      font-size:11px;
+      color:#9ed0ff;
+    }
+    .toggle-icon{
+      width:26px;
+      height:26px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.5);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:radial-gradient(circle at top,rgba(255,255,255,0.25),rgba(0,0,0,0.9));
+      box-shadow:0 10px 24px rgba(0,0,0,0.9);
+      font-size:13px;
+      color:#f5f1ff;
+      transform:rotate(0deg);
+      transition:transform .3s ease,background .3s ease;
+    }
+    .speaker-card.open .toggle-icon{
+      transform:rotate(180deg);
+      background:radial-gradient(circle at top,rgba(255,244,201,0.9),rgba(0,0,0,0.95));
+      color:#5c3900;
+    }
+
+    .speaker-panel{
+      padding:0 22px 18px;
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .55s cubic-bezier(0.19,0.95,0.22,1),opacity .4s ease;
+      opacity:0;
+    }
+    .speaker-card.open .speaker-panel{
+      opacity:1;
+    }
+
+    .panel-headline{
+      font-size:14px;
+      margin:14px 0 10px;
+      color:#ffe6a8;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .panel-headline span{
+      font-size:11px;
+      padding:1px 7px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.25);
+      color:#e3f2ff;
+      background:linear-gradient(135deg,rgba(0,0,0,0.8),rgba(255,255,255,0.18));
+    }
+
+    .insights-list{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      margin-bottom:10px;
+    }
+    .insight{
+      padding:10px 12px 9px;
+      border-radius:16px;
+      background:rgba(4,6,14,0.84);
+      border:1px solid rgba(255,255,255,0.09);
+      font-size:14px;
+      line-height:1.6;
+      color:#f5ecff;
+    }
+    .insight strong{
+      font-weight:650;
+      color:#fff3b0;
+    }
+    .insight:nth-child(4n+1){color:#ffe6b3;}
+    .insight:nth-child(4n+2){color:#c6f5ff;}
+    .insight:nth-child(4n+3){color:#ffd6f5;}
+    .insight:nth-child(4n){color:#d4ffc8;}
+
+    .sub-label{
+      font-size:12px;
+      color:#9bd0ff;
+      margin:4px 0 2px;
+    }
+
+    /* 思维导图卡片 */
+    .mindmap-card{
+      margin-top:24px;
+      border-radius:26px;
+      padding:18px 18px 18px;
+      background:radial-gradient(circle at top left,rgba(88,119,255,0.16),rgba(3,6,18,0.96));
+      border:1px solid rgba(167,198,255,0.6);
+      box-shadow:0 22px 62px rgba(0,0,0,0.9);
+      backdrop-filter:blur(26px);
+    }
+    .mindmap-title{
+      font-size:16px;
+      color:#ffeab0;
+      margin-bottom:10px;
+      display:flex;
+      align-items:center;
+      gap:6px;
+    }
+    .mindmap-title span{
+      font-size:11px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,0.24);
+      color:#e2f3ff;
+      background:linear-gradient(135deg,rgba(0,0,0,0.8),rgba(255,255,255,0.12));
+    }
+
+    .mm-root{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .mm-node{
+      position:relative;
+      border-radius:16px;
+      padding:8px 11px 8px 14px;
+      background:rgba(3,6,18,0.92);
+      border:1px solid rgba(140,180,255,0.35);
+      color:#e7f0ff;
+      font-size:13px;
+    }
+    .mm-node.level-1{
+      background:radial-gradient(circle at top left,rgba(255,234,170,0.38),rgba(3,6,18,0.95));
+      border-color:rgba(255,245,181,0.82);
+      color:#3b2600;
+      font-weight:700;
+    }
+    .mm-children{
+      margin-top:6px;
+      margin-left:18px;
+      border-left:1px dashed rgba(149,186,255,0.7);
+      padding-left:10px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .mm-node.level-2{
+      color:#ffe4f4;
+      border-style:dashed;
+    }
+    .mm-node.level-3{
+      color:#c7ffe0;
+      border-style:dotted;
+      font-size:12px;
+      opacity:.96;
+    }
+
+    @media (max-width:720px){
+      .hero{padding:22px 16px;}
+      .speaker-header{padding:14px 16px;}
+      .speaker-panel{padding:0 16px 16px;}
+    }
+  </style>
+</head>
+<body>
+<div class="floating-lights">
+  <div class="light-dot"></div>
+  <div class="light-dot"></div>
+  <div class="light-dot"></div>
+  <div class="light-dot"></div>
+</div>
+
+<div class="page">
+  <!-- 顶部说明 -->
+  <header class="hero">
+    <div class="hero-eyebrow">FUTURE · 4D INSIGHT MAP</div>
+    <h1 class="hero-title">来自未来的好消息 · 趋势篇</h1>
+    <p class="hero-sub">
+      四位老师从<span class="txt-gold">财富结构</span>、<span class="txt-cyan">国家意志</span>、
+      <span class="txt-pink">精神标尺</span>和<span class="txt-lime">AI 时代的人生策略</span>，
+      勾勒出未来十到二十年的大趋势。
+    </p>
+    <div class="hero-meta">
+      <div class="chip">毛玻璃折叠卡片 · 一页看全</div>
+      <div class="chip">香帅 × 马江博 × 贾行家 × 罗振宇</div>
+      <div class="chip">岛链化 · 智能化 · 国家意志 · AI 合伙人</div>
+    </div>
+  </header>
+
+  <h2 class="section-title">
+    未来趋势洞察
+    <span>3C 折叠结构 · 金色标题 · 顶级毛玻璃</span>
+  </h2>
+
+  <!-- ① 香帅 -->
+  <section class="speaker-card open" data-open="true">
+    <button class="speaker-header" type="button">
+      <div class="speaker-left">
+        <div class="pill-index">①</div>
+        <div class="speaker-text">
+          <div class="speaker-name">香帅 · 财富与宏观趋势</div>
+          <div class="speaker-tagline">两个叙事：<span class="txt-gold">岛链化</span> 与 <span class="txt-cyan">智能化</span></div>
+        </div>
+      </div>
+      <div class="toggle-icon">▲</div>
+    </button>
+    <div class="speaker-panel">
+      <div class="panel-headline">
+        两个叙事，看懂未来财富
+        <span>结构重估 · 资产重新排队</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          全球资金用脚投票：一头涌向<span class="txt-gold">去主权化资产</span>（黄金、比特币、部分股指），
+          一头涌向<span class="txt-cyan">智能化与平台型科技股</span>，背后正是“岛链化 + 智能化”的双重叙事。
+        </div>
+        <div class="insight">
+          “岛链化”意味着世界不再是一块平整大陆，而是<span class="txt-pink">多个大岛 + 多条关键链路</span>，
+          资产配置必须考虑地缘政治与安全锚点。
+        </div>
+        <div class="insight">
+          美元武器化（冻结俄罗斯外汇）之后，各国央行集体增持黄金，
+          黄金涨幅不再只是“乱世黄金”，而是<span class="txt-gold">主权信用重估</span>的结果。
+        </div>
+        <div class="insight">
+          单押任何一种资产都不再安全——不论是房地产、美元资产、黄金还是比特币，
+          都要回到<span class="txt-cyan">“多元分散 + 底线思维”</span>的组合逻辑。
+        </div>
+        <div class="insight">
+          底线思维不是追求 5%–10% 的收益，而是防一个<span class="txt-pink">“0 或 1 的极端风险”</span>：
+          一旦出事不会直接归零，这正是保险与安全资产的价值来源。
+        </div>
+        <div class="insight">
+          安全资产不能只看“现在安全”，而要<span class="txt-lime">站在未来十到二十年的支出安全回头看</span>，
+          以终为始配置健康、养老、教育与家庭保障。
+        </div>
+        <div class="insight">
+          数字化与智能化推动财富载体大变迁：从 2000 年的<span class="txt-orange">石油、通信</span>，
+          过渡到 2024 年几乎被<span class="txt-cyan">AI 与数字平台</span>垄断。
+        </div>
+        <div class="insight">
+          数据成为新的生产要素，具有<span class="txt-gold">边际收益递增</span>的特性：
+          数据越多 → 算法越准 → 盈利越高 → 吸引更多数据，形成正向飞轮。
+        </div>
+        <div class="insight">
+          传统消费中的“老登股”依赖经销商渠道，“小登股”依赖数字营销，
+          真正具备成长性的公司，本质上都是<span class="txt-cyan">数字化驱动的企业</span>。
+        </div>
+        <div class="insight">
+          对普通人而言，最重要的不是猜指数，而是
+          <strong>靠近数据要素与智能化赛道</strong>：选择能沉淀数据、能被 AI 放大的职业和资产。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ② 马江博：C 级深度 -->
+  <section class="speaker-card" id="maj">
+    <button class="speaker-header" type="button">
+      <div class="speaker-left">
+        <div class="pill-index">②</div>
+        <div class="speaker-text">
+          <div class="speaker-name">马江博 · “十五五”与大国意志</div>
+          <div class="speaker-tagline">大国博弈 + 新旧动能转换的关键五年</div>
+        </div>
+      </div>
+      <div class="toggle-icon">▲</div>
+    </button>
+    <div class="speaker-panel">
+      <div class="panel-headline">
+        一、看懂“十五五”的三个大定调
+        <span>问题坐标 + 情感底色</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          <strong>定调 ①：外部环境恶劣，大国博弈成为关键变量。</strong>
+          以中美为核心的大国竞争，不再是背景噪音，而是所有政策的<span class="txt-gold">出发点</span>。
+        </div>
+        <div class="insight">
+          大国博弈并非只有风险，也在制造<span class="txt-lime">“冗余机会”</span>：
+          两个体系都要自建完整供应链，意味着大量“复制 + 备份”的新需求。
+        </div>
+        <div class="insight">
+          <strong>定调 ②：内部抓手是新旧动能转换。</strong>
+          过去二十年的发展路径已达瓶颈，必须通过<span class="txt-cyan">大洗牌</span>完成“旧动能出清 + 新动能崛起”。
+        </div>
+        <div class="insight">
+          新旧动能转换不是小修小补，而是<span class="txt-pink">存量重写游戏规则</span>：
+          一批行业会提质升级，一批会被边缘化。
+        </div>
+        <div class="insight">
+          <strong>定调 ③：情感底色从“保持定力”升级为“历史主动 +敢打敢赢”。</strong>
+          文件中罕见出现“激发斗志、勇于斗争”等高烈度用词，意味着国家准备在未来五年<span class="txt-gold">强攻</span>。
+        </div>
+        <div class="insight">
+          过去文件强调“趋利避害、保持战略定力”，现在改为“历史时刻到了，那就干”，
+          预示政策强度、资源投入都会<span class="txt-orange">史无前例</span>。
+        </div>
+      </div>
+
+      <div class="panel-headline">
+        二、三个关键任务：产业 · 科技 · 区域
+        <span>国家意志指向哪里，机会就在哪里</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          <strong>任务 ①：把发展着力点牢牢放在实体经济和制造业。</strong>
+          这是大国博弈下的<span class="txt-gold">生死关键</span>，也是中国保持优势的根基。
+        </div>
+        <div class="insight">
+          制造业比重过低的国家，很难保持中长期增长（典型如巴西、俄罗斯），
+          中国必须避免在未现代化前就先产业空心化。
+        </div>
+        <div class="insight">
+          传统产业（矿业、冶金、化工、纺织等）不是简单保守，
+          而是通过<span class="txt-cyan">数字化、绿色化、智能化改造</span>，变成高附加值的新底盘。
+        </div>
+        <div class="insight">
+          传统产业改造的盘子巨大，官方估算<span class="txt-gold">单量可达“十万亿级”</span>，
+          其中节能环保设备、工业软件、工业互联网是核心增量。
+        </div>
+        <div class="insight">
+          <strong>战略新兴产业的关键词是“从 1 到 10 的规模化”。</strong>
+          新能源、新材料、航空航天、低空经济等赛道，谁能形成规模化供给，谁就能成为万亿产业。
+        </div>
+        <div class="insight">
+          在所有新兴产业里，<span class="txt-pink">低空经济</span>被提升到极高位置：
+          它在发改委单设“低空经济司”，而“未来产业”在工信部仅是一个处，反映出优先级。
+        </div>
+        <div class="insight">
+          未来产业（脑机接口、量子科技等）更像<span class="txt-violet">十到二十年的前瞻布局</span>，
+          对科研和风险资金是机会，但短期对普通人更多是“吞金兽”。
+        </div>
+        <div class="insight">
+          <strong>任务 ②：高水平科技自立自强。</strong>
+          目标是显著增加“并跑 + 领跑”领域，形成一批可与全球对手硬刚的技术高地。
+        </div>
+        <div class="insight">
+          “新型举国体制”是集中力量办大事的<span class="txt-cyan">市场化升级版</span>：
+          不再只是政府和国企冲锋，民企与专精特新企业也被纳入国家战略编队。
+        </div>
+        <div class="insight">
+          政府通过<span class="txt-gold">“采购自主创新产品”</span>释放兜底信号：
+          只要你敢闯关键技术，我来当第一批大客户，但也会同时开启“去伪存真”的洗牌。
+        </div>
+        <div class="insight">
+          科技强国离不开<span class="txt-lime">教育强国 + 金融强国</span>：
+          高校学科将越来越“战略任务化”，金融体系也要为长期科技投入买单。
+        </div>
+        <div class="insight">
+          国家提出从战略科学家 → 卓越工程师 → 大国工匠 → 高技能人才的完整人才链条，
+          其中<span class="txt-pink">卓越工程师 + 高技能蓝领</span>会成为最现实、最确定的红利群体。
+        </div>
+        <div class="insight">
+          <strong>任务 ③：区域协调发展。</strong>
+          东部大省要挑增长大梁，中西部要成为安全与产能冗余的战略腹地。
+        </div>
+        <div class="insight">
+          产业布局从“效率优先”走向“效率 + 安全”并重，
+          四川、成渝、武汉、郑州、合肥等地将承接大量核心产业的“粘贴复制”。
+        </div>
+        <div class="insight">
+          对个人选城市的启示：与其挤在已分配完蛋糕的一线，
+          不如去那些<span class="txt-lime">既在主航道又愿意分蛋糕给年轻人</span>的成长型城市。
+        </div>
+      </div>
+
+      <div class="panel-headline">
+        三、普通人与企业的行动指南
+        <span>顺着国家意志做选择</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          未来五年是<span class="txt-gold">“内外部强攻的关键五年”</span>，
+          国家愿意在关键领域“不计局部成本”，政策确定性远大于市场情绪。
+        </div>
+        <div class="insight">
+          对个人来说，职业与资产要尽量贴近四个词：
+          <strong>科技 · 先进制造 · 中西部枢纽城市 · 高技能蓝领</strong>。
+        </div>
+        <div class="insight">
+          对企业来说，只有两条真正的主线：
+          <span class="txt-cyan">帮国家变强</span>（破解卡脖子），
+          或<span class="txt-lime">帮国家变稳</span>（稳就业、稳消费）。
+        </div>
+        <div class="insight">
+          能解释自己在国家战略中的位置的企业，会获得政策、金融与人才的<span class="txt-gold">三重加成</span>；
+          解释不清楚的，则很可能在下一轮洗牌中被边缘化。
+        </div>
+        <div class="insight">
+          未来十到二十年，中国将是<span class="txt-pink">“国家意志 + 市场规则全面升级结合”</span>的时代；
+          懂政策又懂市场的人，将更容易完成阶层跃迁。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ③ 贾行家 -->
+  <section class="speaker-card">
+    <button class="speaker-header" type="button">
+      <div class="speaker-left">
+        <div class="pill-index">③</div>
+        <div class="speaker-text">
+          <div class="speaker-name">贾行家 · 精神标尺与商业价值</div>
+          <div class="speaker-tagline">从“风口”回到“尺子”——以人为尺度</div>
+        </div>
+      </div>
+      <div class="toggle-icon">▲</div>
+    </button>
+    <div class="speaker-panel">
+      <div class="panel-headline">
+        一、从风口思维回到“尺子思维”
+        <span>先找尺子，再谈方向</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          过去几年，我们习惯用<span class="txt-gold">资本预期</span>做尺子：
+          “风口在哪、钱好不好赚、回报率多高”，
+          结果往往是风口消失、方向迷失。
+        </div>
+        <div class="insight">
+          古人说“人是万物的尺度”，
+          在今天可以理解为：<strong>以具体的人与真实感受为衡量标准</strong>，
+          而不是只看抽象指标。
+        </div>
+        <div class="insight">
+          科学把世界变得可测量、可计算，非常重要；
+          但如果所有决策都只看数据，人本身反而从系统里<span class="txt-pink">被“弹出”</span>。
+        </div>
+        <div class="insight">
+          在复原力时代，比起“赚快钱”，
+          更关键的是找回那个能度量生活、度量事业的<span class="txt-cyan">内在尺子</span>。
+        </div>
+      </div>
+
+      <div class="panel-headline">
+        二、艺术 · 商业 · 大众的正确顺序
+        <span>从人到人，再到商业</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          很多失败的内容产品，都犯了一个错误：<span class="txt-pink">从商业直达大众</span>，
+          把作品当“商品投放”，忽略了创作者自身与真实观众。
+        </div>
+        <div class="insight">
+          更健康的路径是：
+          <strong>艺术 → 大众 → 商业</strong>——
+          先用真诚作品和真实观众对话，再由商业读懂这种选择并放大。
+        </div>
+        <div class="insight">
+          电影《小妖怪的夏天》的成功，不是算出来的，
+          而是创作者三十年如一日地画自己相信的故事，
+          最终被大众与市场<span class="txt-gold">事后奖励</span>。
+        </div>
+        <div class="insight">
+          阿那亚从“自己想过怎样的生活”出发，先照顾好人的体验，
+          之后商业逻辑才自然而然地生长出来。
+        </div>
+        <div class="insight">
+          脱离真实人的感受，只依靠模型预测市场，是对观众的<span class="txt-cyan">最大不尊重</span>，
+          也是失败项目的共同特征。
+        </div>
+      </div>
+
+      <div class="panel-headline">
+        三、给当下行动者的精神建议
+        <span>把尺子握回自己手里</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          当金钱潮水退去，滩涂上重新显露出来的不是废墟，
+          而是<span class="txt-gold">“从人到人”的关系网</span>——
+          谁能看见人，谁就能活得更久。
+        </div>
+        <div class="insight">
+          所谓“以人为尺子”，不是反对效率和技术，
+          而是先问一句：<strong>这件事对具体的人，到底好不好？</strong>
+        </div>
+        <div class="insight">
+          对金融、保险、教育等“面向人的行业”来说，
+          最核心的竞争力不是产品条款，而是<span class="txt-pink">持续理解人的能力</span>。
+        </div>
+        <div class="insight">
+          真正可持续的商业价值，来自长期站在人的一边，
+          而不是短期站在“趋势和算法”的一边。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ④ 罗振宇 -->
+  <section class="speaker-card">
+    <button class="speaker-header" type="button">
+      <div class="speaker-left">
+        <div class="pill-index">④</div>
+        <div class="speaker-text">
+          <div class="speaker-name">罗振宇 · AI 时代的人类价值</div>
+          <div class="speaker-tagline">当 AI 比人更强，我们还有什么？</div>
+        </div>
+      </div>
+      <div class="toggle-icon">▲</div>
+    </button>
+    <div class="speaker-panel">
+      <div class="panel-headline">
+        一、AI 不是工具，而是“合伙伙伴”
+        <span>人机关系被重写</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          传统工具的终极形态，是“人器合一、工具消失”；
+          而 AI 用得越好，你越不会忽略它——更像<span class="txt-gold">狗与马</span>这样的伙伴。
+        </div>
+        <div class="insight">
+          人类文明史上，能重塑人机关系的时刻屈指可数：
+          驯化狗、驯化马，如今是<span class="txt-cyan">与 AI 结成新伙伴</span>。
+        </div>
+        <div class="insight">
+          好工具往往让人变懒、变弱；好伙伴则会让人<span class="txt-lime">变强</span>。
+          下一代 AI 的价值，不在于替你干多少，而在于<span class="txt-pink">帮你长成谁</span>。
+        </div>
+      </div>
+
+      <div class="panel-headline">
+        二、人类的“弱点”，正是我们的铠甲
+        <span>创造力 · 判断力 · 共情 · 审美</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          纳瓦尔提到，人类在 AI 时代稀缺的能力是：
+          创造力、判断力、共情力、审美力——这些看似高大上的能力，
+          其实都源自人类的<span class="txt-pink">不完美和不理性</span>。
+        </div>
+        <div class="insight">
+          创造力来自逻辑的小混乱；判断力来自信息的不完备；
+          共情力来自是非感的模糊；审美力来自力量不足、只能远观的惆怅。
+        </div>
+        <div class="insight">
+          AI 的强，在于算得多、算得快；人的强，在于
+          <strong>敢用自己的脆弱与矛盾去感受世界</strong>，
+          这恰恰是 AI 无法复制的。
+        </div>
+        <div class="insight">
+          人类历史上每一次重大认知飞跃，都伴随一次“自降神坛”：
+          哥白尼、达尔文、弗洛伊德，直到今天的 AI，
+          一再证明“人并不那么强”，但文明因此向前。
+        </div>
+      </div>
+
+      <div class="panel-headline">
+        三、AI 定义手段，人类负责“坐牢的责任”
+        <span>未来职业观：为自己发明一个岗位</span>
+      </div>
+      <div class="insights-list">
+        <div class="insight">
+          未来很多决策中的“意义与责任”，可能也会受到 AI 建议的影响，
+          但最后签字、承担后果的，仍然必须是<span class="txt-gold">人类</span>。
+        </div>
+        <div class="insight">
+          “AI 很棒，如果它能替我坐牢就更棒。”——
+          这句玩笑背后，是现实规则：<strong>责任不可外包</strong>。
+        </div>
+        <div class="insight">
+          未来的文明可以被想象成一个巨大的系统，
+          AI 负责稳定运算，人类像<span class="txt-cyan">分布式神经元</span>一样，
+          负责感受、连接、担惊受怕与承担责任。
+        </div>
+        <div class="insight">
+          这意味着职业世界会从“大职业”走向“微职业”：
+          每个人都要为自己发明一个<span class="txt-lime">“只有我最称职”</span>的岗位。
+        </div>
+        <div class="insight">
+          对保险代理人这类职业来说，核心价值在于
+          <strong>成为客户与未来之间的可信连接节点</strong>——
+          这是任何 AI 难以替代的人际枢纽。
+        </div>
+        <div class="insight">
+          听风八百遍，才知是人间。未来最值得投入时间的事情，
+          是让自己成为一个<span class="txt-pink">足够敏感、足够负责的“听风的人”</span>。
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 思维导图总览 -->
+  <section class="mindmap-card">
+    <div class="mindmap-title">
+      趋势总览思维导图
+      <span>一眼看懂四位老师的交叉结论</span>
+    </div>
+    <div class="mm-root">
+      <div class="mm-node level-1">来自未来的好消息 · 四条主线</div>
+
+      <div class="mm-children">
+        <div class="mm-node level-2">① 财富结构重估（香帅）</div>
+        <div class="mm-children">
+          <div class="mm-node level-3">岛链化：资产要考虑地缘与安全锚点，美元不再“绝对安全”。</div>
+          <div class="mm-node level-3">智能化：数据成为新生产要素，靠近 AI 与数字平台才有长坡厚雪。</div>
+          <div class="mm-node level-3">行动：多元分散 + 底线思维，用保险与长期资产锁定家庭底盘。</div>
+        </div>
+
+        <div class="mm-node level-2">② 国家意志与产业布局（马江博）</div>
+        <div class="mm-children">
+          <div class="mm-node level-3">关键五年：外有大国博弈，内有新旧动能转换，国家准备强攻。</div>
+          <div class="mm-node level-3">抓手：实体经济 + 制造业升级 + 战略新兴产业 + 科技自立。</div>
+          <div class="mm-node level-3">空间：东部增长极 + 中西部战略腹地，新一轮城市和产业洗牌。</div>
+        </div>
+
+        <div class="mm-node level-2">③ 精神与文化的标尺（贾行家）</div>
+        <div class="mm-children">
+          <div class="mm-node level-3">从“风口逻辑”回到“以人为尺子”，先问人再问钱。</div>
+          <div class="mm-node level-3">正确顺序：艺术 → 大众 → 商业，内容先服务真实人群。</div>
+          <div class="mm-node level-3">启示：任何行业都要重新校准“人的体验”这把尺子。</div>
+        </div>
+
+        <div class="mm-node level-2">④ AI 时代的人生策略（罗振宇）</div>
+        <div class="mm-children">
+          <div class="mm-node level-3">AI 从工具变伙伴，人类用“弱点”建立不可替代的价值。</div>
+          <div class="mm-node level-3">未来职业：为自己发明一个只能由你负责、你来“坐牢”的岗位。</div>
+          <div class="mm-node level-3">答案：让 AI 定义手段，人类专注感受、选择与承担。</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+  // 折叠逻辑：稳定计算 max-height，避免内容被截断
+  document.querySelectorAll('.speaker-card').forEach(function(card){
+    var btn = card.querySelector('.speaker-header');
+    var panel = card.querySelector('.speaker-panel');
+
+    // 初始化：带 data-open="true" 的默认展开
+    if(card.dataset.open === 'true'){
+      card.classList.add('open');
+      panel.style.maxHeight = panel.scrollHeight + 'px';
+    }
+
+    btn.addEventListener('click', function(){
+      var isOpen = card.classList.contains('open');
+      if(isOpen){
+        card.classList.remove('open');
+        panel.style.maxHeight = null;
+      }else{
+        card.classList.add('open');
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+
+    // 窗口尺寸变化时重新计算高度
+    window.addEventListener('resize', function(){
+      if(card.classList.contains('open')){
+        panel.style.maxHeight = panel.scrollHeight + 'px';
+      }
+    });
+  });
+</script>
+</body>
+</html>

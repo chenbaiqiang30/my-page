@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吴军问答局：AI来了，你该做些什么准备</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --secondary: #7c3aed;
+            --success: #10b981;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --info: #06b6d4;
+            --light: #f3f4f6;
+            --dark: #1f2937;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-dark: rgba(31, 41, 55, 0.7);
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
+            color: #f1f5f9;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            transition: all 0.3s ease;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部 */
+        .header {
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: slideDown 0.6s ease;
+        }
+
+        body.dark-mode .header {
+            background: var(--glass-dark);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        /* 模式切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            z-index: 1000;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--glass-dark);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.dark-mode .mindmap-section {
+            background: var(--glass-dark);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .mindmap-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .mindmap-node {
+            text-align: center;
+            flex: 1;
+            min-width: 200px;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .mindmap-node.center {
+            flex: 0 0 100%;
+        }
+
+        .node-main {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .node-sub {
+            background: rgba(255, 255, 255, 0.8);
+            border: 2px solid var(--primary);
+            padding: 12px 16px;
+            border-radius: 10px;
+            font-size: 0.9em;
+            margin-bottom: 8px;
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .node-sub {
+            background: rgba(30, 41, 55, 0.6);
+            border-color: var(--info);
+            color: #f1f5f9;
+        }
+
+        .node-sub:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            backdrop-filter: blur(10px);
+            background: var(--glass);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation: fadeIn 0.6s ease;
+        }
+
+        body.dark-mode .content-card {
+            background: var(--glass-dark);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 24px;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 2px;
+        }
+
+        /* 可折叠内容 */
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            font-weight: 600;
+            border-bottom: 2px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .collapsible-header {
+            border-bottom-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .collapsible-icon {
+            display: inline-block;
+            transition: transform 0.3s;
+        }
+
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+            padding-top: 0;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 1000px;
+            padding-top: 15px;
+        }
+
+        /* 高亮文本 */
+        .highlight-important {
+            background: linear-gradient(120deg, rgba(239, 68, 68, 0.3), rgba(239, 68, 68, 0.1));
+            padding: 2px 4px;
+            border-left: 3px solid #ef4444;
+            color: #dc2626;
+            font-weight: 500;
+        }
+
+        body.dark-mode .highlight-important {
+            color: #fca5a5;
+        }
+
+        .highlight-data {
+            background: linear-gradient(120deg, rgba(37, 99, 235, 0.3), rgba(37, 99, 235, 0.1));
+            padding: 2px 4px;
+            color: #1e40af;
+            font-weight: 500;
+        }
+
+        body.dark-mode .highlight-data {
+            color: #93c5fd;
+        }
+
+        .highlight-quote {
+            background: linear-gradient(120deg, rgba(16, 185, 129, 0.3), rgba(16, 185, 129, 0.1));
+            padding: 2px 4px;
+            border-left: 3px solid #10b981;
+            color: #047857;
+            font-weight: 500;
+        }
+
+        body.dark-mode .highlight-quote {
+            color: #6ee7b7;
+        }
+
+        /* 专家评论气泡 */
+        .expert-comments {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .comment-bubble {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.1), rgba(124, 58, 237, 0.1));
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+            animation: slideUp 0.6s ease;
+        }
+
+        body.dark-mode .comment-bubble {
+            background: linear-gradient(135deg, rgba(37, 99, 235, 0.15), rgba(124, 58, 237, 0.15));
+        }
+
+        .comment-author {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .comment-author::before {
+            content: '💡';
+        }
+
+        .comment-text {
+            font-size: 0.95em;
+            line-height: 1.6;
+            opacity: 0.85;
+        }
+
+        /* 关键要点列表 */
+        .key-points {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            border-left: 4px solid var(--success);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 20px;
+        }
+
+        body.dark-mode .key-points {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15));
+        }
+
+        .key-points h4 {
+            color: var(--success);
+            margin-bottom: 12px;
+        }
+
+        .key-points li {
+            margin-left: 20px;
+            margin-bottom: 8px;
+            opacity: 0.85;
+        }
+
+        /* 动画 */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            margin-top: 50px;
+            padding: 30px;
+            opacity: 0.6;
+            font-size: 0.9em;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .header {
+                padding: 25px;
+            }
+
+            .content-card {
+                padding: 20px;
+            }
+
+            .mindmap {
+                flex-direction: column;
+            }
+
+            .header-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🤖 吴军问答局：AI来了，你该做些什么准备</h1>
+            <div class="header-meta">
+                <span class="meta-item">👤 讲师：吴军</span>
+                <span class="meta-item">🎓 身份：计算机科学家、自然语言处理专家</span>
+                <span class="meta-item">📊 核心话题：ChatGPT本质、应对策略</span>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="mindmap-section">
+            <h2>📊 核心内容结构</h2>
+            <div class="mindmap">
+                <div class="mindmap-node center">
+                    <div class="node-main">🎯 ChatGPT的真相与应对</div>
+                </div>
+                <div class="mindmap-node">
+                    <div class="node-sub">上半场</div>
+                    <div class="node-sub">• 过度炒作现象</div>
+                    <div class="node-sub">• 涌现误读</div>
+                    <div class="node-sub">• 深度学习悲观论</div>
+                </div>
+                <div class="mindmap-node">
+                    <div class="node-sub">下半场</div>
+                    <div class="node-sub">• 技术革命判断</div>
+                    <div class="node-sub">• 被替代风险</div>
+                    <div class="node-sub">• 个人准备方向</div>
+                </div>
+                <div class="mindmap-node">
+                    <div class="node-sub">问答环节</div>
+                    <div class="node-sub">• 学生使用建议</div>
+                    <div class="node-sub">• 图灵测试讨论</div>
+                    <div class="node-sub">• 教育规划建议</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 上半场内容 -->
+        <div class="content-card">
+            <div class="card-title">📍 上半场：理性认识ChatGPT</div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span>第一问：为什么ChatGPT被过度炒作？</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p>吴军通过历史类比说明：当<span class="highlight-important">连擦皮鞋的孩童都在谈论股票</span>时，就说明市场已经过度炒作了。同样的道理今天适用于ChatGPT：</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>很多自称"专家"从未真正做过AI研究</li>
+                        <li>媒体无脑转载，甚至改都不改一个字</li>
+                        <li>历史上类似事件不止一次：VR、AlphaGo、区块链、元宇宙都经历过这个过程</li>
+                    </ul>
+                    <div class="key-points">
+                        <h4>💡 关键洞察</h4>
+                        <ul>
+                            <li><span class="highlight-important">真正被淘汰的是那些做无用转载的人</span></li>
+                            <li>任何不提供真实价值的工作都会被AI替代</li>
+                            <li>炒作本身是一个清晰的过度信号</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span>第二问：为什么大多数人对"涌现"理解错了？</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p>涌现（emergence）这个概念被严重误解了：</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>ChatGPT给出的所有答案都是人类已知的</li>
+                        <li>它不能创造真正新的知识</li>
+                        <li>99%的常见问题都能在维基百科找到</li>
+                        <li>只有<span class="highlight-data">1%的完全新知识</span>超出了ChatGPT的能力</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><span class="highlight-important">真正的"涌现"只发生在特定领域</span>——比如围棋，因为围棋有明确的输赢标准。但在自然语言处理中，没有唯一正确答案。</p>
+                    <div class="key-points">
+                        <h4>📊 数据观察</h4>
+                        <ul>
+                            <li>人类知道的但不知道怎么表达的：很多</li>
+                            <li>ChatGPT帮你改进文章质量：可以</li>
+                            <li>ChatGPT创造全新知识：不能</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span>第三问：深度学习之父Hinton的悲观言论为什么被误读？</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p>Hinton（图灵奖得主）离开Google的真实原因：</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><span class="highlight-data">主要原因：年纪大了（75岁）</span>，不适合频繁出差</li>
+                        <li>次要原因：在公司内不好批评公司的产品策略</li>
+                        <li>真实担忧：训练数据太脏导致大量错误答案</li>
+                        <li>现实危险：容易误导很多人</li>
+                    </ul>
+                    <p style="margin-top: 15px;">Hinton并非说AI威胁人类，而是指出了<span class="highlight-important">数据质量问题</span>。这是一个工程问题，不是存在论问题。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 下半场内容 -->
+        <div class="content-card">
+            <div class="card-title">📍 下半场：未来趋势与个人应对</div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span>ChatGPT是技术革命吗？</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p>历史上真正的"革命"只有四次：</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><span class="highlight-data">农业革命</span>：一万多年前，持续6000年</li>
+                        <li><span class="highlight-data">第一次工业革命</span>：1776年瓦特蒸汽机，改变人类命运</li>
+                        <li><span class="highlight-data">第二次工业革命</span>：1860-1870年代，真正带来财富增长</li>
+                        <li><span class="highlight-data">信息革命</span>：自1946年计算机诞生至今</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><span class="highlight-important">ChatGPT只是深度学习的一部分，深度学习只是AI的一部分，AI只是信息革命的一部分。</span></p>
+                    <p>这是一个涟漪，不是浪潮。</p>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span>ChatGPT会替代哪些人的工作？</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p><span class="highlight-important">第一波被替代的：无脑转载者和毫无营养文字的写手</span></p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li>快速消失的工作：转载+SEO优化+水文案</li>
+                        <li>即将威胁的：简单翻唱/模仿型创作</li>
+                        <li>难以替代的：真正有灵魂的创意工作</li>
+                    </ul>
+                    <p style="margin-top: 15px;">关于"机会"的残酷真实：</p>
+                    <ul style="margin-left: 20px;">
+                        <li>全球IT从业人员：<span class="highlight-data">2100万</span></li>
+                        <li>占全球劳动力：<span class="highlight-data">千分之五</span></li>
+                        <li>核心AI研发人员：<span class="highlight-data">不到100万</span>（软件开发60多万、硬件开发6.7万等）</li>
+                        <li><span class="highlight-important">对99.9%的人来说，没有直接机会</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span>普通人应该做什么准备？</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p><strong>三个核心建议：</strong></p>
+                    <div style="margin-top: 15px;">
+                        <p><span class="highlight-important">1️⃣ 要理解ChatGPT的原理</span></p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>就像要理解电的原理，而不是盲目害怕电</li>
+                            <li>了解能做什么、不能做什么</li>
+                        </ul>
+
+                        <p style="margin-top: 15px;"><span class="highlight-important">2️⃣ 做创造性的工作</span></p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>创造性工作永远不会被淘汰</li>
+                            <li>为什么要做机器能做的事？</li>
+                            <li>任何时代，做创意工作的人都不失业</li>
+                        </ul>
+
+                        <p style="margin-top: 15px;"><span class="highlight-important">3️⃣ 把本职工作做好</span></p>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>这是最重要的准备</li>
+                            <li>同行中做最好的20%，价值差数量级</li>
+                            <li><span class="highlight-data">一个优秀工程师的收入能相差数倍到数十倍</span></li>
+                        </ul>
+                    </div>
+
+                    <div class="key-points">
+                        <h4>🎯 最后的建议</h4>
+                        <ul>
+                            <li>不要被短期效率提升所迷惑，关注人生长期规划</li>
+                            <li>人生效率提升比日常效率提升重要1000倍</li>
+                            <li>把手机扔了，这是最有效的效率提升工具</li>
+                            <li>房贷、养老这些真实问题比AI机会重要得多</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 教育与长期建议 -->
+        <div class="content-card">
+            <div class="card-title">🎓 对教育和个人成长的建议</div>
+            
+            <div class="collapsible">
+                <div class="collapsible-header">
+                    <span>孩子应该怎样在AI时代成长？</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <p><span class="highlight-important">最欠缺的是语文教育</span></p>
+                    <p style="margin-top: 10px;">三个核心方向：</p>
+                    <ul style="margin-left: 20px; margin-top: 10px;">
+                        <li><strong>多阅读：</strong>读真正的文学作品，不是网文和公众号</li>
+                        <li><strong>多写作：</strong>从每天写简单日记开始</li>
+                        <li><strong>修辞学：</strong>学会说服人、表达清楚的能力</li>
+                    </ul>
+                    <p style="margin-top: 15px;">这三个能力在AI时代比技术能力更值钱。</p>
+
+                    <div class="key-points">
+                        <h4>💡 关键洞察</h4>
+                        <ul>
+                            <li>培养好奇心和创造力，而非简单的找答案能力</li>
+                            <li>鼓励犯错，错误帮助记忆比灌输正确答案有效</li>
+                            <li>未知问题没有已知答案，创新需要探索精神</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 专家评论 -->
+        <div class="content-card">
+            <div class="card-title">💬 多维度观点解析</div>
+            
+            <div class="expert-comments">
+                <div class="comment-bubble">
+                    <div class="comment-author">吴军的核心立场</div>
+                    <div class="comment-text">
+                        别被炒作吓到，做好自己的事情。一个人在同行中做得比绝大多数人好，就不用担心被替代。关键是做创造性的工作，而不是可被复制的工作。
+                    </div>
+                </div>
+
+                <div class="comment-bubble">
+                    <div class="comment-author">数据背后的真相</div>
+                    <div class="comment-text">
+                        全球只有2100万IT从业者，占劳动力千分之五。真正的核心AI研发人员不到100万。99.9%的人不会直接受益于这波浪潮。
+                    </div>
+                </div>
+
+                <div class="comment-bubble">
+                    <div class="comment-author">历史视角</div>
+                    <div class="comment-text">
+                        真正的技术革命只有四次。ChatGPT不是革命，只是涟漪。关注长期人生规划，而不是短期热点。房贷比AI机会更紧迫。
+                    </div>
+                </div>
+
+                <div class="comment-bubble">
+                    <div class="comment-author">技术本质</div>
+                    <div class="comment-text">
+                        ChatGPT本质上是一个超级预测键盘。它的所有答案都来自人类已知数据。99%的问题都能在维基百科找到答案，只有1%的新知是真正超出范围的。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关键数据汇总 -->
+        <div class="content-card">
+            <div class="card-title">📊 关键数据与事实</div>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 20px;">
+                <div style="background: rgba(37, 99, 235, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--primary);">
+                    <div style="color: var(--primary); font-weight: bold; margin-bottom: 5px;">全球IT从业人员</div>
+                    <div style="font-size: 1.8em; font-weight: bold;">2100万</div>
+                    <div style="font-size: 0.85em; opacity: 0.7;">占全球劳动力千分之五</div>
+                </div>
+
+                <div style="background: rgba(124, 58, 237, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--secondary);">
+                    <div style="color: var(--secondary); font-weight: bold; margin-bottom: 5px;">核心AI研发人员</div>
+                    <div style="font-size: 1.8em; font-weight: bold;">&lt;100万</div>
+                    <div style="font-size: 0.85em; opacity: 0.7;">软件开发60+万、硬件6.7万</div>
+                </div>
+
+                <div style="background: rgba(16, 185, 129, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--success);">
+                    <div style="color: var(--success); font-weight: bold; margin-bottom: 5px;">ChatGPT知识来源</div>
+                    <div style="font-size: 1.8em; font-weight: bold;">99%</div>
+                    <div style="font-size: 0.85em; opacity: 0.7;">来自人类已知信息</div>
+                </div>
+
+                <div style="background: rgba(245, 158, 11, 0.1); padding: 15px; border-radius: 10px; border-left: 4px solid var(--warning);">
+                    <div style="color: var(--warning); font-weight: bold; margin-bottom: 5px;">新知识贡献</div>
+                    <div style="font-size: 1.8em; font-weight: bold;">1%</div>
+                    <div style="font-size: 0.85em; opacity: 0.7;">超出人类知识范围</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="content-card">
+            <div class="card-title">✨ 核心总结</div>
+            
+            <div style="margin-top: 20px;">
+                <h4 style="color: var(--primary); margin-bottom: 12px;">ChatGPT的三个真相：</h4>
+                <ul style="margin-left: 20px; line-height: 2;">
+                    <li><span class="highlight-important">它不是革命，只是信息技术革命中的一个涟漪</span></li>
+                    <li><span class="highlight-important">它替代的首先是无脑转载者，然后是可复制的工作</span></li>
+                    <li><span class="highlight-important">99%的机会与99.9%的人无关</span></li>
+                </ul>
+
+                <h4 style="color: var(--primary); margin-bottom: 12px; margin-top: 20px;">个人应该做的：</h4>
+                <ul style="margin-left: 20px; line-height: 2;">
+                    <li><span class="highlight-important">理解技术本质，而不是被炒作吓到</span></li>
+                    <li><span class="highlight-important">做创造性工作，而不是可复制的工作</span></li>
+                    <li><span class="highlight-important">做好本职工作，这是最大的竞争力</span></li>
+                    <li><span class="highlight-important">关注人生长期规划，而不是短期热点</span></li>
+                </ul>
+
+                <div class="key-points" style="margin-top: 25px;">
+                    <h4>🎯 最后一句话</h4>
+                    <p style="margin-top: 10px;">
+                        人要淡定。有好奇心是好事，但患得患失没必要。世界上没有不费力就能得到的东西。你想要得到值钱的东西，唯一的办法就是花力气。不要指望看一篇报道或听半小时讲座就懂了，要认认真真地学、系统地学。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 本页面基于吴军在得到平台的《前沿课·吴军讲GPT》直播内容整理</p>
+            <p>✨ 采用苹果风格玻璃态设计 | 支持深色/浅色模式切换</p>
+        </div>
+    </div>
+
+    <script>
+        // 深色/浅色模式切换
+        function toggleTheme() {
+            const body = document.body;
+            const toggle = document.querySelector('.theme-toggle');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                toggle.textContent = '☀️';
+                localStorage.setItem('theme', 'dark');
+            } else {
+                toggle.textContent = '🌙';
+                localStorage.setItem('theme', 'light');
+            }
+        }
+
+        // 可折叠内容功能
+        document.querySelectorAll('.collapsible-header').forEach(header => {
+            header.addEventListener('click', function() {
+                const collapsible = this.parentElement;
+                collapsible.classList.toggle('active');
+            });
+        });
+
+        // 初始化主题
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.querySelector('.theme-toggle').textContent = '☀️';
+            }
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
