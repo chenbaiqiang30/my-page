@@ -1,33 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
-  <channel>
-    <title>小超的内容站点 RSS</title>
-    <link>https://chenbaiqiang30.github.io/my-page/</link>
-    <description>自动生成的 RSS 全站订阅</description>
-    <language>zh-cn</language>
+<channel>
+<title>小超RSS</title>
+<link>https://chenbaiqiang30.github.io/my-page/</link>
+<description>自动订阅源</description>
+<language>zh-cn</language>
 
-    <!-- 自动注入文章 -->
-    <items>
-      <!-- JS 动态填充（GitHub Pages 允许 XML 内 JS） -->
-      <script>
-        fetch("rename-map.json")
-          .then(r => r.json())
-          .then(map => {
-            let xml = "";
-            for (const oldName in map) {
-              const file = map[oldName];
-              xml += `
-                <item>
-                  <title>${file.replace(".html", "")}</title>
-                  <link>https://chenbaiqiang30.github.io/my-page/${file}</link>
-                  <guid>https://chenbaiqiang30.github.io/my-page/${file}</guid>
-                </item>
-              `;
-            }
-            document.write(xml);
-          });
-      </script>
-    </items>
+<script src="site-data.js"></script>
+<script>
+(async()=>{
+    const {posts}=await loadSiteData();
+    document.write(posts.map(p=>`
+        <item>
+            <title>${p.title}</title>
+            <link>https://chenbaiqiang30.github.io/my-page/${p.url}</link>
+        </item>
+    `).join(""));
+})();
+</script>
 
-  </channel>
+</channel>
 </rss>
