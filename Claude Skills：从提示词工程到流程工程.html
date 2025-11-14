@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Claude Skills：从提示词到流程工程 · 交互式精炼版</title>
+<style>
+/* ===== 基础与主题 ===== */
+:root{
+  --bg: radial-gradient(1200px 800px at 10% 0%,#a78bfa22,transparent 60%),
+        radial-gradient(1100px 750px at 90% 20%,#60a5fa22,transparent 60%),
+        linear-gradient(135deg,#020617,#020617 40%,#020817);
+  --glass: rgba(15,23,42,.72);
+  --glass-border: rgba(148,163,184,.55);
+  --text: #e5e7eb;
+  --muted: #cbd5e1;
+  --accent: #8b5cf6;
+  --accent2:#22d3ee;
+  --gold:#fbbf24;
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{
+  margin:0;
+  font-family: system-ui,-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial;
+  color:var(--text);
+  background:var(--bg) fixed;
+  line-height:1.7;
+}
+.container{max-width:1120px;margin:40px auto 56px;padding:0 16px}
+
+/* ===== 头部 ===== */
+.header{
+  position:relative;
+  padding:26px 24px 22px;
+  border-radius:24px;
+  background:linear-gradient(135deg,#1e293bdd,#020617dd);
+  backdrop-filter: blur(20px);
+  border:1px solid #38bdf8aa;
+  box-shadow:
+    0 0 0 1px #0f172a,
+    0 20px 60px #000c;
+}
+.h1{
+  margin:0 0 10px;
+  font-size:clamp(28px,3.6vw,40px);
+  font-weight:800;
+  letter-spacing:0.02em;
+  background:conic-gradient(from 160deg,#e879f9,#60a5fa,#22d3ee,#a855f7,#f97316,#e879f9);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.sub{color:var(--muted);font-size:14px}
+.badges{margin-top:14px;display:flex;flex-wrap:wrap;gap:8px}
+.badge{
+  padding:5px 11px;
+  border-radius:999px;
+  border:1px solid var(--glass-border);
+  background:linear-gradient(135deg,#0f172a,#020617);
+  font-size:12px;
+  display:inline-flex;
+  align-items:center;
+  gap:4px;
+}
+.dot{
+  width:8px;height:8px;border-radius:999px;
+  background:radial-gradient(circle,#f97316,#be123c);
+}
+
+/* ===== 控件 ===== */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 0}
+.btn{
+  background:linear-gradient(135deg,#1d283a,#020617);
+  backdrop-filter: blur(12px);
+  border:1px solid #38bdf8aa;
+  color:var(--text);
+  padding:8px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  font-weight:600;
+  font-size:12px;
+  letter-spacing:0.03em;
+  text-transform:uppercase;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  transition:.18s ease-out;
+}
+.btn span{font-size:15px}
+.btn:hover{
+  transform:translateY(-1px) translateZ(0);
+  box-shadow:0 12px 32px #000a;
+}
+
+/* ===== 浮动光点背景 ===== */
+.glow-orb{
+  position:fixed;
+  width:360px;height:360px;
+  border-radius:999px;
+  background:radial-gradient(circle at 30% 30%,#22d3ee66,transparent 60%);
+  filter:blur(20px);
+  opacity:.55;
+  pointer-events:none;
+  mix-blend-mode:screen;
+  z-index:-1;
+  top:10%;
+  left:-10%;
+}
+.glow-orb2{
+  position:fixed;
+  width:420px;height:420px;
+  border-radius:999px;
+  background:radial-gradient(circle at 70% 40%,#8b5cf666,transparent 65%);
+  filter:blur(26px);
+  opacity:.5;
+  pointer-events:none;
+  mix-blend-mode:screen;
+  z-index:-1;
+  bottom:-8%;
+  right:-6%;
+}
+
+/* ===== 折叠卡片 ===== */
+.card{
+  position:relative;
+  margin:18px 0;
+  border-radius:20px;
+  overflow:hidden;
+  border:1px solid var(--glass-border);
+  background:linear-gradient(135deg,#020617ee,#020617f5);
+  box-shadow:0 18px 40px #020617dd;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(135deg,#38bdf855,#a855f755);
+  opacity:0;
+  pointer-events:none;
+  mix-blend-mode:soft-light;
+  transition:.35s ease-out;
+}
+.card:hover::before{opacity:.16}
+.card header{
+  position:relative;
+  padding:16px 18px 14px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  cursor:pointer;
+  z-index:1;
+}
+.card h3{
+  margin:0;
+  font-size:17px;
+  font-weight:800;
+  background:linear-gradient(90deg,#22d3ee,#e879f9,#f97316);
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+}
+.tagline{color:var(--muted);font-size:13px;margin-top:4px;max-width:620px}
+.chev{
+  width:26px;height:26px;
+  border-radius:999px;
+  border:1px solid rgba(250,204,21,.85);
+  background:radial-gradient(circle at 30% 30%,#fbbf24,#f97316);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:15px;
+  color:#111827;
+  box-shadow:0 0 0 1px #42200688,0 6px 18px #000d;
+  transition:.18s ease-out;
+  flex-shrink:0;
+}
+.card.collapsed .chev{
+  transform:rotate(-90deg);
+  opacity:.85;
+}
+.content{
+  padding:0 18px 16px 18px;
+  max-height:1200px;
+  transition:max-height .36s ease-out;
+}
+.card.collapsed .content{
+  max-height:0;
+  padding-bottom:0;
+  overflow:hidden;
+}
+
+/* 思维导图卡片始终展开，不折叠 */
+.card.mind-card header{cursor:default;}
+.card.mind-card .chev{display:none;}
+
+/* ===== 彩色关键字 ===== */
+.k{color:#f97316;font-weight:700;}
+.d{color:#60a5fa;font-weight:700;}
+.g{color:#4ade80;font-weight:700;}
+.y{color:#fde68a;font-weight:700;}
+.p{color:#e879f9;font-weight:700;}
+
+/* ===== 布局块 ===== */
+.grid{display:grid;gap:14px}
+@media(min-width:880px){
+  .grid-2{grid-template-columns:repeat(2,1fr)}
+  .grid-3{grid-template-columns:repeat(3,1fr)}
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:4px 10px;
+  border-radius:999px;
+  font-size:12px;
+  border:1px solid var(--glass-border);
+  background:radial-gradient(circle at 0 0,#38bdf822,transparent 55%);
+}
+.hr{
+  height:1px;
+  margin:10px 0;
+  background:linear-gradient(90deg,transparent,#64748b88,transparent);
+}
+ul{margin:6px 0 0 0;padding-left:16px;font-size:13px}
+ol{margin:4px 0 0 16px;font-size:13px}
+li{margin:2px 0 0}
+
+/* ===== 思维导图容器 ===== */
+.mind{
+  margin-top:4px;
+  border-radius:18px;
+  border:1px solid #38bdf8aa;
+  background:radial-gradient(circle at 10% 0,#1d4ed822,transparent 60%),
+             radial-gradient(circle at 90% 100%,#a855f722,transparent 60%),
+             #020617;
+  padding:10px;
+}
+
+/* ===== 专家点评 ===== */
+.note{
+  border-radius:14px;
+  border:1px solid #38bdf8aa;
+  background:linear-gradient(135deg,#22d3ee22,#8b5cf622);
+  padding:12px 14px 12px 14px;
+  font-size:13px;
+}
+.note b{color:#fef3c7}
+
+/* ===== 尾部 ===== */
+.footer{
+  margin-top:20px;
+  font-size:11px;
+  color:var(--muted);
+  text-align:center;
+  opacity:.8;
+}
+
+/* ===== 动画 ===== */
+@keyframes floatOrbs{
+  0%{transform:translate(0,0);}
+  50%{transform:translate(14px,-10px);}
+  100%{transform:translate(0,0);}
+}
+.glow-orb{animation:floatOrbs 18s ease-in-out infinite;}
+.glow-orb2{animation:floatOrbs 24s ease-in-out infinite reverse;}
+</style>
+</head>
+<body>
+<div class="glow-orb"></div>
+<div class="glow-orb2"></div>
+
+<div class="container">
+  <!-- 头部 -->
+  <section class="header">
+    <h1 class="h1">Claude Skills：从提示词工程到流程工程</h1>
+    <div class="sub">
+      不只是「把提示词存成文件夹」，而是把<span class="p">经验</span>、<span class="d">流程</span>、<span class="g">工具</span>、<span class="y">上下文</span>，拼成一套可复用的「AI 工作操作系统」。
+    </div>
+    <div class="badges">
+      <span class="badge"><span class="dot"></span>蓝紫霓虹 · 玻璃拟态</span>
+      <span class="badge"><span class="dot"></span>可折叠知识卡片</span>
+      <span class="badge"><span class="dot"></span>SVG 思维导图</span>
+      <span class="badge"><span class="dot"></span>流程级精炼 · 杜绝堆字</span>
+    </div>
+    <div class="toolbar">
+      <button class="btn" id="toggleAllBtn"><span>⤢</span>全部折叠 / 展开</button>
+      <button class="btn" onclick="scrollToMind()"><span>🧠</span>直达思维导图</button>
+    </div>
+  </section>
+
+  <!-- 导语 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>导语 · 这篇长文到底讲明白了什么？</h3>
+        <div class="tagline">一句话：<span class="k">Prompt 工程只是上半场，下半场是流程工程（Skill Engineering）</span></div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="grid grid-3">
+        <div>
+          <div class="pill"><span>🎯</span>核心观点</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="p">Skills ≠ 仅仅存提示词</span>，而是把做事方法写成 SOP、可调用的流程模块。</li>
+            <li>真正护城河在于：<span class="g">谁能把业务流程沉淀成可复用 Skills 库</span>。</li>
+            <li>Prompts / Skills / Projects / Subagents / MCP 是<span class="d">五块积木</span>，要按场景组合。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🧱</span>五块关键积木</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="y">Prompts：</span>当场吩咐，一次性对话。</li>
+            <li><span class="k">Skills：</span>流程＋脚本＋资源的「能力文件夹」。</li>
+            <li><span class="d">Projects：</span>带知识库和历史记录的「项目空间」。</li>
+            <li><span class="g">Subagents：</span>负责子任务的「专职 AI 同事」。</li>
+            <li><span class="p">MCP：</span>把外部系统接成一张网的「通用连接层」。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🚀</span>对 AI 创业者的启发</div>
+          <div class="hr"></div>
+          <ul>
+            <li>差异化：从「选模型」升级为<span class="k">Skill 设计能力</span>。</li>
+            <li>架构：产品变成「Agent 积木组合」，而不是一个聊天框。</li>
+            <li>角色：出现<span class="p">Skill Engineer / AI Workflow Architect</span> 这种新职业。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Claude 生态五块积木 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>一、Claude 生态的五块「积木」：先把名字捋顺</h3>
+        <div class="tagline">先分清谁管「说话」、谁管「干活」、谁管「接系统」</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="grid grid-3">
+        <div>
+          <div class="pill"><span>💬</span>Prompts：临场吩咐</div>
+          <div class="hr"></div>
+          <ul>
+            <li>你在对话框里敲的自然语言指令。</li>
+            <li>特征：一次性、即时、会话内有效。</li>
+            <li>问题：跨对话<span class="y">不会自动保留</span>，容易反复复制粘贴。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🧰</span>Skills：能力文件夹</div>
+          <div class="hr"></div>
+          <ul>
+            <li>一个 Skill = 岗位说明书 + SOP + 工具包。</li>
+            <li>包含：执行步骤、注意事项、输出格式、脚本和样例文件。</li>
+            <li>场景：品牌规范、合规流程、专业分析套路、个人写作/研究习惯。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>📁</span>Projects：项目空间</div>
+          <div class="hr"></div>
+          <ul>
+            <li>每个 Project 有自己的聊天记录＋知识库＋项目指令。</li>
+            <li>适合长期课题、特定客户/产品线。</li>
+            <li>定位：<span class="d">「要知道什么」</span> —— 背景知识。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:10px">
+        <div>
+          <div class="pill"><span>👥</span>Subagents：专职 AI 同事</div>
+          <div class="hr"></div>
+          <ul>
+            <li>每个 subagent 有自己的系统提示、上下文、工具权限。</li>
+            <li>适合：代码审查、性能分析、安全审计、文档写作等「岗位型」工作。</li>
+            <li>定位：<span class="g">具体干活的人</span>，可以调用 Skills 当「教材」。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🌐</span>MCP：统一连接层</div>
+          <div class="hr"></div>
+          <ul>
+            <li>用统一协议连接 Google Drive、Slack、GitHub、数据库、内部系统等。</li>
+            <li>让 AI 能读写真实业务系统。</li>
+            <li>定位：<span class="p">接线总线</span>，把工具和数据接进来，再交给 Skills / Agents 去用。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills 详解 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>二、Skills：把「会聊天」升级成「会干活」</h3>
+        <div class="tagline">从提示词工程 → 流程工程：把岗位说明书写进模型的长期记忆</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="grid grid-3">
+        <div>
+          <div class="pill"><span>📘</span>1）Skills 是什么？</div>
+          <div class="hr"></div>
+          <ul>
+            <li>本质：把「经验」和「做事方法」固化成可复用单元。</li>
+            <li>内容：执行步骤、注意事项、输出格式、脚本、模板。</li>
+            <li>效果：Claude 做类似任务时，自动套用，不必每次重讲。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🧠</span>2）渐进披露：不撑爆上下文</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="k">先看封面：</span>只扫描各个 Skill 的少量元数据。</li>
+            <li><span class="d">相关再翻正文：</span>按需载入 SKILL.md。</li>
+            <li><span class="p">真要用到脚本/文件时</span>再载入资源。</li>
+            <li>好处：可以装很多 Skills，又不会压满上下文窗口。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🎯</span>3）什么内容值得写成 Skill？</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="g">组织级工作流：</span>品牌规范、合规/法务 SOP、统一报告结构。</li>
+            <li><span class="y">专业经验沉淀：</span>Excel 分析套路、安全审计 checklist、常用研究路径。</li>
+            <li><span class="p">个人习惯：</span>写公众号模板、研究流程、笔记结构。</li>
+            <li>一句话：<span class="k">不想反复解释的东西，统统写进 Skill。</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Prompts / Skills / Projects / Subagents / MCP 对比 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>三、Prompts / Skills / Projects / Subagents / MCP：各司其职</h3>
+        <div class="tagline">谁负责「说话」，谁负责「记忆」，谁负责「执行」，谁负责「接系统」？</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="grid grid-2">
+        <div>
+          <div class="pill"><span>💬</span>Prompts vs Skills</div>
+          <div class="hr"></div>
+          <ul>
+            <li>Prompts：一次性指令，适合即时对话、局部微调。</li>
+            <li>Skills：长期工作方式，适合稳定流程、标准化经验。</li>
+            <li>升级信号：<span class="p">跨对话、跨项目要反复用的流程，就该做成 Skill。</span></li>
+            <li>推荐模式：<span class="g">Skills 打地基，Prompts 做细节调参。</span></li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>📁</span>Projects vs Skills</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="d">Projects =「要知道什么」</span> —— 文档、背景、知识库。</li>
+            <li><span class="k">Skills =「要怎么干活」</span> —— 流程、范式、代码模板。</li>
+            <li>Projects 是场景局部，绑定某个项目/客户。</li>
+            <li>Skills 是能力全局，在任何项目和对话里都能按需调用。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid grid-3" style="margin-top:10px">
+        <div>
+          <div class="pill"><span>👥</span>Subagents vs Skills</div>
+          <div class="hr"></div>
+          <ul>
+            <li>Subagent 像岗位明确的 AI 员工，负责某块工作。</li>
+            <li>Skill 像这位员工的「教材 + 操作手册」。</li>
+            <li>最佳实践：<span class="p">Subagent + 多个 Skills 组合</span>，让 AI 员工带着「内部培训材料」上岗。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🌐</span>MCP + Skills：接线 & 用线</div>
+          <div class="hr"></div>
+          <ul>
+            <li>MCP：解决「连到哪里」，把数据源和工具接进来。</li>
+            <li>Skills：解决「怎么用」，定义使用顺序、过滤规则、输出规范。</li>
+            <li>理想形态：每接一个 MCP 源，都配一组对应的使用 Skill。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🧩</span>一句话总括</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="p">Prompt = 语言接口</span></li>
+            <li><span class="k">Skill = 能力模组</span></li>
+            <li><span class="d">Project = 知识场景</span></li>
+            <li><span class="g">Subagent = 执行者</span></li>
+            <li><span class="y">MCP = 系统总线</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 研究 Agent 案例 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>四、一个「竞品研究 Agent」的完整拼装案例</h3>
+        <div class="tagline">Product + Skills + Projects + Subagents + MCP 如何落到实战？</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="grid grid-3">
+        <div>
+          <div class="pill"><span1️⃣</span>搭项目场景：Project</div>
+          <div class="hr"></div>
+          <ul>
+            <li>创建「竞争情报」项目：放行业报告、竞品文档、CRM 反馈、历史分析。</li>
+            <li>项目指令：要求站在自家产品战略视角，给结论＋证据＋可执行建议。</li>
+            <li>效果：所有对话默认带上这层「战略滤镜」。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>2️⃣</span>接外部系统：MCP</div>
+          <div class="hr"></div>
+          <ul>
+            <li>通过 MCP 接：Google Drive、GitHub、Web 搜索等。</li>
+            <li>统一成「可被 Agent 调用」的数据与工具接口。</li>
+            <li>研究不再停留在几份 PDF，而是打通实时数据源。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>3️⃣</span>定义研究 Skill</div>
+          <div class="hr"></div>
+          <ul>
+            <li>例如 competitive-analysis Skill：</li>
+            <li>— 描述 GDrive 目录结构和权威文档位置。</li>
+            <li>— 规定研究步骤：检索 → 筛选 → 对照 → 总结。</li>
+            <li>— 要求输出：必须带来源、日期、置信度。</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="grid grid-2" style="margin-top:12px">
+        <div>
+          <div class="pill"><span>4️⃣</span>配置 Subagents 分工</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="d">market-researcher：</span>看市场格局、定位、份额、融资。</li>
+            <li><span class="g">technical-analyst：</span>看技术栈、架构、性能、工程决策。</li>
+            <li>各自有不同工具权限和系统提示，互不干扰。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>5️⃣</span>一次调用，背后协同</div>
+          <div class="hr"></div>
+          <ul>
+            <li>你只问：「分析前三个竞品 AI 功能的定位和我们的空档」。</li>
+            <li>背后自动：加载 Project → 通过 MCP 调数据 → 调用 Skill 工作流 → 分派 Subagents → 汇总。</li>
+            <li>产出：<span class="p">带引用、结构化、可执行的竞品研报</span>。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 官方 FAQ 精炼要点 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>五、FAQ 精华：几个容易搞混的关键点</h3>
+        <div class="tagline">官方长文浓缩成 5 条「一定要记住」的工作原则</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <ol>
+        <li><span class="k">为什么 Skill 多了也不会拖垮性能？</span><br>
+          靠「渐进披露」：先看元数据，再按需载入全文、脚本和文件。</li>
+        <li><span class="d">什么时候用 Skills，什么时候用 Subagents？</span><br>
+          Skills：沉淀统一做事方法；Subagents：构建专职 AI 岗位，最佳是组合使用。</li>
+        <li><span class="p">Prompts 升级成 Skill 的触发条件？</span><br>
+          凡是跨对话、跨项目要反复用的流程类指令，不该停在 Prompt 层。</li>
+        <li><span class="g">Project vs Skill 的一句对比？</span><br>
+          <span class="d">Project：这是你要知道的东西。</span> / <span class="k">Skill：这是你该怎么做事。</span></li>
+        <li><span class="y">Subagents 能不能用 Skills？</span><br>
+          不仅可以，而且应该：给每个岗位型 subagent 绑定 Skills，相当于给 AI 员工配完整培训体系。</li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 不同用户如何上手 Skills -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>六、不同角色怎么「立刻」用起来？</h3>
+        <div class="tagline">网页用户 / API 开发者 / Claude Code 用户，各有一条清晰路径</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="grid grid-3">
+        <div>
+          <div class="pill"><span>🖥</span>Claude 网页用户</div>
+          <div class="hr"></div>
+          <ul>
+            <li>在设置里打开 Skills 功能。</li>
+            <li>给重要课题建 Project（如「公众号运营」「产品研究」）。</li>
+            <li>从自己最熟的一套流程起步，先写成第一个 Skill。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🧑‍💻</span>API / 产品开发者</div>
+          <div class="hr"></div>
+          <ul>
+            <li>阅读 Skills API 文档，熟悉创建 / 管理接口。</li>
+            <li>把团队现有「内部 SOP / 指南」逐步迁入 Skills 库。</li>
+            <li>参考官方 skills cookbook，先抄一版跑起来，再按领域重构。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>🧱</span>Claude Code / Agent 开发者</div>
+          <div class="hr"></div>
+          <ul>
+            <li>在 Agent 配置里，为不同 subagent 绑定对应 Skills。</li>
+            <li>把调研、审计、测试等跨项目工作流抽象成通用 Skills。</li>
+            <li>随着业务成长，逐步形成自己的「Skill Store」。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 创业者视角：中美财经专家点评 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>七、中美财经专家视角：Skill 工程对企业与资本市场意味着什么？</h3>
+        <div class="tagline">从「好玩 demo」到「可投可估值的生产力基础设施」</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="note">
+        <p><b>1）对企业经营：</b></p>
+        <ul>
+          <li>企业从「人教人」走向「人教 AI，AI 教人」——Skills 就是这套“教案”。</li>
+          <li>先把核心流程固化成 Skills 的公司，组织复利更高、对人员流动更不敏感。</li>
+          <li>长期看，Skill 库会像 ERP/CRM 一样，成为企业数字资产的一部分。</li>
+        </ul>
+        <p><b>2）对估值与护城河：</b></p>
+        <ul>
+          <li>美国市场看重：能否形成标准化 Agent 模块，对外开放成 Platform / Store。</li>
+          <li>中国市场看重：能否深度绑定具体行业场景，把行业 know-how 编译成 Skills 库。</li>
+          <li>共同点：<span class="p">Skill 体系越成熟，业务越「可复制」、越「可估值」，模型本身反而可替换。</span></li>
+        </ul>
+        <p><b>3）对个人和团队能力结构：</b></p>
+        <ul>
+          <li>单纯「会写 prompt」会变成基础技能。</li>
+          <li>稀缺的是：能拆解流程、抽象成 Skill、组合成 Agent 的复合型人才。</li>
+          <li>从人力资本角度，这类人才在中美市场都有明显溢价空间。</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- 作者实践：几个实战 Skill 示例 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>八、实战样本：作者已经在用的几类 Skills</h3>
+        <div class="tagline">从写公众号到性能分析，把个人「手艺」变成可调用模块</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <div class="grid grid-2">
+        <div>
+          <div class="pill"><span>📰</span>内容 & 产品类 Skill</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="p">公众号 Skill：</span>标题模板、导语结构、配图比例、语言风格统一写进 Skill。</li>
+            <li><span class="d">产品更新日志 Skill：</span>输入 changelog，自动变成用户友好的更新说明。</li>
+            <li><span class="g">产品 idea 头脑风暴 Skill：</span>固定发散→收敛→评估流程，不再随缘聊天。</li>
+            <li><span class="y">域名讨论 Skill：</span>从备选词到可用性查询，走完整套半自动流程。</li>
+          </ul>
+        </div>
+        <div>
+          <div class="pill"><span>⚙️</span>技术 & 工程类 Skill</div>
+          <div class="hr"></div>
+          <ul>
+            <li><span class="k">代码性能分析 Skill：</span>把数据库设计、Redis 配合、算法、缓存策略等经验写成 checklist。</li>
+            <li>单靠 MCP 或 Subagent 很难覆盖细节，必须靠 Skill 写进「老司机心法」。</li>
+            <li>长期看，这些技术 Skills 会沉淀成团队工程文化的一部分。</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 思维导图：Skill 时代的 AI 产品观 -->
+  <section class="card mind-card" id="mind">
+    <header>
+      <div>
+        <h3>九、思维导图 · 从 Prompt 工程到 Skill 工程</h3>
+        <div class="tagline">中心是「业务价值」，不是某一个炫酷名词</div>
+      </div>
+    </header>
+    <div class="content mind">
+      <svg viewBox="0 0 960 540" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto;">
+        <defs>
+          <linearGradient id="core" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#22d3ee"/>
+            <stop offset="50%" stop-color="#a855f7"/>
+            <stop offset="100%" stop-color="#f97316"/>
+          </linearGradient>
+          <linearGradient id="branch1" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#60a5fa"/>
+            <stop offset="100%" stop-color="#22d3ee"/>
+          </linearGradient>
+          <linearGradient id="branch2" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#4ade80"/>
+            <stop offset="100%" stop-color="#bef264"/>
+          </linearGradient>
+          <linearGradient id="branch3" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="#f97316"/>
+            <stop offset="100%" stop-color="#fb7185"/>
+          </linearGradient>
+        </defs>
+
+        <!-- 中心节点 -->
+        <circle cx="470" cy="260" r="78" fill="url(#core)" opacity="0.9"/>
+        <text x="470" y="248" fill="#0b1120" font-size="18" font-weight="700" text-anchor="middle">AI 业务系统</text>
+        <text x="470" y="270" fill="#0b1120" font-size="13" text-anchor="middle">Prompt → Skill → Agent 积木</text>
+        <text x="470" y="290" fill="#111827" font-size="11" text-anchor="middle">核心任务：把经验和流程「编译」进 Skill 库</text>
+
+        <!-- 左上：Prompts -->
+        <line x1="430" y1="220" x2="220" y2="110" stroke="url(#branch1)" stroke-width="3"/>
+        <rect x="100" y="60" width="210" height="96" rx="14" ry="14"
+              fill="#020617" stroke="#60a5fa" stroke-width="1.4"/>
+        <text x="205" y="88" fill="#60a5fa" font-size="16" font-weight="700" text-anchor="middle">Prompts</text>
+        <text x="205" y="108" fill="#e5e7eb" font-size="12" text-anchor="middle">临场指令 · 对话接口</text>
+        <text x="205" y="126" fill="#9ca3af" font-size="11" text-anchor="middle">适合一次性任务</text>
+        <text x="205" y="142" fill="#9ca3af" font-size="11" text-anchor="middle">反复出现 → 升级成 Skill</text>
+
+        <!-- 左下：Projects -->
+        <line x1="420" y1="290" x2="230" y2="380" stroke="url(#branch2)" stroke-width="3"/>
+        <rect x="80" y="332" width="230" height="108" rx="14" ry="14"
+              fill="#020617" stroke="#4ade80" stroke-width="1.4"/>
+        <text x="195" y="360" fill="#4ade80" font-size="16" font-weight="700" text-anchor="middle">Projects</text>
+        <text x="195" y="380" fill="#e5e7eb" font-size="12" text-anchor="middle">知识场景 · 项目空间</text>
+        <text x="195" y="398" fill="#9ca3af" font-size="11" text-anchor="middle">「要知道什么」</text>
+        <text x="195" y="414" fill="#9ca3af" font-size="11" text-anchor="middle">长期课题 / 客户 / 产品线</text>
+
+        <!-- 右上：Skills -->
+        <line x1="510" y1="220" x2="720" y2="120" stroke="url(#branch3)" stroke-width="3"/>
+        <rect x="650" y="60" width="230" height="110" rx="14" ry="14"
+              fill="#020617" stroke="#fb7185" stroke-width="1.4"/>
+        <text x="765" y="88" fill="#fb7185" font-size="16" font-weight="700" text-anchor="middle">Skills</text>
+        <text x="765" y="108" fill="#e5e7eb" font-size="12" text-anchor="middle">流程模块 · 能力封装</text>
+        <text x="765" y="126" fill="#9ca3af" font-size="11" text-anchor="middle">「要怎么干活」</text>
+        <text x="765" y="144" fill="#9ca3af" font-size="11" text-anchor="middle">沉淀经验 / SOP / 模板</text>
+
+        <!-- 右中：Subagents -->
+        <line x1="525" y1="260" x2="740" y2="260" stroke="url(#branch2)" stroke-width="3"/>
+        <rect x="690" y="220" width="210" height="88" rx="14" ry="14"
+              fill="#020617" stroke="#4ade80" stroke-width="1.4"/>
+        <text x="795" y="248" fill="#4ade80" font-size="16" font-weight="700" text-anchor="middle">Subagents</text>
+        <text x="795" y="268" fill="#e5e7eb" font-size="12" text-anchor="middle">岗位化 AI 同事</text>
+        <text x="795" y="286" fill="#9ca3af" font-size="11" text-anchor="middle">携带 Skills 执行子任务</text>
+
+        <!-- 右下：MCP -->
+        <line x1="510" y1="300" x2="720" y2="400" stroke="url(#branch1)" stroke-width="3"/>
+        <rect x="640" y="352" width="240" height="112" rx="14" ry="14"
+              fill="#020617" stroke="#60a5fa" stroke-width="1.4"/>
+        <text x="760" y="380" fill="#60a5fa" font-size="16" font-weight="700" text-anchor="middle">MCP</text>
+        <text x="760" y="400" fill="#e5e7eb" font-size="12" text-anchor="middle">统一接入 · 系统总线</text>
+        <text x="760" y="418" fill="#9ca3af" font-size="11" text-anchor="middle">连接数据源 & 工具</text>
+        <text x="760" y="436" fill="#9ca3af" font-size="11" text-anchor="middle">交给 Skills / Agents 使用</text>
+
+        <!-- 底部说明 -->
+        <text x="470" y="510" fill="#9ca3af" font-size="11" text-anchor="middle">
+          护城河不在于用哪个模型，而在于：谁先把流程、知识、工具组合成自己的 Skill 体系
+        </text>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 终章：给 AI 创业者的结论 -->
+  <section class="card" data-collapsible="true">
+    <header>
+      <div>
+        <h3>十、给 AI 产品创业者的结论：别停在「好玩的 Demo」层</h3>
+        <div class="tagline">真正能穿越周期的，是把经验「编译」进 Skills 的能力</div>
+      </div>
+      <div class="chev">▾</div>
+    </header>
+    <div class="content">
+      <ul>
+        <li><span class="k">1）Prompt 工程只是上半场</span>：解决「怎么和模型说话」。Skill / Project / Subagent / MCP 组合，才是下半场 —— 「模型在真实复杂环境下，怎么长期稳定替你干活」。</li>
+        <li><span class="p">2）你真正的产品，是一整套 Skill 体系</span>：领域经验、业务流程、组织规范，被写成可复用、可维护、可组合的能力模块，而不是一堆「神 Prompt」。</li>
+        <li><span class="d">3）产品架构将越来越「Agent 化」</span>：一个功能 = 若干 Project + Skills + Subagents + MCP 的组合，将来也可以以「Skill Store」形式对外输出。</li>
+        <li><span class="g">4）团队要补的是「流程工程」能力</span>：关键岗位是能拆解业务、写成 Skill、组合成 Agent 的那批人，而不是再多一个「大模型调参师」。</li>
+        <li><span class="y">5）现在开始写的每一个高质量 Skill，都是未来几年你的无形资产</span>：短期提升效率，长期拉开业务差距和估值差距。</li>
+      </ul>
+    </div>
+  </section>
+
+  <div class="footer">
+    © 交互式 Skill 工程读书笔记 · Apple Glass 风格 · 可折叠 HTML 版本
+  </div>
+</div>
+
+<script>
+/* 统一用 JS 事件绑定，避免某些环境屏蔽 inline onclick 导致折叠失效 */
+(function(){
+  const cards = document.querySelectorAll('.card[data-collapsible="true"]');
+  cards.forEach(card=>{
+    const header = card.querySelector('header');
+    header.addEventListener('click',function(){
+      card.classList.toggle('collapsed');
+    });
+  });
+
+  const toggleAllBtn = document.getElementById('toggleAllBtn');
+  toggleAllBtn.addEventListener('click',function(){
+    const anyOpen = Array.from(cards).some(c=>!c.classList.contains('collapsed'));
+    cards.forEach(c=>{
+      if(anyOpen){
+        c.classList.add('collapsed');
+      }else{
+        c.classList.remove('collapsed');
+      }
+    });
+  });
+})();
+
+function scrollToMind(){
+  const el = document.getElementById('mind');
+  if(el){el.scrollIntoView({behavior:'smooth',block:'start'});}
+}
+</script>
+</body>
+</html>
