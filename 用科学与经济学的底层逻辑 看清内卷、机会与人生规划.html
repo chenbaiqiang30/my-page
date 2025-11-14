@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>《吴军来信·第二季》精华 | 底层逻辑·内卷·婚育规划</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg-main: radial-gradient(circle at top left, #283bff 0, #050816 45%, #000000 100%);
+      --glass: rgba(15, 23, 42, 0.78);
+      --glass-soft: rgba(15, 23, 42, 0.6);
+      --border-soft: rgba(148, 163, 184, 0.35);
+      --accent-blue: #38bdf8;
+      --accent-purple: #a855f7;
+      --accent-emerald: #34d399;
+      --accent-amber: #fbbf24;
+      --accent-rose: #fb7185;
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background: var(--bg-main);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", Segoe UI, sans-serif;
+      color: var(--text-main);
+      padding: 32px 16px 48px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1160px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(260px, 0.9fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 920px) {
+      .page {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .glass-card {
+      background: var(--glass);
+      border-radius: 24px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 24px 80px rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(22px) saturate(140%);
+      padding: 20px 22px;
+    }
+
+    .hero {
+      grid-column: 1 / -1;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 22px 24px;
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.16), transparent 55%),
+                  radial-gradient(circle at bottom right, rgba(236, 72, 153, 0.18), transparent 55%),
+                  var(--glass);
+    }
+
+    .hero-main {
+      flex: 1 1 280px;
+    }
+
+    .hero-kpi {
+      flex: 0 0 260px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .chip {
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      font-size: 11px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-soft);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      backdrop-filter: blur(14px);
+    }
+
+    .chip-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent-emerald);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    }
+
+    h1 {
+      font-size: 26px;
+      line-height: 1.25;
+      margin-bottom: 8px;
+      letter-spacing: 0.02em;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      color: var(--text-soft);
+      max-width: 520px;
+    }
+
+    .pill-metric {
+      padding: 10px 12px;
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: radial-gradient(circle at top left, rgba(59, 130, 246, 0.24), rgba(15, 23, 42, 0.9));
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .pill-label {
+      font-size: 11px;
+      color: var(--text-soft);
+    }
+
+    .pill-value {
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .pill-tagline {
+      font-size: 11px;
+      color: #a5b4fc;
+    }
+
+    .layout-main {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .layout-side {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .section-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title span.icon {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+    }
+
+    .icon-blue { background: rgba(59, 130, 246, 0.16); color: var(--accent-blue); }
+    .icon-purple { background: rgba(168, 85, 247, 0.18); color: var(--accent-purple); }
+    .icon-emerald { background: rgba(16, 185, 129, 0.18); color: var(--accent-emerald); }
+    .icon-amber { background: rgba(245, 158, 11, 0.18); color: var(--accent-amber); }
+    .icon-rose { background: rgba(248, 113, 113, 0.18); color: var(--accent-rose); }
+
+    p {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-soft);
+      margin-bottom: 6px;
+    }
+
+    .highlight {
+      font-weight: 600;
+      color: #e0f2fe;
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .tag {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      color: var(--text-soft);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .tag.blue { border-color: rgba(59, 130, 246, 0.6); color: #bfdbfe; }
+    .tag.purple { border-color: rgba(168, 85, 247, 0.7); color: #e9d5ff; }
+    .tag.green { border-color: rgba(52, 211, 153, 0.7); color: #bbf7d0; }
+    .tag.rose { border-color: rgba(244, 114, 182, 0.7); color: #fed7e2; }
+    .tag.amber { border-color: rgba(251, 191, 36, 0.8); color: #fef3c7; }
+
+    details.module {
+      border-radius: 18px;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.7));
+      padding: 10px 12px;
+    }
+
+    details.module[open] {
+      background: radial-gradient(circle at top left, rgba(56, 189, 248, 0.18), transparent 60%),
+                  radial-gradient(circle at bottom right, rgba(244, 114, 182, 0.22), transparent 60%),
+                  rgba(15, 23, 42, 0.96);
+      box-shadow: 0 20px 50px rgba(15, 23, 42, 0.95);
+    }
+
+    details.module + details.module {
+      margin-top: 10px;
+    }
+
+    summary.module-head {
+      list-style: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    summary.module-head::-webkit-details-marker {
+      display: none;
+    }
+
+    .module-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .module-pill {
+      font-size: 11px;
+      padding: 3px 7px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      color: var(--text-soft);
+    }
+
+    .module-arrow {
+      width: 18px;
+      height: 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      color: var(--text-soft);
+      flex-shrink: 0;
+    }
+
+    details[open] .module-arrow {
+      background: rgba(59, 130, 246, 0.25);
+      color: #e5e7eb;
+    }
+
+    .module-body {
+      margin-top: 10px;
+      border-top: 1px dashed rgba(148, 163, 184, 0.45);
+      padding-top: 10px;
+    }
+
+    .grid-two {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .grid-two {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .bullet {
+      font-size: 13px;
+      line-height: 1.7;
+      color: var(--text-soft);
+      padding-left: 14px;
+      position: relative;
+      margin-bottom: 4px;
+    }
+
+    .bullet::before {
+      content: "";
+      position: absolute;
+      left: 4px;
+      top: 0.7em;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+    }
+
+    .badge-inline {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 6px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      border: 1px solid rgba(129, 140, 248, 0.7);
+      color: #c7d2fe;
+    }
+
+    .badge-inline span.dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(to bottom right, var(--accent-blue), var(--accent-purple));
+    }
+
+    .color-blue { color: #bfdbfe; }
+    .color-purple { color: #e9d5ff; }
+    .color-emerald { color: #bbf7d0; }
+    .color-amber { color: #fef3c7; }
+    .color-rose { color: #fecaca; }
+
+    .mindmap {
+      position: relative;
+      padding: 10px 10px 6px;
+      border-radius: 18px;
+      background: radial-gradient(circle at top, rgba(56, 189, 248, 0.18), transparent 70%),
+                  radial-gradient(circle at bottom, rgba(168, 85, 247, 0.26), transparent 70%),
+                  rgba(15, 23, 42, 0.96);
+      border: 1px solid rgba(129, 140, 248, 0.7);
+      overflow: hidden;
+    }
+
+    .mindmap-center {
+      margin: 0 auto 10px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(248, 250, 252, 0.8);
+      background: rgba(15, 23, 42, 0.9);
+      font-size: 13px;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .mindmap-center-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: conic-gradient(from 140deg, var(--accent-blue), var(--accent-purple), var(--accent-emerald), var(--accent-blue));
+      box-shadow: 0 0 0 4px rgba(129, 140, 248, 0.38);
+    }
+
+    .mindmap-cols {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    @media (max-width: 720px) {
+      .mindmap-cols {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .mindmap-node {
+      border-radius: 14px;
+      padding: 7px 8px;
+      background: rgba(15, 23, 42, 0.92);
+      border: 1px solid rgba(148, 163, 184, 0.65);
+      font-size: 12px;
+    }
+
+    .mindmap-node-title {
+      font-weight: 600;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .mindmap-node-bullets {
+      padding-left: 14px;
+      color: var(--text-soft);
+    }
+
+    .mindmap-node-bullets li {
+      margin-bottom: 2px;
+      position: relative;
+      list-style: none;
+      font-size: 11.5px;
+    }
+
+    .mindmap-node-bullets li::before {
+      content: "";
+      position: absolute;
+      left: -8px;
+      top: 0.55em;
+      width: 4px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(129, 140, 248, 0.9);
+    }
+
+    .note {
+      font-size: 11px;
+      color: var(--text-soft);
+      margin-top: 6px;
+      opacity: 0.9;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="glass-card hero">
+      <div class="hero-main">
+        <div class="chip-row">
+          <div class="chip">
+            <span class="chip-dot"></span>
+            吴军来信 · 第二季精华
+          </div>
+          <div class="chip">底层逻辑 × 反内卷 × 婚育规划</div>
+        </div>
+        <h1>
+          用<span class="color-blue">科学与经济学</span>的底层逻辑
+          看清<span class="color-emerald">内卷、机会与人生规划</span>
+        </h1>
+        <p class="hero-sub">
+          本页把多封来信与问答串成一张「底层逻辑×人生策略」的大图：
+          从<span class="color-amber">美国大学招生</span>到<span class="color-rose">职场内卷</span>，
+          从<span class="color-purple">劳动价值论与财商</span>到<span class="color-emerald">婚姻与养育规划</span>，
+          再到<span class="color-blue">牛顿定律、香农定律与倒着看世界</span>，帮你在 AI 时代重建一套可落地的世界观与行动框架。
+        </p>
+      </div>
+      <div class="hero-kpi">
+        <div class="pill-metric">
+          <div class="pill-label">一页搞懂</div>
+          <div class="pill-value">4 大底层逻辑</div>
+          <div class="pill-tagline">科学 × 经济学 × 信息论 × 规划</div>
+        </div>
+        <div class="pill-metric">
+          <div class="pill-label">实践指向</div>
+          <div class="pill-value">3 个人生战场</div>
+          <div class="pill-tagline">反内卷 · 职场/商业 · 婚育教育</div>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout-main">
+      <!-- 模块一：5 句话速读全篇 -->
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-blue">★</span>
+          <span>模块一 · 5 句话速读全篇（给忙碌的你）</span>
+        </div>
+        <details class="module" open>
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">精华提炼</span>
+              <span>抓住这 5 点，再看全文会很「顺」</span>
+            </div>
+            <span class="module-arrow">−</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet"><span class="highlight">① 美国大学招生是「弹性+博弈系统」，不是简单的「多投多赚」。</span> 
+              学校按历史数据预估录取率，多发 offer、用 waiting list 调节，还要在「公平性」和「生源质量」之间平衡。</p>
+            <p class="bullet"><span class="highlight">② 真正可怕的不是「大家都卷」，而是「无结果的内卷」。</span> 
+              很多组织里，问题不是 10 选 9，而是 10 个人 1 个在干活、9 个摸鱼，裁谁都难——盲目拼命，可能拼错了方向。</p>
+            <p class="bullet"><span class="highlight">③ 经济学底层逻辑：钱来自「劳动创造价值」，不是大风刮来。</span> 
+              想变富，不是多做简单劳动，而是切换到<span class="color-emerald">更复杂、更稀缺、更能调动资源的劳动</span>，并学会从「挣钱」走向「赚钱」。</p>
+            <p class="bullet"><span class="highlight">④ 科学底层逻辑：牛顿第二定律 + 积分效应 + 香农定律。</span> 
+              人生差距来自长期「速度的积分」，而速度又来自「加速度的积分」。同时，
+              <span class="color-blue">如果任务难度远超能力带宽，结果往往不是 60 分，而是 0 分</span>。</p>
+            <p class="bullet"><span class="highlight">⑤ 人生要「规划」，还要学会「倒着看世界」。</span> 
+              倒推结婚、生育、教育的时间线，主动做减法；遇到价值观和面子问题，敢于换视角、伤一点面子，换来长期正确。</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- 模块二：问答部分 -->
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-purple">Q</span>
+          <span>模块二 · 问答精华：内卷、美国大学与马斯克的「反卷路径」</span>
+        </div>
+
+        <!-- Q1 美国大学招生与 offer -->
+        <details class="module" open>
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">Q1 美国大学</span>
+              <span>「一人申十几所，会不会把大学挤爆或挤空？」</span>
+            </div>
+            <span class="module-arrow">−</span>
+          </summary>
+          <div class="module-body">
+            <div class="grid-two">
+              <div>
+                <p class="highlight">核心逻辑：美国大学是按「概率 + 弹性」来设计录取系统。</p>
+                <p class="bullet">名校有历史数据：比如顶级学校 offer 接受率 ≈ 70%，排名略后的名校 ≈ 一半左右。
+                  好学生会拿到多所 offer，因此学校必须「多发录取」。</p>
+                <p class="bullet">学校会<span class="color-emerald">故意多发录取（如 +80%）</span>，然后在每年 5 月看实际入学人数，
+                  不足的从 waiting list 精准补录；超额则短期「挤一挤」（租酒店当宿舍等），
+                  下一年缩招一些。</p>
+                <p class="bullet">结论：这个系统本身预设了「有人放弃 offer」的事实，不会因为学生多申几所就崩盘。</p>
+              </div>
+              <div>
+                <p class="highlight">对中国家长/学生的启发：</p>
+                <p class="bullet">不要用「一次性、绝对公平」的高考思维去理解「多轮博弈、带弹性」的美本录取。</p>
+                <p class="bullet">对申请者而言，重点不是「多投」，而是：<span class="color-blue">组合合理 + 与学校匹配 + 整体叙事清晰</span>。</p>
+                <p class="bullet">
+                  <span class="badge-inline"><span class="dot"></span><span>中美商业观察视角</span></span>
+                  ：这更像是一个<span class="color-purple">动态供需匹配系统</span>，而不是单次考试的「一次定终身」。
+                </p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <!-- Q2 抢凳子与内卷 -->
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">Q2 职场内卷</span>
+              <span>「10 抢 9 的抢凳子游戏，是不是典型内卷？」</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">老师的直截了当：现实里「10 个人都很优秀」极少见。</p>
+            <p class="bullet">真实世界更常见：<span class="color-rose">10 人中只有 1 人真正高效，其余 9 人在摸鱼</span>，
+              而且往往摸鱼的人背景更「硬」，更难被裁。</p>
+            <p class="bullet">很多大机构裁员的难点，不在于怎么在 10 个优秀者里选 9 个，而在于「明知谁在摸鱼，却动不了」。
+              人情、体制、背景，使得「努力未必是最优解」。</p>
+            <p class="bullet">更残酷的一点：<span class="color-amber">有时最卷的那个人，反而最容易被裁</span>，
+              因为 TA 常常是没有保护、没有「关系」的那一个。</p>
+            <p class="highlight">中美商业观察 + AI 时代视角：</p>
+            <p class="bullet">与其在低杠杆岗位上无差别加班，不如问：
+              「我做的事，将来 5 年会被 AI/流程替代掉几成？我是否在积累可迁移的结构性能力？」</p>
+            <p class="bullet">反内卷的关键是：<span class="color-emerald">把力气用在能改变「势」的地方，而不是用在「耗损自己的地方」</span>。</p>
+          </div>
+        </details>
+
+        <!-- Q3 马斯克&高维竞争 -->
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">Q3 马斯克</span>
+              <span>「只有马斯克这种人，才玩得起高维竞争吗？」</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">作者的澄清：马斯克做 Tesla / SpaceX，本质上是「退一步，避开 IT 红海」。</p>
+            <p class="bullet">20 多年前，他判断：<span class="color-blue">最有前途的是 IT 行业，但竞争过于惨烈</span>，
+              于是转向能源主线（电动车、火箭、太阳能）。
+            </p>
+            <p class="bullet">早期马斯克并不富有，多次在破产边缘，是「先把事做成，才变得有钱」，而不是反过来。</p>
+            <p class="bullet">今天他在 AI 上加注，是延续当年对 IT 与智能的判断，而不是临时跟风。</p>
+            <p class="highlight">给普通人的策略建议：</p>
+            <p class="bullet">不要幻想「直接在最高维度一战成名」，
+              而是先做到：<span class="color-emerald">识别那些注定双输的红海战场，主动退出；把精力投到自己有胜算的赛道</span>。</p>
+            <p class="bullet">在 AI 时代，比起「押中某只股票」，更重要的是
+              <span class="color-purple">押中一条长期对的主线（如数据、智能、能源、算力、基础设施）+ 长期复利</span>。</p>
+          </div>
+        </details>
+
+        <!-- Q4 限制申请数量与契约社会 -->
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">Q4 契约社会</span>
+              <span>「如何真正限制申请数量？公平与择优怎么平衡？」</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">关键差异：美国是典型的<span class="color-blue">契约社会 + 声誉社会</span>。</p>
+            <p class="bullet">高中生申请大学，需要升学顾问/老师的推荐信与背书，
+              <span class="color-emerald">学校可以用制度来限制你能正式投出去的申请数量</span>。</p>
+            <p class="bullet">如果「偷偷违规」，一旦被发现，代价极大：
+              不仅学生可能被取消录取，所在高中也会受牵连，进而影响后续届学生。</p>
+            <p class="bullet">名校在各高中之间还会考虑「名额分布的公平性」，
+              避免少数高中「赢者通吃」，这会导致：
+              <span class="color-amber">哪怕同一所高中还有更优秀的学生，也可能因为名额已满而被拒录</span>。</p>
+            <p class="highlight">对我们思考世界的两个提醒：</p>
+            <p class="bullet">① 很多「反直觉」现象，要么真的不合理，要么背后有更多无法明说的约束与权衡。</p>
+            <p class="bullet">② 尽量避免用「在地经验」去脑补整个世界——
+              <span class="color-purple">先承认自己的「一知半解」，少做主观假设，是一种更科学的姿态</span>。</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- 模块三：经济学底层逻辑 -->
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-emerald">E</span>
+          <span>模块三 · 经济学底层逻辑：钱从哪里来，应该往哪里去</span>
+        </div>
+
+        <details class="module" open>
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">3-1 劳动价值论</span>
+              <span>钱不是大风刮来的：劳动创造价值</span>
+            </div>
+            <span class="module-arrow">−</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">钱的源头：是人类的经济活动，即广义的「劳动」。</p>
+            <p class="bullet">一个国家的关键指标：就业、制造业和服务业的生产指数，本质上都是在衡量「劳动有多活跃」。</p>
+            <p class="bullet">亚当·斯密的三点结论：
+              <span class="color-blue">① 国民劳动是国家财富的源泉；② 商品价值由投入的劳动量决定；③ 复杂/熟练劳动价值更高。</span>
+            </p>
+            <p class="bullet">
+              对个体而言，「财富」可以理解为你能调动多少资源：
+              有钱 ≈ 能让更多人、更多机器、更多系统为你工作。
+            </p>
+            <p class="bullet">机器人或 AI 大规模投入生产，并不会自动让「每个人都变富」，而是让
+              <span class="color-emerald">拥有机器人/模型/算力的人变得更富</span>。</p>
+            <p class="highlight">实践结论：
+              想变得更有钱，关键不是「更辛苦」，而是转向
+              <span class="color-purple">更稀缺、更复杂、更能调动资源的工作</span>。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">3-2 财商</span>
+              <span>挣钱 vs 赚钱：提手旁和贝字旁的区别</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">挣钱：用时间与体力去换钱；赚钱：用钱（或资产与系统）去生钱。</p>
+            <p class="bullet">学校系统主要训练的是「怎样帮别人挣钱」——做一名好员工；
+              真正的「赚钱能力」，大多需要自学与实践积累。</p>
+            <p class="bullet">财商 = 对财富本质的认知 × 驾驭财富的能力。
+              缺乏财商的典型表现：
+              <span class="color-rose">把纸面市值当财富、不理解沉没成本、只看到「能赚多少钱」，看不见「可能亏多少」。</span>
+            </p>
+            <p class="bullet">理解「市场有效性」：大部分公开信息已经反映在价格中，
+              靠「选股」持续跑赢市场的难度极高。</p>
+            <p class="bullet">生活版「有效市场」：
+              <span class="color-amber">不存在「容易学、门槛低、又长期高收入」的专业和技能</span>——一旦有，也会迅速被卷平。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">3-3 资产与债务</span>
+              <span>看得见的豪宅，可能是「看不见的负债」</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet">真正的资产：
+              <span class="color-emerald">能创造现金流或稳定增值，且维护成本可控</span>。</p>
+            <p class="bullet">伪资产：
+              外表是「豪宅、庄园、收藏品」，实质是高昂的维护费用 + 不一定能变现的价值。</p>
+            <p class="bullet">做决策时，不能只看购置成本，更要看长期持有与维护的总成本。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">3-4 商业与慈善</span>
+              <span>「商业是最好的慈善」的真正含义</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">商业能够最高效地调动社会资源，因此健康的商业本身就是对社会的长期贡献。</p>
+            <p class="bullet">企业的第一任务：
+              <span class="color-blue">合法、可持续地赚钱</span>，
+              养活员工、回报股东，然后再讨论做慈善。</p>
+            <p class="bullet">如果企业自己的主业一团糟，却热衷各种「跨界、公益、作秀」，
+              很可能在扭曲资源，甚至摧毁原本健康的产业生态。</p>
+            <p class="bullet">谷歌与苹果的极端案例：主业极强，因此在回购股票、支持生态、做公益时，才有足够筹码。</p>
+            <p class="highlight">给个体的镜像：
+              <span class="color-emerald">先把自己的人生主业做好</span>——身体、能力、财务和亲密关系稳住，
+              再去谈「帮别人、做更多事」，会更踏实也更持久。</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- 模块四：科学底层逻辑 -->
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-blue">S</span>
+          <span>模块四 · 科学底层逻辑：用物理学与信息论理解人生节奏</span>
+        </div>
+
+        <details class="module" open>
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">4-1 牛顿第二定律</span>
+              <span>F = ma：从「施力」到「人生飞轮」</span>
+            </div>
+            <span class="module-arrow">−</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">速度是加速度的积分，距离是速度的积分。</p>
+            <p class="bullet">人与人的「差距」就是距离；
+              距离来自长期速度差；
+              速度差又来自长期不同的加速度。</p>
+            <p class="bullet">你初始速度可以很慢，只要长期保持正加速度，
+              终有一天速度会超过别人——这就是讨人喜欢的
+              <span class="color-emerald">「飞轮效应」</span>。</p>
+            <p class="bullet">加速度来自外力 F：
+              你愿意为学习、训练、人脉、健康等投入多少「外力」，决定你能获得多大的加速度。</p>
+            <p class="bullet">若外力有限，就必须「减轻质量」——
+              <span class="color-amber">做减法，聚焦更少的项目和角色，速度才会上去</span>。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">4-2 香农第二定律</span>
+              <span>能力带宽 × 任务难度：有时超载的结果是 0 分</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">通信理论里：信息传输率不能超过信道容量，否则错误率会接近 100%。</p>
+            <p class="bullet">人生版本：
+              当一个任务的难度远超你的当前能力带宽时，
+              结果往往不是「勉强 60 分」，而是「根本做不成」。</p>
+            <p class="bullet">正确做法有两个方向：
+              <span class="color-emerald">要么先扩展带宽（升级能力与系统）</span>，
+              要么暂时降低传输率（降低目标难度/并发任务数量）。</p>
+            <p class="bullet">这也解释了：为什么「同时做 5 个大项目」常常颗粒无收，
+              而「同时只推进 1–2 个关键项目」反而能拿到结果。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">4-3 奥卡姆剃刀</span>
+              <span>如无必要，勿增实体</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet">面对复杂世界，
+              <span class="color-purple">最简单的解释，往往比复杂解释更接近真相</span>。</p>
+            <p class="bullet">不要为了显得「高深」，给事情加上大量阴谋论、隐藏设定，
+              那很可能离事实更远。</p>
+            <p class="bullet">同样地，在设计策略、组织流程、技术架构时，
+              <span class="color-emerald">优先选最简单可行方案</span>，更稳定，也更易迭代。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">4-4 科学方法</span>
+              <span>事实总是对的，观察和偏见常常是错的</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet">区分「事实」与「我的观察」：
+              很多困惑源于「事实没弄清」，或「把偏见当事实」。</p>
+            <p class="bullet">抽象化 + 分解问题，是走向规律层面的必经之路。</p>
+            <p class="bullet">警惕「身边统计学」：只看身边几个例子，很容易以偏概全、不断加深偏见。</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- 模块五：倒着看世界 & 面子 -->
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-rose">↻</span>
+          <span>模块五 · 倒着看世界：当主流价值观带偏你时，换个视角</span>
+        </div>
+
+        <details class="module" open>
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">5-1 面子与长期利益</span>
+              <span>有时「伤面子」是更大的善意</span>
+            </div>
+            <span class="module-arrow">−</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet">传统观念：
+              「绝不能伤别人面子」。</p>
+            <p class="bullet">倒过来看：
+              面子只是众多价值中的一个，很多场景下，
+              <span class="color-emerald">健康、安全、长期成长，比一时的面子重要得多</span>。</p>
+            <p class="bullet">例：强行劝酒，本质是在用别人的身体为自己的面子买单，
+              拒绝反而更合理——
+              「你的面子和我的命，哪个更值钱？」</p>
+            <p class="bullet">给亲友提意见时，一味「顾面子」可能让对方错过纠偏时机；
+              但<strong>反复劝一个根本听不进去的人</strong>，往往只是「双方内耗」。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">5-2 过时价值观</span>
+              <span>不要用农耕文明的准则绑架 21 世纪的人生</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet">传统「重农抑商」在漫长的农耕时代曾有其合理性，
+              但在工业与信息社会，商业与实业反而是国家与个体跃迁的核心引擎。</p>
+            <p class="bullet">清末新政与商部、公司律的出现，就是一次典型的
+              <span class="color-blue">「倒着看世界」后做出的制度调整</span>。</p>
+            <p class="bullet">今天我们也要小心：
+              某些「被反复强调的传统美德」，
+              在新的技术与社会结构下，可能已经变形甚至反向。</p>
+          </div>
+        </details>
+      </section>
+
+      <!-- 模块六：婚姻&养育规划 -->
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-amber">∞</span>
+          <span>模块六 · 婚姻与养育：把人生大事当「项目」认真规划</span>
+        </div>
+
+        <details class="module" open>
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">6-1 结婚规划</span>
+              <span>从目标年龄倒推，留出谈恋爱的「项目周期」</span>
+            </div>
+            <span class="module-arrow">−</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">逻辑非常工程师：先设「希望生育的年龄」，再层层往前倒推。</p>
+            <p class="bullet">例如：35 岁前生孩子 → 大约 33 岁结婚 → 至少 3 年稳定恋爱 →
+              大约 30 岁要有合适对象 → 27–28 岁就要认真投入找对象。</p>
+            <p class="bullet">对条件好的年轻人（高学历、好学校、好性格）：
+              <span class="color-amber">你筛选别人，别人也在筛选你</span>，
+              适合的人「很快被占用」，更需要提前规划。</p>
+            <p class="bullet">现实中很多「晚婚甚至无婚」并不是主动选择，
+              而是「一直没规划、一直觉得来得及」，最后变成被动结果。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">6-2 生育与财务</span>
+              <span>别把孩子规划成「有空就顺便做的事情」</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet">丁克家庭里，确实有人原本不是「反对要孩子」，
+              而是「先等买好学区房」「先等事业稳定」……
+              一拖再拖，最后超龄。</p>
+            <p class="bullet">规划生育，要同时看三条线：
+              <span class="color-emerald">生理时间窗 × 职业节奏 × 家庭财务承载力</span>。</p>
+          </div>
+        </details>
+
+        <details class="module">
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">6-3 养育与教育</span>
+              <span>一张纸把时间与钱写清楚，很多纠结自然消失</span>
+            </div>
+            <span class="module-arrow">+</span>
+          </summary>
+          <div class="module-body">
+            <p class="highlight">方法很简单：左边写「可用资源」，右边写「想做的事」，两边一对照，删减就有依据。</p>
+            <p class="bullet">孩子不可能同时高水平学：
+              美术 + 音乐 + 体育 + 编程 + N 门兴趣班——
+              每一项真正想学到专业水准，都需要大约 1 万小时。</p>
+            <p class="bullet">考试周复习也是同理：先按科目掌握程度分配时间，再区分「重点 vs 次重点」，
+              不要幻想「临时突击把一个学期的漏洞补完」。</p>
+            <p class="bullet">合理目标：在孩子当前基础上，规划一个可实现的提升区间，而不是死盯「满分」。</p>
+          </div>
+        </details>
+      </section>
+    </main>
+
+    <!-- 右侧：思维导图 + 专家点评 -->
+    <aside class="layout-side">
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-purple">◎</span>
+          <span>模块七 · 思维导图：一张图看清整篇结构</span>
+        </div>
+        <div class="mindmap">
+          <div class="mindmap-center">
+            <span class="mindmap-center-dot"></span>
+            <span>吴军 · 底层逻辑 × 人生规划</span>
+          </div>
+          <div class="mindmap-cols">
+            <div class="mindmap-node">
+              <div class="mindmap-node-title">
+                <span class="color-blue">一 · 问答与反内卷</span>
+                <span class="tag blue">Q&A</span>
+              </div>
+              <ul class="mindmap-node-bullets">
+                <li>美国大学：多发 offer + waiting list + 公平性约束</li>
+                <li>抢凳子：现实里更像「1 干 9 摸鱼」，卷错方向最危险</li>
+                <li>马斯克：为避 IT 红海转向能源 → 成功后再回到 AI</li>
+                <li>契约社会：申请限制靠制度与声誉，而非「自觉」</li>
+              </ul>
+            </div>
+            <div class="mindmap-node">
+              <div class="mindmap-node-title">
+                <span class="color-emerald">二 · 经济学底层逻辑</span>
+                <span class="tag green">Economics</span>
+              </div>
+              <ul class="mindmap-node-bullets">
+                <li>劳动价值论：钱来自真实劳动创造的价值</li>
+                <li>复杂、稀缺劳动 &gt; 简单、可替代劳动</li>
+                <li>挣钱 vs 赚钱：财商 = 认知 × 驾驭能力</li>
+                <li>资产/负债：看长期现金流与维护成本</li>
+                <li>商业是最好的慈善：先把主业做强</li>
+              </ul>
+            </div>
+            <div class="mindmap-node">
+              <div class="mindmap-node-title">
+                <span class="color-purple">三 · 科学底层逻辑</span>
+                <span class="tag purple">Science</span>
+              </div>
+              <ul class="mindmap-node-bullets">
+                <li>牛顿第二定律：差距源于长期速度/加速度差</li>
+                <li>香农定律：超出能力带宽 → 结果趋近 0</li>
+                <li>奥卡姆剃刀：优先简单解释与方案</li>
+                <li>事实 vs 观察：警惕身边统计学与偏见</li>
+              </ul>
+            </div>
+            <div class="mindmap-node">
+              <div class="mindmap-node-title">
+                <span class="color-amber">四 · 倒着看世界 & 人生规划</span>
+                <span class="tag amber">Planning</span>
+              </div>
+              <ul class="mindmap-node-bullets">
+                <li>面子有时需要被「牺牲」换长期正确</li>
+                <li>重农抑商等传统观念，在新环境已失效</li>
+                <li>婚姻与生育：从目标年龄倒推时间线</li>
+                <li>养育与教育：写清资源，再做选择与减法</li>
+              </ul>
+            </div>
+          </div>
+          <div class="note">提示：你可以把这张导图当作「复盘 checklist」，逐条对照自己的职业、家庭和投资决策。</div>
+        </div>
+      </section>
+
+      <section class="glass-card">
+        <div class="section-title">
+          <span class="icon icon-emerald">AI</span>
+          <span>模块八 · 作为「中美商业观察者 & 科学家 & AI 专家」的一点补充</span>
+        </div>
+        <details class="module" open>
+          <summary class="module-head">
+            <div class="module-title">
+              <span class="module-pill">8-1 面向 AI 时代，如何用好这些底层逻辑？</span>
+            </div>
+            <span class="module-arrow">−</span>
+          </summary>
+          <div class="module-body">
+            <p class="bullet">① <span class="color-blue">职业选择：从「劳动价值论」升级到「人机协同价值论」。</span>
+              问自己两个问题：
+              「在我这行，AI 最快会替掉哪一段流程？」
+              「我能否站到『设计流程 + 驾驭 AI』的那一侧？」</p>
+            <p class="bullet">② <span class="color-emerald">反内卷：把牛顿和香农装进你的日程表。</span>
+              每季度只允许自己认真做 1–2 件真正有加速度的大事，
+              主动减少低价值的忙碌，以保证带宽不被稀释。</p>
+            <p class="bullet">③ <span class="color-purple">投资决策：用「市场有效性 + 奥卡姆剃刀」过滤噪音。</span>
+              对所有看上去「既轻松又暴利」的机会，默认它不可持续，除非你能清楚说明它绕开的是什么约束。</p>
+            <p class="bullet">④ <span class="color-amber">家庭与教育：把规划当作长期系统工程。</span>
+              不要等到「时间窗口快关上了」才匆忙决策；
+              现在就可以拿一张纸，像作者建议的那样把时间与钱写清楚。</p>
+            <p class="bullet">⑤ <span class="color-rose">心态：在不确定世界里，先承认「我一知半解」。</span>
+              少一点武断，多一点基于事实的验证和迭代，
+              这是科学思维、商业决策和 AI 研发共同的底色。</p>
+          </div>
+        </details>
+        <p class="note">如果你愿意，我们后续可以把「职业/投资/婚育」拆成三个单独的 html 仪表盘，分别做更细的规划和行动清单。</p>
+      </section>
+    </aside>
+  </div>
+</body>
+</html>
