@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吴军来信学习笔记 - 个人成长与智慧思考</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary-color: #4A90E2;
+            --secondary-color: #7B68EE;
+            --accent-color: #FF6B6B;
+            --success-color: #51CF66;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            line-height: 1.8;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #2c3e50;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: #ecf0f1;
+        }
+
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header-subtitle {
+            font-size: 1.1em;
+            color: #fff;
+            opacity: 0.9;
+        }
+
+        .header-meta {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            padding: 12px 24px;
+            cursor: pointer;
+            z-index: 1000;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .mindmap, .article-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .mindmap h2, .article-section h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .article-section h2 {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .toggle-icon {
+            font-size: 0.7em;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-icon.collapsed { transform: rotate(-90deg); }
+
+        .section-preview {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95em;
+            margin-bottom: 20px;
+            font-style: italic;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .section-content {
+            color: rgba(255, 255, 255, 0.95);
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+        }
+
+        .section-content.collapsed {
+            max-height: 0 !important;
+            opacity: 0;
+        }
+
+        .section-content h3 {
+            font-size: 1.4em;
+            margin: 30px 0 15px 0;
+            color: #fff;
+            padding-left: 15px;
+            border-left: 4px solid var(--accent-color);
+        }
+
+        .section-content h4 {
+            font-size: 1.2em;
+            margin: 20px 0 10px 0;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .section-content p {
+            margin-bottom: 15px;
+            text-indent: 2em;
+        }
+
+        .section-content ul, .section-content ol {
+            margin: 15px 0;
+            padding-left: 30px;
+        }
+
+        .section-content li { margin-bottom: 10px; }
+
+        .highlight-data {
+            color: var(--primary-color);
+            font-weight: 600;
+            background: rgba(74, 144, 226, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .highlight-important {
+            color: var(--accent-color);
+            font-weight: 600;
+            background: rgba(255, 107, 107, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .highlight-quote {
+            color: var(--success-color);
+            font-style: italic;
+            background: rgba(81, 207, 102, 0.15);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        .expert-comment {
+            background: rgba(123, 104, 238, 0.15);
+            border-left: 4px solid var(--secondary-color);
+            padding: 20px;
+            padding-left: 50px;
+            margin: 20px 0;
+            border-radius: 12px;
+            position: relative;
+        }
+
+        .expert-comment:before {
+            content: "💡";
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            font-size: 1.5em;
+        }
+
+        .expert-comment-title {
+            font-weight: 600;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .key-points {
+            background: rgba(81, 207, 102, 0.15);
+            border: 2px solid var(--success-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .key-points h4 {
+            color: var(--success-color);
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .key-points ul { list-style: none; }
+
+        .key-points li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .key-points li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .case-study {
+            background: rgba(255, 107, 107, 0.15);
+            border: 2px solid var(--accent-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .case-study h4 {
+            color: var(--accent-color);
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .qa-box {
+            background: rgba(74, 144, 226, 0.15);
+            border: 2px solid var(--primary-color);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+
+        .qa-box h4 {
+            color: var(--primary-color);
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: 600;
+            text-align: center;
+            margin: 0 auto 30px auto;
+            max-width: 300px;
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .mindmap-branch {
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .mindmap-branch:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .mindmap-branch h3 {
+            color: #fff;
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .mindmap-branch ul {
+            list-style: none;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.9em;
+        }
+
+        .mindmap-branch li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .mindmap-branch li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--success-color);
+        }
+
+        .footer {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 24px;
+            padding: 30px;
+            margin-top: 30px;
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header, .article-section, .mindmap { padding: 20px; }
+            .theme-toggle { top: 10px; right: 10px; }
+            .mindmap-branches { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span> <span id="theme-text">深色模式</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>📚 吴军来信学习笔记</h1>
+            <div class="header-subtitle">个人成长智慧 · 底层逻辑思考 · 人生规划方法论</div>
+            <div class="header-meta">
+                <div class="meta-item">📖 来源:《吴军来信》第二季</div>
+                <div class="meta-item">✍️ 作者:吴军</div>
+                <div class="meta-item">🏷️ 标签:规划·心理学·认知提升</div>
+            </div>
+        </div>
+
+        <div class="mindmap">
+            <h2>🧠 核心知识图谱</h2>
+            <div class="mindmap-center">吴军来信精华</div>
+            <div class="mindmap-branches">
+                <div class="mindmap-branch">
+                    <h3>💰 财务规划</h3>
+                    <ul>
+                        <li>思考可预见的收入与生活</li>
+                        <li>投资与花费比例合理</li>
+                        <li>预期寿命与退休金规划</li>
+                        <li>排除不可能性</li>
+                    </ul>
+                </div>
+                <div class="mindmap-branch">
+                    <h3>🎯 规划工具</h3>
+                    <ul>
+                        <li>计算资源与分配</li>
+                        <li>发现矛盾点</li>
+                        <li>不是目标而是方法</li>
+                        <li>适用于人生各领域</li>
+                    </ul>
+                </div>
+                <div class="mindmap-branch">
+                    <h3>🦉 猫头鹰效应</h3>
+                    <ul>
+                        <li>白日效应：视野局限</li>
+                        <li>暗夜效应：隐藏真相</li>
+                        <li>不敷衍自己</li>
+                        <li>机会在不设防时</li>
+                    </ul>
+                </div>
+                <div class="mindmap-branch">
+                    <h3>💧 黑滴效应</h3>
+                    <ul>
+                        <li>观察者的误差</li>
+                        <li>追求确定性</li>
+                        <li>脑补造成误会</li>
+                        <li>用沟通代替猜测</li>
+                    </ul>
+                </div>
+                <div class="mindmap-branch">
+                    <h3>😊 积极心态</h3>
+                    <ul>
+                        <li>区分个人与系统问题</li>
+                        <li>守住自我价值</li>
+                        <li>不背系统性压力</li>
+                        <li>正向心理学的局限</li>
+                    </ul>
+                </div>
+                <div class="mindmap-branch">
+                    <h3>🎓 认知优化</h3>
+                    <ul>
+                        <li>优化有极限</li>
+                        <li>理解底层逻辑</li>
+                        <li>跳出原有圈子</li>
+                        <li>边际效益递减</li>
+                    </ul>
+                </div>
+                <div class="mindmap-branch">
+                    <h3>👨‍👩‍👧‍👦 财富传承</h3>
+                    <ul>
+                        <li>均值回归规律</li>
+                        <li>基因回归平庸</li>
+                        <li>家风可传承</li>
+                        <li>专业机构管理</li>
+                    </ul>
+                </div>
+                <div class="mindmap-branch">
+                    <h3>💪 体力精力</h3>
+                    <ul>
+                        <li>健康生活方式</li>
+                        <li>适度锻炼</li>
+                        <li>避免高强度损伤</li>
+                        <li>从身体反应判断</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 1: 规划工具 -->
+        <div class="article-section">
+            <h2 onclick="toggleSection(this)">
+                <span class="toggle-icon">▼</span>
+                <span>📋 把规划作为工具</span>
+            </h2>
+            <div class="section-preview">
+                规划不是目标或战略,而是一种做事的方法和工具。通过计算资源分配、发现矛盾,规划能帮我们排除不可能性,让许多想法回归现实。
+            </div>
+            <div class="section-content">
+                <div class="expert-comment">
+                    <div class="expert-comment-title">核心洞察</div>
+                    <p>规划的本质是<span class="highlight-important">发现矛盾、排除不可能</span>。很多人的财务问题不是挣得少,而是缺乏规划导致资源错配。</p>
+                </div>
+
+                <h3>一、规划的本质定义</h3>
+                <p>规划<span class="highlight-important">不是目标,不是战略,甚至也不是战术,它是一种做事的方法和工具</span>。你不论定了什么人生目标,实现它的时候最好有个规划;你不论采用什么战略,规划都是一个好的工具。</p>
+
+                <div class="key-points">
+                    <h4>📌 规划的两个要点</h4>
+                    <ul>
+                        <li><strong>计算资源</strong>:算一算你有什么资源,如何分配</li>
+                        <li><strong>发现矛盾</strong>:排除不可能性,让想法回归现实</li>
+                    </ul>
+                </div>
+
+                <h3>二、财务规划案例分析</h3>
+                
+                <div class="case-study">
+                    <h4>📖 案例:小赵的财务困境</h4>
+                    <p><strong>背景</strong>:硅谷科技公司员工,单身时在郊区贷款买房并豪华装修</p>
+                    <p><strong>问题链</strong>:</p>
+                    <ul>
+                        <li>花光积蓄+卖股票+背房贷(利率超过6%)</li>
+                        <li>位置偏远,男友不愿住,变成负担</li>
+                        <li>结婚后AA制,独自供养1.5套房子</li>
+                        <li>2008年次贷危机房价跳水,卖房没赚钱</li>
+                        <li>工作十年未攒退休金,错过投资机会</li>
+                    </ul>
+                    <p><strong>根本原因</strong>:<span class="highlight-important">缺乏财务规划</span>,没有提前计算资源和长期需求</p>
+                </div>
+
+                <h3>三、财务规划的三个原则</h3>
+
+                <div class="key-points">
+                    <h4>🎯 原则一:思考可预见收入下的生活方式</h4>
+                    <ul>
+                        <li>根据现在和将来可预见的收入,在<span class="highlight-important">每月收支平衡</span>的情况下,决定过什么样的生活</li>
+                        <li>挣钱的区间是可预期的,努力也有天花板</li>
+                        <li>关键是做好取舍,放弃一些花钱的想法</li>
+                        <li>搞清楚<span class="highlight-important">最看重的生活价值</span>,优先保证它</li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>🎯 原则二:投资和花费比例合理</h4>
+                    <ul>
+                        <li>每一项花销都应该有比例限制</li>
+                        <li>美国中产典型配置:<span class="highlight-data">10%退休金+25%房贷</span></li>
+                        <li>剩余的钱扣除日常开销,才是真正能花的</li>
+                        <li>给每项花销设定限度,超过就不能花</li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>🎯 原则三:根据预期寿命规划退休金</h4>
+                    <ul>
+                        <li>现在的财务经理按<span class="highlight-data">100岁,最多120岁</span>做规划</li>
+                        <li>退休金增长通常赶不上物价上涨</li>
+                        <li>积蓄如果不是好的投资,用一点少一点</li>
+                        <li>必须考虑生大病的情况(没有保险可能瞬间赤贫)</li>
+                    </ul>
+                </div>
+
+                <h3>四、规划的本质作用</h3>
+                <p>规划使用之后,你就会发现很多想法和现实之间的矛盾之处,就会发现很多事情其实不能做。在财务上,<span class="highlight-important">很多事情不做,钱也就留住了</span>。</p>
+            </div>
+        </div>
+
+        <!-- Article 2: 猫头鹰效应 -->
+        <div class="article-section">
+            <h2 onclick="toggleSection(this)">
+                <span class="toggle-icon">▼</span>
+                <span>🦉 两个猫头鹰效应</span>
+            </h2>
+            <div class="section-preview">
+                白日猫头鹰效应指视野局限、判断不清距离;暗夜猫头鹰效应揭示命运在默默观察我们不设防时的真实表现。机会眷顾持续精进的人。
+            </div>
+            <div class="section-content">
+                <h3>一、白日"猫头鹰效应":视野的局限</h3>
+                
+                <p>白日"猫头鹰效应"指的是:<span class="highlight-important">视野窄、判断不清距离,只看到当前或周围一点情况,缺乏对全局的了解</span>。</p>
+
+                <div class="key-points">
+                    <h4>⚠️ 常见表现</h4>
+                    <ul>
+                        <li>只看身边统计学,不看整体数据</li>
+                        <li>只看算法推荐,不主动寻找信息</li>
+                        <li>只关注短视频推荐的新闻</li>
+                        <li>缺乏对全局和趋势的把握</li>
+                    </ul>
+                </div>
+
+                <h3>二、暗夜猫头鹰效应:隐藏的真相</h3>
+
+                <p>"暗夜猫头鹰效应"指:<span class="highlight-important">当一个人以为自己不被注意,或别人看不到的时候,其实有一双猫头鹰的眼睛在盯着他看,猫头鹰看到了真相,并且在评判表现</span>。</p>
+
+                <div class="case-study">
+                    <h4>👑 历史案例:宋孝宗被选中</h4>
+                    <p><strong>背景</strong>:宋高宗从1600多个候选人中挑出两个孩子,一胖一瘦,原本中意胖孩子。</p>
+                    <p><strong>转折</strong>:一只猫窜过来,瘦孩子站立不动,胖孩子飞起一脚把猫踢走。</p>
+                    <p><strong>结果</strong>:宋高宗改变主意,留下瘦孩子(后来的宋孝宗),他对宋高宗很孝顺,把国家治理得不错。</p>
+                    <p><strong>启示</strong>:<span class="highlight-important">人在最放松的时候,最容易流露出本性,同时这也是最弱、最容易受伤害的时候</span>。</p>
+                </div>
+
+                <h3>三、暗夜猫头鹰效应的三点启发</h3>
+
+                <div class="key-points">
+                    <h4>📌 启发一:不敷衍自己</h4>
+                    <ul>
+                        <li>大部分人无法敷衍别人(很多眼睛在盯着)</li>
+                        <li>但经常敷衍自己(从小习惯到大决策)</li>
+                        <li>最影响寿命的因素:基因+<span class="highlight-important">生活习惯</span></li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>📌 启发二:好运气从地里长出来</h4>
+                    <ul>
+                        <li>好运气不是从天上掉下来的,而是<span class="highlight-important">从地里长出来</span>的</li>
+                        <li>命运在默默观察,我们要么停在原地,要么实现超越</li>
+                        <li>决定命运的是<span class="highlight-important">在一边默默观察的人</span></li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>📌 启发三:真正的考验更隐蔽</h4>
+                    <ul>
+                        <li>人生考验不像学校考试那样有铃声、交卷时间和监考人</li>
+                        <li>它更隐蔽,常常体现在<span class="highlight-important">没有人提醒、没有明确界限的场景</span>中</li>
+                        <li>用人单位看的是<span class="highlight-important">是否真的能做事情,是否和其他同事相处融洽</span></li>
+                    </ul>
+                </div>
+
+                <p>暗夜里的猫头鹰,默默提醒我们:<span class="highlight-important">机会往往眷顾那些持续精进的人</span>。</p>
+            </div>
+        </div>
+
+        <!-- Article 3: 黑滴效应 -->
+        <div class="article-section">
+            <h2 onclick="toggleSection(this)">
+                <span class="toggle-icon">▼</span>
+                <span>💧 黑滴效应:别把系统问题背在自己身上</span>
+            </h2>
+            <div class="section-preview">
+                我们信誓旦旦以为看到的真实现象,其实不过是观察失误或手段不足。人们追求确定性,容易把模糊画面脑补成确定答案,造成误会甚至战争。
+            </div>
+            <div class="section-content">
+                <h3>一、黑滴效应的来源</h3>
+
+                <p>1761年,俄罗斯天文学家罗蒙诺索夫在观察金星凌日时,发现金星在进入和离开太阳盘面时,接触部分的太阳边缘会变得模糊,像是一个<span class="highlight-important">黑水滴</span>。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-comment-title">科学解释</div>
+                    <p>直到2012年揭示:所谓的黑滴现象,<span class="highlight-important">不是金星或太阳造成的,而是当年罗蒙诺索夫用的老式折射望远镜准确性不高造成的</span>。这不是天文学现象,而是观察者和观察工具出了问题。</p>
+                </div>
+
+                <h3>二、黑滴效应的心理学应用</h3>
+
+                <p>在心理学上,"黑滴效应"指:<span class="highlight-important">我们信誓旦旦,以为看到的真实现象,其实不过是我们自己的观察失误,或者观察手段的不足而已</span>。</p>
+
+                <div class="case-study">
+                    <h4>📖 案例一:职场猜疑</h4>
+                    <p>小组会上,经理用怪眼神看了小常一眼,或语气冷淡了一点,小常就开始想:是不是自己哪里做错了?担心经理要针对自己。</p>
+                    <p><strong>真相</strong>:小常以为在分析经理想法,其实只是在<span class="highlight-important">投射自己内心最害怕的东西</span>。不是在观察事实,而是根据模糊信息胡乱猜想。</p>
+                </div>
+
+                <h3>三、追求确定性引发黑滴效应</h3>
+
+                <p><span class="highlight-important">人都喜欢确定性,不喜欢模糊</span>。如果对一件事脑子里是空白,或看到的画面很真切,不会胡思乱想。但如果看到的是模糊画面,你会努力用想象力和知识把它们清晰化。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-comment-title">心理机制</div>
+                    <p>几乎每个人都会对不确定感到痛苦,对确定感到安心,哪怕那份确定是坏结果。人们通常不愿意在不确定中等待,而更愿意在没有答案时,<span class="highlight-important">自己在脑子里构建一个答案,哪怕那个答案是假的</span>。</p>
+                </div>
+
+                <h3>四、黑滴效应的可能危害</h3>
+
+                <div class="case-study">
+                    <h4>⚔️ 第一次世界大战</h4>
+                    <p><strong>历史共识</strong>:原本是一场<span class="highlight-important">可以避免的战争</span>,当时大部分人也认为打不起来。</p>
+                    <p><strong>恶性循环</strong>:</p>
+                    <ul>
+                        <li>各国之间没有信任,为防范对方先发制人</li>
+                        <li>俄国:德国站在奥匈一边,为防袭击,提前军事动员</li>
+                        <li>奥匈:俄国已动员,估计是要主动进攻我</li>
+                        <li>结果:在没有沟通、又各自心存疑虑的情况下,战争爆发</li>
+                    </ul>
+                </div>
+
+                <h3>五、怎样摆脱黑滴效应?</h3>
+
+                <div class="key-points">
+                    <h4>🎯 具体方法</h4>
+                    <ul>
+                        <li><strong>等一等</strong>:面对模糊和未知,不要急着根据过去经验直接画像</li>
+                        <li><strong>问自己</strong>:我看到的是事实,还是黑滴?</li>
+                        <li><strong>走近真相</strong>:看到模糊黑影,停下来,去问问那个黑影到底是谁</li>
+                        <li><strong>成为愿意靠近真相的人</strong>,而不是活在脑补剧本里的人</li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>💡 思维升级</h4>
+                    <ul>
+                        <li><strong>分清事实和想象</strong>:哪些是证据,哪些是联想</li>
+                        <li><strong>用觉察替代判断</strong>:对事物客观觉察,替代主观判断</li>
+                        <li><strong>用沟通消散误解</strong>:用询问代替猜测</li>
+                        <li><strong>用可能性取代绝对性</strong>:对世界保持开放态度</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 4: 积极心态 -->
+        <div class="article-section">
+            <h2 onclick="toggleSection(this)">
+                <span class="toggle-icon">▼</span>
+                <span>😊 积极心态:不要把系统问题背在身上</span>
+            </h2>
+            <div class="section-preview">
+                过度神化的"积极心态"可能成为无形枷锁,掩盖真正的问题,把系统性压力转嫁到个人头上。要分清个人问题与客观问题,守住自我价值。
+            </div>
+            <div class="section-content">
+                <h3>一、积极心态变成了无形枷锁?</h3>
+
+                <div class="expert-comment">
+                    <div class="expert-comment-title">本质转变</div>
+                    <p>积极乐观从过去的一种美德,悄然变成了一种<span class="highlight-important">义务</span>,甚至有时候成为了一种<span class="highlight-important">规训</span>。原本积极心态是健康的体现,给我们带来安慰;但当它变成强制要求、一种压力时,就成为一道精神枷锁。</p>
+                </div>
+
+                <h3>二、积极心态流行的三个原因</h3>
+
+                <div class="key-points">
+                    <h4>📚 原因一:正向心理学的流行</h4>
+                    <ul>
+                        <li>美国心理学家马丁·塞利格曼等写了一系列畅销书</li>
+                        <li>提出:积极思维和积极情绪能带来巨大的个人改变</li>
+                        <li>在美国进入企业文化和K-12教育系统</li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>🏢 原因二:管理者的控制工具</h4>
+                    <ul>
+                        <li>一些企业或组织利用"积极心态"控制内部秩序</li>
+                        <li>案例:长期加班被奉为奋斗精神,反对加班的人被认为不够积极</li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>⚠️ 原因三:掩盖系统问题、推卸责任(最重要)</h4>
+                    <ul>
+                        <li>有的系统或机构通过倡导积极心态,掩盖自身问题</li>
+                        <li>案例:学生作业负担重、焦虑→老师说"心态放好一点就好"</li>
+                        <li>案例:公司经营不善裁员调岗→领导说"要有平常心"</li>
+                    </ul>
+                </div>
+
+                <h3>三、神化积极心态的危害</h3>
+
+                <h4>危害一:真正的问题被忽视</h4>
+                <p>当积极心态不再是个人选择,而成为社会期待甚至道德标准时,它的负面作用和危害就开始显露。</p>
+
+                <h4>危害二:无形的压迫</h4>
+                <p>即使一个人心态再好、再积极,<span class="highlight-data">C9大学也不会多招几个学生,阿里巴巴或腾讯也不会多招几个应届毕业生,更不会给员工集体涨工资</span>。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-comment-title">问题转化</div>
+                    <p>当这些问题被过度神化的"积极心态"掩盖后,<span class="highlight-important">客观存在的问题就被悄悄转化为个人的心理问题,压在了个体身上</span>。</p>
+                </div>
+
+                <h4>危害三:系统性风险转嫁到个人</h4>
+                <p>过度强调积极心态的背后,可能会让一部分行业的<span class="highlight-important">系统性风险转嫁到个人头上</span>。</p>
+
+                <h3>四、应对系统性压力的建议</h3>
+
+                <div class="key-points">
+                    <h4>💡 建议一:分清客观问题与个人问题</h4>
+                    <ul>
+                        <li>很多客观问题光靠调整心态无法解决</li>
+                        <li>正向心理学对今天大多数中国人来说<span class="highlight-important">用途已经不大</span></li>
+                        <li>中国人已经很卖力地工作和生活,很积极向上</li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>💡 建议二:守住自我价值</h4>
+                    <ul>
+                        <li>世界上很多事情不是我们的心态能够左右的</li>
+                        <li>需要想清楚<span class="highlight-important">自己想成为什么样的人,那个目标能否实现</span></li>
+                        <li>想清楚后,就能确定自我价值</li>
+                        <li>不论周围人给什么压力,都要坚守自己的价值</li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>💡 建议三:不要背系统性问题和压力</h4>
+                    <ul>
+                        <li>一个人哪怕再积极,心态再好,也背不起系统性问题</li>
+                        <li>把系统性问题全部背到自己身上,反倒容易<span class="highlight-important">伤害自己</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 5: 认知优化 -->
+        <div class="article-section">
+            <h2 onclick="toggleSection(this)">
+                <span class="toggle-icon">▼</span>
+                <span>🧠 认知优化的极限与方法</span>
+            </h2>
+            <div class="section-preview">
+                优化可以无限进行,但总优化程度有极限。人的认知受限于文明、环境等因素,想突破需要跳出原有圈子。基础理论学习应先理解时代底层逻辑。
+            </div>
+            <div class="section-content">
+                <h3>一、优化的数学本质</h3>
+                <p><span class="highlight-important">优化是可以无限进行下去的,但是无限的优化,不等于总的优化程度是无限大</span>。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-comment-title">数学类比</div>
+                    <p>阿喀琉斯和乌龟赛跑的悖论:可以把有限的时间(或距离)分成无限份,但总和是有限的。比如<span class="highlight-data">1+0.1+0.01+...=10/9</span>(有限数字,不是无穷大)。</p>
+                </div>
+
+                <h3>二、认知优化的边界</h3>
+                <p>在学习任何技能或知识的过程中,<span class="highlight-important">进步的总量会有一个极限</span>。你只要愿意优化,能越来越接近这个极限,但不会超过它。</p>
+
+                <div class="key-points">
+                    <h4>⚠️ 优化的成本考量</h4>
+                    <ul>
+                        <li>每一次优化都有成本</li>
+                        <li>最终会遇到<span class="highlight-important">边际效益小于边际成本</span>的情况</li>
+                        <li>这时候的优化反而有害</li>
+                        <li>很多时候优化得差不多就可以了</li>
+                    </ul>
+                </div>
+
+                <h3>三、基础理论学习的正确姿势</h3>
+
+                <div class="key-points">
+                    <h4>🔍 不同时代的底层逻辑</h4>
+                    <ul>
+                        <li><strong>机械时代</strong>:牛顿力学、玻意耳的机械论、<span class="highlight-data">确定性和可预测性</span></li>
+                        <li><strong>信息时代</strong>:量子力学、信息论和控制论、<span class="highlight-data">不确定性和概率</span></li>
+                    </ul>
+                </div>
+
+                <div class="key-points">
+                    <h4>💡 高效学习路径</h4>
+                    <ul>
+                        <li><strong>第一步</strong>:先理解和接受思想者、智者对时代的思考和建议</li>
+                        <li><strong>第二步</strong>:理解了信息时代的底层逻辑后,再学习相关基础理论</li>
+                        <li><strong>效果</strong>:学习效率提高,更容易抓住重点</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- Article 6: 财富传承 -->
+        <div class="article-section">
+            <h2 onclick="toggleSection(this)">
+                <span class="toggle-icon">▼</span>
+                <span>👨‍👩‍👧‍👦 为什么常常富不过三代?</span>
+            </h2>
+            <div class="section-preview">
+                财富回归是均值回归的自然规律,与人的精力体力、兴趣转移、基因回归平庸有关。真正应该传承的是家风,而非财富本身。
+            </div>
+            <div class="section-content">
+                <h3>一、均值回归的生物学规律</h3>
+                
+                <div class="expert-comment">
+                    <div class="expert-comment-title">核心观点</div>
+                    <p>没有像大多数人一样简单地归咎于后代挥霍,而是从<span class="highlight-important">"均值回归"的社会机制和生物规律</span>,以及个人兴趣和财富管理方式的差异,剖析了财富难以长久传承的原因。</p>
+                </div>
+
+                <h3>二、精力与体力的不可继承性</h3>
+                
+                <div class="key-points">
+                    <h4>💪 顶层人物的共同特质</h4>
+                    <ul>
+                        <li>超乎常人的驱动力</li>
+                        <li>能够在巨大压力下长期保持高强度工作</li>
+                        <li>这种特质<span class="highlight-important">很难像资产一样被精准继承</span></li>
+                    </ul>
+                </div>
+
+                <h3>三、兴趣的自然转移</h3>
+                
+                <div class="expert-comment">
+                    <div class="expert-comment-title">代际视角</div>
+                    <p><span class="highlight-quote">富家后代未必对管钱感兴趣</span>。当一个人拥有足以让自己自由选择的财富时,他为什么一定要走父辈铺好的路呢?主动的选择远比被动接受一份自己不感兴趣的事业要高贵得多。</p>
+                </div>
+
+                <p>从这个角度看,<span class="highlight-important">富不过三代有时并非家族的悲剧,反而是后代挣脱束缚、实现个体自由的一种体现</span>。</p>
+
+                <h3>四、应该传承什么?</h3>
+
+                <h4>1. 西方的财富管理模式</h4>
+                <div class="key-points">
+                    <h4>🏦 专业管理策略</h4>
+                    <ul>
+                        <li>让专业机构帮助家族管理财富</li>
+                        <li>后代有足够的钱维持体面生活</li>
+                        <li>但没有太多钱让他们躺平</li>
+                        <li>香港大家族:二代三代可支配的钱不多</li>
+                    </ul>
+                </div>
+
+                <h4>2. 家风的代际传承</h4>
+                <p>在中国,财富传承三代以上的例子不多,但<span class="highlight-important">家风代代相传的例子却很多</span>。</p>
+
+                <div class="key-points">
+                    <h4>🎓 成功案例</h4>
+                    <ul>
+                        <li><strong>曾国藩家族</strong>:第二代、第三代人才辈出</li>
+                        <li><strong>吴越王钱镠家族</strong>:传承上千年,历代重视教育(三钱:钱学森、钱三强、钱伟长)</li>
+                        <li><strong>达尔文-韦奇伍德联姻</strong>:两家族后代出了十多位皇家科学院院士</li>
+                    </ul>
+                </div>
+
+                <h3>五、均值回归的自然规律</h3>
+                
+                <div class="expert-comment">
+                    <div class="expert-comment-title">生物学视角</div>
+                    <p><span class="highlight-important">人的基因回归平庸是自然规律</span>。很多第一代成功人士拥有的天赋不是常人具备的,因此一两代下来,很多后代能力无法和祖辈相比,回归平庸很正常。</p>
+                </div>
+
+                <h3>六、精力体力的提升方法</h3>
+
+                <div class="key-points">
+                    <h4>🏃 科学提升方法</h4>
+                    <ul>
+                        <li><strong>方法一:健康生活</strong>:按时作息、保障睡眠、不暴饮暴食、节制欲望、保证营养</li>
+                        <li><strong>方法二:年轻时锻炼</strong>:做有益于身体和心肺发育的活动,<span class="highlight-important">不要追求奥运会级别的高强度训练</span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>📚 学习笔记整理 · 持续精进 · 终身成长</p>
+            <p style="margin-top: 10px; opacity: 0.7; font-size: 0.9em;">
+                "规划不是目标,而是工具;机会眷顾持续精进的人;不要把系统性问题背在自己身上。"
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const themeIcon = document.getElementById('theme-icon');
+            const themeText = document.getElementById('theme-text');
+            
+            body.classList.toggle('dark-mode');
+            
+            if (body.classList.contains('dark-mode')) {
+                themeIcon.textContent = '☀️';
+                themeText.textContent = '浅色模式';
+            } else {
+                themeIcon.textContent = '🌙';
+                themeText.textContent = '深色模式';
+            }
+        }
+
+        function toggleSection(header) {
+            const preview = header.nextElementSibling;
+            const content = preview.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            
+            if (content.classList.contains('collapsed')) {
+                content.classList.remove('collapsed');
+                content.style.maxHeight = content.scrollHeight + 'px';
+                icon.classList.remove('collapsed');
+            } else {
+                content.style.maxHeight = content.scrollHeight + 'px';
+                setTimeout(() => {
+                    content.classList.add('collapsed');
+                    content.style.maxHeight = '0';
+                }, 10);
+                icon.classList.add('collapsed');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const allContents = document.querySelectorAll('.section-content');
+            allContents.forEach(content => {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            });
+        });
+    </script>
+</body>
+</html>
