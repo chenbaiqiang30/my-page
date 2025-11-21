@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资本的真相 - 财富专家深度解析</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-start: #0F2027;
+            --bg-mid: #203A43;
+            --bg-end: #2C5364;
+            --glass-bg: rgba(255, 255, 255, 0.05);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #FFFFFF;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent-red: #FF3B30;
+            --accent-blue: #0A84FF;
+            --accent-green: #34C759;
+            --accent-gold: #FFD700;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, var(--bg-start), var(--bg-mid), var(--bg-end));
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 50px 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+        }
+
+        .header .author {
+            font-size: 1em;
+            color: var(--accent-blue);
+        }
+
+        /* 控制按钮 */
+        .control-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .control-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 12px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1em;
+        }
+
+        .control-btn:hover {
+            background: rgba(10, 132, 255, 0.3);
+            border-color: var(--accent-blue);
+            transform: translateY(-2px);
+        }
+
+        /* 可折叠卡片 */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            margin-bottom: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 25px 35px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.03);
+            transition: background 0.3s;
+        }
+
+        .card-header:hover {
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .card-header h2 {
+            font-size: 1.8em;
+            margin: 0;
+            color: var(--accent-blue);
+            flex: 1;
+        }
+
+        .toggle-icon {
+            font-size: 1.3em;
+            transition: transform 0.3s;
+            color: var(--accent-blue);
+        }
+
+        .toggle-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        .card-preview {
+            padding: 0 35px 20px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            font-style: italic;
+        }
+
+        .card-preview.hidden {
+            display: none;
+        }
+
+        .card-content {
+            padding: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .card-content.expanded {
+            max-height: 50000px;
+            padding: 0 35px 35px;
+        }
+
+        .card-content h3 {
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+            color: var(--accent-green);
+        }
+
+        .card-content p {
+            margin: 15px 0;
+        }
+
+        .card-content ul, .card-content ol {
+            margin: 20px 0;
+            padding-left: 35px;
+        }
+
+        .card-content li {
+            margin: 10px 0;
+        }
+
+        /* 高亮 */
+        .highlight-red { color: var(--accent-red); font-weight: bold; }
+        .highlight-blue { color: var(--accent-blue); font-weight: bold; }
+        .highlight-green { color: var(--accent-green); font-weight: bold; }
+        .highlight-gold { color: var(--accent-gold); font-weight: bold; }
+
+        /* 引用框 */
+        .quote {
+            background: rgba(255, 59, 48, 0.1);
+            border-left: 4px solid var(--accent-red);
+            padding: 25px 30px;
+            margin: 25px 0;
+            border-radius: 10px;
+            font-style: italic;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(52, 199, 89, 0.1), rgba(10, 132, 255, 0.1));
+            border-left: 4px solid var(--accent-green);
+            padding: 25px 30px;
+            margin: 25px 0;
+            border-radius: 12px;
+        }
+
+        .expert-name {
+            font-weight: bold;
+            color: var(--accent-green);
+            margin-bottom: 12px;
+        }
+
+        /* 数据框 */
+        .data-box {
+            background: rgba(10, 132, 255, 0.12);
+            border: 2px solid var(--accent-blue);
+            border-radius: 18px;
+            padding: 25px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .data-box .number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .data-box .description {
+            color: var(--text-secondary);
+        }
+
+        /* 洞察框 */
+        .insight-box {
+            background: rgba(0, 0, 0, 0.25);
+            border-left: 5px solid var(--accent-gold);
+            padding: 28px 35px;
+            margin: 25px 0;
+            border-radius: 15px;
+        }
+
+        .insight-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: var(--accent-gold);
+            margin-bottom: 15px;
+        }
+
+        /* 关键要点 */
+        .key-takeaway {
+            background: linear-gradient(135deg, rgba(255, 59, 48, 0.2), rgba(255, 149, 0, 0.2));
+            border: 3px solid var(--accent-red);
+            border-radius: 18px;
+            padding: 25px 35px;
+            margin: 30px 0;
+            font-size: 1.15em;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        /* 思维导图 */
+        .mindmap {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+        }
+
+        .mindmap h2 {
+            text-align: center;
+            font-size: 2.2em;
+            margin-bottom: 40px;
+            color: var(--accent-blue);
+        }
+
+        .mindmap-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+        }
+
+        .mindmap-center {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px;
+            border-radius: 25px;
+            font-size: 2em;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.5);
+        }
+
+        .mindmap-branch {
+            background: var(--glass-bg);
+            padding: 30px 25px;
+            border-radius: 20px;
+            border: 2px solid var(--glass-border);
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .mindmap-branch:hover {
+            transform: translateY(-8px);
+            border-color: var(--accent-blue);
+            box-shadow: 0 8px 32px rgba(10, 132, 255, 0.4);
+        }
+
+        .mindmap-branch .icon {
+            font-size: 3em;
+            text-align: center;
+            display: block;
+            margin-bottom: 15px;
+        }
+
+        .mindmap-branch .title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: var(--accent-blue);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .mindmap-branch .content {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        /* 财富专家板块 */
+        .wealth-expert {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.12), rgba(255, 140, 0, 0.12));
+            border: 2px solid rgba(255, 215, 0, 0.4);
+            border-radius: 30px;
+            padding: 50px 45px;
+            margin: 50px 0;
+            box-shadow: 0 12px 50px rgba(255, 215, 0, 0.2);
+        }
+
+        .wealth-expert h2 {
+            color: var(--accent-gold);
+            font-size: 2.5em;
+            margin-bottom: 35px;
+            text-shadow: 0 2px 10px rgba(255, 215, 0, 0.3);
+        }
+
+        .wealth-expert h3 {
+            color: #FFA500;
+            font-size: 1.8em;
+            margin: 35px 0 20px;
+            border-bottom: 2px solid rgba(255, 215, 0, 0.3);
+            padding-bottom: 12px;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 25px;
+            right: 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.15) rotate(15deg);
+        }
+
+        /* 浅色主题 */
+        body.light-theme {
+            --bg-start: #E0E5EC;
+            --bg-mid: #F5F7FA;
+            --bg-end: #E8EDF2;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1C1C1E;
+            --text-secondary: rgba(28, 28, 30, 0.7);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2em; }
+            .card, .mindmap, .wealth-expert { padding: 25px 20px; }
+            .card-header { padding: 20px; }
+            .mindmap-grid { grid-template-columns: 1fr; }
+        }
+
+        ::-webkit-scrollbar { width: 12px; }
+        ::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon" style="font-size: 1.5em;">🌙</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>💎 资本的真相</h1>
+            <div class="subtitle">走向财富自由之路的核心概念 • 财富专家深度解析版</div>
+            <div class="author">原作者：李笑来 | AI财富专家深度评注</div>
+        </div>
+
+        <div class="control-buttons">
+            <button class="control-btn" onclick="expandAll()">📖 展开全部</button>
+            <button class="control-btn" onclick="collapseAll()">📕 收起全部</button>
+        </div>
+
+        <!-- 核心观点 -->
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>💡 核心观点：钱≠资本</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">一堆砖头不是房子,一堆钱也不是资本...</div>
+            <div class="card-content">
+                <div class="quote">
+                    房子确实是主要用砖头建造的，但仅仅一堆砖头摆在那里肯定算不上房子……<br><br>
+                    同样的道理：<span class="highlight-red">资本确实主要由钱构成，但仅仅一堆钱放在那里肯定算不上是资本。</span>
+                </div>
+                <p>钱和资本实际上是很不一样的东西。<span class="highlight-red">有钱和有资本，其实完全是两回事儿。</span></p>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="mindmap">
+            <h2>🧠 资本三要素思维导图</h2>
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 30px;">
+                点击各要素可快速跳转 • 三要素相互关联,缺一不可
+            </p>
+            <div class="mindmap-grid">
+                <div class="mindmap-center">
+                    💰 资本三要素
+                    <div style="font-size: 0.4em; margin-top: 10px;">Money → Capital</div>
+                </div>
+
+                <div class="mindmap-branch" onclick="scrollTo('factor1')">
+                    <span class="icon">💰</span>
+                    <div class="title">金额大小</div>
+                    <div class="content">
+                        • <strong>误区:</strong> 本金太少无法投资<br>
+                        • <strong>真相:</strong> 关注收益率而非绝对值<br>
+                        • <strong>标准:</strong> 几千元即可起步<br>
+                        • <strong>数据:</strong> 90%投资者不懂相对值
+                    </div>
+                </div>
+
+                <div class="mindmap-branch" onclick="scrollTo('factor2')">
+                    <span class="icon">⏰</span>
+                    <div class="title">使用时限</div>
+                    <div class="content">
+                        • <strong>核心:</strong> "判无期徒刑"<br>
+                        • <strong>比例:</strong> 年收入10-20%<br>
+                        • <strong>心法:</strong> 当作"已丢"的钱<br>
+                        • <strong>案例:</strong> 刘元生28年750倍
+                    </div>
+                </div>
+
+                <div class="mindmap-branch" onclick="scrollTo('factor3')">
+                    <span class="icon">🎓</span>
+                    <div class="title">背后智慧</div>
+                    <div class="content">
+                        • <strong>获取:</strong> 只能从实战积累<br>
+                        • <strong>时间:</strong> 需要长期思考<br>
+                        • <strong>现实:</strong> 80%投资者失败<br>
+                        • <strong>关系:</strong> 与时限联合并发
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 要素一 -->
+        <div class="card" id="factor1">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>💰 要素一：资金的金额大小</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">90%投资者的致命误区 | 相对值思维...</div>
+            <div class="card-content">
+                <h3>关键误区</h3>
+                <p>很多人误以为自己"反正也没有多少钱"，于是投资这事儿跟自己没关系。这是常见的<span class="highlight-red">心理自我保护</span>。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-name">💼 投资原理</div>
+                    <p><span class="highlight-blue">盈亏比例</span>比绝对金额更重要。用1万元盈利50%，远胜于用10万元盈利15%。</p>
+                </div>
+
+                <div class="data-box">
+                    <div class="number">90%+</div>
+                    <div class="description">的投资者终生没学会关注相对收益</div>
+                </div>
+
+                <div class="quote">
+                    <span class="highlight-red">投资的重点不在于盈亏绝对值大小，而在于盈亏比例大小。</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 要素二 -->
+        <div class="card" id="factor2">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>⏰ 要素二：使用时限（最重要★★★）</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">"判无期徒刑"的勇气 | 刘元生传奇...</div>
+            <div class="card-content">
+                <h3>传奇案例</h3>
+                <div class="data-box">
+                    <div class="number">750倍</div>
+                    <div class="description">刘元生1988年360万投资万科，28年后27亿</div>
+                </div>
+
+                <p>关键在于：那是<span class="highlight-red">到死都可以无需挪用的钱</span>。</p>
+
+                <h3>心理学发现</h3>
+                <div class="expert-comment">
+                    <div class="expert-name">🧠 研究数据</div>
+                    <ul>
+                        <li><span class="highlight-blue">2/3</span>的人丢失年收入<span class="highlight-blue">10%</span>不影响生活</li>
+                        <li><span class="highlight-blue">1/2</span>的人丢失年收入<span class="highlight-blue">20%</span>不影响生活</li>
+                    </ul>
+                </div>
+
+                <div class="key-takeaway">
+                    最重要的铁律：<br><br>
+                    <span class="highlight-red" style="font-size: 1.2em;">不能心平气和被判无期徒刑的资金，<br>就别假装资本混迹江湖！</span>
+                </div>
+
+                <h3>实用技巧</h3>
+                <div class="insight-box">
+                    <div class="insight-title">把投资款当作"已经丢了"的钱</div>
+                    <p>用这种心态面对投资，你才能真正做到<span class="highlight-green">淡定从容</span>，这是过滤噪音、耐心积累的基础。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 要素三 -->
+        <div class="card" id="factor3">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>🎓 要素三：资金背后的智慧</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">残酷的事实 | 只能从实战获得...</div>
+            <div class="card-content">
+                <div class="quote">
+                    <span class="highlight-red">大多数人其实不配站在资本之后。</span>
+                </div>
+
+                <p>同样的钱，在不同人手里，威力完全不同。</p>
+
+                <div class="data-box">
+                    <div class="number">100万元</div>
+                    <div class="description">滴滴的天使投资额度</div>
+                </div>
+
+                <h3>作者经历</h3>
+                <div class="expert-comment">
+                    <div class="expert-name">李笑来自述</div>
+                    <ul>
+                        <li><span class="highlight-blue">2008:</span> 有100万也不知投给谁</li>
+                        <li><span class="highlight-blue">2013:</span> 以为懂了，结果投错很多</li>
+                        <li>花了很长时间，才基本站在资本之后</li>
+                    </ul>
+                </div>
+
+                <div class="quote">
+                    投资智慧<span class="highlight-red">只能从实战中获得</span>——书上写的、牛人讲的都跟你没关系，只有在你骨子里生根发芽才算数。
+                </div>
+
+                <div class="data-box">
+                    <div class="number">80%</div>
+                    <div class="description">股市投资者是亏钱的</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 投资vs赌博 -->
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>🎲 投资 VS 赌博</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">短期靠运气？| 彩票大奖得主悲剧...</div>
+            <div class="card-content">
+                <h3>短期来看：有人靠运气赚钱</h3>
+                <p>但这和买彩票本质上没区别。</p>
+
+                <div class="data-box" style="background: rgba(255,59,48,0.1); border-color: var(--accent-red);">
+                    <div class="number" style="color: var(--accent-red);">44%</div>
+                    <div class="description">彩票大奖得主在5年内破产</div>
+                </div>
+
+                <p>为什么？因为缺少<span class="highlight-red">"资金背后的智慧"</span>。</p>
+
+                <h3>为什么"借钱投资"必败？</h3>
+                <ol>
+                    <li><span class="highlight-red">金额</span>：不是小，是负数</li>
+                    <li><span class="highlight-red">时限</span>：不够长，无法"判无期徒刑"</li>
+                    <li><span class="highlight-red">智慧</span>：连以上都想不到，完全不配</li>
+                </ol>
+            </div>
+        </div>
+
+        <!-- 三步突破法 -->
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>🚀 如何突破：循序渐进三步走</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">好消息！可以习得 | 循环突破...</div>
+            <div class="card-content">
+                <div class="quote">
+                    站在资本背后的实力<span class="highlight-green">确实可以习得</span>。方法是从各个维度<span class="highlight-blue">逐步循环突破</span>。
+                </div>
+
+                <h3>第一步：突破金额观念</h3>
+                <ul>
+                    <li>关注<span class="highlight-blue">盈亏比例</span>，非绝对金额</li>
+                    <li>几千块就可以开始实践</li>
+                    <li>不要因起点低丧失信心</li>
+                </ul>
+
+                <h3>第二步：突破时限观念 ★★★</h3>
+                <div class="key-takeaway">最重要的突破！</div>
+                <ul>
+                    <li>拿出年收入<span class="highlight-blue">10-20%</span></li>
+                    <li>给这笔钱"判无期徒刑"</li>
+                    <li>当作"已经丢了"的钱</li>
+                </ul>
+
+                <h3>第三步：实战积累智慧</h3>
+                <div class="expert-comment">
+                    <div class="expert-name">🔄 联合并发</div>
+                    <p>第二个突破之所以最重要，是因为第三个突破<span class="highlight-green">几乎与第二个联合并发</span>。</p>
+                    <p>给资金"判无期徒刑"的人，已经拥有了足够智慧的基础，这为养成"长期思考"能力打下基础。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 财富专家评论 -->
+        <div class="wealth-expert">
+            <h2>💎 AI财富专家深度评论</h2>
+            <p style="margin-bottom: 30px; font-size: 1.1em;">
+                作为深度研究财富管理的AI专家，我对"资本三要素"有以下深层思考：
+            </p>
+
+            <h3>一、理论的深层价值</h3>
+            <div class="insight-box">
+                <div class="insight-title">认知革命的起点</div>
+                <p>这篇文章最大的价值<strong>不在于告诉你如何赚钱</strong>，而在于<span class="highlight-gold">重构你对"钱"和"资本"的本质认知</span>。</p>
+                <p>绝大多数人终其一生都在追逐"钱"，却从未想过："钱"如何才能变成"资本"？</p>
+            </div>
+
+            <h3>二、为什么90%的人无法突破第一要素？</h3>
+            <div class="insight-box">
+                <div class="insight-title">绝对值思维的心理陷阱</div>
+                <p><strong>1. 锚定效应</strong> - 用"别人有多少钱"作锚点，产生相对剥夺感</p>
+                <p><strong>2. 损失厌恶</strong> - 失去100元的痛苦 = 获得100元快乐的2.5倍</p>
+                <p><strong>3. 认知带宽不足</strong> - 贫困不仅是经济状态，更是认知带宽的匮乏</p>
+            </div>
+
+            <h3>三、第二要素的终极奥义</h3>
+            <div class="insight-box">
+                <div class="insight-title">时间+复利的恐怖威力</div>
+                <p>刘元生案例的本质：</p>
+                <ul>
+                    <li>360万 × 750 = 27亿</li>
+                    <li>年化收益率 ≈ 27%</li>
+                    <li>最重要的是：<strong>28年零中断</strong></li>
+                </ul>
+                <p>如果中途"动一动"，最终可能只有几千万而非27亿！</p>
+            </div>
+
+            <h3>四、第三要素的悖论</h3>
+            <div class="insight-box">
+                <div class="insight-title">智慧无法传授</div>
+                <p>投资智慧属于<span class="highlight-red">隐性知识</span>——就像骑自行车，读100本教程也学不会，必须摔几次。</p>
+                <p><strong>10000小时定律：</strong>成为投资专家需要至少10000小时刻意练习。</p>
+                <p>如果每天2小时：10000÷2÷365 ≈ <strong>14年</strong></p>
+            </div>
+
+            <h3>五、给不同阶段的建议</h3>
+            <div class="insight-box">
+                <div class="insight-title">💰 净资产 < 0（负债）</div>
+                <p><span class="highlight-red">绝对不要投资！</span>专注于提升个人价值，用2-3年清零债务。</p>
+            </div>
+
+            <div class="insight-box">
+                <div class="insight-title">💰 净资产 0-50万</div>
+                <p>拿出年收入<span class="highlight-blue">10%</span>（5000-20000元）：</p>
+                <ul>
+                    <li>50%投指数基金定投</li>
+                    <li>30%投个股学习</li>
+                    <li>20%保留现金</li>
+                </ul>
+                <p>目标：用3年建立投资直觉</p>
+            </div>
+
+            <div class="insight-box">
+                <div class="insight-title">💰 净资产 50-200万</div>
+                <p>年收入15-20% + 净资产10%：</p>
+                <ul>
+                    <li>60%核心资产</li>
+                    <li>30%卫星资产</li>
+                    <li>10%高风险</li>
+                </ul>
+                <p>目标：建立投资框架</p>
+            </div>
+
+            <div class="insight-box">
+                <div class="insight-title">💰 净资产 200万+</div>
+                <p><span class="highlight-gold">至少50%资产</span>"判无期徒刑"：</p>
+                <ul>
+                    <li>70%永续资产</li>
+                    <li>20%成长资产</li>
+                    <li>10%对冲资产</li>
+                </ul>
+                <p>目标：<span class="highlight-green">被动收入 > 主动收入</span></p>
+            </div>
+
+            <h3>六、关于"机会"的哲学思考</h3>
+            <div class="quote" style="background: rgba(10,132,255,0.12); border-color: var(--accent-blue);">
+                如果你没准备好，<span class="highlight-red">那从来不是你的机会</span>。<br>
+                如果你准备好了，<span class="highlight-green">机会会主动找上门</span>。<br><br>
+                所谓"错过"，只是自我安慰或责备的借口。<br>
+                真相是：<span class="highlight-blue">你还没到那个level</span>。
+            </div>
+
+            <div class="key-takeaway" style="background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(255,140,0,0.2)); border-color: var(--accent-gold);">
+                <p style="font-size: 1.2em; margin-bottom: 20px;">
+                    <span class="highlight-gold">这篇文章最大的价值是：</span>
+                </p>
+                <ol style="line-height: 2; text-align: left;">
+                    <li>认知重构：理解钱≠资本</li>
+                    <li>心态修炼："判无期徒刑"的勇气</li>
+                    <li>系统思维：三要素循环突破</li>
+                    <li>长期主义：相信时间的力量</li>
+                </ol>
+                <p style="margin-top: 20px; font-size: 1.1em;">
+                    <span class="highlight-red">观念不升级，财富难自由。</span><br>
+                    <span class="highlight-green">先成为配得上资本的人，资本自然会来。</span>
+                </p>
+            </div>
+        </div>
+
+        <!-- 行动清单 -->
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>📝 思考与行动清单</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">5个深度思考题 | 立即行动...</div>
+            <div class="card-content">
+                <h3>深度思考题</h3>
+                <ol>
+                    <li>如果5000元就能投资，你最早什么时候可开始？<span class="highlight-red">你错过了多长时间？</span></li>
+                    <li>你身边有多少人可以投资但从未意识到？</li>
+                    <li>你现在可有多少金额"判无期徒刑"？</li>
+                    <li>你的"资金"是否有资格被称作"资本"？</li>
+                    <li>升级观念后，<span class="highlight-red">什么绝对不能做？什么必须做？</span></li>
+                </ol>
+
+                <div class="key-takeaway">
+                    <span class="highlight-green">做对的事情</span>，比把事情做对更重要
+                </div>
+
+                <h3>✅ 必做清单</h3>
+                <ul>
+                    <li>✅ 建立相对值思维</li>
+                    <li>✅ 计算可"判无期徒刑"的金额</li>
+                    <li>✅ 把投资款当"已丢"的钱</li>
+                    <li>✅ 开始小额实战</li>
+                    <li>✅ 培养长期思考习惯</li>
+                </ul>
+
+                <h3>❌ 禁止清单</h3>
+                <ul>
+                    <li>❌ 不要借钱投资</li>
+                    <li>❌ 不要火急火燎随大流</li>
+                    <li>❌ 不要每天盯盘</li>
+                    <li>❌ 不要追求短期暴富</li>
+                    <li>❌ 不要在负资产状态投资</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 结语 -->
+        <div class="card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2>🌟 最后的话</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">我竟然找到了捷径 | 观念升级后的蜕变...</div>
+            <div class="card-content">
+                <div class="quote">
+                    我竟然找到了捷径，可惜早已身不在起点……<br>
+                    <span style="font-size: 0.9em;">——李笑来</span>
+                </div>
+
+                <p>一路走过来，越走越远，越远感慨越多——这么简单、这么重要的东西，怎么就没人讲过？</p>
+
+                <div class="expert-comment">
+                    <div class="expert-name">🎓 学习提醒</div>
+                    <p>我们的专栏<span class="highlight-red">不只谈"钱"</span>。踏上财富自由之路，需要足够体力，我们现在做的相当于<span class="highlight-blue">前期体能训练</span>。</p>
+                </div>
+
+                <div class="key-takeaway">
+                    关于资本的思考，<br>
+                    <span style="font-size: 1.3em;">一旦开始就不应该停止</span>
+                </div>
+
+                <div class="insight-box">
+                    <div class="insight-title">三层价值</div>
+                    <p><strong>表层：</strong>告诉你什么是资本三要素</p>
+                    <p><strong>中层：</strong>教你如何循序渐进突破</p>
+                    <p><strong>深层：</strong><span class="highlight-gold">重构你对金钱、时间、智慧的本质认知</span></p>
+                    <p style="text-align: center; margin-top: 20px; font-size: 1.1em;">
+                        如果真正理解了这些概念，<br>
+                        <span class="highlight-green" style="font-size: 1.2em;">财富自由的路，其实并不遥远。</span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div style="text-align: center; padding: 50px 20px; color: var(--text-secondary);">
+            <p style="font-size: 1.1em;">本文来自李笑来《通往财富自由之路》</p>
+            <p style="color: var(--accent-gold); margin-top: 10px;">💎 AI财富专家深度评注版</p>
+            <p style="margin-top: 20px;">💡 <span class="highlight-blue">概念正确，才能做对的事</span></p>
+        </div>
+    </div>
+
+    <script>
+        function toggleCard(header) {
+            const card = header.parentElement;
+            const content = card.querySelector('.card-content');
+            const preview = card.querySelector('.card-preview');
+            const icon = header.querySelector('.toggle-icon');
+            
+            content.classList.toggle('expanded');
+            icon.classList.toggle('expanded');
+            preview.classList.toggle('hidden');
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.card').forEach(card => {
+                const content = card.querySelector('.card-content');
+                const preview = card.querySelector('.card-preview');
+                const icon = card.querySelector('.toggle-icon');
+                
+                if (!content.classList.contains('expanded')) {
+                    content.classList.add('expanded');
+                    icon.classList.add('expanded');
+                    if (preview) preview.classList.add('hidden');
+                }
+            });
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.card').forEach(card => {
+                const content = card.querySelector('.card-content');
+                const preview = card.querySelector('.card-preview');
+                const icon = card.querySelector('.toggle-icon');
+                
+                content.classList.remove('expanded');
+                icon.classList.remove('expanded');
+                if (preview) preview.classList.remove('hidden');
+            });
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            
+            if (body.classList.contains('light-theme')) {
+                body.classList.remove('light-theme');
+                icon.textContent = '🌙';
+            } else {
+                body.classList.add('light-theme');
+                icon.textContent = '☀️';
+            }
+        }
+
+        function scrollTo(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                const content = element.querySelector('.card-content');
+                const preview = element.querySelector('.card-preview');
+                const icon = element.querySelector('.toggle-icon');
+                
+                if (!content.classList.contains('expanded')) {
+                    content.classList.add('expanded');
+                    icon.classList.add('expanded');
+                    if (preview) preview.classList.add('hidden');
+                }
+                
+                setTimeout(() => {
+                    element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+        window.addEventListener('load', function() {
+            const firstCard = document.querySelector('.card');
+            if (firstCard) {
+                const header = firstCard.querySelector('.card-header');
+                toggleCard(header);
+            }
+        });
+    </script>
+</body>
+</html>

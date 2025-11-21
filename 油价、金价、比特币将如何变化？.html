@@ -1,0 +1,916 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投资问答｜油价、金价、比特币将如何变化？ - 何刚投资热点分析</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --highlight-key: #ef4444;
+            --highlight-data: #3b82f6;
+            --highlight-quote: #10b981;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --accent: #8b5cf6;
+        }
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --glass-bg: rgba(30, 30, 60, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: fadeInUp 0.6s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ef4444, #3b82f6, #10b981, #f59e0b);
+            border-radius: 24px 24px 0 0;
+        }
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent), #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .meta {
+            display: flex;
+            gap: 30px;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        .mindmap-title {
+            font-size: 1.8em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            min-height: 400px;
+            overflow-x: auto;
+        }
+        .mindmap-center {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px 30px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.2em;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 10px 30px rgba(103, 126, 234, 0.4);
+        }
+        .mindmap-branch {
+            position: absolute;
+            padding: 15px 20px;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 16px;
+            font-size: 0.95em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .mindmap-branch:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+            z-index: 5;
+        }
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            width: 2px;
+            background: var(--glass-border);
+            z-index: -1;
+        }
+        .branch-1 { top: -80px; left: 50%; transform: translateX(-50%); }
+        .branch-1::before { height: 60px; bottom: -60px; left: 50%; transform: translateX(-50%); }
+        .branch-2 { top: 50%; right: -250px; transform: translateY(-50%); }
+        .branch-2::before { width: 80px; height: 2px; left: -80px; top: 50%; transform: translateY(-50%); }
+        .branch-3 { bottom: -80px; left: 50%; transform: translateX(-50%); }
+        .branch-3::before { height: 60px; top: -60px; left: 50%; transform: translateX(-50%); }
+        .branch-4 { top: 50%; left: -250px; transform: translateY(-50%); }
+        .branch-4::before { width: 80px; height: 2px; right: -80px; top: 50%; transform: translateY(-50%); }
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease;
+        }
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        .section-header:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+        }
+        .icon-macro { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .icon-market { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .icon-industry { background: linear-gradient(135deg, #10b981, #059669); }
+        .icon-company { background: linear-gradient(135deg, #3b82f6, #1e40af); }
+        .icon-qa { background: linear-gradient(135deg, #ec4899, #db2777); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+        .section-toggle {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+        }
+        .section.collapsed .section-toggle {
+            transform: rotate(-90deg);
+        }
+        .section-content {
+            padding: 0 30px 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        .section.expanded .section-content {
+            max-height: none;
+        }
+        .content-block {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            border-left: 4px solid var(--accent);
+        }
+        .content-block h3 {
+            font-size: 1.3em;
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 600;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 600;
+            background: rgba(59, 130, 246, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-style: italic;
+            border-left: 3px solid var(--highlight-quote);
+            padding-left: 15px;
+            margin: 15px 0;
+        }
+        .expert-comment {
+            position: relative;
+            margin: 20px 0;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 16px;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .expert-comment::before {
+            content: '💡 专家点评';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--glass-bg);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            font-weight: 600;
+            color: var(--accent);
+        }
+        .key-points {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+        }
+        .key-points h4 {
+            margin-bottom: 15px;
+            color: var(--accent);
+        }
+        .key-points ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .key-points li {
+            padding-left: 30px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+        .key-points li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--highlight-quote);
+            font-weight: bold;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            overflow-x: auto;
+        }
+        .data-table th,
+        .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .data-table th {
+            background: rgba(139, 92, 246, 0.1);
+            font-weight: 600;
+        }
+        .data-table tr:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @media (max-width: 768px) {
+            .mindmap-branch {
+                position: static;
+                margin: 10px 0;
+                transform: none !important;
+            }
+            .mindmap-branch::before {
+                display: none;
+            }
+            .mindmap {
+                flex-direction: column;
+                min-height: auto;
+            }
+            .branch-1, .branch-2, .branch-3, .branch-4 {
+                top: auto;
+                left: auto;
+                right: auto;
+                bottom: auto;
+                transform: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>投资问答｜油价、金价、比特币将如何变化？</h1>
+            <div class="meta">
+                <div class="meta-item">📅 2024年12月9日</div>
+                <div class="meta-item">🎙️ 何刚老师</div>
+                <div class="meta-item">⏱️ 时长：约3小时</div>
+                <div class="meta-item">📊 投资热点分析</div>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="toggleTheme()">🌓 切换主题</button>
+                <button class="btn" onclick="expandAll()">📖 展开全部</button>
+                <button class="btn" onclick="collapseAll()">📕 收起全部</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印</button>
+            </div>
+        </div>
+
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">📊 核心观点思维导图</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">投资热点全景图</div>
+                <div class="mindmap-branch branch-1">🏛️ 宏观政策<br>稳楼市稳股市</div>
+                <div class="mindmap-branch branch-2">📈 市场趋势<br>美元强势周期</div>
+                <div class="mindmap-branch branch-3">🏭 行业机遇<br>AI+保险+地产</div>
+                <div class="mindmap-branch branch-4">🏢 公司价值<br>龙头企业分析</div>
+            </div>
+        </div>
+
+        <div class="section expanded">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div>
+                    <div class="section-title">
+                        <span class="section-icon icon-macro">🏛️</span>
+                        <span>宏观经济与政策指向</span>
+                    </div>
+                    <div class="section-preview">中央政治局会议释放重磅信号，适度宽松货币政策，稳定股市楼市...</div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🔥 中央政治局会议核心要点</h3>
+                    <p>12月9日中央政治局会议公报释放了重要政策信号，这是年度经济工作的风向标。</p>
+                    <div class="key-points">
+                        <h4>政策三大转变：</h4>
+                        <ul>
+                            <li><span class="highlight-key">货币政策重大调整</span>：从"稳健"转为"适度宽松"，这是罕见的政策基调转变</li>
+                            <li><span class="highlight-key">财政政策加码</span>：增发特别国债、专项债将成为必然选择</li>
+                            <li><span class="highlight-key">明确支持资产价格</span>：罕见提出"稳定股市和楼市"</li>
+                        </ul>
+                    </div>
+                    <div class="expert-comment">
+                        <p><strong>专家解读：</strong>适度宽松的货币政策意味着降准降息将继续，资金面将保持充裕。对投资者而言，这是一个明确的政策底信号。结合财政发力，2025年中国经济增长目标预计在4.5%-5%之间。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>📊 关键经济数据解读</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>指标</th>
+                                <th>当前值</th>
+                                <th>预期影响</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>GDP增速(2024E)</td>
+                                <td class="highlight-data">4.9%-5.0%</td>
+                                <td>顺利完成年度目标</td>
+                            </tr>
+                            <tr>
+                                <td>CPI(11月)</td>
+                                <td class="highlight-data">0.2%</td>
+                                <td>通缩压力仍存</td>
+                            </tr>
+                            <tr>
+                                <td>GDP总量预测(2025)</td>
+                                <td class="highlight-data">138万亿元</td>
+                                <td>增量约6万亿</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h3>🌍 全球经济展望</h3>
+                    <p>2025年全球经济面临多重挑战：</p>
+                    <div class="highlight-quote">
+                        "全球经济增速预计不超过2.5%，关税壁垒可能导致GDP损失0.8个百分点"
+                    </div>
+                    <ul>
+                        <li>🇺🇸 <span class="highlight-key">特朗普2.0冲击波</span>：减税9万亿美元，对中国商品加征60%关税</li>
+                        <li>📈 <span class="highlight-data">美联储降息放缓</span>：通胀压力上升，降息节奏将明显减缓</li>
+                        <li>🌏 <span class="highlight-key">新兴市场机遇</span>：中印两国28亿人口的消费潜力巨大</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div>
+                    <div class="section-title">
+                        <span class="section-icon icon-market">📈</span>
+                        <span>市场热点与资产配置</span>
+                    </div>
+                    <div class="section-preview">美元指数强势、黄金价格高位、比特币突破10万美元、油价承压...</div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>💵 美元与人民币走势</h3>
+                    <div class="key-points">
+                        <h4>美元指数关键信息：</h4>
+                        <ul>
+                            <li>10月以来上涨<span class="highlight-data">5%</span>，创2022年以来最大季度涨幅</li>
+                            <li>美联储降息节奏放缓是主因</li>
+                            <li>人民币汇率贬至<span class="highlight-data">7.3</span>附近，2025年难回"6时代"</li>
+                        </ul>
+                    </div>
+                    <div class="expert-comment">
+                        <p><strong>投资启示：</strong>美元强势周期下，建议适度配置美元资产。人民币汇率7-7.3区间或成常态，出口企业相对受益。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🥇 黄金价格分析</h3>
+                    <p>黄金价格接近<span class="highlight-data">2800美元/盎司</span>，国内投资金条<span class="highlight-data">630元/克</span>。</p>
+                    <div class="highlight-quote">
+                        "中国央行11月恢复增持黄金16万盎司，结束连续6个月暂停"
+                    </div>
+                    <ul>
+                        <li>✅ 央行增持是价格支撑的关键因素</li>
+                        <li>✅ 地缘冲突持续，避险需求强劲</li>
+                        <li>❌ 比特币并非黄金替代品，两者同步上涨</li>
+                    </ul>
+                </div>
+
+                <div class="content-block">
+                    <h3>₿ 比特币创新高</h3>
+                    <p>比特币突破<span class="highlight-data">10万美元</span>大关，总市值超<span class="highlight-data">2.1万亿美元</span>。</p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>时间段</th>
+                                <th>价格变化</th>
+                                <th>涨幅</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>2024年8月</td>
+                                <td>5万美元</td>
+                                <td>-</td>
+                            </tr>
+                            <tr>
+                                <td>2024年12月</td>
+                                <td>10万美元</td>
+                                <td class="highlight-data">+100%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="expert-comment">
+                        <p><strong>风险提示：</strong>比特币仍是高风险衍生品，不是真正的货币。价值投资者应保持警惕，它的涨跌幅度都很惊人。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🛢️ 国际油价展望</h3>
+                    <p>油价在<span class="highlight-data">70美元/桶</span>附近徘徊，2025年预期继续承压。</p>
+                    <div class="key-points">
+                        <h4>三大压制因素：</h4>
+                        <ul>
+                            <li>美国增产石油，特朗普支持传统能源</li>
+                            <li>中国新能源汽车渗透率近<span class="highlight-data">40%</span>，石油需求减少</li>
+                            <li>全球经济放缓，需求增长乏力</li>
+                        </ul>
+                    </div>
+                    <div class="expert-comment">
+                        <p><strong>投资机会：</strong>油价下跌利好航空公司（成本下降）和石油炼化企业，利空原油开采公司。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div>
+                    <div class="section-title">
+                        <span class="section-icon icon-industry">🏭</span>
+                        <span>重点行业投资机会</span>
+                    </div>
+                    <div class="section-preview">房地产触底企稳、保险业业绩暴增、人工智能加速应用...</div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🏠 房地产：最坏时光已过</h3>
+                    <p>经过3年调整，房地产市场出现企稳迹象：</p>
+                    <ul>
+                        <li>10-11月销售面积降幅收窄至<span class="highlight-data">-15%</span>（前期-22%）</li>
+                        <li>一线城市二手房交易明显回暖</li>
+                        <li>政策明确支持楼市稳定</li>
+                    </ul>
+                    <div class="expert-comment">
+                        <p><strong>投资建议：</strong>刚需可考虑入场，但要量力而行，控制杠杆。房地产股票可关注龙头企业的估值修复机会。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🏦 保险业：业绩爆发</h3>
+                    <p>保险行业2024年业绩令人震惊：</p>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>公司</th>
+                                <th>营收增长</th>
+                                <th>净利润增长</th>
+                                <th>Q3单季利润增长</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>中国人寿</td>
+                                <td class="highlight-data">+55%</td>
+                                <td class="highlight-data">+174%</td>
+                                <td class="highlight-data">+1767%</td>
+                            </tr>
+                            <tr>
+                                <td>新华保险</td>
+                                <td class="highlight-data">+73%</td>
+                                <td>扭亏为盈</td>
+                                <td class="highlight-data">+300%</td>
+                            </tr>
+                            <tr>
+                                <td>中国平安</td>
+                                <td class="highlight-data">+10%</td>
+                                <td class="highlight-data">+36%</td>
+                                <td>-</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="highlight-quote">
+                        "保险公司第三季度利润暴增的秘密：9月股市大涨带来的投资收益"
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🤖 人工智能：中国应用场景广阔</h3>
+                    <p>中国AI产业规模已达<span class="highlight-data">6500亿元</span>，年增长<span class="highlight-data">15%+</span>。</p>
+                    <div class="key-points">
+                        <h4>五大应用领域：</h4>
+                        <ul>
+                            <li>🏙️ 智慧城市管理</li>
+                            <li>🏢 企业智能化改造</li>
+                            <li>🏭 工业制造智能化</li>
+                            <li>🛒 智能营销与新零售</li>
+                            <li>🚗 智能汽车（重点发展）</li>
+                        </ul>
+                    </div>
+                    <div class="expert-comment">
+                        <p><strong>投资方向：</strong>2025年AI产业应用将全面推进，关注有实际应用场景和盈利能力的公司，避免纯概念炒作。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div>
+                    <div class="section-title">
+                        <span class="section-icon icon-company">🏢</span>
+                        <span>重点公司价值分析</span>
+                    </div>
+                    <div class="section-preview">亚马逊、中国平安、赛力斯、寒武纪等公司深度分析...</div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🌟 亚马逊：云计算引领者</h3>
+                    <ul>
+                        <li>市值：<span class="highlight-data">2.37万亿美元</span></li>
+                        <li>股价表现：年涨幅超<span class="highlight-data">50%</span></li>
+                        <li>利润增长：前三季度<span class="highlight-data">+98%</span></li>
+                        <li>核心优势：AWS云服务全球第一</li>
+                    </ul>
+                    <div class="expert-comment">
+                        <p><strong>投资展望：</strong>有望成为第四家突破3万亿美元市值的科技巨头，2025年仍有30%上涨空间。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🏦 中国平安：综合金融龙头</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>指标</th>
+                                <th>数值</th>
+                                <th>评价</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>净利润增长</td>
+                                <td class="highlight-data">+36%</td>
+                                <td>优秀</td>
+                            </tr>
+                            <tr>
+                                <td>ROE</td>
+                                <td class="highlight-data">13.6%</td>
+                                <td>稳健</td>
+                            </tr>
+                            <tr>
+                                <td>股息率(港股)</td>
+                                <td class="highlight-data">5.7%</td>
+                                <td>吸引力强</td>
+                            </tr>
+                            <tr>
+                                <td>市净率</td>
+                                <td class="highlight-data">1.1倍</td>
+                                <td>低估</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h3>🚗 赛力斯：新能源黑马</h3>
+                    <ul>
+                        <li>营收增长：<span class="highlight-data">500%</span></li>
+                        <li>销量增长：<span class="highlight-data">360%</span></li>
+                        <li>年销量目标：<span class="highlight-data">40万辆</span></li>
+                        <li>核心优势：与华为深度合作的问界系列</li>
+                    </ul>
+                    <div class="expert-comment">
+                        <p><strong>风险提示：</strong>股价涨幅已近90%，估值偏高，净利率仅3.2%，需警惕回调风险。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>💻 寒武纪：AI芯片国家队</h3>
+                    <div class="highlight-quote">
+                        "研发费用是营收的3.6倍，典型的早期科技公司"
+                    </div>
+                    <ul>
+                        <li>❌ 前三季度亏损<span class="highlight-data">7亿元</span></li>
+                        <li>❌ 市销率高达<span class="highlight-data">308倍</span>（行业7.8倍）</li>
+                        <li>✅ 受益于中美科技博弈</li>
+                        <li>✅ 国家队背景，研发投入巨大</li>
+                    </ul>
+                    <div class="expert-comment">
+                        <p><strong>投资警示：</strong>股价已涨3倍，严重透支未来3-5年预期，当前不具备价值投资特征。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div>
+                    <div class="section-title">
+                        <span class="section-icon icon-qa">💬</span>
+                        <span>投资问答精选</span>
+                    </div>
+                    <div class="section-preview">周期股投资、分散投资策略、外资动向、A股港股选择...</div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>❓ 如何投资周期股？</h3>
+                    <div class="expert-comment">
+                        <p><strong>核心原则：</strong></p>
+                        <ol>
+                            <li>分清上中下游周期特点</li>
+                            <li>判断与宏观经济的关系（先行/同步/滞后）</li>
+                            <li><span class="highlight-key">顺周期投资，不逆周期操作</span></li>
+                            <li>周期下行时坚决离场</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>❓ 如何进行分散投资？</h3>
+                    <div class="key-points">
+                        <h4>分散投资的层次：</h4>
+                        <ul>
+                            <li><strong>资产类别分散：</strong>股票不超过总资产50%</li>
+                            <li><strong>股票内部分散：</strong>价值股50% + 成长股50%</li>
+                            <li><strong>行业分散：</strong>周期股与非周期股搭配</li>
+                            <li><strong>规模分散：</strong>大盘股与中小盘股组合</li>
+                        </ul>
+                    </div>
+                    <div class="highlight-quote">
+                        "买5只银行股不叫分散投资，买1只银行股+1只科技股才是真分散"
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>❓ 如何跟踪外资投资动向？</h3>
+                    <p>关注四大指标：</p>
+                    <ol>
+                        <li><span class="highlight-data">MSCI A50指数</span> - 国际投资者对中国的态度</li>
+                        <li><span class="highlight-data">纳斯达克金龙指数</span> - 中概股表现</li>
+                        <li><span class="highlight-data">港股市场</span> - 外资自由进出的市场</li>
+                        <li><span class="highlight-data">QFII持仓</span> - 合格境外机构投资者偏好</li>
+                    </ol>
+                    <div class="expert-comment">
+                        <p><strong>重要发现：</strong>外资青睐被低估的优质中国公司，特别是高分红的央国企。昨日港股率先反弹证明外资对中国资产价值的认可。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>❓ A股和港股如何选择？</h3>
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>维度</th>
+                                <th>A股</th>
+                                <th>港股</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>波动性</td>
+                                <td>有涨跌停限制</td>
+                                <td>无限制，波动大</td>
+                            </tr>
+                            <tr>
+                                <td>交易制度</td>
+                                <td>T+1</td>
+                                <td>T+0</td>
+                            </tr>
+                            <tr>
+                                <td>估值差异</td>
+                                <td colspan="2">价差超50%需谨慎</td>
+                            </tr>
+                            <tr>
+                                <td>投资门槛</td>
+                                <td>低</td>
+                                <td>需要港股账户</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="section expanded">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div>
+                    <div class="section-title">
+                        <span class="section-icon icon-macro">📌</span>
+                        <span>核心投资建议总结</span>
+                    </div>
+                    <div class="section-preview">2025年投资主线与风险提示...</div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🎯 2025年投资主线</h3>
+                    <div class="key-points">
+                        <h4>三条主线把握机会：</h4>
+                        <ul>
+                            <li><strong>政策受益板块：</strong>关注稳增长政策下的基建、地产产业链</li>
+                            <li><strong>科技创新方向：</strong>人工智能、新能源、半导体国产化</li>
+                            <li><strong>高分红价值股：</strong>银行、保险、电信等防御性品种</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>⚠️ 风险提示</h3>
+                    <div class="expert-comment">
+                        <p><strong>何刚老师忠告：</strong></p>
+                        <ul>
+                            <li>🔴 不要被悲观情绪主导，外资正在积极布局中国资产</li>
+                            <li>🔴 警惕高估值成长股，如寒武纪等已严重透支</li>
+                            <li>🔴 比特币是高风险资产，不是货币，谨慎参与</li>
+                            <li>🟢 <span class="highlight-key">坚持价值投资，关注基本面改善的公司</span></li>
+                            <li>🟢 适度分散，控制仓位，不过度使用杠杆</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>📚 推荐阅读</h3>
+                    <ul>
+                        <li>📖《财富是认知的变现》- 提升投资认知</li>
+                        <li>📖《投资中最简单的事》- 邱国鹭的实战经验</li>
+                        <li>📖《贝索斯致股东的信》- 学习长期价值创造</li>
+                    </ul>
+                </div>
+
+                <div class="content-block">
+                    <h3>🔮 最后寄语</h3>
+                    <div class="highlight-quote">
+                        "新的投资周期已经开始，不要跟财富人生失之交臂。A股外资的行动正在告诉我们什么是中国资产的新价值。" - 何刚
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.toggleAttribute('data-theme');
+            const isDark = document.body.hasAttribute('data-theme');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        }
+
+        function toggleSection(header) {
+            const section = header.closest('.section');
+            section.classList.toggle('expanded');
+            section.classList.toggle('collapsed');
+        }
+
+        function expandAll() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('expanded');
+                section.classList.remove('collapsed');
+            });
+        }
+
+        function collapseAll() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('expanded');
+                section.classList.add('collapsed');
+            });
+        }
+
+        // 初始化主题
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+        }
+
+        // 初始化折叠状态
+        document.querySelectorAll('.section').forEach((section, index) => {
+            if (index > 0 && index < 4) {
+                section.classList.add('collapsed');
+            }
+        });
+
+        // 打印优化
+        window.addEventListener('beforeprint', () => {
+            expandAll();
+        });
+    </script>
+</body>
+</html>
