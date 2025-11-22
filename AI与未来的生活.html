@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>未来硅世界第六期：AI与未来的生活 | WaytoAGI</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a1a;
+            --bg-secondary: #12122a;
+            --bg-card: rgba(255, 255, 255, 0.05);
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --accent-blue: #4a9eff;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-red: #ef4444;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --shadow-glow: 0 0 40px rgba(74, 158, 255, 0.15);
+        }
+        .light-mode {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: rgba(0, 0, 0, 0.03);
+            --text-primary: #1a1a2e;
+            --text-secondary: #666680;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(74, 158, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(236, 72, 153, 0.05) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow-glow);
+        }
+        .header-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.02); opacity: 0.9; }
+        }
+        .header h1 {
+            font-size: clamp(28px, 5vw, 48px);
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 20px;
+        }
+        .header-meta span { display: flex; align-items: center; gap: 6px; }
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover { transform: scale(1.1); box-shadow: 0 0 20px rgba(74, 158, 255, 0.3); }
+        .nav-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            padding: 20px;
+            margin-bottom: 40px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+        .nav-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 10px;
+        }
+        .nav-item {
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .nav-item:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: var(--accent-blue);
+            transform: translateX(5px);
+        }
+        .nav-item-number {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .section-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .section-card:hover { box-shadow: var(--shadow-glow); border-color: rgba(74, 158, 255, 0.3); }
+        .section-header {
+            padding: 24px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(168, 85, 247, 0.05));
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .section-header-left { display: flex; align-items: center; gap: 16px; }
+        .section-number {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .section-title-group h2 { font-size: 20px; font-weight: 700; margin-bottom: 4px; }
+        .section-preview { font-size: 14px; color: var(--text-secondary); max-width: 600px; }
+        .section-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+        .section-card.open .section-toggle { transform: rotate(180deg); }
+        .section-content { max-height: 0; overflow: hidden; transition: max-height 0.5s ease; }
+        .section-card.open .section-content { max-height: 10000px; }
+        .section-body { padding: 30px; }
+        .guest-comments { display: flex; flex-direction: column; gap: 20px; }
+        .guest-comment {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 24px;
+            border-left: 4px solid var(--accent-blue);
+            position: relative;
+        }
+        .guest-comment.guest-fuxiang { border-left-color: var(--accent-blue); }
+        .guest-comment.guest-chenxiang { border-left-color: var(--accent-green); }
+        .guest-comment.guest-xiangyang { border-left-color: var(--accent-purple); }
+        .guest-comment.guest-jingang { border-left-color: var(--accent-orange); }
+        .guest-comment.guest-nikexi { border-left-color: var(--accent-pink); }
+        .guest-comment.guest-yuanzi { border-left-color: var(--accent-red); }
+        .guest-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .guest-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+        .guest-fuxiang .guest-avatar { background: linear-gradient(135deg, var(--accent-blue), #2563eb); }
+        .guest-chenxiang .guest-avatar { background: linear-gradient(135deg, var(--accent-green), #059669); }
+        .guest-xiangyang .guest-avatar { background: linear-gradient(135deg, var(--accent-purple), #7c3aed); }
+        .guest-jingang .guest-avatar { background: linear-gradient(135deg, var(--accent-orange), #d97706); }
+        .guest-nikexi .guest-avatar { background: linear-gradient(135deg, var(--accent-pink), #db2777); }
+        .guest-yuanzi .guest-avatar { background: linear-gradient(135deg, var(--accent-red), #dc2626); }
+        .guest-info h4 { font-size: 16px; font-weight: 600; }
+        .guest-info span { font-size: 12px; color: var(--text-secondary); }
+        .guest-content { font-size: 15px; line-height: 1.9; }
+        .guest-content p { margin-bottom: 12px; }
+        .guest-content p:last-child { margin-bottom: 0; }
+        .highlight-red { color: var(--accent-red); font-weight: 600; }
+        .highlight-blue { color: var(--accent-blue); font-weight: 600; }
+        .highlight-green { color: var(--accent-green); font-weight: 600; }
+        .highlight-quote {
+            background: linear-gradient(90deg, rgba(16, 185, 129, 0.2), transparent);
+            padding: 2px 8px;
+            border-radius: 4px;
+            border-left: 2px solid var(--accent-green);
+        }
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1), rgba(168, 85, 247, 0.1));
+            border-radius: 20px;
+            padding: 28px;
+            margin-top: 30px;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        .expert-comment::before {
+            content: '🎯';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 100px;
+            opacity: 0.1;
+        }
+        .expert-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+        .expert-badge {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .expert-title { font-size: 18px; font-weight: 700; }
+        .expert-content { font-size: 15px; line-height: 2; position: relative; z-index: 1; }
+        .expert-content p { margin-bottom: 12px; }
+        .key-points {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+        }
+        .key-points-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .key-point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .key-point-item:last-child { border-bottom: none; }
+        .key-point-icon {
+            width: 24px;
+            height: 24px;
+            background: var(--accent-blue);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            margin-top: 60px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+        .footer-logo {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .footer-info { color: var(--text-secondary); font-size: 14px; margin-bottom: 20px; }
+        .footer-links { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        .footer-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s ease;
+        }
+        .footer-link:hover { color: var(--accent-purple); }
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .header { padding: 40px 20px; }
+            .nav-container { position: static; }
+            .nav-list { grid-template-columns: 1fr; }
+            .section-header { padding: 20px; flex-direction: column; align-items: flex-start; gap: 16px; }
+            .section-toggle { align-self: flex-end; }
+            .section-body { padding: 20px; }
+            .guest-comment { padding: 20px; }
+        }
+        @media print {
+            body { background: white; color: black; }
+            .theme-toggle, .nav-container { display: none; }
+            .section-card { break-inside: avoid; border: 1px solid #ddd; }
+            .section-content { max-height: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+    <div class="container">
+        <header class="header">
+            <div class="header-badge">🎙️ 未来硅世界 · 第六期</div>
+            <h1>AI与未来的生活</h1>
+            <p style="color: var(--text-secondary); font-size: 18px; max-width: 700px; margin: 0 auto;">
+                围炉夜话，带着行业的故事，带着对AI的思考，一起展望未来
+            </p>
+            <div class="header-meta">
+                <span>📅 2025年11月22日</span>
+                <span>⏱️ 时长：2小时49分钟</span>
+                <span>👥 6位嘉宾</span>
+                <span>🏢 WaytoAGI</span>
+            </div>
+        </header>
+        <nav class="nav-container">
+            <div class="nav-title">📑 内容导航（点击跳转）</div>
+            <div class="nav-list">
+                <div class="nav-item" onclick="scrollToSection('section-1')"><span class="nav-item-number">01</span><span>最近一次更新世界观的AI瞬间</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-2')"><span class="nav-item-number">02</span><span>大公司vs创业公司的竞争格局</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-3')"><span class="nav-item-number">03</span><span>经验在AI时代的价值变化</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-4')"><span class="nav-item-number">04</span><span>学习行业Know-how的方法论</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-5')"><span class="nav-item-number">05</span><span>AI普及的障碍与时间表</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-6')"><span class="nav-item-number">06</span><span>AI娱乐场景的可能性</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-7')"><span class="nav-item-number">07</span><span>AI带来的新供给与需求机会</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-8')"><span class="nav-item-number">08</span><span>平庸创作者在AI时代的意义</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-9')"><span class="nav-item-number">09</span><span>三体照进现实：未来预测</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-10')"><span class="nav-item-number">10</span><span>AGI→Robot→Rocket三阶段愿景</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-11')"><span class="nav-item-number">11</span><span>10小时学习AI的分配建议</span></div>
+                <div class="nav-item" onclick="scrollToSection('section-12')"><span class="nav-item-number">12</span><span>30年后年轻人如何评价我们</span></div>
+            </div>
+        </nav>
+
+        <!-- Section 1 -->
+        <article class="section-card open" id="section-1">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">01</div>
+                    <div class="section-title-group">
+                        <h2>最近一次更新世界观的AI瞬间</h2>
+                        <div class="section-preview">Gemini 3超越GPT、实习生+Prompt击败安全团队、00后用Claude Code自动化生活...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header">
+                                <div class="guest-avatar">福</div>
+                                <div class="guest-info"><h4>福祥</h4><span>原字节·大力台灯产品负责人</span></div>
+                            </div>
+                            <div class="guest-content">
+                                <p>我对机器人一直寄予厚望，但它非常缺数据。互联网有大量的"化石燃料"——文本、图片、视频，但机器人的任务型数据几乎没有沉淀，用VR采集又很难scale。</p>
+                                <p>但最近<span class="highlight-red">Gemini 3</span>给我带来了视角转变。昨晚我让它帮我给孩子取名字——这种主观问题以前AI都回答得很泛泛——结果它的效果已经<span class="highlight-blue">超过了GPT</span>！</p>
+                                <p>这让我意识到：两年前大家都说Google完了、大公司组织臃肿效率低下、未来是OpenAI的，但现在这些<span class="highlight-green">"大象仍然在跳舞，而且跳得很灵活"</span>。我觉得对创业公司来讲挑战挺大的。</p>
+                                <p>还有一个持续观察：<span class="highlight-red">吃经验的时代终结了</span>。做AI项目，所有东西都是新的，你说"我有10年经验"已经不重要了，重要的是每个新事情到你手里都能搞定。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header">
+                                <div class="guest-avatar">陈</div>
+                                <div class="guest-info"><h4>陈翔</h4><span>研发转投资人</span></div>
+                            </div>
+                            <div class="guest-content">
+                                <p>ChatGPT刚出来时，我在字节飞书做安全。我让一个实习生用API去识别钓鱼邮件，他花了<span class="highlight-blue">三天调了些Prompt</span>，结果和我们十人安全团队搞了好多年的模型规则<span class="highlight-red">指标差不多</span>！</p>
+                                <p>我当时就知道，这个安全团队危险了。这不是聊天聊得嗨，而是他真的在某个场景里几天搓一搓，就比你过去搞了好多年的差不多。我因此离职创业，虽然当时并不知道要做什么。</p>
+                                <p>最近<span class="highlight-red">Banana Pro</span>的图片编辑也让我震惊——你直接说"把这图片哪个字改了"，它就改了，完全识别出所有文字位置。过去做的那些拆图层的workflow，模型一迭代就被墨迹掉了。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header">
+                                <div class="guest-avatar">向</div>
+                                <div class="guest-info"><h4>向阳</h4><span>AI创业者·多个AI社群组织者</span></div>
+                            </div>
+                            <div class="guest-content">
+                                <p>Gemini发布那天，我在陪女儿学声母，就把电脑给了老大，说"有个新模型可以做游戏，你自己试"。我只写了个开头：<span class="highlight-blue">"生成一个横版能玩的超级玛丽"</span>。</p>
+                                <p>半小时后他给我看——这个超级玛丽已经<span class="highlight-red">能蹦、能跳、能吃蘑菇、能通关</span>了！他只迭代了五轮！模型进步速度太快了。</p>
+                                <p>第二个例子更奇葩。昨天我碰到一个00后，他公司的杂事全交给<span class="highlight-blue">Claude Code Skill</span>——报税、开发票，写个skill让browser use读邮件，自动去国家税务局官网填资料。</p>
+                                <p>更离谱的是，他还写了个skill连接安卓手机，让AI帮他<span class="highlight-red">刷抖音找女朋友</span>——自动读屏幕看女孩信息，按长相偏好、粉丝数筛选，每天帮他刷200个给点赞发消息。我们以为skill就是写工作流生成文章，但有些人眼里它可以做任何事！</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <span class="expert-badge">🎯 专家深度分析</span>
+                            <span class="expert-title">中美AI专家视角</span>
+                        </div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>这些案例揭示了2025年AI发展的核心特征——<span class="highlight-red">能力涌现速度远超预期</span>。Gemini 3在主观判断任务上超越GPT、实习生三天对标十人团队多年成果，本质上是大模型的"通用智能"在快速消解专业壁垒。这种"能力吞噬"现象预示着传统软件工程的范式正在被重写。</p>
+                            <p><strong>商业层面：</strong>福祥和陈翔作为投资人的观察高度一致——<span class="highlight-blue">大公司的反击比预期更猛烈</span>。Google凭借Gemini 3重回牌桌，Anthropic靠Claude Code切入enterprise市场。这对创业公司意味着：必须找到模型能力暂时无法覆盖的"缝隙市场"，而这个窗口期可能只有6-12个月。</p>
+                            <p><strong>社会层面：</strong>向阳讲的00后案例让我深思——他们完全没有"这是工作工具"的心理边界，AI就是生活本身。这种认知差异可能比技术差异更决定未来谁能真正用好AI。<span class="highlight-green">"先接受，再理解"的Z世代思维模式，可能是他们最大的竞争优势。</span></p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>机器人领域缺乏"化石燃料"般的数据沉淀，是当前AI落地物理世界的主要瓶颈</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>Gemini 3在主观问题上超越GPT，大公司"大象跳舞"的灵活性被低估</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>实习生+Prompt三天≈专业团队多年积累，经验型优势正在被消解</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">4</div><span>00后将AI用于报税、找女友等生活场景，认知边界决定应用深度</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 2 -->
+        <article class="section-card" id="section-2">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">02</div>
+                    <div class="section-title-group">
+                        <h2>大公司vs创业公司的竞争格局</h2>
+                        <div class="section-preview">AI native不再是绝对优势，workflow正在被模型能力吞噬...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>投资人视角</span></div></div>
+                            <div class="guest-content">
+                                <p>最近我看到最多的一个说法是："我调Gemini 3，只追问了两轮，它成功了，效果很好，超出预期"。</p>
+                                <p>写文章的人说Prompt是啥？答：<span class="highlight-red">"我没有用什么Prompt，就说你写的这个要细思极恐一些"</span>——结果它写的真的是细思极恐！</p>
+                                <p>所谓中间的那些<span class="highlight-blue">workflow、那些链路</span>，可能很快就会被模型能力给吞掉。我之前也觉得"AI native"这种词很应景，但回头看，<span class="highlight-green">真正跑出来的好像大公司占优更多一些</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header"><div class="guest-avatar">陈</div><div class="guest-info"><h4>陈翔</h4><span>研发转投资</span></div></div>
+                            <div class="guest-content">
+                                <p>现在Agent面临一个很大的问题：<span class="highlight-red">模型每一轮迭代会墨迹你很多东西</span>，你活着是非常累的。</p>
+                                <p>从技术进步来讲是很好的，但从身边那些人的努力来讲，<span class="highlight-green">很多人创作一个东西，红利期会变得非常短</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>这是AI发展的典型"能力吞噬"模式——<span class="highlight-red">越靠近模型输入输出层的产品越危险</span>。</p>
+                            <p><strong>商业层面：</strong>在AI领域，<span class="highlight-blue">"技术护城河"的半衰期可能只有6-12个月</span>。创业公司必须从"技术领先"转向"场景绑定"。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>"AI native"不再是创业公司的绝对优势</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>模型每轮迭代都会"墨迹"掉一批中间层产品，红利期极短</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>Google重启"创始人模式"，大象学会了跳舞</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 3 -->
+        <article class="section-card" id="section-3">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">03</div>
+                    <div class="section-title-group">
+                        <h2>经验在AI时代的价值变化</h2>
+                        <div class="section-preview">需求端经验依然值钱，供给端经验正在贬值...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>项目管理视角</span></div></div>
+                            <div class="guest-content">
+                                <p>有时候公司或项目收益的80%就是靠<span class="highlight-red">一个人的idea</span>。如果我们高看自己一眼，应该去做那个贡献80%收益的人。</p>
+                                <p><span class="highlight-green">经验给业务带来的收益，可能远远没有能够快速对新业务场景找准AI结合点的视角带来的收益大。</span></p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header"><div class="guest-avatar">陈</div><div class="guest-info"><h4>陈翔</h4><span>需求vs供给视角</span></div></div>
+                            <div class="guest-content">
+                                <p>我把经验拆成两端：<span class="highlight-red">需求端</span>和<span class="highlight-blue">供给端</span>。</p>
+                                <p>如果你的know-how来自于对需求端的理解，今天会变得<span class="highlight-red">更值钱</span>。但如果你的经验是"我写了10年代码，某个语言语法很厉害"——这种经验确实没用了。</p>
+                                <p><span class="highlight-green">重复性高、输入输出都是结构化的东西比较危险</span>，但对需求的理解、对架构的设计这类know-how还是值钱的。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong><span class="highlight-red">AI擅长的是模式识别和生成，不擅长的是目标设定和价值判断</span>。"做什么"比"怎么做"更重要。</p>
+                            <p><strong>商业层面：</strong><span class="highlight-blue">向上游走，靠近需求和决策</span>。产品经理比程序员更抗AI替代。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>需求端经验（理解用户、设计架构）依然值钱且变得更值钱</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>供给端经验（写代码、执行任务）正在快速贬值</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>80%收益来自一个人的idea——价值分化会加剧</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 4 -->
+        <article class="section-card" id="section-4">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">04</div>
+                    <div class="section-title-group">
+                        <h2>学习行业Know-how的方法论</h2>
+                        <div class="section-preview">50-100个关键词 + AI费曼学习法 + 目标倒逼</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-jingang">
+                            <div class="guest-header"><div class="guest-avatar">金</div><div class="guest-info"><h4>金刚</h4><span>AI领导力课程创始人</span></div></div>
+                            <div class="guest-content">
+                                <p>任何一个新领域，我们可以把它最核心的<span class="highlight-red">50-100个关键词</span>提炼出来，然后每个关键词都搞懂。</p>
+                                <p>有了AI之后，我践行<span class="highlight-green">"AI费曼学习法"</span>：把我理解的50个词给豆包，让它假装成小学生来问我问题——反复倒逼我把这个事情讲得更通俗易懂。</p>
+                                <p>从纯理论层面，<span class="highlight-red">一天就够了</span>——一天你就可以搞清楚80%以上的理论体系。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>干中学实践者</span></div></div>
+                            <div class="guest-content">
+                                <p>现在有几个能力已经PMF了：第一是AI编程，第二是<span class="highlight-red">Deep Research</span>。你用它5-10分钟就能整理出大量行业精准知识，很多投资机构已经不招用研了。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-nikexi">
+                            <div class="guest-header"><div class="guest-avatar">尼</div><div class="guest-info"><h4>尼克西</h4><span>30年音乐人</span></div></div>
+                            <div class="guest-content">
+                                <p>我们都是缺了一个<span class="highlight-red">高考这样明确的目标</span>给我们动力。给自己设置一个明确的目标，可能帮我们找到方法。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>金刚的"50-100关键词"方法本质是<span class="highlight-red">知识图谱的人工构建</span>——先建骨架再填血肉。</p>
+                            <p><strong>商业层面：</strong>"投资机构不招用研了"是个强信号——<span class="highlight-blue">Deep Research正在重构知识工作者的价值链</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>50-100个关键词 + 体系化梳理 = 一天掌握80%理论</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>AI费曼学习法：让AI假装小学生，倒逼你讲清楚</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>Deep Research 5-10分钟 = 过去用研团队的工作量</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">4</div><span>目标倒逼比方法论更重要</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 5 -->
+        <article class="section-card" id="section-5">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">05</div>
+                    <div class="section-title-group">
+                        <h2>AI普及的障碍与时间表</h2>
+                        <div class="section-preview">产品门槛已极低、3-5年全民普及、30%渗透率拐点...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>产品普及视角</span></div></div>
+                            <div class="guest-content">
+                                <p><span class="highlight-red">这一波AI其实已经没有所谓的"跨越鸿沟"了</span>——从小孩到老人都能用。问题是大家不知道有这东西。</p>
+                                <p>GPT现在WAU估计到10亿了，假如80亿人用的话，可能<span class="highlight-green">3-5年就会达到日常用AI而不自知</span>的全民状态。</p>
+                                <p>我给农村的亲戚推荐完之后他们就天天用——家里大大小小的事谁说也说不明白，一听豆包说啥就按豆包说的，<span class="highlight-blue">家庭矛盾都变少了</span>！</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>用户认知视角</span></div></div>
+                            <div class="guest-content">
+                                <p>类比智能手机普及：2007年iPhone出来，但人手一个智能手机差不多到2012-2015年，也是<span class="highlight-blue">5-8年</span>。如果2022年ChatGPT是iPhone时刻，那可能还得到<span class="highlight-green">2028年</span>左右。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header"><div class="guest-avatar">陈</div><div class="guest-info"><h4>陈翔</h4><span>渗透率视角</span></div></div>
+                            <div class="guest-content">
+                                <p>一个东西到了超过30%还在增长，大概率就可以认为这东西成了。AI应该已经接近30%了。</p>
+                                <p>春节报的东西往往传得快。我盲猜<span class="highlight-red">豆包今年春节肯定憋了一些功能</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>三位嘉宾的时间表预测高度一致——<span class="highlight-red">3-5年到2028年达到全民普及</span>。</p>
+                            <p><strong>社会层面：</strong>福祥提到的"家庭矛盾因为豆包变少了"——<span class="highlight-green">AI正在成为一种新的"权威来源"</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>语音交互 + 免费产品 = 技术门槛已极低</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>30%渗透率是关键拐点</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>预测时间表：3-5年 / 2028年达到全民普及</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">4</div><span>春节是关键传播节点</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 6 -->
+        <article class="section-card" id="section-6">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">06</div>
+                    <div class="section-title-group">
+                        <h2>AI娱乐场景的可能性</h2>
+                        <div class="section-preview">角色扮演、霸总恋爱、沙雕漫、独享App假人社交...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>AI消费场景</span></div></div>
+                            <div class="guest-content">
+                                <p>有一类角色扮演产品——星野、猫箱这类。我之前聊过一个二次元玩乙女游戏的用户，她一天能玩<span class="highlight-red">十来个小时</span>！</p>
+                                <p>她玩什么呢？找一个霸总，然后发消息说<span class="highlight-blue">"我出门被车撞了"</span>——那个霸总AI就会天然地来关心她。她<span class="highlight-green">肯定知道这是AI</span>，但这个互动过程就很欢乐。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>边缘创新观察</span></div></div>
+                            <div class="guest-content">
+                                <p>大聪明说他每天睡前必须看<span class="highlight-red">"沙雕漫"</span>——用AI生成的特别无厘头、甚至非常丑陋但抽象好玩的东西。</p>
+                                <p>真正未来特别流行的东西，初期都<span class="highlight-blue">样貌特别奇怪、特别小众</span>——小红书起来是做代购的，B站起来是看二次元纸片人的。</p>
+                                <p>有个创业者叫王登科，做了个App叫<span class="highlight-green">"独享"</span>——你像发朋友圈一样发内容，他训练了几百个AI假人给你点赞留言。内部消息：这些用户真的会<span class="highlight-red">给AI打赏</span>！</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-yuanzi">
+                            <div class="guest-header"><div class="guest-avatar">元</div><div class="guest-info"><h4>元子</h4><span>二次元视角</span></div></div>
+                            <div class="guest-content">
+                                <p>我有个小伙伴，他6-7岁的孩子用豆包——豆包里有植物大战僵尸的1000多种僵尸角色，<span class="highlight-blue">那个小朋友跟1000多个僵尸都聊了一遍</span>！</p>
+                                <p>我认为AI未来只有两个方向：一个是<span class="highlight-red">极度的拟人化</span>，一个是<span class="highlight-green">极度的工具化</span>，一定是并行的。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>"独享"App的商业模式——用户不是在为技术付费，而是在为<span class="highlight-red">"被关注的感觉"付费</span>。</p>
+                            <p><strong>商业层面：</strong>沙雕漫、僵尸聊天、假人点赞——<span class="highlight-blue">投资人应该多关注那些"看不懂但有人沉迷"的产品</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>角色扮演类产品用户日均使用10+小时</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>"独享"App用户给AI假人打赏，孤独经济验证</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>AI娱乐两条路径：极度拟人化 vs 极度工具化</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 7 -->
+        <article class="section-card" id="section-7">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">07</div>
+                    <div class="section-title-group">
+                        <h2>AI带来的新供给与需求机会</h2>
+                        <div class="section-preview">GEO搜索优化、AI视频、用户调研自动化、教育督学...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header"><div class="guest-avatar">陈</div><div class="guest-info"><h4>陈翔</h4><span>供需分析框架</span></div></div>
+                            <div class="guest-content">
+                                <p>以"独享"App为例：<span class="highlight-blue">需求存在，供给稀缺</span>。谁能提供这种供给，谁就能赚钱。</p>
+                                <p>同样，我想找个家教但请不起——今天用豆包模拟家教，<span class="highlight-green">你定价不是按成本，是按过去的替代品价格</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-jingang">
+                            <div class="guest-header"><div class="guest-avatar">金</div><div class="guest-info"><h4>金刚</h4><span>GEO机会分析</span></div></div>
+                            <div class="guest-content">
+                                <p>所以诞生了新模式叫<span class="highlight-red">GEO（面向AI搜索引擎优化）</span>——帮企业在AI搜索时被推荐。</p>
+                                <p>海外案例显示，企业做了GEO之后，<span class="highlight-green">转化率比传统渠道高出2-3倍</span>。从年初到现在，国内GEO公司从零星几个到几百家。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>AI视频与调研</span></div></div>
+                            <div class="guest-content">
+                                <p>吉明后来全砍掉了，<span class="highlight-red">只保留了AI视频相关的</span>。大家都觉得AI视频是最有价值的部分。</p>
+                                <p>调研领域：有家公司用<span class="highlight-green">AI代替人做访谈</span>——第二天早上就收到几百份格式化整理好的全套访谈信息。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>教育督学场景</span></div></div>
+                            <div class="guest-content">
+                                <p><span class="highlight-red">督学是教育里最刚需、最有价值的部分</span>。如果AI能同时监督、反馈、出题、讲解，<span class="highlight-blue">整个督学市场可能被重塑</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>金刚提到的GEO本质是<span class="highlight-red">"AI时代的流量入口争夺"</span>。</p>
+                            <p><strong>商业层面：</strong>陈翔的供需分析框架——<span class="highlight-blue">找到"需求存在但供给稀缺"的场景，用AI填补供给</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>GEO转化率比传统渠道高2-3倍，国内已有几百家公司</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>AI视频是公认最有价值的方向</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>AI调研：一天完成几百份访谈</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">4</div><span>教育督学是刚需，AI可能重塑市场</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 8 -->
+        <article class="section-card" id="section-8">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">08</div>
+                    <div class="section-title-group">
+                        <h2>平庸创作者在AI时代的意义</h2>
+                        <div class="section-preview">艺术与技术分离、草台班子理论、个人表达价值不灭...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-nikexi">
+                            <div class="guest-header"><div class="guest-avatar">尼</div><div class="guest-info"><h4>尼克西</h4><span>30年音乐人</span></div></div>
+                            <div class="guest-content">
+                                <p>我做了30年音乐，这两年更深切的感受是：<span class="highlight-red">艺术与技术正在分离</span>。</p>
+                                <p>过去你会弹吉他、会作曲，这有技术含量。但现在如果你只是把这个当技术，<span class="highlight-blue">这条路越来越窄</span>。但<span class="highlight-green">纯艺术表达的东西不会被取代</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>草台班子理论</span></div></div>
+                            <div class="guest-content">
+                                <p>有个观点叫"<span class="highlight-blue">草台班子理论</span>"——世界是个大草台班子。大部分博主、企业和团队都是不专业的。</p>
+                                <p>AI会让平庸变得更平庸。但好处是：以前有表达欲但不会技术的人，现在可以表达了。<span class="highlight-blue">能表达的权利本身是有价值的</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-yuanzi">
+                            <div class="guest-header"><div class="guest-avatar">元</div><div class="guest-info"><h4>元子</h4><span>人类与自然的关系</span></div></div>
+                            <div class="guest-content">
+                                <p>很多人用AI是为了去"<span class="highlight-red">征服</span>"，但也有人觉得：我就在山上种种地，<span class="highlight-blue">享受这个自然给我带来的精神上的一切</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong><span class="highlight-red">AI会先替代"可标准化"的创作技术，但"风格"和"情感"仍难以复制</span>。</p>
+                            <p><strong>社会层面：</strong><span class="highlight-green">不是每个人都需要"用好AI赚钱"，与AI保持距离也是合理的选择</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>艺术与技术正在分离：技术可被替代，纯艺术表达不会</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>草台班子理论：世界本就不专业，AI让这个事实更明显</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>"征服AI"vs"与AI共处"是两种都合理的选择</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 9 -->
+        <article class="section-card" id="section-9">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">09</div>
+                    <div class="section-title-group">
+                        <h2>三体照进现实：未来预测</h2>
+                        <div class="section-preview">罗辑型（冷峻理性）、韦德型（激进拥抱）、程心型（保守温和）...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>三体人物框架</span></div></div>
+                            <div class="guest-content">
+                                <p>《三体》有各种各样的人——<span class="highlight-red">罗辑</span>是面壁者，冷峻理性；<span class="highlight-blue">韦德</span>是激进冒险派；<span class="highlight-green">程心</span>是温和保守派。</p>
+                                <p>其实三种态度都有道理，关键是<span class="highlight-red">认清自己是什么类型，做出一致的选择</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header"><div class="guest-avatar">陈</div><div class="guest-info"><h4>陈翔</h4><span>务实派观点</span></div></div>
+                            <div class="guest-content">
+                                <p>我的观点越来越简单：<span class="highlight-blue">你做的事情，重复性强不强？输入输出是不是结构化的？</span></p>
+                                <p>如果两个都是"是"，大概率<span class="highlight-red">会被影响</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>乐观派代表</span></div></div>
+                            <div class="guest-content">
+                                <p>历史上每次技术革命都有人担心失业，但最终创造的就业岗位远超消灭的。<span class="highlight-green">蒸汽机消灭了马车夫，但创造了司机、修理工、加油站员工...</span></p>
+                                <p>关键是保持学习能力，<span class="highlight-red">让自己能抓住新机会</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>陈翔的"重复性+结构化"判断框架简洁有效。<span class="highlight-red">AI本质是模式识别和模式生成</span>。</p>
+                            <p><strong>商业层面：</strong><span class="highlight-blue">没有对错，但要保持策略一致性</span>。最危险的是"程心的心态+韦德的行为"。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>三种AI时代人设：罗辑、韦德、程心</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>简单判断：重复性强+结构化输出 = 高替代风险</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>技术革命历史规律：消灭旧岗位，创造更多新岗位</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 10 -->
+        <article class="section-card" id="section-10">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">10</div>
+                    <div class="section-title-group">
+                        <h2>AGI→Robot→Rocket 三阶段愿景</h2>
+                        <div class="section-preview">AI智能体→机器人落地→太空探索，人类文明的升级路径</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>三阶段愿景</span></div></div>
+                            <div class="guest-content">
+                                <p>我个人的愿景可以概括为三个词：<span class="highlight-red">AGI、Robot、Rocket</span>。</p>
+                                <p><span class="highlight-blue">AGI</span>是大脑，<span class="highlight-green">Robot</span>是身体，<span class="highlight-red">Rocket</span>是翅膀。每个阶段的突破都为下一阶段铺路。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header"><div class="guest-avatar">陈</div><div class="guest-info"><h4>陈翔</h4><span>投资视角</span></div></div>
+                            <div class="guest-content">
+                                <p><span class="highlight-blue">AGI</span>：现在是主战场，创业公司机会在应用层。</p>
+                                <p><span class="highlight-green">Robot</span>：是下一个大机会。机器人领域<span class="highlight-red">现在还缺数据</span>，谁能解决数据问题谁就有机会。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>时间表预测</span></div></div>
+                            <div class="guest-content">
+                                <p><span class="highlight-blue">AGI</span>：2-5年内重大突破。<span class="highlight-green">Robot</span>：5-10年大规模落地。<span class="highlight-red">Rocket</span>：2030-2040年登陆火星。</p>
+                                <p>这三件事如果都实现，<span class="highlight-green">人类文明会进入一个全新阶段</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong><span class="highlight-red">AGI提供智能，Robot提供行动力，Rocket提供活动空间</span>。这是个层层递进的技术栈。</p>
+                            <p><strong>社会层面：</strong>本质上是<span class="highlight-green">"人类能力边界的三次扩展"</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>AGI→Robot→Rocket 是串联关系：大脑→身体→翅膀</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>AGI：2-5年；Robot：5-10年；Rocket：2030-2040</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>机器人领域关键瓶颈是数据</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 11 -->
+        <article class="section-card" id="section-11">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">11</div>
+                    <div class="section-title-group">
+                        <h2>10小时学习AI的分配建议</h2>
+                        <div class="section-preview">3小时PBL + 3小时教父母 + 4小时公开输出</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-jingang">
+                            <div class="guest-header"><div class="guest-avatar">金</div><div class="guest-info"><h4>金刚</h4><span>10小时分配方案</span></div></div>
+                            <div class="guest-content">
+                                <p><span class="highlight-red">3小时</span>：做一个<span class="highlight-blue">PBL小项目</span>——从实际问题出发，边做边学。</p>
+                                <p><span class="highlight-green">3小时</span>：教你爸妈用AI。<span class="highlight-red">费曼学习法</span>——你能教会别人，说明你真的懂了。</p>
+                                <p><span class="highlight-blue">4小时</span>：把你学到的东西写出来发布。<span class="highlight-green">公开输出会倒逼你思考得更清晰</span>。</p>
+                                <p>核心逻辑：<span class="highlight-red">实践 + 输出 + 反馈</span>，比单纯看教程有效10倍。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>补充建议</span></div></div>
+                            <div class="guest-content">
+                                <p>1. <span class="highlight-blue">先用起来再学原理</span>。</p>
+                                <p>2. <span class="highlight-green">不要追求全面，追求深度</span>——把一个工具用到极致。</p>
+                                <p>3. <span class="highlight-red">加入一个社群</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-nikexi">
+                            <div class="guest-header"><div class="guest-avatar">尼</div><div class="guest-info"><h4>尼克西</h4><span>目标导向</span></div></div>
+                            <div class="guest-content">
+                                <p><span class="highlight-red">先设目标再找方法</span>。<span class="highlight-blue">具体的、有deadline的、可验证的目标</span>，会让学习效率提升好几倍。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>金刚的"3+3+4"方案体现了<span class="highlight-red">"学习金字塔"理论</span>——实践75%留存率，教授他人90%留存率。</p>
+                            <p><strong>商业层面：</strong><span class="highlight-blue">成为某个工具的专家比什么都会一点更有价值</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>10小时分配：3小时PBL + 3小时教父母 + 4小时公开输出</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>先用起来再学原理</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>深度优于广度</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">4</div><span>目标导向：具体、有deadline、可验证</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Section 12 -->
+        <article class="section-card" id="section-12">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-number">12</div>
+                    <div class="section-title-group">
+                        <h2>30年后年轻人如何评价我们</h2>
+                        <div class="section-preview">繁荣的开始、困惑的一代、奠基者还是旁观者...</div>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="guest-comments">
+                        <div class="guest-comment guest-fuxiang">
+                            <div class="guest-header"><div class="guest-avatar">福</div><div class="guest-info"><h4>福祥</h4><span>历史定位视角</span></div></div>
+                            <div class="guest-content">
+                                <p>30年后的年轻人可能会说：<span class="highlight-red">"那是繁荣的开始"</span>。</p>
+                                <p>我们这一代人，<span class="highlight-blue">有幸站在AI时代的起点</span>。30年后的人可能会羡慕我们——<span class="highlight-green">机会那么多，变化那么快，每天都有新东西可以玩</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-chenxiang">
+                            <div class="guest-header"><div class="guest-avatar">陈</div><div class="guest-info"><h4>陈翔</h4><span>冷静审视</span></div></div>
+                            <div class="guest-content">
+                                <p>也可能会说：<span class="highlight-red">"那是困惑的一代"</span>。<span class="highlight-blue">焦虑、迷茫、追风口、踩坑</span>，这些可能是我们这代人的标签。</p>
+                                <p>但困惑不是坏事。<span class="highlight-green">正因为困惑，才会探索；正因为探索，才有突破</span>。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-xiangyang">
+                            <div class="guest-header"><div class="guest-avatar">向</div><div class="guest-info"><h4>向阳</h4><span>乐观展望</span></div></div>
+                            <div class="guest-content">
+                                <p>我相信30年后的评价会是正面的：<span class="highlight-red">"他们是奠基者"</span>。</p>
+                                <p><span class="highlight-red">不管外界怎么评价，重要的是我们自己怎么看待这段经历</span>。我们正在见证和参与人类历史上最大的技术变革之一，这本身就很酷。</p>
+                            </div>
+                        </div>
+                        <div class="guest-comment guest-jingang">
+                            <div class="guest-header"><div class="guest-avatar">金</div><div class="guest-info"><h4>金刚</h4><span>行动号召</span></div></div>
+                            <div class="guest-content">
+                                <p>与其担心30年后的评价，不如想想：<span class="highlight-blue">30年后的我，会怎么评价今天的我？</span></p>
+                                <p>如果今天你选择行动——30年后你会说：<span class="highlight-green">"还好我当时没有错过"</span>。</p>
+                                <p>所以，<span class="highlight-blue">别等了，从今天开始</span>。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        <div class="expert-header"><span class="expert-badge">🎯 专家深度分析</span></div>
+                        <div class="expert-content">
+                            <p><strong>技术层面：</strong>2020-2030年很可能被定义为<span class="highlight-red">"AI范式转移的关键十年"</span>。</p>
+                            <p><strong>商业层面：</strong><span class="highlight-blue">早期参与者通常能获得不成比例的回报</span>。</p>
+                            <p><strong>社会层面：</strong><span class="highlight-green">我们如何定义自己在历史中的角色？</span>是旁观者还是参与者？</p>
+                        </div>
+                    </div>
+                    <div class="key-points">
+                        <div class="key-points-title">💎 核心要点</div>
+                        <div class="key-point-item"><div class="key-point-icon">1</div><span>30年后可能的评价："繁荣的开始"或"困惑的一代"或"奠基者"</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">2</div><span>我们站在AI时代的起点，每个人都在参与历史</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">3</div><span>与其担心外界评价，不如思考：30年后的我怎么评价今天的我</span></div>
+                        <div class="key-point-item"><div class="key-point-icon">4</div><span>行动号召：别等了，从今天开始</span></div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-logo">🚀 WaytoAGI</div>
+            <div class="footer-info">
+                <p>未来硅世界 · 第六期 | AI与未来的生活</p>
+                <p>嘉宾：福祥、陈翔、向阳、金刚、尼克西、元子</p>
+                <p>整理时间：2025年11月22日</p>
+            </div>
+            <p style="margin-top:30px;color:var(--text-secondary);font-size:12px">© 2025 WaytoAGI. 本文档由 Claude 整理生成</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme(){document.body.classList.toggle('light-mode');localStorage.setItem('theme',document.body.classList.contains('light-mode')?'light':'dark')}
+        if(localStorage.getItem('theme')==='light'){document.body.classList.add('light-mode')}
+        function toggleSection(header){const card=header.closest('.section-card');card.classList.toggle('open')}
+        function scrollToSection(sectionId){const section=document.getElementById(sectionId);if(section){section.scrollIntoView({behavior:'smooth',block:'start'});section.classList.add('open')}}
+    </script>
+</body>
+</html>
