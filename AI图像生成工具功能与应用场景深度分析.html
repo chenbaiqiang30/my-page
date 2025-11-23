@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nano Banana Pro AI图像生成工具功能与应用场景深度分析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #007AFF;
+            --secondary: #5856D6;
+            --success: #34C759;
+            --warning: #FF9500;
+            --danger: #FF3B30;
+            --bg-light: #F2F2F7;
+            --bg-dark: #1C1C1E;
+            --card-light: rgba(255, 255, 255, 0.9);
+            --card-dark: rgba(28, 28, 30, 0.9);
+            --text-light: #1C1C1E;
+            --text-dark: #F2F2F7;
+            --accent-blue: #0A84FF;
+            --accent-purple: #BF5AF2;
+            --accent-pink: #FF2D55;
+            --accent-orange: #FF9F0A;
+            --shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: var(--text-light);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+            min-height: 100vh;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease;
+        }
+
+        .header h1 {
+            font-size: 3em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .header h1 {
+            background: linear-gradient(135deg, #00d4ff 0%, #ff0080 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1.2em;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 300;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--card-light);
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--card-dark);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        .card {
+            background: var(--card-light);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        body.dark-mode .card {
+            background: var(--card-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .section-title {
+            font-size: 2em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        body.dark-mode .section-title {
+            color: var(--accent-blue);
+        }
+
+        .section-title::before {
+            content: '';
+            width: 5px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, rgba(255, 45, 85, 0.2) 0%, rgba(255, 45, 85, 0.05) 100%);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: var(--danger);
+        }
+
+        .data {
+            background: linear-gradient(120deg, rgba(10, 132, 255, 0.2) 0%, rgba(10, 132, 255, 0.05) 100%);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        .quote {
+            background: linear-gradient(120deg, rgba(52, 199, 89, 0.2) 0%, rgba(52, 199, 89, 0.05) 100%);
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: var(--success);
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+        }
+
+        .collapsible-icon {
+            transition: transform 0.3s ease;
+            font-size: 1.5em;
+        }
+
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.5s ease;
+            padding: 0 20px;
+        }
+
+        .content.show {
+            max-height: 5000px;
+            padding: 20px;
+        }
+
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(191, 90, 242, 0.1) 0%, rgba(255, 45, 85, 0.1) 100%);
+            border-left: 4px solid var(--accent-purple);
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .expert-comment::before {
+            content: '💡';
+            font-size: 2em;
+            position: absolute;
+            top: 10px;
+            left: -15px;
+            background: white;
+            border-radius: 50%;
+            padding: 5px;
+        }
+
+        .mindmap {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 30px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mindmap-node {
+            background: white;
+            padding: 15px 25px;
+            border-radius: 25px;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .mindmap-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            font-size: 1.2em;
+            padding: 20px 40px;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            margin: 5px;
+            font-weight: 500;
+        }
+
+        .tag-feature {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tag-tech {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .tag-market {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .capability-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .capability-item {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .capability-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .capability-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .market-analysis {
+            background: linear-gradient(135deg, rgba(52, 199, 89, 0.1) 0%, rgba(52, 199, 89, 0.05) 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .price-range {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .price-card {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            min-width: 200px;
+        }
+
+        body.dark-mode .price-card {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .price-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 10px 0;
+        }
+
+        .tech-implementation {
+            background: linear-gradient(135deg, rgba(191, 90, 242, 0.1) 0%, rgba(191, 90, 242, 0.05) 100%);
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .prompt-example {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            border-left: 4px solid var(--accent-purple);
+        }
+
+        .prompt-label {
+            color: var(--accent-blue);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2em;
+            }
+            .card {
+                padding: 25px;
+            }
+            .theme-toggle {
+                width: 50px;
+                height: 50px;
+                top: 20px;
+                right: 20px;
+            }
+            .capability-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .speaker-tag {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .speaker-1 {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .speaker-2 {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .speaker-3 {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            color: white;
+        }
+
+        .timeline-item {
+            margin: 15px 0;
+            padding-left: 30px;
+            border-left: 3px solid var(--primary);
+            position: relative;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 5px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: var(--primary);
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        body.dark-mode .comparison-table {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.dark-mode .comparison-table td {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-radius: 15px;
+            margin: 10px 0;
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>🎨 Nano Banana Pro</h1>
+            <p class="subtitle">AI图像生成工具功能与应用场景深度分析</p>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="card">
+            <h2 class="section-title">🧠 核心能力思维导图</h2>
+            <div class="mindmap">
+                <div class="mindmap-node mindmap-center">Nano Banana Pro</div>
+                <div class="mindmap-branch">
+                    <div class="mindmap-node">⚡ 更快更稳更强</div>
+                    <div class="mindmap-node">🎯 推理能力</div>
+                    <div class="mindmap-node">📝 提示词遵循</div>
+                    <div class="mindmap-node">🌍 世界知识</div>
+                </div>
+                <div class="mindmap-branch">
+                    <div class="mindmap-node">🔤 中文文字稳定</div>
+                    <div class="mindmap-node">📸 超强真实感</div>
+                    <div class="mindmap-node">👤 主体一致性</div>
+                    <div class="mindmap-node">🎬 商业化应用</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心特性概览 -->
+        <div class="card">
+            <h2 class="section-title">✨ 核心特性概览</h2>
+            <div class="expert-comment">
+                <strong>专家总结：</strong>Nano Banana Pro代表了<span class="highlight">AI图像生成的新纪元</span>，其核心突破在于<span class="data">中文理解、推理能力、提示词遵循精度</span>三大维度的显著提升。相比前代产品，生成速度提升<span class="data">2-3倍</span>，中文文字准确率达<span class="data">90%以上</span>，可生成<span class="data">2K-4K</span>高清图像。
+            </div>
+
+            <div class="capability-grid">
+                <div class="capability-item">
+                    <div class="capability-icon">⚡</div>
+                    <h3>极速生成</h3>
+                    <p>比前代产品快<span class="data">2-3倍</span>，稳定性大幅提升，中文和审美能力超强</p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">🧮</div>
+                    <h3>推理能力</h3>
+                    <p>可解复杂数学题、物理原理图，甚至能处理<span class="highlight">微积分</span>等高难度内容</p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">🎯</div>
+                    <h3>精准遵循</h3>
+                    <p>能够<span class="highlight">完整遵循</span>复杂的多层级提示词要求，细节控制达专业级</p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">🌏</div>
+                    <h3>世界知识</h3>
+                    <p>内置丰富知识库，可生成教科书级别的<span class="quote">科普插图、原理图解</span></p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">🔤</div>
+                    <h3>中文文字</h3>
+                    <p>中文文字生成<span class="data">准确率90%+</span>，支持曲面、多角度文字呈现</p>
+                </div>
+                <div class="capability-item">
+                    <div class="capability-icon">📸</div>
+                    <h3>真实感</h3>
+                    <p>生成图像<span class="highlight">难辨真假</span>，特别是昏暗场景下的细节表现</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实际应用场景 -->
+        <div class="card">
+            <div class="collapsible" onclick="toggleSection(this)">
+                <h2 class="section-title">🎯 实际应用场景</h2>
+                <span class="collapsible-icon">▼</span>
+            </div>
+            <div class="content">
+                <div class="timeline-item">
+                    <span class="speaker-tag speaker-2">昌河老师</span>
+                    <strong>数据大屏</strong>：一句话需求即可生成专业的<span class="highlight">新能源储能监控大屏</span>，适合领导演示和项目展示
+                </div>
+                <div class="timeline-item">
+                    <span class="speaker-tag speaker-2">昌河老师</span>
+                    <strong>产品原型设计</strong>：快速生成APP原型图（如小宇宙APP），虽不完美但<span class="data">效率极高</span>
+                </div>
+                <div class="timeline-item">
+                    <span class="speaker-tag speaker-2">昌河老师</span>
+                    <strong>PPT生成</strong>：配合Notebook LM，可一键生成完整的<span class="quote">科技风PPT</span>，效果惊艳
+                </div>
+                <div class="timeline-item">
+                    <span class="speaker-tag speaker-2">昌河老师</span>
+                    <strong>公众号封面</strong>：解决程序员审美难题，可<span class="highlight">一键生成</span>专业级封面设计
+                </div>
+                <div class="timeline-item">
+                    <span class="speaker-tag speaker-2">昌河老师</span>
+                    <strong>信息图表</strong>：直接把文章转换为<span class="data">可视化信息图</span>，无需复杂提示词
+                </div>
+                <div class="timeline-item">
+                    <span class="speaker-tag speaker-2">昌河老师</span>
+                    <strong>连环画/漫画</strong>：可生成<span class="quote">赤壁之战</span>等历史故事连环画，适合儿童教育
+                </div>
+                <div class="timeline-item">
+                    <span class="speaker-tag speaker-2">昌河老师</span>
+                    <strong>角色串场</strong>：支持多个动漫角色（火影、海贼王等）的<span class="highlight">跨作品互动</span>场景生成
+                </div>
+
+                <div class="expert-comment">
+                    <strong>💡 商业化洞察：</strong>这些应用场景的共同特点是<span class="highlight">大幅降低创作门槛</span>。以前需要专业设计师数天完成的工作，现在普通人用AI几分钟即可完成80%的效果。这对<span class="data">自媒体、电商、教育</span>等行业具有革命性意义。
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术能力深度分析 -->
+        <div class="card">
+            <div class="collapsible" onclick="toggleSection(this)">
+                <h2 class="section-title">🔬 技术能力深度分析</h2>
+                <span class="collapsible-icon">▼</span>
+            </div>
+            <div class="content">
+                <h3>1. 推理能力</h3>
+                <div class="stat-box">
+                    <div class="stat-number">90%+</div>
+                    <div class="stat-label">微积分题目解答准确率</div>
+                </div>
+                <p><span class="speaker-tag speaker-3">孟飞老师</span>测试：可解手写微积分题目，包括<span class="highlight">辅助线绘制、推导过程</span>等复杂操作。这在之前的图像模型中几乎不可能实现。</p>
+                
+                <h3>2. 提示词遵循</h3>
+                <div class="expert-comment">
+                    <strong>实测案例：</strong>儿童绘本插画需求，包含<span class="data">15+细节要求</span>（窗户位置、鸟巢数量、花朵颜色等），Pro版本可<span class="highlight">100%遵循</span>所有要求，这是前所未有的精度。
+                </div>
+
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>模型</th>
+                            <th>遵循准确率</th>
+                            <th>细节控制</th>
+                            <th>适用场景</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Nano Banana 1.0</td>
+                            <td>60-70%</td>
+                            <td>基础</td>
+                            <td>简单创意</td>
+                        </tr>
+                        <tr>
+                            <td>Nano Banana Pro</td>
+                            <td>90-95%</td>
+                            <td>专业级</td>
+                            <td>商业化生产</td>
+                        </tr>
+                        <tr>
+                            <td>其他模型</td>
+                            <td>50-60%</td>
+                            <td>有限</td>
+                            <td>实验性</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3>3. 世界知识</h3>
+                <p>内置丰富的<span class="quote">物理、化学、生物</span>等学科知识，可生成：</p>
+                <ul style="margin-left: 40px; margin-top: 15px;">
+                    <li>光的折射原理图（含入射角、折射角标注）</li>
+                    <li>锂电池工作原理爆炸图</li>
+                    <li>塑料瓶回收流程图</li>
+                    <li>操作流程指示图（适合线下门店）</li>
+                </ul>
+
+                <h3>4. 中文文字稳定性</h3>
+                <div class="stat-box">
+                    <div class="stat-number">90%+</div>
+                    <div class="stat-label">中文文字生成准确率（包括曲面文字）</div>
+                </div>
+                <p><span class="highlight">突破性进展：</span>可在曲面（如饮料瓶）上生成多语言文字，支持<span class="data">韩语、藏语</span>等小语种，适合跨境电商本地化。</p>
+
+                <h3>5. 主体一致性</h3>
+                <p><span class="speaker-tag speaker-3">孟飞老师</span>实测：亚洲儿童面部一致性保持能力显著提升，虽未达到<span class="data">100%</span>，但已可商用（如儿童写真）。</p>
+            </div>
+        </div>
+
+        <!-- 商业化应用案例 -->
+        <div class="card">
+            <div class="collapsible" onclick="toggleSection(this)">
+                <h2 class="section-title">💼 商业化应用案例</h2>
+                <span class="collapsible-icon">▼</span>
+            </div>
+            <div class="content">
+                <h3>案例1：UI设计原型 + 前端开发</h3>
+                <p><span class="speaker-tag speaker-3">孟飞老师</span>团队实战：线下硬件拍照机UI设计</p>
+                <ul style="margin-left: 40px; margin-top: 15px;">
+                    <li><strong>传统流程：</strong>花费<span class="data">5万+</span>，耗时数周，沟通成本极高</li>
+                    <li><strong>AI流程：</strong>生成<span class="data">100套</span>风格方案，团队内部筛选，交付设计师精修</li>
+                    <li><strong>成本节约：</strong>降低<span class="highlight">70%+</span>，时间缩短<span class="data">80%</span></li>
+                </ul>
+
+                <h3>案例2：简笔画教程批量生产</h3>
+                <div class="expert-comment">
+                    <strong>💡 商机发现：</strong>淘宝上简笔画教程销量极好。传统制作需要专业设计师，现在可用AI<span class="highlight">批量生成</span>：圆形脑袋→五官→身体→上色，完整流程一键生成。
+                </div>
+
+                <h3>案例3：电商详情页/海报设计</h3>
+                <p>支持：</p>
+                <ul style="margin-left: 40px; margin-top: 15px;">
+                    <li>小红书爆款封面（大字报风格）</li>
+                    <li>品牌邀请海报（个性化定制）</li>
+                    <li>产品详情页可视化</li>
+                    <li>多语言本地化（一键翻译+场景适配）</li>
+                </ul>
+
+                <h3>案例4：教育内容制作</h3>
+                <p><span class="speaker-tag speaker-2">昌河老师</span>分享：给孩子讲故事，可生成<span class="quote">定制化连环画</span>，零成本替代传统绘本购买。</p>
+            </div>
+        </div>
+
+        <!-- 使用入口汇总 -->
+        <div class="card">
+            <div class="collapsible" onclick="toggleSection(this)">
+                <h2 class="section-title">🚪 使用入口汇总</h2>
+                <span class="collapsible-icon">▼</span>
+            </div>
+            <div class="content">
+                <h3>官方入口（需魔法）</h3>
+                <ul style="margin-left: 40px; margin-top: 15px;">
+                    <li><strong>Google AI Studio：</strong>需API Token，Pro用户<span class="data">100张/天</span></li>
+                    <li><strong>Gemini面板：</strong>免费/Pro用户均可用</li>
+                </ul>
+
+                <h3>国内入口（免魔法）</h3>
+                <ul style="margin-left: 40px; margin-top: 15px;">
+                    <li><strong>海螺AI：</strong>会员<span class="highlight">活动期无限生成</span>，免费用户<span class="data">50张/天</span>（推荐）</li>
+                    <li><strong>纳米AI：</strong>有免费额度</li>
+                    <li><strong>拉瓦尔/Flow：</strong>需要扣积分</li>
+                </ul>
+
+                <div class="expert-comment">
+                    <strong>💡 使用建议：</strong>无魔法用户优先选择<span class="highlight">海螺AI</span>，活动期内体验最佳。有魔法用户建议直接用<span class="quote">Gemini官方面板</span>，稳定性和速度最优。
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术对比 -->
+        <div class="card">
+            <div class="collapsible" onclick="toggleSection(this)">
+                <h2 class="section-title">⚖️ 技术对比分析</h2>
+                <span class="collapsible-icon">▼</span>
+            </div>
+            <div class="content">
+                <h3>Nano Banana Pro vs Midjourney</h3>
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>维度</th>
+                            <th>Nano Banana Pro</th>
+                            <th>Midjourney</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>中文支持</td>
+                            <td><span class="highlight">★★★★★</span></td>
+                            <td>★★☆☆☆</td>
+                        </tr>
+                        <tr>
+                            <td>推理能力</td>
+                            <td><span class="highlight">★★★★★</span>（可解数学题）</td>
+                            <td>★☆☆☆☆</td>
+                        </tr>
+                        <tr>
+                            <td>提示词遵循</td>
+                            <td><span class="highlight">★★★★★</span></td>
+                            <td>★★★☆☆</td>
+                        </tr>
+                        <tr>
+                            <td>美学风格</td>
+                            <td>★★★★☆</td>
+                            <td><span class="highlight">★★★★★</span></td>
+                        </tr>
+                        <tr>
+                            <td>商业化成熟度</td>
+                            <td><span class="data">刚起步</span></td>
+                            <td><span class="data">成熟</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="expert-comment">
+                    <strong>💡 选择建议：</strong>如果你的需求是<span class="highlight">中文内容、复杂逻辑、教育科普</span>，选Nano Banana Pro。如果追求<span class="quote">极致美学、艺术创作</span>，Midjourney仍是首选。
+                </div>
+            </div>
+        </div>
+
+        <!-- 市场分析与技术实现（重点板块） -->
+        <div class="card" style="border: 3px solid var(--accent-purple);">
+            <div class="collapsible" onclick="toggleSection(this)">
+                <h2 class="section-title">📊 三大细分市场深度分析</h2>
+                <span class="collapsible-icon">▼</span>
+            </div>
+            <div class="content">
+                <div class="expert-comment" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.2) 0%, rgba(255, 165, 0, 0.1) 100%); border-left-color: #FFD700;">
+                    <strong>🎯 专家导读：</strong>本板块深入分析<span class="highlight">儿童写真图、简笔画、拼豆画</span>三大细分市场的商业价值和技术实现路径。这些领域正处于<span class="data">AI赋能的爆发前夜</span>，掌握技术实现方法的创业者将率先占领市场。
+                </div>
+
+                <!-- 1. 儿童写真图 -->
+                <div class="market-analysis">
+                    <h3 style="color: var(--accent-blue); font-size: 1.8em; margin-bottom: 20px;">📸 一、儿童写真图市场分析</h3>
+                    
+                    <h4 style="margin-top: 25px; color: var(--primary);">🛒 市场规模与需求</h4>
+                    <div class="price-range">
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">闲鱼价格区间</div>
+                            <div class="price-value">¥9.9 - ¥99</div>
+                            <div style="margin-top: 10px; color: #666;">10-50张成品照</div>
+                        </div>
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">淘宝价格区间</div>
+                            <div class="price-value">¥29 - ¥299</div>
+                            <div style="margin-top: 10px; color: #666;">含精修、多套服装</div>
+                        </div>
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">线下影楼</div>
+                            <div class="price-value">¥688 - ¥2999</div>
+                            <div style="margin-top: 10px; color: #666;">专业拍摄+实体相册</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-number">500万+</div>
+                        <div class="stat-label">年搜索量（淘宝+闲鱼"儿童写真"关键词）</div>
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">📈 竞争态势</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>高端市场（¥500+）：</strong>被<span class="highlight">传统影楼</span>垄断，注重实景拍摄和实物产品</li>
+                        <li><strong>中端市场（¥50-500）：</strong><span class="data">AI写真崛起</span>，如妙鸭相机、海马体，但多为成人向</li>
+                        <li><strong>低端市场（¥50以下）：</strong>个人卖家用SD/MJ生成，<span class="highlight">质量参差不齐</span></li>
+                    </ul>
+
+                    <div class="expert-comment">
+                        <strong>💡 市场机会：</strong>Nano Banana Pro的<span class="highlight">儿童面部一致性</span>能力显著提升，虽未达100%但已可商用。当前市场痛点是：<span class="data">儿童表情多变、生长变化快</span>，传统AI模型难以保持一致性。Pro版本在这方面的突破，为<span class="quote">¥99-299价位段</span>的在线儿童写真服务提供了技术可能性。
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">🎯 目标客户画像</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li>年轻父母（25-35岁），注重性价比</li>
+                        <li>二三线城市，线下影楼价格偏高</li>
+                        <li>追求多样化场景（公主、超人、古风等）</li>
+                        <li>愿意为<span class="data">快速交付</span>（24小时内）付费</li>
+                    </ul>
+                </div>
+
+                <!-- 技术实现：儿童写真图 -->
+                <div class="tech-implementation">
+                    <h3 style="color: var(--accent-purple); font-size: 1.6em; margin-bottom: 20px;">🔧 技术实现：儿童写真图</h3>
+                    
+                    <h4 style="margin-top: 20px; color: var(--secondary);">核心技术要点</h4>
+                    <ol style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>主体一致性保持：</strong>需要用户提供<span class="data">3-5张</span>不同角度的儿童照片</li>
+                        <li><strong>年龄段适配：</strong>明确标注儿童年龄（如"3岁男童"），避免年龄错位</li>
+                        <li><strong>场景风格控制：</strong>使用<span class="highlight">风格锁定词</span>，如"迪士尼公主风格"、"日系小清新"</li>
+                        <li><strong>面部细节优化：</strong>强调"保持面部特征"、"五官清晰"等关键词</li>
+                    </ol>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">Prompt示例</h4>
+                    
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 基础模板（公主风）</div>
+A 3-year-old Asian girl in a Disney princess style dress, standing in an enchanted forest.
+
+【关键要素】
+- Subject: 3-year-old girl, [上传参考照片]
+- Style: Disney princess, soft pastel colors, dreamy atmosphere
+- Setting: enchanted forest with sparkles and butterflies
+- Lighting: soft golden hour light
+- Technical: 2K resolution, maintain facial features from reference photo
+
+【中文提示词版本】
+一个3岁的亚洲女孩，穿着迪士尼公主风格的裙子，站在魔法森林中。
+柔和的粉色系，梦幻氛围，有闪光和蝴蝶。
+柔和的金色日落光线。
+2K分辨率，保持参考照片中的面部特征。
+                    </div>
+
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 进阶模板（多场景系列）</div>
+Generate 5 variations of a 4-year-old Asian boy in different scenarios:
+
+1. Superhero theme: wearing a small cape, standing heroically
+2. Beach theme: building sandcastles, sunny day
+3. Astronaut theme: in a space suit, stars background
+4. Painter theme: with colorful paint on hands, easel nearby
+5. Chef theme: wearing a mini chef hat, pretending to cook
+
+【统一要求】
+- Same child in all images (reference photo provided)
+- Consistent facial features and expression style
+- Age-appropriate props and settings
+- Soft, natural lighting
+- 2K resolution, portrait orientation
+
+【中文提示词版本】
+为一个4岁的亚洲男孩生成5个不同场景的照片：
+1. 超级英雄主题：穿着小披风，英雄站姿
+2. 海滩主题：堆沙堡，阳光明媚
+3. 宇航员主题：穿着太空服，星空背景
+4. 小画家主题：手上有彩色颜料，旁边有画架
+5. 小厨师主题：戴着迷你厨师帽，假装做饭
+
+所有图片保持同一个孩子（已提供参考照片）
+一致的面部特征和表情风格
+适龄的道具和场景设置
+柔和自然的光线
+2K分辨率，竖版构图
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">⚠️ 关键注意事项</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>伦理问题：</strong>必须获得<span class="highlight">家长明确授权</span>，不得用于任何商业推广以外的用途</li>
+                        <li><strong>年龄限制：</strong>建议只接<span class="data">2-8岁</span>儿童订单，此年龄段面部变化相对稳定</li>
+                        <li><strong>质量把控：</strong>每单生成<span class="data">30-50张</span>，让客户挑选10-20张精修</li>
+                        <li><strong>横版/竖版选择：</strong>写真多用<span class="highlight">竖版（3:4或9:16）</span>，符合手机查看习惯</li>
+                    </ul>
+
+                    <div class="expert-comment" style="border-left-color: var(--accent-orange);">
+                        <strong>🚀 商业化建议：</strong>定价策略建议<span class="data">¥99/10张精修照</span>，提供<span class="highlight">5种场景主题</span>选择包。成本端：单次生成约<span class="data">30-50次</span>API调用，按当前海螺AI免费政策，边际成本几乎为零。关键是要建立<span class="quote">快速交付能力</span>（24小时内）和<span class="highlight">售后保障</span>（不满意重拍）。
+                    </div>
+                </div>
+
+
+                <!-- 2. 简笔画市场分析 -->
+                <div class="market-analysis" style="margin-top: 40px;">
+                    <h3 style="color: var(--accent-blue); font-size: 1.8em; margin-bottom: 20px;">✏️ 二、简笔画市场分析</h3>
+                    
+                    <h4 style="margin-top: 25px; color: var(--primary);">🛒 市场规模与需求</h4>
+                    <div class="price-range">
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">电子版（淘宝）</div>
+                            <div class="price-value">¥5.8 - ¥29.9</div>
+                            <div style="margin-top: 10px; color: #666;">PDF格式，100-500页</div>
+                        </div>
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">实体书（当当）</div>
+                            <div class="price-value">¥19.8 - ¥68</div>
+                            <div style="margin-top: 10px; color: #666;">彩印装订</div>
+                        </div>
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">定制服务（闲鱼）</div>
+                            <div class="price-value">¥9.9 - ¥49.9</div>
+                            <div style="margin-top: 10px; color: #666;">指定主题批量生成</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-number">1200万+</div>
+                        <div class="stat-label">年搜索量（淘宝"简笔画教程"关键词）</div>
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">📈 竞争态势</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>传统出版物：</strong>由<span class="highlight">专业插画师</span>手绘，质量高但<span class="data">更新慢、主题有限</span></li>
+                        <li><strong>个人卖家：</strong>大量倒卖盗版资源，价格<span class="data">¥5-10</span>，版权风险高</li>
+                        <li><strong>AI生成（新兴）：</strong>少数卖家开始用SD批量生成，但<span class="highlight">风格不统一</span></li>
+                    </ul>
+
+                    <div class="expert-comment">
+                        <strong>💡 市场机会：</strong>Nano Banana Pro的<span class="highlight">九宫格进阶式生成</span>能力（圆形→五官→身体→上色）完美契合简笔画教学需求。当前市场痛点是：<span class="data">主题同质化严重</span>（80%是动物/水果），新兴主题（如恐龙、宇航员、职业人物）供给不足。用AI可<span class="quote">快速填补长尾需求</span>。
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">🎯 目标客户画像</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2.2;">
+                        <li>幼儿园、小学美术老师（<span class="data">B端批量采购</span>）</li>
+                        <li>宝妈群体（<span class="highlight">亲子互动需求</span>）</li>
+                        <li>儿童培训机构（美术、托管班）</li>
+                        <li>自媒体博主（小红书/抖音育儿博主引流品）</li>
+                    </ul>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">📊 具体销售数据分析</h4>
+                    <div style="background: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <p style="margin-bottom: 15px;"><strong>淘宝热销产品案例：</strong></p>
+                        <ul style="margin-left: 40px; line-height: 2;">
+                            <li>"10000个简笔画大全"电子版：月销<span class="data">5000+</span>，定价<span class="highlight">¥9.9</span></li>
+                            <li>"儿童学画500例"实体书：月销<span class="data">2万+</span>，定价<span class="highlight">¥29.8</span></li>
+                            <li>"简笔画视频课程+图纸"：月销<span class="data">1200+</span>，定价<span class="highlight">¥39.9</span></li>
+                            <li>"主题定制简笔画"服务：月接单<span class="data">300+</span>，均价<span class="highlight">¥25</span></li>
+                        </ul>
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">🎯 细分需求场景</h4>
+                    <div class="capability-grid">
+                        <div class="capability-item">
+                            <div class="capability-icon">👨‍🏫</div>
+                            <h4>教学场景</h4>
+                            <p>幼儿园美术课、托管班手工课需要<span class="data">大量主题素材</span>，按季节、节日更新</p>
+                        </div>
+                        <div class="capability-item">
+                            <div class="capability-icon">👪</div>
+                            <h4>家庭教育</h4>
+                            <p>宝妈购买用于<span class="highlight">亲子互动</span>，培养孩子绘画兴趣和手眼协调</p>
+                        </div>
+                        <div class="capability-item">
+                            <div class="capability-icon">📱</div>
+                            <h4>自媒体引流</h4>
+                            <p>小红书/抖音育儿博主用作<span class="quote">免费引流品</span>，引导关注和私域</p>
+                        </div>
+                        <div class="capability-item">
+                            <div class="capability-icon">🎨</div>
+                            <h4>美术培训</h4>
+                            <p>儿童美术培训机构需要<span class="data">系统化教材</span>，分难度等级</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 技术实现：简笔画 -->
+                <div class="tech-implementation">
+                    <h3 style="color: var(--accent-purple); font-size: 1.6em; margin-bottom: 20px;">🔧 技术实现：简笔画</h3>
+                    
+                    <h4 style="margin-top: 20px; color: var(--secondary);">核心技术要点</h4>
+                    <ol style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>分步式生成：</strong>严格控制<span class="highlight">4-6步进阶</span>，每步只增加一个元素</li>
+                        <li><strong>线条风格统一：</strong>使用"simple black lines, children's drawing style"锁定风格</li>
+                        <li><strong>留白控制：</strong>要求"white background, plenty of white space"便于打印</li>
+                        <li><strong>比例控制：</strong>明确指定"large simple shapes, easy for kids to copy"</li>
+                    </ol>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">Prompt示例</h4>
+                    
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 基础模板（小猫进阶教程）</div>
+Generate a 6-step tutorial showing how to draw a simple cat for children:
+
+Step 1: A circle (head only), simple black outline
+Step 2: Add two triangle ears on top of the circle
+Step 3: Draw two dots for eyes and a small triangle nose
+Step 4: Add whiskers (3 lines on each side)
+Step 5: Draw an oval body below the head
+Step 6: Add four simple legs and a curved tail
+Step 7 (Bonus): Color the cat in light orange
+
+【统一要求】
+- Each step on separate white background
+- Simple black lines, 2-3px width
+- Children's drawing style, easy to copy
+- No shading or complex details
+- Arrange in 3x3 grid format for printing
+- Include Chinese text labels for each step
+
+【中文提示词版本】
+生成一个6步简笔画教程，教孩子如何画小猫：
+
+第1步：一个圆形（只有头），简单的黑色轮廓
+第2步：在圆形顶部加两个三角形耳朵
+第3步：画两个点作为眼睛，一个小三角形鼻子
+第4步：加上胡须（每边3根线）
+第5步：在头部下方画一个椭圆形身体
+第6步：加上四条简单的腿和一条弯曲的尾巴
+第7步（加分项）：用浅橙色给小猫上色
+
+每一步都在单独的白色背景上
+简单的黑线，2-3像素宽度
+儿童绘画风格，容易模仿
+无阴影或复杂细节
+按3x3网格格式排列，便于打印
+每一步包含中文文字标签
+                    </div>
+
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 进阶模板（主题系列包）</div>
+Generate a complete "Ocean Animals" simple drawing tutorial pack:
+
+【包含10个主题】
+1. Fish (4 steps)
+2. Octopus (5 steps)
+3. Whale (5 steps)
+4. Starfish (3 steps)
+5. Crab (6 steps)
+6. Turtle (5 steps)
+7. Seahorse (4 steps)
+8. Dolphin (5 steps)
+9. Jellyfish (4 steps)
+10. Seashell (3 steps)
+
+【统一要求】
+- Each animal: basic shape → add features → final colored version
+- Consistent line style across all tutorials
+- Age-appropriate (4-8 years old)
+- Include both Chinese and English labels
+- Designed for A4 printing (one tutorial per page)
+- Add a cover page with all animals preview
+
+【中文提示词版本】
+生成一个完整的"海洋动物"简笔画教程包：
+
+包含10个主题（鱼、章鱼、鲸鱼、海星、螃蟹、海龟、海马、海豚、水母、贝壳）
+
+每个动物：基础形状→添加特征→最终上色版本
+所有教程保持一致的线条风格
+适合4-8岁年龄段
+包含中英文标签
+设计为A4打印（每页一个教程）
+添加封面页，预览所有动物
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">⚠️ 关键注意事项</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>版权问题：</strong>AI生成内容<span class="highlight">可商用</span>，但避免模仿知名IP（如米老鼠）</li>
+                        <li><strong>打印适配：</strong>确保<span class="data">300dpi以上</span>分辨率，线条粗细适合儿童描摹</li>
+                        <li><strong>主题选择：</strong>优先做<span class="highlight">长尾主题</span>（恐龙、昆虫、职业人物），避开红海</li>
+                        <li><strong>中英双语：</strong>有助于提升产品价值感，可定价更高</li>
+                    </ul>
+
+                    <div class="expert-comment" style="border-left-color: var(--success);">
+                        <strong>🚀 商业化建议：</strong>定价策略：<span class="data">¥19.9/主题包（10个教程）</span>或<span class="data">¥49.9/全套（5个主题包，共50个教程）</span>。制作成本：单个主题包<span class="highlight">1小时内</span>可完成（生成+排版），边际成本几乎为零。关键是要建立<span class="quote">主题库矩阵</span>（动物、交通工具、职业、恐龙等10+大类），通过<span class="data">SEO优化</span>（淘宝/闲鱼标题关键词）获取自然流量。
+                    </div>
+                </div>
+
+                <!-- 3. 拼豆画市场分析 -->
+                <div class="market-analysis" style="margin-top: 40px;">
+                    <h3 style="color: var(--accent-blue); font-size: 1.8em; margin-bottom: 20px;">🎨 三、拼豆画市场分析</h3>
+                    
+                    <div class="expert-comment" style="background: linear-gradient(135deg, rgba(147, 51, 234, 0.2) 0%, rgba(147, 51, 234, 0.1) 100%); border-left-color: #9333ea;">
+                        <strong>📌 名词解释：</strong>拼豆画（Perler Beads / 豆豆画）是一种用彩色塑料小豆按照图案拼成像素画，然后用熨斗加热固定的手工艺品。类似于<span class="highlight">实体版像素画</span>，深受儿童和手工爱好者喜爱。
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">🛒 市场规模与需求</h4>
+                    <div class="price-range">
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">图纸（淘宝）</div>
+                            <div class="price-value">¥3.8 - ¥19.9</div>
+                            <div style="margin-top: 10px; color: #666;">电子图纸，50-200款</div>
+                        </div>
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">材料包（拼多多）</div>
+                            <div class="price-value">¥9.9 - ¥59.9</div>
+                            <div style="margin-top: 10px; color: #666;">豆豆+图纸+工具</div>
+                        </div>
+                        <div class="price-card">
+                            <div style="font-size: 1.2em; margin-bottom: 10px;">成品（小红书）</div>
+                            <div class="price-value">¥29 - ¥199</div>
+                            <div style="margin-top: 10px; color: #666;">定制拼豆画成品</div>
+                        </div>
+                    </div>
+
+                    <div class="stat-box">
+                        <div class="stat-number">380万+</div>
+                        <div class="stat-label">年搜索量（淘宝"拼豆图纸"关键词）</div>
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">📈 竞争态势</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>图纸市场：</strong>主要是<span class="highlight">手动像素化</span>现有图片，设计成本高，主题<span class="data">同质化严重</span></li>
+                        <li><strong>材料市场：</strong>被<span class="data">拼多多白牌</span>占据，价格战激烈，利润薄</li>
+                        <li><strong>定制市场：</strong>小红书手工达人接单，客单价<span class="highlight">¥50-200</span>，但产能有限</li>
+                        <li><strong>AI生成（空白）：</strong>目前<span class="data">几乎无人</span>用AI批量生成拼豆图纸</li>
+                    </ul>
+
+                    <div class="expert-comment">
+                        <strong>💡 市场机会：</strong>拼豆画本质是<span class="highlight">像素艺术</span>，Nano Banana Pro可以通过<span class="data">分辨率控制</span>直接生成像素风格图案。当前市场痛点是：<span class="quote">图纸设计师稀缺</span>，导致主题严重依赖流行IP（宝可梦、迪士尼等），原创性不足。用AI可以<span class="data">无限制生成</span>各种像素风格图案，填补<span class="highlight">原创主题</span>空白。
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">🎯 目标客户画像</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li>手工爱好者（主力是<span class="data">8-16岁女生</span>和宝妈）</li>
+                        <li>幼儿园、小学手工课采购（<span class="highlight">B端需求</span>）</li>
+                        <li>动漫周边收藏爱好者（二次元群体）</li>
+                        <li>小红书手工博主（内容创作需求）</li>
+                    </ul>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">📊 具体销售数据分析</h4>
+                    <div style="background: rgba(255, 255, 255, 0.5); padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <p style="margin-bottom: 15px;"><strong>电商平台热销数据：</strong></p>
+                        <ul style="margin-left: 40px; line-height: 2;">
+                            <li><strong>淘宝：</strong>"拼豆图纸1000款"电子版：月销<span class="data">3000+</span>，定价<span class="highlight">¥9.9</span></li>
+                            <li><strong>拼多多：</strong>"拼豆材料大礼包"：月销<span class="data">1.5万+</span>，定价<span class="highlight">¥19.9</span></li>
+                            <li><strong>小红书：</strong>定制拼豆画服务：月接单<span class="data">200-500单</span>，均价<span class="highlight">¥80</span></li>
+                            <li><strong>闲鱼：</strong>"照片转拼豆图纸"服务：月接单<span class="data">100+</span>，均价<span class="highlight">¥25</span></li>
+                        </ul>
+                        <p style="margin-top: 15px;"><strong>🔥 热门主题排行：</strong></p>
+                        <ol style="margin-left: 40px; line-height: 2;">
+                            <li>动漫角色（宝可梦、火影等）：占比<span class="data">45%</span></li>
+                            <li>卡通形象（史迪仔、龙猫等）：占比<span class="data">25%</span></li>
+                            <li>节日主题（圣诞、春节等）：占比<span class="data">15%</span></li>
+                            <li>宠物照片定制：占比<span class="data">10%</span></li>
+                            <li>原创图案：占比<span class="data">5%</span>（<span class="highlight">蓝海机会！</span>）</li>
+                        </ol>
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">🎯 细分需求场景</h4>
+                    <div class="capability-grid">
+                        <div class="capability-item">
+                            <div class="capability-icon">🎁</div>
+                            <h4>礼品制作</h4>
+                            <p>生日礼物、情侣定制、毕业纪念等，<span class="data">高客单价</span>（¥50-200）</p>
+                        </div>
+                        <div class="capability-item">
+                            <div class="capability-icon">👧</div>
+                            <h4>儿童手工</h4>
+                            <p>培养动手能力，<span class="highlight">家长陪伴型消费</span>，复购率高</p>
+                        </div>
+                        <div class="capability-item">
+                            <div class="capability-icon">🎮</div>
+                            <h4>二次元周边</h4>
+                            <p>动漫角色拼豆画，<span class="quote">粉丝经济</span>驱动，溢价空间大</p>
+                        </div>
+                        <div class="capability-item">
+                            <div class="capability-icon">📚</div>
+                            <h4>教育市场</h4>
+                            <p>STEAM教育、美术培训班，<span class="data">B端批量采购</span></p>
+                        </div>
+                    </div>
+
+                    <h4 style="margin-top: 25px; color: var(--primary);">⚠️ 行业痛点</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>设计周期长：</strong>手动像素化一张图需要<span class="data">1-3小时</span>，效率低下</li>
+                        <li><strong>主题同质化：</strong>80%图纸是流行IP，<span class="highlight">版权风险高</span></li>
+                        <li><strong>定制成本高：</strong>个性化定制需要设计师一对一服务，<span class="data">产能瓶颈</span></li>
+                        <li><strong>色号匹配难：</strong>不同品牌豆豆色号不统一，需要<span class="quote">专业知识</span></li>
+                    </ul>
+                </div>
+
+                <!-- 技术实现：拼豆画 -->
+                <div class="tech-implementation">
+                    <h3 style="color: var(--accent-purple); font-size: 1.6em; margin-bottom: 20px;">🔧 技术实现：拼豆画</h3>
+                    
+                    <h4 style="margin-top: 20px; color: var(--secondary);">核心技术要点</h4>
+                    <ol style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>像素化风格：</strong>使用"pixel art style, 8-bit graphics"强制像素风格</li>
+                        <li><strong>颜色限制：</strong>拼豆有<span class="data">标准48色</span>，需限制调色板（或后期处理）</li>
+                        <li><strong>尺寸控制：</strong>常规拼豆板为<span class="highlight">29x29格</span>，需要精确控制像素尺寸</li>
+                        <li><strong>简化细节：</strong>避免过度复杂的渐变，保持<span class="data">块状色彩</span></li>
+                    </ol>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">Prompt示例</h4>
+                    
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 基础模板（小动物拼豆图纸）</div>
+Generate a perler bead pattern of a cute cat face:
+
+【Technical Requirements】
+- Pixel art style, 8-bit graphics
+- Size: 29x29 pixels grid
+- Use only simple, solid colors (max 8 colors)
+- No gradients or anti-aliasing
+- Thick black outlines for each shape
+- Symmetrical design
+- Easy for beginners (10-15 minutes to complete)
+
+【Style Requirements】
+- Kawaii cute style
+- Simple geometric shapes
+- Clear color boundaries
+- White background
+- Include a color legend showing bead colors needed
+
+【中文提示词版本】
+生成一个可爱猫咪脸的拼豆图案：
+
+技术要求：
+像素艺术风格，8位图形
+尺寸：29x29像素网格
+仅使用简单的纯色（最多8种颜色）
+无渐变或抗锯齿
+每个形状有粗黑色轮廓
+对称设计
+适合初学者（10-15分钟完成）
+
+风格要求：
+可爱卡哇伊风格
+简单几何形状
+清晰的颜色边界
+白色背景
+包含颜色图例，显示所需的豆豆颜色
+                    </div>
+
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 进阶模板（主题系列包）</div>
+Create a "Zodiac Animals" perler bead pattern collection:
+
+【12 Designs】
+Rat, Ox, Tiger, Rabbit, Dragon, Snake, Horse, Goat, Monkey, Rooster, Dog, Pig
+
+【统一规格】
+- Each design: 29x29 pixel grid
+- Consistent pixel art style
+- Use same color palette (12 colors max)
+- Cute chibi/SD style proportions
+- Include both full-color and outline-only versions
+- Provide color-by-number legend
+- Difficulty level: Easy to Medium
+
+【额外要求】
+- Add Chinese zodiac name in pixel font
+- Design can be used as keychain (small size)
+- Include estimated bead count for each color
+- Provide assembly instructions diagram
+
+【中文提示词版本】
+创建一个"十二生肖"拼豆图案合集：
+
+12个设计（鼠、牛、虎、兔、龙、蛇、马、羊、猴、鸡、狗、猪）
+
+统一规格：
+每个设计：29x29像素网格
+一致的像素艺术风格
+使用相同的调色板（最多12种颜色）
+可爱的Q版比例
+包含全彩和仅轮廓两个版本
+提供按数字涂色图例
+难度级别：简单到中等
+
+额外要求：
+用像素字体添加中文生肖名称
+设计可用作钥匙扣（小尺寸）
+包含每种颜色的估计豆豆数量
+提供组装说明图
+                    </div>
+
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 高级模板（照片转拼豆图纸）</div>
+Convert a photo into a perler bead pattern:
+
+【输入】
+[用户上传照片，如宠物照片、家庭合影等]
+
+【转换要求】
+- Pixelate the photo to 50x50 grid
+- Reduce colors to 24 perler bead standard colors
+- Maintain recognizable features (eyes, nose, etc.)
+- Add black outlines for key features
+- Optimize for actual bead placement (avoid single-pixel details)
+- Generate both preview (full color) and blueprint (grid with color codes)
+
+【输出格式】
+1. Full-color preview image
+2. Grid blueprint with color numbers
+3. Color legend (bead color name + quantity needed)
+4. Difficulty rating (based on color count and complexity)
+
+【中文提示词版本】
+将照片转换为拼豆图纸：
+
+输入：用户上传照片（宠物、家庭合影等）
+
+转换要求：
+- 将照片像素化为50x50网格
+- 将颜色减少为24种拼豆标准颜色
+- 保持可识别特征（眼睛、鼻子等）
+- 为关键特征添加黑色轮廓
+- 优化实际豆豆放置（避免单像素细节）
+- 生成预览图（全彩）和蓝图（带颜色代码的网格）
+
+输出格式：
+1. 全彩预览图
+2. 带颜色编号的网格蓝图
+3. 颜色图例（豆豆颜色名称+所需数量）
+4. 难度评级（基于颜色数量和复杂度）
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">⚠️ 关键注意事项</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>颜色标准化：</strong>拼豆有<span class="data">官方色号</span>（如Perler、Hama品牌），需提供色号对照表</li>
+                        <li><strong>网格精度：</strong>必须严格<span class="highlight">1像素=1豆</span>，否则无法实际拼装</li>
+                        <li><strong>难度分级：</strong>根据颜色数量和尺寸分为<span class="data">简单（5-8色，20x20）、中等（8-12色，29x29）、困难（12+色，50x50）</span></li>
+                        <li><strong>版权风险：</strong>避免生成<span class="highlight">知名IP角色</span>（如米老鼠、皮卡丘），专注原创或公版形象</li>
+                    </ul>
+
+                    <div class="expert-comment" style="border-left-color: var(--accent-pink);">
+                        <strong>🚀 商业化建议：</strong>拼豆图纸市场的<span class="highlight">核心竞争力</span>是<span class="data">主题创新+打包销售</span>。建议定价：<span class="data">¥9.9/主题包（20款图纸+色号表）</span>或<span class="data">¥29.9/大礼包（100款+视频教程）</span>。技术路径：<span class="quote">AI生成像素图 → Python脚本像素化处理 → 自动生成色号对照表 → 批量输出PDF图纸</span>。关键是要建立<span class="highlight">自动化流水线</span>，单人可日产<span class="data">50-100款</span>图纸。目标平台：<span class="data">淘宝（主力）+ 小红书（引流）+ 拼多多（走量）</span>。
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">🔧 后处理工具链</h4>
+                    <div style="background: rgba(0, 0, 0, 0.05); padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <p style="margin-bottom: 15px;">由于Nano Banana Pro生成的像素图可能不完全符合拼豆规格，建议使用以下工具链进行后处理：</p>
+                        <ol style="margin-left: 40px; line-height: 2;">
+                            <li><strong>Photoshop / GIMP：</strong>精确调整到<span class="data">29x29像素</span>，使用索引颜色模式限制色数</li>
+                            <li><strong>Bead Surge App：</strong>专业拼豆设计软件，自动生成色号和用量</li>
+                            <li><strong>Python脚本：</strong>批量处理，自动输出PDF图纸（可在GitHub找开源代码）</li>
+                            <li><strong>Excel模板：</strong>制作颜色图例和材料清单</li>
+                        </ol>
+                    </div>
+                </div>
+包含全彩和仅轮廓两个版本
+提供按数字涂色图例
+难度级别：简单到中等
+
+额外要求：
+用像素字体添加中文生肖名称
+设计可用作钥匙扣（小尺寸）
+包含每种颜色的估计豆豆数量
+提供组装说明图
+                    </div>
+
+                    <div class="prompt-example">
+                        <div class="prompt-label">📝 高级模板（照片转拼豆图纸）</div>
+Convert a photo into a perler bead pattern:
+
+【输入】
+[用户上传照片，如宠物照片、家庭合影等]
+
+【转换要求】
+- Pixelate the photo to 50x50 grid
+- Reduce colors to 24 perler bead standard colors
+- Maintain recognizable features (eyes, nose, etc.)
+- Add black outlines for key features
+- Optimize for actual bead placement (avoid single-pixel details)
+- Generate both preview (full color) and blueprint (grid with color codes)
+
+【输出格式】
+1. Full-color preview image
+2. Grid blueprint with color numbers
+3. Color legend (bead color name + quantity needed)
+4. Difficulty rating (based on color count and complexity)
+
+【中文提示词版本】
+将照片转换为拼豆图纸：
+
+输入：用户上传照片（宠物、家庭合影等）
+
+转换要求：
+- 将照片像素化为50x50网格
+- 将颜色减少为24种拼豆标准颜色
+- 保持可识别特征（眼睛、鼻子等）
+- 为关键特征添加黑色轮廓
+- 优化实际豆豆放置（避免单像素细节）
+- 生成预览图（全彩）和蓝图（带颜色代码的网格）
+
+输出格式：
+1. 全彩预览图
+2. 带颜色编号的网格蓝图
+3. 颜色图例（豆豆颜色名称+所需数量）
+4. 难度评级（基于颜色数量和复杂度）
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">⚠️ 关键注意事项</h4>
+                    <ul style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                        <li><strong>颜色标准化：</strong>拼豆有<span class="data">官方色号</span>（如Perler、Hama品牌），需提供色号对照表</li>
+                        <li><strong>网格精度：</strong>必须严格<span class="highlight">1像素=1豆</span>，否则无法实际拼装</li>
+                        <li><strong>难度分级：</strong>根据颜色数量和尺寸分为<span class="data">简单（5-8色，20x20）、中等（8-12色，29x29）、困难（12+色，50x50）</span></li>
+                        <li><strong>版权风险：</strong>避免生成<span class="highlight">知名IP角色</span>（如米老鼠、皮卡丘），专注原创或公版形象</li>
+                    </ul>
+
+                    <div class="expert-comment" style="border-left-color: var(--accent-pink);">
+                        <strong>🚀 商业化建议：</strong>拼豆图纸市场的<span class="highlight">核心竞争力</span>是<span class="data">主题创新+打包销售</span>。建议定价：<span class="data">¥9.9/主题包（20款图纸+色号表）</span>或<span class="data">¥29.9/大礼包（100款+视频教程）</span>。技术路径：<span class="quote">AI生成像素图 → Python脚本像素化处理 → 自动生成色号对照表 → 批量输出PDF图纸</span>。关键是要建立<span class="highlight">自动化流水线</span>，单人可日产<span class="data">50-100款</span>图纸。目标平台：<span class="data">淘宝（主力）+ 小红书（引流）+ 拼多多（走量）</span>。
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--secondary);">🔧 后处理工具链</h4>
+                    <div style="background: rgba(0, 0, 0, 0.05); padding: 20px; border-radius: 10px; margin-top: 15px;">
+                        <p style="margin-bottom: 15px;">由于Nano Banana Pro生成的像素图可能不完全符合拼豆规格，建议使用以下工具链进行后处理：</p>
+                        <ol style="margin-left: 40px; line-height: 2;">
+                            <li><strong>Photoshop / GIMP：</strong>精确调整到<span class="data">29x29像素</span>，使用索引颜色模式限制色数</li>
+                            <li><strong>Bead Surge App：</strong>专业拼豆设计软件，自动生成色号和用量</li>
+                            <li><strong>Python脚本：</strong>批量处理，自动输出PDF图纸（可在GitHub找开源代码）</li>
+                            <li><strong>Excel模板：</strong>制作颜色图例和材料清单</li>
+                        </ol>
+                    </div>
+                </div>
+
+                <!-- 综合对比 -->
+                <div class="expert-comment" style="margin-top: 40px; background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%); border-left-color: #667eea;">
+                    <h3 style="color: var(--primary); margin-bottom: 20px;">📊 三大市场综合对比</h3>
+                    
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>维度</th>
+                                <th>儿童写真图</th>
+                                <th>简笔画</th>
+                                <th>拼豆画</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>市场规模</strong></td>
+                                <td><span class="data">★★★★☆</span><br>500万+搜索/年</td>
+                                <td><span class="highlight">★★★★★</span><br>1200万+搜索/年</td>
+                                <td><span class="data">★★★☆☆</span><br>380万+搜索/年</td>
+                            </tr>
+                            <tr>
+                                <td><strong>客单价</strong></td>
+                                <td><span class="highlight">¥99-299</span></td>
+                                <td>¥19.9-49.9</td>
+                                <td>¥9.9-29.9</td>
+                            </tr>
+                            <tr>
+                                <td><strong>竞争强度</strong></td>
+                                <td><span class="data">中等</span><br>线下影楼占主导</td>
+                                <td><span class="highlight">高</span><br>大量盗版资源</td>
+                                <td><span class="quote">低</span><br>AI介入少</td>
+                            </tr>
+                            <tr>
+                                <td><strong>技术难度</strong></td>
+                                <td><span class="highlight">★★★★☆</span><br>需精确控制面部</td>
+                                <td><span class="data">★★★☆☆</span><br>需分步式生成</td>
+                                <td><span class="highlight">★★★★☆</span><br>需后处理像素化</td>
+                            </tr>
+                            <tr>
+                                <td><strong>复购率</strong></td>
+                                <td><span class="data">中</span><br>每年1-2次</td>
+                                <td><span class="highlight">高</span><br>持续购买新主题</td>
+                                <td><span class="highlight">高</span><br>手工爱好粘性强</td>
+                            </tr>
+                            <tr>
+                                <td><strong>推荐指数</strong></td>
+                                <td><span class="highlight">★★★★☆</span><br>高客单价但需精细运营</td>
+                                <td><span class="highlight">★★★★★</span><br>市场大+易上手</td>
+                                <td><span class="data">★★★★☆</span><br>蓝海市场但需技术积累</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <h4 style="margin-top: 30px; color: var(--secondary);">🎯 创业建议</h4>
+                    <div style="margin-left: 20px; margin-top: 20px;">
+                        <p style="margin-bottom: 15px;"><strong>📍 新手入门：</strong>推荐从<span class="highlight">简笔画</span>开始。理由：市场最大、技术门槛相对低、可快速验证AI生成效果、复购率高。前期投入<span class="data">1-2周</span>建立主题库，然后长期自然流量获客。</p>
+                        
+                        <p style="margin-bottom: 15px;"><strong>📍 追求高客单价：</strong>选择<span class="highlight">儿童写真图</span>。理由：客单价<span class="data">¥99-299</span>，单笔利润高。但需要建立<span class="quote">客服+售后体系</span>，处理客户修改需求。适合有运营经验的团队。</p>
+                        
+                        <p style="margin-bottom: 15px;"><strong>📍 蓝海机会：</strong>押注<span class="highlight">拼豆画</span>。理由：当前AI介入少，<span class="data">竞争低</span>。但需要一定的<span class="quote">后处理技术能力</span>（像素化、色号匹配）。适合有技术背景的创业者。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 总结与展望 -->
+        <div class="card">
+            <h2 class="section-title">🔮 总结与展望</h2>
+            <div class="expert-comment">
+                <strong>🎯 核心观点：</strong>Nano Banana Pro的发布标志着<span class="highlight">AI图像生成进入实用化阶段</span>。其在<span class="data">中文支持、推理能力、提示词遵循</span>三大维度的突破，使得原本需要专业设计师完成的工作，现在普通人也能快速完成。这对<span class="quote">自媒体、电商、教育、设计</span>等行业具有深远影响。
+            </div>
+
+            <h3 style="margin-top: 30px;">未来趋势预测</h3>
+            <div class="timeline-item">
+                <strong>短期（3-6个月）：</strong>更多国内平台接入Pro版本，<span class="data">免费额度</span>可能收紧，早期使用者获得成本优势
+            </div>
+            <div class="timeline-item">
+                <strong>中期（6-12个月）：</strong><span class="highlight">视频生成能力</span>整合，从静态图像到动态内容的跨越
+            </div>
+            <div class="timeline-item">
+                <strong>长期（1-2年）：</strong>多模态能力深度融合，<span class="quote">文本+图像+视频+音频</span>一体化创作
+            </div>
+
+            <h3 style="margin-top: 30px;">行动建议</h3>
+            <ol style="margin-left: 40px; margin-top: 15px; line-height: 2;">
+                <li>立即体验并熟悉工具，积累<span class="data">提示词库</span></li>
+                <li>找到自己的<span class="highlight">商业化应用场景</span>（参考本文案例）</li>
+                <li>建立<span class="quote">内容生产流水线</span>，批量输出</li>
+                <li>关注<span class="data">版权合规</span>，避免使用知名IP</li>
+                <li>持续关注模型更新，保持技术领先</li>
+            </ol>
+        </div>
+
+        <!-- 页脚 -->
+        <div style="text-align: center; margin-top: 60px; padding: 30px; opacity: 0.6;">
+            <p>📅 生成时间：2025年1月</p>
+            <p>🎨 基于 Nano Banana Pro 分享会整理</p>
+            <p>💡 由 Claude 使用 video-transcript-to-premium-html Skill 生成</p>
+        </div>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('theme-icon');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        function toggleSection(element) {
+            element.classList.toggle('active');
+            const content = element.nextElementSibling;
+            content.classList.toggle('show');
+        }
+
+        // 默认展开第一个可折叠内容
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstCollapsible = document.querySelector('.collapsible');
+            if (firstCollapsible) {
+                toggleSection(firstCollapsible);
+            }
+        });
+    </script>
+</body>
+</html>
