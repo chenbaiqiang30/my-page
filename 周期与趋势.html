@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>周期与趋势 - 深度解析</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            min-height: 100vh;
+            color: #e0e0e0;
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* 头部英雄区域 */
+        .hero {
+            text-align: center;
+            padding: 60px 40px;
+            background: linear-gradient(135deg, 
+                rgba(255, 170, 100, 0.15) 0%, 
+                rgba(255, 140, 60, 0.1) 50%,
+                rgba(200, 100, 50, 0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid rgba(255, 180, 120, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(255, 150, 80, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 180, 100, 0.1) 0%, transparent 50%);
+            animation: heroGlow 8s ease-in-out infinite;
+        }
+
+        @keyframes heroGlow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(20px, 20px); }
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            background: linear-gradient(135deg, #ffb366 0%, #ff8c42 50%, #ffd700 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 0 40px rgba(255, 180, 100, 0.3);
+        }
+
+        .hero .subtitle {
+            font-size: 1.3em;
+            color: rgba(255, 200, 150, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .author {
+            margin-top: 20px;
+            font-size: 1em;
+            color: rgba(255, 180, 120, 0.6);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 玻璃卡片样式 */
+        .glass-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 170, 100, 0.08) 0%, 
+                rgba(255, 140, 80, 0.05) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 180, 120, 0.15);
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                0 20px 60px rgba(255, 150, 80, 0.2),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 180, 120, 0.3);
+        }
+
+        /* 可折叠标题 */
+        .card-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, 
+                rgba(255, 150, 80, 0.1) 0%, 
+                transparent 100%);
+            border-bottom: 1px solid rgba(255, 180, 120, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .card-header:hover {
+            background: linear-gradient(90deg, 
+                rgba(255, 150, 80, 0.15) 0%, 
+                rgba(255, 180, 100, 0.05) 100%);
+        }
+
+        .card-header h2 {
+            font-size: 1.5em;
+            color: #ffb366;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-header .icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #ff8c42 0%, #ffb366 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            box-shadow: 0 4px 15px rgba(255, 140, 66, 0.3);
+        }
+
+        .toggle-icon {
+            width: 30px;
+            height: 30px;
+            background: rgba(255, 180, 120, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: #ffb366;
+            font-size: 1.2em;
+        }
+
+        .card-header.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        /* 卡片内容 */
+        .card-content {
+            padding: 30px;
+            max-height: 5000px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-content.collapsed {
+            max-height: 0;
+            padding: 0 30px;
+            opacity: 0;
+        }
+
+        /* 核心观点样式 */
+        .key-point {
+            background: linear-gradient(135deg, 
+                rgba(255, 180, 100, 0.12) 0%, 
+                rgba(255, 140, 80, 0.08) 100%);
+            border-left: 4px solid #ff8c42;
+            padding: 20px 25px;
+            border-radius: 0 16px 16px 0;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .key-point::before {
+            content: '💡';
+            position: absolute;
+            left: -15px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+        }
+
+        .key-point p {
+            color: #ffd9b3;
+            font-size: 1.1em;
+            font-weight: 500;
+        }
+
+        /* 列表样式 */
+        .styled-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .styled-list li {
+            padding: 15px 20px 15px 50px;
+            margin: 12px 0;
+            background: rgba(255, 150, 80, 0.05);
+            border-radius: 12px;
+            position: relative;
+            border: 1px solid rgba(255, 180, 120, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .styled-list li:hover {
+            background: rgba(255, 150, 80, 0.1);
+            transform: translateX(10px);
+            border-color: rgba(255, 180, 120, 0.2);
+        }
+
+        .styled-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 20px;
+            color: #ff8c42;
+            font-size: 1.2em;
+        }
+
+        /* 韭菜特征列表 */
+        .leek-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .leek-item {
+            background: linear-gradient(135deg, 
+                rgba(255, 100, 100, 0.1) 0%, 
+                rgba(255, 80, 80, 0.05) 100%);
+            border: 1px solid rgba(255, 120, 120, 0.2);
+            border-radius: 12px;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .leek-item:hover {
+            background: rgba(255, 100, 100, 0.15);
+            transform: scale(1.02);
+        }
+
+        .leek-item .num {
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85em;
+            font-weight: bold;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        /* 对比区块 */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            padding: 25px;
+            border-radius: 16px;
+            text-align: center;
+        }
+
+        .comparison-card.negative {
+            background: linear-gradient(135deg, 
+                rgba(255, 100, 100, 0.1) 0%, 
+                rgba(200, 80, 80, 0.05) 100%);
+            border: 1px solid rgba(255, 120, 120, 0.2);
+        }
+
+        .comparison-card.positive {
+            background: linear-gradient(135deg, 
+                rgba(100, 255, 150, 0.1) 0%, 
+                rgba(80, 200, 120, 0.05) 100%);
+            border: 1px solid rgba(120, 255, 150, 0.2);
+        }
+
+        .comparison-card h4 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+
+        .comparison-card.negative h4 { color: #ff8e8e; }
+        .comparison-card.positive h4 { color: #8eff8e; }
+
+        /* SVG容器 */
+        .svg-container {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border: 1px solid rgba(255, 180, 120, 0.1);
+            overflow-x: auto;
+        }
+
+        .svg-container svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .svg-title {
+            text-align: center;
+            color: #ffb366;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* 引用样式 */
+        .quote {
+            background: linear-gradient(135deg, 
+                rgba(255, 215, 0, 0.1) 0%, 
+                rgba(255, 180, 100, 0.05) 100%);
+            border-radius: 16px;
+            padding: 25px 30px;
+            margin: 25px 0;
+            position: relative;
+            border: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .quote::before {
+            content: '"';
+            font-size: 4em;
+            color: rgba(255, 215, 0, 0.3);
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-family: Georgia, serif;
+        }
+
+        .quote p {
+            font-size: 1.15em;
+            font-style: italic;
+            color: #ffd9b3;
+            padding-left: 40px;
+        }
+
+        /* 专家点评区 */
+        .expert-section {
+            background: linear-gradient(135deg, 
+                rgba(100, 150, 255, 0.1) 0%, 
+                rgba(80, 120, 200, 0.05) 100%);
+            border: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+        }
+
+        .expert-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #4a90d9 0%, #357abd 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            box-shadow: 0 8px 25px rgba(74, 144, 217, 0.3);
+        }
+
+        .expert-info h3 {
+            color: #8eb8ff;
+            font-size: 1.4em;
+            margin-bottom: 5px;
+        }
+
+        .expert-info p {
+            color: rgba(142, 184, 255, 0.7);
+            font-size: 0.95em;
+        }
+
+        .expert-content {
+            color: #c8deff;
+        }
+
+        .expert-content h4 {
+            color: #8eb8ff;
+            margin: 25px 0 15px 0;
+            font-size: 1.15em;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rating {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin: 20px 0;
+            padding: 15px 20px;
+            background: rgba(100, 150, 255, 0.1);
+            border-radius: 12px;
+        }
+
+        .rating-label {
+            color: #8eb8ff;
+            font-weight: 600;
+        }
+
+        .rating-stars {
+            display: flex;
+            gap: 5px;
+        }
+
+        .star {
+            font-size: 1.3em;
+        }
+
+        .star.filled { color: #ffd700; }
+        .star.half { color: #ffd700; opacity: 0.5; }
+        .star.empty { color: rgba(255, 255, 255, 0.2); }
+
+        /* 思考题区域 */
+        .thinking-section {
+            background: linear-gradient(135deg, 
+                rgba(180, 100, 255, 0.1) 0%, 
+                rgba(150, 80, 200, 0.05) 100%);
+            border: 1px solid rgba(180, 100, 255, 0.2);
+        }
+
+        .thinking-item {
+            background: rgba(180, 100, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 3px solid #b366ff;
+        }
+
+        .thinking-item .number {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, #b366ff, #9933ff);
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 12px;
+            color: white;
+        }
+
+        /* 数据统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, 
+                rgba(255, 180, 100, 0.15) 0%, 
+                rgba(255, 140, 80, 0.08) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 180, 120, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255, 150, 80, 0.2);
+        }
+
+        .stat-card .value {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #ffb366, #ff8c42);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-card .label {
+            color: rgba(255, 200, 150, 0.8);
+            margin-top: 10px;
+            font-size: 0.95em;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #ff8c42, #ffb366, #ffd700);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 150, 80, 0.08);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 180, 120, 0.15);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 25px;
+            width: 14px;
+            height: 14px;
+            background: #ff8c42;
+            border-radius: 50%;
+            border: 3px solid #1a1a2e;
+            box-shadow: 0 0 15px rgba(255, 140, 66, 0.5);
+        }
+
+        .timeline-item h4 {
+            color: #ffb366;
+            margin-bottom: 10px;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255, 200, 150, 0.5);
+            font-size: 0.9em;
+        }
+
+        .footer a {
+            color: #ffb366;
+            text-decoration: none;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .glass-card {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .glass-card:nth-child(2) { animation-delay: 0.1s; }
+        .glass-card:nth-child(3) { animation-delay: 0.2s; }
+        .glass-card:nth-child(4) { animation-delay: 0.3s; }
+        .glass-card:nth-child(5) { animation-delay: 0.4s; }
+        .glass-card:nth-child(6) { animation-delay: 0.5s; }
+
+        /* 标签 */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .tag {
+            background: linear-gradient(135deg, 
+                rgba(255, 180, 100, 0.2) 0%, 
+                rgba(255, 140, 80, 0.1) 100%);
+            color: #ffb366;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9em;
+            border: 1px solid rgba(255, 180, 120, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .tag:hover {
+            background: rgba(255, 180, 100, 0.3);
+            transform: scale(1.05);
+        }
+
+        /* 分隔线 */
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(255, 180, 120, 0.3) 50%, 
+                transparent 100%);
+            margin: 30px 0;
+        }
+
+        /* 高亮文字 */
+        .highlight {
+            color: #ff8c42;
+            font-weight: 600;
+        }
+
+        .highlight-gold {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+            
+            .hero {
+                padding: 40px 20px;
+            }
+            
+            .card-header h2 {
+                font-size: 1.2em;
+            }
+            
+            .leek-list {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部区域 -->
+        <header class="hero">
+            <h1>🔄 周期与趋势</h1>
+            <p class="subtitle">穿透时间迷雾，洞见财富本质</p>
+            <p class="author">原作：李笑来 | 深度解析版</p>
+        </header>
+
+        <!-- 核心概念 -->
+        <section class="glass-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">🎯</span>核心概念解析</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <div class="key-point">
+                    <p><strong>周期</strong>是理财投资活动中最为关键的考量因素，是开始实践之前必须学习、研究、掌握、遵循的理念和现实。</p>
+                </div>
+
+                <h3 style="color: #ffb366; margin: 25px 0 15px 0;">📐 周期的本质定义</h3>
+                <div class="comparison">
+                    <div class="comparison-card negative">
+                        <h4>❌ 常见误解</h4>
+                        <p>把单次"上升"或"下降"当作趋势</p>
+                        <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.7;">只看到表象，容易追涨杀跌</p>
+                    </div>
+                    <div class="comparison-card positive">
+                        <h4>✅ 正确理解</h4>
+                        <p><strong>上升 + 下降 = 一个完整周期</strong></p>
+                        <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.7;">真正趋势需要≥2个周期才能显现</p>
+                    </div>
+                </div>
+
+                <div class="quote">
+                    <p>现实的经济里没有直线，只有波动。在一个很长的波段中，从任何一个点前后望过去，看起来都像身处在一条直线上——就好像我们站在地球上却很难感知自己其实站在圆面上一样。</p>
+                </div>
+
+                <div class="svg-container">
+                    <p class="svg-title">📊 周期与趋势概念关系图</p>
+                    <svg viewBox="0 0 800 500" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#ffb366"/>
+                                <stop offset="100%" style="stop-color:#ff8c42"/>
+                            </linearGradient>
+                            <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#4a90d9"/>
+                                <stop offset="100%" style="stop-color:#357abd"/>
+                            </linearGradient>
+                            <linearGradient id="greenGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#50c878"/>
+                                <stop offset="100%" style="stop-color:#3da35d"/>
+                            </linearGradient>
+                            <linearGradient id="purpleGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#b366ff"/>
+                                <stop offset="100%" style="stop-color:#9933ff"/>
+                            </linearGradient>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- 中心核心概念 -->
+                        <circle cx="400" cy="250" r="70" fill="url(#goldGrad)" filter="url(#glow)"/>
+                        <text x="400" y="245" text-anchor="middle" fill="#1a1a2e" font-size="18" font-weight="bold">周期</text>
+                        <text x="400" y="268" text-anchor="middle" fill="#1a1a2e" font-size="12">Cycle</text>
+                        
+                        <!-- 四个核心要素 -->
+                        <!-- 上升趋势 -->
+                        <circle cx="250" cy="120" r="55" fill="url(#greenGrad)" filter="url(#glow)"/>
+                        <text x="250" y="115" text-anchor="middle" fill="white" font-size="14" font-weight="bold">上升</text>
+                        <text x="250" y="133" text-anchor="middle" fill="white" font-size="11">趋势</text>
+                        
+                        <!-- 下降趋势 -->
+                        <circle cx="550" cy="120" r="55" fill="#ff6b6b" filter="url(#glow)"/>
+                        <text x="550" y="115" text-anchor="middle" fill="white" font-size="14" font-weight="bold">下降</text>
+                        <text x="550" y="133" text-anchor="middle" fill="white" font-size="11">趋势</text>
+                        
+                        <!-- 真正趋势 -->
+                        <circle cx="250" cy="380" r="55" fill="url(#blueGrad)" filter="url(#glow)"/>
+                        <text x="250" y="375" text-anchor="middle" fill="white" font-size="14" font-weight="bold">真正</text>
+                        <text x="250" y="393" text-anchor="middle" fill="white" font-size="11">趋势</text>
+                        
+                        <!-- 多周期观察 -->
+                        <circle cx="550" cy="380" r="55" fill="url(#purpleGrad)" filter="url(#glow)"/>
+                        <text x="550" y="375" text-anchor="middle" fill="white" font-size="14" font-weight="bold">≥2个</text>
+                        <text x="550" y="393" text-anchor="middle" fill="white" font-size="11">周期</text>
+                        
+                        <!-- 连接线 -->
+                        <path d="M 330 250 L 305 165" stroke="#ffb366" stroke-width="3" fill="none" marker-end="url(#arrow)"/>
+                        <path d="M 470 250 L 495 165" stroke="#ffb366" stroke-width="3" fill="none"/>
+                        <path d="M 330 270 L 305 335" stroke="#ffb366" stroke-width="3" fill="none"/>
+                        <path d="M 470 270 L 495 335" stroke="#ffb366" stroke-width="3" fill="none"/>
+                        
+                        <!-- 横向连接 -->
+                        <path d="M 305 120 L 495 120" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="400" y="105" text-anchor="middle" fill="#ffd700" font-size="12">= 1个周期</text>
+                        
+                        <path d="M 305 380 L 495 380" stroke="rgba(255,255,255,0.3)" stroke-width="2" stroke-dasharray="5,5"/>
+                        <text x="400" y="395" text-anchor="middle" fill="#8eb8ff" font-size="12">需要观察</text>
+                        
+                        <!-- 底部说明 -->
+                        <rect x="150" y="450" width="500" height="35" rx="10" fill="rgba(255,180,100,0.15)" stroke="rgba(255,180,100,0.3)"/>
+                        <text x="400" y="473" text-anchor="middle" fill="#ffd9b3" font-size="13">💡 关键洞见：真正的趋势需要至少两个完整周期才能显现</text>
+                    </svg>
+                </div>
+
+                <div class="tags">
+                    <span class="tag">📈 投资周期</span>
+                    <span class="tag">🔄 波动规律</span>
+                    <span class="tag">👁️ 长期视角</span>
+                    <span class="tag">⏰ 时间维度</span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 韭菜特征识别 -->
+        <section class="glass-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">🌱</span>"韭菜"特征识别</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 20px;">在交易市场里，<span class="highlight">"韭菜"就是注定会被收割的人</span>。只要脑子里存在以下任何一个闪念，你就是确定无疑的"韭菜"：</p>
+                
+                <div class="leek-list">
+                    <div class="leek-item">
+                        <span class="num">1</span>
+                        <span>X 靠谱吗？你说 Y 能涨吗？</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">2</span>
+                        <span>X 太贵了，买不起，看看 Y 吧</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">3</span>
+                        <span>真倒霉，一买就跌一卖就涨！</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">4</span>
+                        <span>刚才你们说啥，我错过了什么？</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">5</span>
+                        <span>都一整天了，咋也不见涨呢！</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">6</span>
+                        <span>赚了！我这就去换辆车！</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">7</span>
+                        <span>跌成屎了，媳妇要跟我离婚！</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">8</span>
+                        <span>等我借来钱，已经涨上天了！</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">9</span>
+                        <span>他们运气真好！我运气真差！</span>
+                    </div>
+                    <div class="leek-item">
+                        <span class="num">10</span>
+                        <span>这帮家伙！你们都是骗子！</span>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <p><strong>脱离"韭菜"的核心方法</strong>：判断趋势时，至少观察两个完整周期。不被短期波动左右情绪和决策。</p>
+                </div>
+
+                <div class="svg-container">
+                    <p class="svg-title">🔄 韭菜 vs 成熟投资者 行为对比</p>
+                    <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 背景分区 -->
+                        <rect x="50" y="50" width="300" height="300" rx="20" fill="rgba(255,100,100,0.1)" stroke="rgba(255,100,100,0.3)" stroke-width="2"/>
+                        <rect x="450" y="50" width="300" height="300" rx="20" fill="rgba(100,255,150,0.1)" stroke="rgba(100,255,150,0.3)" stroke-width="2"/>
+                        
+                        <!-- 标题 -->
+                        <text x="200" y="85" text-anchor="middle" fill="#ff8e8e" font-size="20" font-weight="bold">🌱 韭菜行为</text>
+                        <text x="600" y="85" text-anchor="middle" fill="#8eff8e" font-size="20" font-weight="bold">🏆 成熟投资者</text>
+                        
+                        <!-- 韭菜特征 -->
+                        <text x="200" y="130" text-anchor="middle" fill="#ffa0a0" font-size="14">• 只看单次涨跌</text>
+                        <text x="200" y="160" text-anchor="middle" fill="#ffa0a0" font-size="14">• 追涨杀跌</text>
+                        <text x="200" y="190" text-anchor="middle" fill="#ffa0a0" font-size="14">• 情绪化决策</text>
+                        <text x="200" y="220" text-anchor="middle" fill="#ffa0a0" font-size="14">• 借钱投资</text>
+                        <text x="200" y="250" text-anchor="middle" fill="#ffa0a0" font-size="14">• 短期暴富心态</text>
+                        <text x="200" y="280" text-anchor="middle" fill="#ffa0a0" font-size="14">• 归因于运气</text>
+                        <text x="200" y="310" text-anchor="middle" fill="#ffa0a0" font-size="14">• 患得患失</text>
+                        
+                        <!-- 成熟投资者特征 -->
+                        <text x="600" y="130" text-anchor="middle" fill="#a0ffa0" font-size="14">• 观察多个周期</text>
+                        <text x="600" y="160" text-anchor="middle" fill="#a0ffa0" font-size="14">• 理性分析趋势</text>
+                        <text x="600" y="190" text-anchor="middle" fill="#a0ffa0" font-size="14">• 用闲钱投资</text>
+                        <text x="600" y="220" text-anchor="middle" fill="#a0ffa0" font-size="14">• 多元收入来源</text>
+                        <text x="600" y="250" text-anchor="middle" fill="#a0ffa0" font-size="14">• 长期持有心态</text>
+                        <text x="600" y="280" text-anchor="middle" fill="#a0ffa0" font-size="14">• 复盘学习</text>
+                        <text x="600" y="310" text-anchor="middle" fill="#a0ffa0" font-size="14">• 从容淡定</text>
+                        
+                        <!-- 中间转化箭头 -->
+                        <path d="M 370 200 L 430 200" stroke="#ffd700" stroke-width="4" fill="none" marker-end="url(#arrowGold)"/>
+                        <defs>
+                            <marker id="arrowGold" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+                                <path d="M0,0 L0,6 L9,3 z" fill="#ffd700"/>
+                            </marker>
+                        </defs>
+                        <text x="400" y="175" text-anchor="middle" fill="#ffd700" font-size="12" font-weight="bold">认知升级</text>
+                        <text x="400" y="230" text-anchor="middle" fill="#ffd700" font-size="11">理解周期</text>
+                    </svg>
+                </div>
+            </div>
+        </section>
+
+        <!-- 历史数据透视 -->
+        <section class="glass-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">📈</span>历史数据透视</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 20px;">从<span class="highlight-gold">1800年至2012年</span>的超长周期来看，不同资产类别展现出截然不同的趋势：</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="value">212年</div>
+                        <div class="label">观察时间跨度</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">股权 &gt; 债权</div>
+                        <div class="label">长期收益对比</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="value">≥2</div>
+                        <div class="label">最小观察周期数</div>
+                    </div>
+                </div>
+
+                <div class="svg-container">
+                    <p class="svg-title">📊 长期资产收益趋势示意图</p>
+                    <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 坐标轴 -->
+                        <line x1="80" y1="280" x2="750" y2="280" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <line x1="80" y1="280" x2="80" y2="50" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        
+                        <!-- Y轴标签 -->
+                        <text x="40" y="280" fill="rgba(255,255,255,0.6)" font-size="12">低</text>
+                        <text x="40" y="165" fill="rgba(255,255,255,0.6)" font-size="12">中</text>
+                        <text x="40" y="60" fill="rgba(255,255,255,0.6)" font-size="12">高</text>
+                        <text x="25" y="170" fill="rgba(255,255,255,0.4)" font-size="11" transform="rotate(-90 25 170)">收益</text>
+                        
+                        <!-- X轴标签 -->
+                        <text x="100" y="305" fill="rgba(255,255,255,0.6)" font-size="12">1800</text>
+                        <text x="280" y="305" fill="rgba(255,255,255,0.6)" font-size="12">1900</text>
+                        <text x="460" y="305" fill="rgba(255,255,255,0.6)" font-size="12">1950</text>
+                        <text x="640" y="305" fill="rgba(255,255,255,0.6)" font-size="12">2000</text>
+                        <text x="720" y="305" fill="rgba(255,255,255,0.6)" font-size="12">2012</text>
+                        <text x="400" y="335" fill="rgba(255,255,255,0.4)" font-size="11">时间</text>
+                        
+                        <!-- 股票曲线 (红色，波动大但整体上升) -->
+                        <path d="M 100 250 
+                                 Q 150 240, 180 220 
+                                 Q 220 260, 250 200 
+                                 Q 300 180, 350 150
+                                 Q 380 200, 420 140
+                                 Q 480 100, 520 130
+                                 Q 560 80, 600 100
+                                 Q 650 60, 720 70" 
+                              stroke="#ff6b6b" stroke-width="3" fill="none" filter="url(#glow)"/>
+                        
+                        <!-- 债券曲线 (蓝色，波动小) -->
+                        <path d="M 100 260 
+                                 Q 200 250, 300 230 
+                                 Q 400 220, 500 200
+                                 Q 600 185, 720 170" 
+                              stroke="#4a90d9" stroke-width="3" fill="none" filter="url(#glow)"/>
+                        
+                        <!-- 黄金/美元曲线 (黄色，相对平缓) -->
+                        <path d="M 100 265 
+                                 Q 200 260, 300 255 
+                                 Q 400 250, 500 240
+                                 Q 600 235, 720 225" 
+                              stroke="#ffd700" stroke-width="3" fill="none" filter="url(#glow)"/>
+                        
+                        <!-- 图例 -->
+                        <rect x="550" y="40" width="200" height="90" rx="10" fill="rgba(0,0,0,0.3)" stroke="rgba(255,255,255,0.1)"/>
+                        <line x1="570" y1="60" x2="610" y2="60" stroke="#ff6b6b" stroke-width="3"/>
+                        <text x="620" y="65" fill="#ff6b6b" font-size="13">股票指数</text>
+                        <line x1="570" y1="85" x2="610" y2="85" stroke="#4a90d9" stroke-width="3"/>
+                        <text x="620" y="90" fill="#4a90d9" font-size="13">债券指数</text>
+                        <line x1="570" y1="110" x2="610" y2="110" stroke="#ffd700" stroke-width="3"/>
+                        <text x="620" y="115" fill="#ffd700" font-size="13">黄金/美元</text>
+                    </svg>
+                </div>
+
+                <div class="key-point">
+                    <p>起起落落这么多年，<span class="highlight">股权投资和债权投资的趋势其实是一样的：都在上升</span>。只不过债权投资"看起来更稳定"（波动相对小），但涨幅却落后于股权投资。这也是为什么越来越多人认为<span class="highlight-gold">"股权收益时代来了"</span>的重要原因。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 多周期曲线模型 -->
+        <section class="glass-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">🔬</span>经典周期模型</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <p style="margin-bottom: 25px;">几乎一切事物，无论是抽象的、具体的，都有它自己的周期。理解这些经典模型，能帮助我们<span class="highlight">识别机会与陷阱</span>。</p>
+
+                <div class="svg-container">
+                    <p class="svg-title">📉 库布乐罗斯改变曲线 (Kübler-Ross Change Curve)</p>
+                    <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 坐标轴 -->
+                        <line x1="60" y1="280" x2="760" y2="280" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <line x1="60" y1="280" x2="60" y2="40" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        
+                        <!-- 曲线 -->
+                        <path d="M 80 100 
+                                 Q 120 80, 160 120
+                                 Q 200 160, 280 200
+                                 Q 360 250, 420 260
+                                 Q 500 250, 560 200
+                                 Q 620 150, 680 100
+                                 Q 720 80, 750 70" 
+                              stroke="url(#goldGrad)" stroke-width="4" fill="none" filter="url(#glow)"/>
+                        
+                        <!-- 阶段标注点 -->
+                        <circle cx="120" cy="85" r="8" fill="#50c878"/>
+                        <text x="120" y="60" text-anchor="middle" fill="#50c878" font-size="12" font-weight="bold">震惊</text>
+                        
+                        <circle cx="200" cy="155" r="8" fill="#ffd700"/>
+                        <text x="200" y="130" text-anchor="middle" fill="#ffd700" font-size="12" font-weight="bold">否认</text>
+                        
+                        <circle cx="320" cy="220" r="8" fill="#ff8c42"/>
+                        <text x="320" y="195" text-anchor="middle" fill="#ff8c42" font-size="12" font-weight="bold">愤怒</text>
+                        
+                        <circle cx="420" cy="260" r="8" fill="#ff6b6b"/>
+                        <text x="420" y="290" text-anchor="middle" fill="#ff6b6b" font-size="12" font-weight="bold">谷底</text>
+                        
+                        <circle cx="520" cy="230" r="8" fill="#b366ff"/>
+                        <text x="520" y="205" text-anchor="middle" fill="#b366ff" font-size="12" font-weight="bold">探索</text>
+                        
+                        <circle cx="620" cy="160" r="8" fill="#4a90d9"/>
+                        <text x="620" y="135" text-anchor="middle" fill="#4a90d9" font-size="12" font-weight="bold">接受</text>
+                        
+                        <circle cx="720" cy="80" r="8" fill="#8eff8e"/>
+                        <text x="720" y="55" text-anchor="middle" fill="#8eff8e" font-size="12" font-weight="bold">整合</text>
+                        
+                        <!-- 轴标签 -->
+                        <text x="25" y="170" fill="rgba(255,255,255,0.5)" font-size="11" transform="rotate(-90 25 170)">效能/情绪</text>
+                        <text x="400" y="320" fill="rgba(255,255,255,0.5)" font-size="11">时间</text>
+                    </svg>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="svg-container">
+                    <p class="svg-title">🚀 新生事物发展曲线 (Transition Curve)</p>
+                    <svg viewBox="0 0 800 350" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 坐标轴 -->
+                        <line x1="60" y1="280" x2="760" y2="280" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        <line x1="60" y1="280" x2="60" y2="40" stroke="rgba(255,255,255,0.3)" stroke-width="2"/>
+                        
+                        <!-- 期望曲线 (虚线) -->
+                        <path d="M 80 260 
+                                 Q 150 200, 220 80
+                                 Q 280 40, 350 60
+                                 Q 420 120, 480 180
+                                 Q 540 200, 600 180
+                                 Q 660 140, 740 80" 
+                              stroke="rgba(255,200,100,0.5)" stroke-width="2" stroke-dasharray="8,4" fill="none"/>
+                        
+                        <!-- 实际发展曲线 -->
+                        <path d="M 80 260 
+                                 Q 120 230, 160 180
+                                 Q 200 100, 260 70
+                                 Q 320 120, 380 200
+                                 Q 440 240, 500 220
+                                 Q 560 180, 620 140
+                                 Q 680 100, 740 70" 
+                              stroke="url(#greenGrad)" stroke-width="4" fill="none" filter="url(#glow)"/>
+                        
+                        <!-- 阶段区域 -->
+                        <rect x="80" y="30" width="140" height="25" rx="5" fill="rgba(80,200,120,0.2)"/>
+                        <text x="150" y="48" text-anchor="middle" fill="#50c878" font-size="11">技术萌芽期</text>
+                        
+                        <rect x="220" y="30" width="120" height="25" rx="5" fill="rgba(255,140,66,0.2)"/>
+                        <text x="280" y="48" text-anchor="middle" fill="#ff8c42" font-size="11">期望膨胀期</text>
+                        
+                        <rect x="340" y="30" width="140" height="25" rx="5" fill="rgba(255,100,100,0.2)"/>
+                        <text x="410" y="48" text-anchor="middle" fill="#ff6b6b" font-size="11">泡沫幻灭期</text>
+                        
+                        <rect x="480" y="30" width="120" height="25" rx="5" fill="rgba(74,144,217,0.2)"/>
+                        <text x="540" y="48" text-anchor="middle" fill="#4a90d9" font-size="11">复苏爬坡期</text>
+                        
+                        <rect x="600" y="30" width="140" height="25" rx="5" fill="rgba(142,255,142,0.2)"/>
+                        <text x="670" y="48" text-anchor="middle" fill="#8eff8e" font-size="11">成熟稳定期</text>
+                        
+                        <!-- 图例 -->
+                        <rect x="550" y="260" width="190" height="55" rx="8" fill="rgba(0,0,0,0.3)"/>
+                        <line x1="570" y1="280" x2="610" y2="280" stroke="rgba(255,200,100,0.5)" stroke-width="2" stroke-dasharray="8,4"/>
+                        <text x="620" y="285" fill="rgba(255,200,100,0.7)" font-size="11">期望值</text>
+                        <line x1="570" y1="300" x2="610" y2="300" stroke="#50c878" stroke-width="3"/>
+                        <text x="620" y="305" fill="#50c878" font-size="11">实际发展</text>
+                    </svg>
+                </div>
+
+                <div class="key-point">
+                    <p>每次巨大技术变革出现时，都有一批投资者"死在路上"——他们看到了所谓的"趋势"，却忘记或不知道<span class="highlight">真正的趋势需要一个以上的周期才会真正显现</span>。互联网、云计算等都是如此。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实践方法论 -->
+        <section class="glass-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">🛠️</span>实践方法论</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <h3 style="color: #ffb366; margin-bottom: 20px;">🎯 核心行动原则</h3>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4>原则一：多周期观察</h4>
+                        <p>判断趋势时，<span class="highlight">至少观察两个完整周期</span>。一个上升+一个下降才构成一个周期，真正的趋势需要多个周期后才能显现。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>原则二：收入多元化</h4>
+                        <p><span class="highlight-gold">"繁殖能力强是王道"</span>——赚钱的方式越多越好。必须有投资以外的收入来源，才能给投资资金一个"无期徒刑"。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>原则三：用闲钱投资</h4>
+                        <p>能让你保持淡定的最终因素：<span class="highlight">这些钱即便全没了，我也依然可以过得很好</span>。不要让单一投资占总资产超过1/4。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>原则四：培养渐变感知力</h4>
+                        <p>通过<span class="highlight">记录</span>来训练感受渐变的能力。我们的记忆力不可靠，需要借助记录工具客观感受微小变化。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>原则五：理解波动是常态</h4>
+                        <p>即便是注定上升趋势的事情（如成长），也无法避免过程中的波动。低潮时告诉自己：<span class="highlight-gold">我现在只是处于一个周期的波动中</span>。</p>
+                    </div>
+                </div>
+
+                <div class="svg-container">
+                    <p class="svg-title">🗺️ 实践路径思维导图</p>
+                    <svg viewBox="0 0 900 500" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 中心节点 -->
+                        <circle cx="450" cy="250" r="60" fill="url(#goldGrad)" filter="url(#glow)"/>
+                        <text x="450" y="245" text-anchor="middle" fill="#1a1a2e" font-size="16" font-weight="bold">理解</text>
+                        <text x="450" y="265" text-anchor="middle" fill="#1a1a2e" font-size="16" font-weight="bold">周期</text>
+                        
+                        <!-- 分支1：认知层面 -->
+                        <line x1="395" y1="210" x2="200" y2="100" stroke="#ff8c42" stroke-width="3"/>
+                        <circle cx="150" cy="80" r="45" fill="rgba(255,140,66,0.2)" stroke="#ff8c42" stroke-width="2"/>
+                        <text x="150" y="75" text-anchor="middle" fill="#ff8c42" font-size="13" font-weight="bold">认知</text>
+                        <text x="150" y="92" text-anchor="middle" fill="#ff8c42" font-size="13" font-weight="bold">升级</text>
+                        
+                        <!-- 认知分支 -->
+                        <line x1="105" y1="80" x2="50" y2="50" stroke="rgba(255,140,66,0.5)" stroke-width="2"/>
+                        <text x="50" y="35" text-anchor="middle" fill="#ffd9b3" font-size="11">看穿表象</text>
+                        
+                        <line x1="105" y1="100" x2="40" y2="120" stroke="rgba(255,140,66,0.5)" stroke-width="2"/>
+                        <text x="40" y="140" text-anchor="middle" fill="#ffd9b3" font-size="11">长期视角</text>
+                        
+                        <!-- 分支2：心态层面 -->
+                        <line x1="505" y1="210" x2="700" y2="100" stroke="#4a90d9" stroke-width="3"/>
+                        <circle cx="750" cy="80" r="45" fill="rgba(74,144,217,0.2)" stroke="#4a90d9" stroke-width="2"/>
+                        <text x="750" y="75" text-anchor="middle" fill="#4a90d9" font-size="13" font-weight="bold">心态</text>
+                        <text x="750" y="92" text-anchor="middle" fill="#4a90d9" font-size="13" font-weight="bold">淡定</text>
+                        
+                        <!-- 心态分支 -->
+                        <line x1="795" y1="80" x2="850" y2="50" stroke="rgba(74,144,217,0.5)" stroke-width="2"/>
+                        <text x="850" y="35" text-anchor="middle" fill="#c8deff" font-size="11">接受波动</text>
+                        
+                        <line x1="795" y1="100" x2="860" y2="120" stroke="rgba(74,144,217,0.5)" stroke-width="2"/>
+                        <text x="860" y="140" text-anchor="middle" fill="#c8deff" font-size="11">不患得患失</text>
+                        
+                        <!-- 分支3：行动层面 -->
+                        <line x1="395" y1="290" x2="200" y2="400" stroke="#50c878" stroke-width="3"/>
+                        <circle cx="150" cy="420" r="45" fill="rgba(80,200,120,0.2)" stroke="#50c878" stroke-width="2"/>
+                        <text x="150" y="415" text-anchor="middle" fill="#50c878" font-size="13" font-weight="bold">多元</text>
+                        <text x="150" y="432" text-anchor="middle" fill="#50c878" font-size="13" font-weight="bold">收入</text>
+                        
+                        <!-- 行动分支 -->
+                        <line x1="105" y1="420" x2="40" y2="390" stroke="rgba(80,200,120,0.5)" stroke-width="2"/>
+                        <text x="40" y="375" text-anchor="middle" fill="#b3ffb3" font-size="11">主业收入</text>
+                        
+                        <line x1="105" y1="440" x2="40" y2="470" stroke="rgba(80,200,120,0.5)" stroke-width="2"/>
+                        <text x="40" y="490" text-anchor="middle" fill="#b3ffb3" font-size="11">副业投资</text>
+                        
+                        <!-- 分支4：投资层面 -->
+                        <line x1="505" y1="290" x2="700" y2="400" stroke="#b366ff" stroke-width="3"/>
+                        <circle cx="750" cy="420" r="45" fill="rgba(179,102,255,0.2)" stroke="#b366ff" stroke-width="2"/>
+                        <text x="750" y="415" text-anchor="middle" fill="#b366ff" font-size="13" font-weight="bold">闲钱</text>
+                        <text x="750" y="432" text-anchor="middle" fill="#b366ff" font-size="13" font-weight="bold">投资</text>
+                        
+                        <!-- 投资分支 -->
+                        <line x1="795" y1="420" x2="850" y2="390" stroke="rgba(179,102,255,0.5)" stroke-width="2"/>
+                        <text x="850" y="375" text-anchor="middle" fill="#d9b3ff" font-size="11">可承受损失</text>
+                        
+                        <line x1="795" y1="440" x2="860" y2="470" stroke="rgba(179,102,255,0.5)" stroke-width="2"/>
+                        <text x="860" y="490" text-anchor="middle" fill="#d9b3ff" font-size="11">长期持有</text>
+                        
+                        <!-- 底部结果节点 -->
+                        <rect x="350" y="440" width="200" height="45" rx="22" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="2"/>
+                        <text x="450" y="468" text-anchor="middle" fill="#ffd700" font-size="14" font-weight="bold">🎯 看到未来趋势</text>
+                        <line x1="450" y1="310" x2="450" y2="440" stroke="#ffd700" stroke-width="2" stroke-dasharray="5,5"/>
+                    </svg>
+                </div>
+
+                <div class="quote">
+                    <p>对周期的深入理解，甚至可能影响一个人的性格。所谓的不屈不挠，所谓的坚持不懈，更多的时候，只不过是因为对自己正在身处某个周期的哪个位置非常了解，所以才更容易做出决定。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 一切皆投资 -->
+        <section class="glass-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">💎</span>万物皆投资</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <div class="key-point">
+                    <p>这世界上所有的事情其实都是投资——<span class="highlight">成长</span>是用自己的注意力向自己投资；<span class="highlight">婚姻</span>是双方共同投资资源去创造更好的家族；<span class="highlight">工作</span>是投资，<span class="highlight">创业</span>还是投资，一切都是投资。</p>
+                </div>
+
+                <div class="svg-container">
+                    <p class="svg-title">🌐 万物皆投资概念图</p>
+                    <svg viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+                        <!-- 中心 -->
+                        <circle cx="400" cy="200" r="70" fill="url(#goldGrad)" filter="url(#glow)"/>
+                        <text x="400" y="195" text-anchor="middle" fill="#1a1a2e" font-size="20" font-weight="bold">投资</text>
+                        <text x="400" y="218" text-anchor="middle" fill="#1a1a2e" font-size="12">Investment</text>
+                        
+                        <!-- 周围领域 -->
+                        <!-- 成长 -->
+                        <circle cx="400" cy="60" r="45" fill="rgba(80,200,120,0.2)" stroke="#50c878" stroke-width="2"/>
+                        <text x="400" y="55" text-anchor="middle" fill="#50c878" font-size="14" font-weight="bold">📚 成长</text>
+                        <text x="400" y="75" text-anchor="middle" fill="#50c878" font-size="10">注意力→自己</text>
+                        <line x1="400" y1="130" x2="400" y2="105" stroke="#50c878" stroke-width="2"/>
+                        
+                        <!-- 工作 -->
+                        <circle cx="560" cy="110" r="45" fill="rgba(74,144,217,0.2)" stroke="#4a90d9" stroke-width="2"/>
+                        <text x="560" y="105" text-anchor="middle" fill="#4a90d9" font-size="14" font-weight="bold">💼 工作</text>
+                        <text x="560" y="125" text-anchor="middle" fill="#4a90d9" font-size="10">时间→价值</text>
+                        <line x1="460" y1="150" x2="515" y2="125" stroke="#4a90d9" stroke-width="2"/>
+                        
+                        <!-- 创业 -->
+                        <circle cx="620" cy="240" r="45" fill="rgba(255,140,66,0.2)" stroke="#ff8c42" stroke-width="2"/>
+                        <text x="620" y="235" text-anchor="middle" fill="#ff8c42" font-size="14" font-weight="bold">🚀 创业</text>
+                        <text x="620" y="255" text-anchor="middle" fill="#ff8c42" font-size="10">资源→事业</text>
+                        <line x1="470" y1="210" x2="575" y2="230" stroke="#ff8c42" stroke-width="2"/>
+                        
+                        <!-- 婚姻 -->
+                        <circle cx="520" cy="340" r="45" fill="rgba(255,100,150,0.2)" stroke="#ff6b9d" stroke-width="2"/>
+                        <text x="520" y="335" text-anchor="middle" fill="#ff6b9d" font-size="14" font-weight="bold">💑 婚姻</text>
+                        <text x="520" y="355" text-anchor="middle" fill="#ff6b9d" font-size="10">共同→家族</text>
+                        <line x1="430" y1="260" x2="490" y2="305" stroke="#ff6b9d" stroke-width="2"/>
+                        
+                        <!-- 理财 -->
+                        <circle cx="280" cy="340" r="45" fill="rgba(255,215,0,0.2)" stroke="#ffd700" stroke-width="2"/>
+                        <text x="280" y="335" text-anchor="middle" fill="#ffd700" font-size="14" font-weight="bold">💰 理财</text>
+                        <text x="280" y="355" text-anchor="middle" fill="#ffd700" font-size="10">资金→收益</text>
+                        <line x1="370" y1="260" x2="310" y2="305" stroke="#ffd700" stroke-width="2"/>
+                        
+                        <!-- 学习 -->
+                        <circle cx="180" cy="240" r="45" fill="rgba(179,102,255,0.2)" stroke="#b366ff" stroke-width="2"/>
+                        <text x="180" y="235" text-anchor="middle" fill="#b366ff" font-size="14" font-weight="bold">🎓 学习</text>
+                        <text x="180" y="255" text-anchor="middle" fill="#b366ff" font-size="10">知识→能力</text>
+                        <line x1="330" y1="210" x2="225" y2="230" stroke="#b366ff" stroke-width="2"/>
+                        
+                        <!-- 健康 -->
+                        <circle cx="240" cy="110" r="45" fill="rgba(100,255,150,0.2)" stroke="#64ff96" stroke-width="2"/>
+                        <text x="240" y="105" text-anchor="middle" fill="#64ff96" font-size="14" font-weight="bold">🏃 健康</text>
+                        <text x="240" y="125" text-anchor="middle" fill="#64ff96" font-size="10">自律→生命</text>
+                        <line x1="340" y1="150" x2="285" y2="125" stroke="#64ff96" stroke-width="2"/>
+                    </svg>
+                </div>
+
+                <ul class="styled-list">
+                    <li><strong>成长投资</strong>：用注意力向自己投资，长期必然是上升趋势</li>
+                    <li><strong>婚姻投资</strong>：双方共同投资资源，创造更好的家族</li>
+                    <li><strong>工作投资</strong>：投入时间和技能，换取经验和报酬</li>
+                    <li><strong>学习投资</strong>：投入精力和金钱，换取知识和能力</li>
+                    <li><strong>健康投资</strong>：投入自律和运动，换取更长的生命周期</li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- 思考与行动 -->
+        <section class="glass-card thinking-section">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">🧠</span>思考与行动</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <div class="thinking-item">
+                    <span class="number">1</span>
+                    <span>你曾经研究过的趋势是什么？后来被验证为正确的是什么？花了最长时间才被验证为正确的又是什么？</span>
+                </div>
+                <div class="thinking-item">
+                    <span class="number">2</span>
+                    <span>当前的"知识变现"被人们认为是个趋势，现在的你呢？你看到了什么？</span>
+                </div>
+                <div class="thinking-item">
+                    <span class="number">3</span>
+                    <span>你现在正在身处其中的趋势是什么？随后可能发生的是什么？为了让自己更好，你现在要对应地做什么？</span>
+                </div>
+                <div class="thinking-item">
+                    <span class="number">4</span>
+                    <span>回想一下，有多少事情半途而废是因为缺少了对"低潮的包容"才放弃的？</span>
+                </div>
+
+                <div class="key-point" style="margin-top: 30px;">
+                    <p>即便你不参与任何金钱的投资，也应该对周期有清晰的认识——因为这对你的成长至关重要。<span class="highlight-gold">必然上升趋势，不代表没有波动</span>。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家点评 -->
+        <section class="glass-card expert-section">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h2><span class="icon">🎩</span>华尔街视角点评</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-content">
+                <div class="expert-header">
+                    <div class="expert-avatar">📊</div>
+                    <div class="expert-info">
+                        <h3>资深财富管理专家视角</h3>
+                        <p>中美市场20年研究经验 | 客观中立分析</p>
+                    </div>
+                </div>
+
+                <div class="expert-content">
+                    <h4>📌 核心观点评估</h4>
+                    <div class="rating">
+                        <span class="rating-label">理论深度：</span>
+                        <div class="rating-stars">
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star filled">★</span>
+                            <span class="star half">★</span>
+                        </div>
+                        <span style="color: rgba(255,255,255,0.6); font-size: 0.9em;">4.5/5</span>
+                    </div>
+                    
+                    <p style="margin-bottom: 15px;">李笑来对<span style="color: #8eb8ff; font-weight: 600;">周期理论</span>的阐述抓住了投资的本质。从华尔街的专业角度来看，这与Ray Dalio在《原则》中强调的"理解经济机器运作方式"以及Howard Marks在《周期》中的核心思想高度一致。</p>
+
+                    <h4>✅ 值得肯定的观点</h4>
+                    <ul class="styled-list">
+                        <li><strong>"至少观察两个周期"原则</strong>：这是机构投资者的基本功，散户最大的问题就是把波动当趋势</li>
+                        <li><strong>"收入多元化"理念</strong>：与现代投资组合理论(MPT)的分散化原则一脉相承，是保持投资心态的关键</li>
+                        <li><strong>"用闲钱投资"</strong>：这是Warren Buffett反复强调的——永远不要借钱投资，保持安全边际</li>
+                        <li><strong>1800-2012年股债对比数据</strong>：Jeremy Siegel的《Stocks for the Long Run》提供了更详尽的实证支持</li>
+                    </ul>
+
+                    <h4>⚠️ 需要补充的视角</h4>
+                    <ul class="styled-list">
+                        <li><strong>周期长度的不确定性</strong>：不同资产类别的周期长度差异极大，A股一个完整周期可能3-5年，而房地产周期可能15-20年</li>
+                        <li><strong>幸存者偏差风险</strong>：1800年的股票指数经历了无数次成分股更换，个股投资者面临的风险远高于指数展示的结果</li>
+                        <li><strong>中国市场特殊性</strong>：A股市场历史较短(30余年)，制度特征与成熟市场不同，需要谨慎套用西方周期理论</li>
+                        <li><strong>黑天鹅事件</strong>：周期分析无法预测2008金融危机、2020疫情等极端事件，需要配合风险管理</li>
+                    </ul>
+
+                    <h4>💡 实操建议</h4>
+                    <div class="comparison">
+                        <div class="comparison-card positive">
+                            <h4>对普通投资者</h4>
+                            <p style="text-align: left; font-size: 0.95em;">
+                                1. 用<strong>指数基金定投</strong>替代个股，自动平滑周期波动<br>
+                                2. 建立<strong>6-12个月应急资金</strong>后再投资<br>
+                                3. 学习使用<strong>资产配置比例</strong>（如股6债4）<br>
+                                4. 设定<strong>再平衡规则</strong>而非主观判断
+                            </p>
+                        </div>
+                        <div class="comparison-card" style="background: rgba(255,180,100,0.1); border-color: rgba(255,180,100,0.2);">
+                            <h4 style="color: #ffb366;">核心原则</h4>
+                            <p style="text-align: left; font-size: 0.95em;">
+                                1. <strong>时间>时机</strong>：在市场中的时间比择时更重要<br>
+                                2. <strong>纪律>聪明</strong>：系统化执行比主观判断可靠<br>
+                                3. <strong>认知>信息</strong>：框架思维比追逐热点有价值<br>
+                                4. <strong>存活>盈利</strong>：先保证不出局，再追求收益
+                            </p>
+                        </div>
+                    </div>
+
+                    <h4>📊 综合评价</h4>
+                    <p>这篇文章的价值不在于提供具体的投资策略，而在于<span style="color: #ffd700; font-weight: 600;">建立正确的认知框架</span>。对于绝大多数散户来说，理解周期、保持耐心、控制情绪，已经能战胜80%的市场参与者。正如Charlie Munger所说：<em>"投资不需要高智商，需要的是情绪稳定和长期视角。"</em></p>
+                    
+                    <div class="key-point" style="background: rgba(100,150,255,0.1); border-left-color: #4a90d9;">
+                        <p><strong>最终建议</strong>：将文章中的周期思维应用于个人成长和职业发展，可能比直接用于投资更安全、回报更高。毕竟，<span style="color: #8eb8ff;">最好的投资永远是投资自己</span>。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <p>📚 基于李笑来《通往财富自由之路》专栏内容深度解析</p>
+            <p style="margin-top: 10px;">设计风格：Apple Frosted Glass | 暖色调主题</p>
+            <p style="margin-top: 10px; opacity: 0.6;">生成时间：2025年11月25日</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleCard(header) {
+            const content = header.nextElementSibling;
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
+
+        // 页面加载时的入场动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>
