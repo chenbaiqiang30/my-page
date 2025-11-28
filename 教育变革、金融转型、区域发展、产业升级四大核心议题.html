@@ -1,0 +1,1605 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政经参考 · 深度解读</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.8;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 40px 20px;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.2em;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .date {
+            margin-top: 15px;
+            font-size: 0.95em;
+            opacity: 0.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        .intro-section {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .intro-section h2 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .intro-section h2::before {
+            content: '📊';
+        }
+
+        .intro-section p {
+            color: #555;
+            font-size: 1.05em;
+        }
+
+        .article-card {
+            background: white;
+            border-radius: 16px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .article-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 50px rgba(0,0,0,0.12);
+        }
+
+        .article-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .article-header:hover {
+            background: #f8f9ff;
+        }
+
+        .article-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .article-title-wrapper {
+            display: flex;
+            align-items: center;
+            flex: 1;
+        }
+
+        .article-title {
+            font-size: 1.25em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .article-tags {
+            display: flex;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .tag {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75em;
+            font-weight: 500;
+        }
+
+        .toggle-icon {
+            font-size: 1.5em;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .article-card.active .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .article-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .article-card.active .article-content {
+            max-height: 10000px;
+        }
+
+        .content-inner {
+            padding: 0 30px 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 1.15em;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .key-points {
+            background: linear-gradient(135deg, #f8f9ff 0%, #f0f4ff 100%);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding: 12px 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+
+        .key-point:last-child {
+            margin-bottom: 0;
+        }
+
+        .point-icon {
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+
+        .quote-box {
+            background: linear-gradient(135deg, #fff9e6 0%, #fff5d6 100%);
+            border-left: 4px solid #f59e0b;
+            padding: 20px 25px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .quote-text {
+            font-size: 1.1em;
+            font-style: italic;
+            color: #92400e;
+            line-height: 1.8;
+        }
+
+        .quote-text::before {
+            content: '"';
+            font-size: 2em;
+            color: #f59e0b;
+            vertical-align: -0.3em;
+            margin-right: 5px;
+        }
+
+        .quote-text::after {
+            content: '"';
+            font-size: 2em;
+            color: #f59e0b;
+            vertical-align: -0.3em;
+            margin-left: 5px;
+        }
+
+        .expert-comment {
+            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            margin-right: 15px;
+        }
+
+        .expert-info h4 {
+            color: #065f46;
+            font-size: 1.1em;
+        }
+
+        .expert-info span {
+            color: #047857;
+            font-size: 0.9em;
+        }
+
+        .expert-content {
+            color: #064e3b;
+            line-height: 1.9;
+        }
+
+        .expert-content p {
+            margin-bottom: 12px;
+        }
+
+        .infographic {
+            margin: 25px 0;
+            padding: 25px;
+            background: linear-gradient(135deg, #fafbff 0%, #f0f4ff 100%);
+            border-radius: 16px;
+            border: 1px solid #e0e7ff;
+        }
+
+        .infographic-title {
+            text-align: center;
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            color: #4338ca;
+        }
+
+        .flow-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .flow-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .flow-box {
+            padding: 15px 20px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 500;
+            min-width: 120px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .flow-arrow {
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .flow-arrow-down {
+            text-align: center;
+            font-size: 1.5em;
+            color: #667eea;
+        }
+
+        .grid-chart {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .grid-item {
+            padding: 20px 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .grid-item .icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .grid-item .label {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .grid-item .desc {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #667eea, #764ba2);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #667eea;
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 2px 8px rgba(102,126,234,0.4);
+        }
+
+        .timeline-item .time {
+            font-weight: 600;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pyramid-level {
+            padding: 12px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .comparison-chart {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .comparison-side {
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .comparison-side h4 {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid currentColor;
+        }
+
+        .comparison-side ul {
+            list-style: none;
+        }
+
+        .comparison-side li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .hub-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .hub-center {
+            padding: 25px 35px;
+            border-radius: 50%;
+            font-weight: 700;
+            font-size: 1.1em;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .hub-spokes {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .hub-spoke {
+            padding: 12px 18px;
+            border-radius: 25px;
+            font-size: 0.9em;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .steps-chart {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .step-item {
+            flex: 1;
+            min-width: 100px;
+            padding: 20px 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        .step-number {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .step-connector {
+            color: #667eea;
+            font-size: 1.5em;
+        }
+
+        /* Color schemes for different articles */
+        .color-1 { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+        .color-2 { background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); }
+        .color-3 { background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); }
+        .color-4 { background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%); }
+        .color-5 { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+        .color-6 { background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%); }
+        .color-7 { background: linear-gradient(135deg, #5ee7df 0%, #b490ca 100%); }
+        .color-8 { background: linear-gradient(135deg, #d299c2 0%, #fef9d7 100%); }
+
+        .tag-1 { background: #ede9fe; color: #7c3aed; }
+        .tag-2 { background: #fce7f3; color: #db2777; }
+        .tag-3 { background: #e0f2fe; color: #0284c7; }
+        .tag-4 { background: #d1fae5; color: #059669; }
+        .tag-5 { background: #fef3c7; color: #d97706; }
+        .tag-6 { background: #ffe4e6; color: #e11d48; }
+        .tag-7 { background: #ddd6fe; color: #7c3aed; }
+        .tag-8 { background: #fae8ff; color: #c026d3; }
+
+        .border-1 { border-color: #667eea; }
+        .border-2 { border-color: #f5576c; }
+        .border-3 { border-color: #4facfe; }
+        .border-4 { border-color: #43e97b; }
+        .border-5 { border-color: #fa709a; }
+        .border-6 { border-color: #a8edea; }
+        .border-7 { border-color: #5ee7df; }
+        .border-8 { border-color: #d299c2; }
+
+        .bg-light-1 { background: #f5f3ff; color: #4c1d95; }
+        .bg-light-2 { background: #fdf2f8; color: #831843; }
+        .bg-light-3 { background: #eff6ff; color: #1e40af; }
+        .bg-light-4 { background: #ecfdf5; color: #065f46; }
+        .bg-light-5 { background: #fffbeb; color: #92400e; }
+        .bg-light-6 { background: #fef2f2; color: #991b1b; }
+        .bg-light-7 { background: #f0fdf4; color: #166534; }
+        .bg-light-8 { background: #faf5ff; color: #6b21a8; }
+
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            margin-top: 40px;
+        }
+
+        .footer p {
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .footer .copyright {
+            font-size: 0.9em;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .article-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .article-title-wrapper {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .article-tags {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+
+            .toggle-icon {
+                align-self: flex-end;
+            }
+
+            .comparison-chart {
+                grid-template-columns: 1fr;
+            }
+
+            .flow-row {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .steps-chart {
+                flex-direction: column;
+            }
+
+            .step-connector {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📚 政经参考 · 深度解读</h1>
+        <p class="subtitle">聚焦政经，举重若轻 | 马江博专栏精选</p>
+        <p class="date">2025年11月 · 八篇核心文章深度剖析</p>
+    </header>
+
+    <div class="container">
+        <div class="intro-section">
+            <h2>本期导读</h2>
+            <p>本期《政经参考》汇集八篇重磅文章，涵盖<strong>教育变革、金融转型、区域发展、产业升级</strong>四大核心议题。从第四代大学的兴起到中美金融博弈，从运河大建设到产业反内卷，每一篇都直击中国发展的关键命题。作为政经研究者，我将为您深度解读这些趋势背后的逻辑与影响，助您洞察未来。</p>
+        </div>
+
+        <!-- 文章1：第四代大学的兴起 -->
+        <div class="article-card" id="article1">
+            <div class="article-header" onclick="toggleArticle('article1')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-1">01</span>
+                    <span class="article-title">第四代大学的兴起与教育变革</span>
+                    <div class="article-tags">
+                        <span class="tag tag-1">教育改革</span>
+                        <span class="tag tag-1">人才培养</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-1">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🎓</span>
+                                <div><strong>第四代大学定义：</strong>打破传统边界，深度融合产业与教育，以便更好服务国家和区域发展的新型研究型大学</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🔄</span>
+                                <div><strong>两条路径：</strong>企业家出资兴办（如福耀科技大学、东方理工）与传统名校转型（如复旦改革、交大GIFT学院）</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">📊</span>
+                                <div><strong>学科重置：</strong>集体押注新工科，低空经济等新兴专业批量涌现，"正规军"正在批量入场</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">⏱️</span>
+                                <div><strong>学制缩短：</strong>采用"3+2+3"分段模式，让博士生26岁左右毕业，为科研创新争取更多时间</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">与其卷考试结果，不如卷研究成果。先缩短在校时间，让年轻人早点上岗，再用随时可以学的小课，拉长学习周期到退休以后，用终身教育对抗快速的技术迭代。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">🏛️ 大学演进四代图谱</h4>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="time">第一代 · 中世纪</div>
+                                <div>以<strong>传授知识</strong>为核心，教学任务主导</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="time">第二代 · 1810年</div>
+                                <div>柏林大学开创，倡导<strong>教学与科研统一</strong></div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="time">第三代 · 20世纪</div>
+                                <div>威斯康星大学提出<strong>人才培养+科学研究+社会服务</strong>三位一体</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="time">第四代 · 当下</div>
+                                <div>AGI时代，<strong>产业+教育深度融合</strong>，重构知识生产模式</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-1">📋 普通人行动指南</h3>
+                        <div class="infographic">
+                            <div class="steps-chart">
+                                <div class="step-item bg-light-1">
+                                    <div class="step-number color-1">1</div>
+                                    <div class="label">产业周期分析</div>
+                                    <div class="desc">识别导入期、成长期、整合期、成熟期、衰退期</div>
+                                </div>
+                                <span class="step-connector">→</span>
+                                <div class="step-item bg-light-1">
+                                    <div class="step-number color-1">2</div>
+                                    <div class="label">设定目标</div>
+                                    <div class="desc">校准能力与产业需求差距，形成完整能力包</div>
+                                </div>
+                                <span class="step-connector">→</span>
+                                <div class="step-item bg-light-1">
+                                    <div class="step-number color-1">3</div>
+                                    <div class="label">三重匹配</div>
+                                    <div class="desc">趋势-能力-兴趣的精准对接</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>从制度经济学视角审视，第四代大学的兴起本质上是<strong>知识生产体制的结构性变革</strong>。传统大学的"象牙塔"模式在技术爆发期暴露出严重的制度滞后性，产学研脱节问题已成为制约创新的核心瓶颈。</p>
+                            <p>值得关注的是，民营资本介入高等教育并非简单的"产业办学"，而是试图构建<strong>新型产学研利益共同体</strong>。福耀、韦尔等企业家的入局，带来的不仅是资金，更是市场化的效率机制与产业前沿的需求信号。</p>
+                            <p>然而，必须警惕两个潜在风险：一是过度市场化可能侵蚀基础研究的公共品属性；二是"订单式培养"若缺乏前瞻性规划，可能陷入短期主义陷阱。<strong>理想的制度设计应在市场效率与学术自由之间寻求动态平衡。</strong></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章2：金融战略大转向 -->
+        <div class="article-card" id="article2">
+            <div class="article-header" onclick="toggleArticle('article2')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-2">02</span>
+                    <span class="article-title">陆家嘴论坛与金融战略大转向</span>
+                    <div class="article-tags">
+                        <span class="tag tag-2">金融改革</span>
+                        <span class="tag tag-2">科技创新</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-2">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🏦</span>
+                                <div><strong>央行八项措施：</strong>设立数字人民币国际运营中心、开展离岸贸易金融服务改革、发展自贸离岸债、优化自由贸易账户</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">📈</span>
+                                <div><strong>证监会"1+6"政策：</strong>深化科创板改革，重启未盈利企业上市标准，打破盈利门槛束缚</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🏠</span>
+                                <div><strong>外汇新政：</strong>取消外资购房限制，允许外资以投资为目的购买境内房产</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🔄</span>
+                                <div><strong>战略转向：</strong>从聚焦基建地产，转向科技创新和国际化两大核心</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">金融战略的转向，实质是在回答"中等收入陷阱"的世纪之问。当传统的增长模式难以为继时，只有把金融资源从投入钢筋水泥，转向投入科技和国际化建设，才能完成发展动能的根本转换。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">🔄 金融战略转向全景图</h4>
+                        <div class="comparison-chart">
+                            <div class="comparison-side" style="background: #fef2f2;">
+                                <h4 style="color: #dc2626;">⬅️ 过去二十年</h4>
+                                <ul>
+                                    <li>🏗️ 聚焦基建和房地产</li>
+                                    <li>🏠 土地财政拉动基建投资</li>
+                                    <li>📊 房地产繁荣循环</li>
+                                    <li>💰 银行成为房地产"提款机"</li>
+                                </ul>
+                            </div>
+                            <div class="comparison-side" style="background: #ecfdf5;">
+                                <h4 style="color: #059669;">➡️ 现在转向</h4>
+                                <ul>
+                                    <li>🔬 科技创新主导</li>
+                                    <li>🌍 人民币国际化战略</li>
+                                    <li>🚀 银行成为科技"加速器"</li>
+                                    <li>🏙️ 上海/深圳/香港差异化布局</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-2">⚡ 五大深远影响</h3>
+                        <div class="infographic">
+                            <div class="grid-chart">
+                                <div class="grid-item" style="background: linear-gradient(135deg, #fdf2f8, #fce7f3);">
+                                    <div class="icon">💰</div>
+                                    <div class="label">财富积累方式变革</div>
+                                    <div class="desc">从土地稀缺性逻辑到知识裂变特征</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+                                    <div class="icon">📉</div>
+                                    <div class="label">传统周期失效</div>
+                                    <div class="desc">科技创新呈"量子跃迁"特征</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe);">
+                                    <div class="icon">👔</div>
+                                    <div class="label">精英阶层更替</div>
+                                    <div class="desc">从土地嗅觉到技术预判</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
+                                    <div class="icon">💱</div>
+                                    <div class="label">人民币国际化新路径</div>
+                                    <div class="desc">房产成为人民币新支点</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #ede9fe, #ddd6fe);">
+                                    <div class="icon">🏙️</div>
+                                    <div class="label">城市竞争重点变化</div>
+                                    <div class="desc">制度创新成为核心竞争力</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>陆家嘴论坛释放的信号，标志着中国金融体系正经历<strong>范式级变革</strong>。这不是简单的政策调整，而是发展模式的根本性重构。</p>
+                            <p>从政治经济学角度分析，允许外资购买境内房产的政策具有多重战略意涵：表层是稳定房地产市场，深层是<strong>构建人民币资产的全球定价体系</strong>。当外资持有更多人民币计价资产时，人民币的国际储备货币地位将获得实质性支撑。</p>
+                            <p>需要关注的是，金融从服务房地产转向服务科技创新，涉及<strong>利益格局的深刻调整</strong>。银行的风险偏好、地方政府的财政模式、民众的资产配置习惯都将面临重塑。这一转型的成功，取决于能否建立与科技创新特性相匹配的风险定价机制和容错文化。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章3：运河大建设与经济版图重塑 -->
+        <div class="article-card" id="article3">
+            <div class="article-header" onclick="toggleArticle('article3')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-3">03</span>
+                    <span class="article-title">运河大建设与经济版图重塑</span>
+                    <div class="article-tags">
+                        <span class="tag tag-3">基础设施</span>
+                        <span class="tag tag-3">区域发展</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-3">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🚢</span>
+                                <div><strong>八省运河布局：</strong>安徽江淮运河(950亿)、湖南湘桂运河(1500亿)、湖北荆汉运河(700亿)、河南水运项目(1400亿)、广西平陆运河(800亿)、浙赣粤运河(3200亿)</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">💰</span>
+                                <div><strong>降本优势：</strong>水运成本是铁路的1/2，公路的12%-15%，碳排放仅为铁路的3%、公路的9%</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🎯</span>
+                                <div><strong>三重战略：</strong>全面降低物流成本、发展新质生产力、非常时期应急保障</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">⚠️</span>
+                                <div><strong>版图重塑：</strong>有城市因运河繁荣，也有城市（如岳阳）可能受影响——这是重置的时代</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">用最低成本、最高韧性的"水上骨架"，继续推进全国统一大市场的建设，也为下个阶段的国内大循环和外部不确定性，提供底层保障。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">🗺️ 运河建设战略版图</h4>
+                        <div class="grid-chart">
+                            <div class="grid-item" style="background: linear-gradient(135deg, #dbeafe, #93c5fd);">
+                                <div class="icon">🏔️</div>
+                                <div class="label">安徽·江淮运河</div>
+                                <div class="desc">950亿 | 连接长江淮河</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #fce7f3, #f9a8d4);">
+                                <div class="icon">🌊</div>
+                                <div class="label">湖南·湘桂运河</div>
+                                <div class="desc">1500亿 | 长江珠江贯通</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #d1fae5, #6ee7b7);">
+                                <div class="icon">⚡</div>
+                                <div class="label">湖北·荆汉运河</div>
+                                <div class="desc">700亿 | 长江截弯取直</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #fef3c7, #fcd34d);">
+                                <div class="icon">🔗</div>
+                                <div class="label">河南·水运项目</div>
+                                <div class="desc">1400亿 | 三大水系联通</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #ede9fe, #c4b5fd);">
+                                <div class="icon">🌅</div>
+                                <div class="label">广西·平陆运河</div>
+                                <div class="desc">800亿 | 西部陆海新通道</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #fef2f2, #fca5a5);">
+                                <div class="icon">🚀</div>
+                                <div class="label">浙赣粤·世纪运河</div>
+                                <div class="desc">3200亿 | 北京到广州水运</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-3">🏙️ 三类城市格局变化</h3>
+                        <div class="infographic">
+                            <div class="pyramid">
+                                <div class="pyramid-level" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; width: 50%;">
+                                    <strong>顶尖港口城市</strong><br>
+                                    <span style="font-size: 0.85em;">上海洋山、广州南沙 | 产业集聚力持续增强</span>
+                                </div>
+                                <div class="pyramid-level" style="background: linear-gradient(135deg, #60a5fa, #3b82f6); color: white; width: 70%;">
+                                    <strong>中部枢纽城市</strong><br>
+                                    <span style="font-size: 0.85em;">合肥、南昌、长沙、武汉 | 融入沿海产业链</span>
+                                </div>
+                                <div class="pyramid-level" style="background: linear-gradient(135deg, #93c5fd, #60a5fa); color: white; width: 90%;">
+                                    <strong>资源型城市</strong><br>
+                                    <span style="font-size: 0.85em;">铜陵、百色、赣州 | 打破封闭困局</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>运河大建设的战略意图远超基础设施层面，本质上是<strong>国家空间治理体系的系统性重构</strong>。从政治经济学视角看，这是中央政府通过交通网络重塑区域权力格局的经典案例。</p>
+                            <p>物流成本14.1%占GDP的比重，较发达国家高出近一倍，这不仅是效率问题，更是<strong>制度性成本的集中体现</strong>。运河建设通过硬件改善倒逼软件改革，推动区域壁垒打破和统一市场形成。</p>
+                            <p>文章敏锐指出荆汉运河对岳阳的潜在冲击，揭示了一个重要规律：<strong>基础设施从来不是中性的</strong>，它重新分配区位优势，必然产生赢家和输家。地方政府应当清醒认识这一点，及早谋划转型，而非坐等被边缘化。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章4：安徽崛起密码 -->
+        <div class="article-card" id="article4">
+            <div class="article-header" onclick="toggleArticle('article4')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-4">04</span>
+                    <span class="article-title">安徽崛起密码：从农业大省到科创高地</span>
+                    <div class="article-tags">
+                        <span class="tag tag-4">区域发展</span>
+                        <span class="tag tag-4">产业投资</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-4">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🚗</span>
+                                <div><strong>汽车制造第一省：</strong>2025年Q1首次超越广东，拿下"中国汽车制造第一省"称号</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🏭</span>
+                                <div><strong>中西部制造业第一：</strong>连续3个季度工业增速位居长三角第一，家电、汽车、消费品遍地开花</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">💡</span>
+                                <div><strong>合肥创投模式：</strong>"以投促创+以投带引"，种子基金资本放大7.8倍，天使基金6.5倍</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🎓</span>
+                                <div><strong>科创基因来源：</strong>1970年争取中科大落户，为科创产业播下种子</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">没有随随便便的成功。安徽在战略层面的远见、产业认知，配合执行层面的魄力和效率，诠释了什么叫越努力越容易被看见。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">🚀 安徽崛起三部曲</h4>
+                        <div class="flow-chart">
+                            <div class="flow-row">
+                                <div class="flow-box" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0); color: #065f46;">
+                                    <strong>第一步：明确战略</strong><br>
+                                    <span style="font-size: 0.9em;">改革开放前确定产业转型升级总体战略</span>
+                                </div>
+                                <span class="flow-arrow">→</span>
+                                <div class="flow-box" style="background: linear-gradient(135deg, #a7f3d0, #6ee7b7); color: #065f46;">
+                                    <strong>第二步：争取资源</strong><br>
+                                    <span style="font-size: 0.9em;">1970年力争中科大落户，播下科创种子</span>
+                                </div>
+                                <span class="flow-arrow">→</span>
+                                <div class="flow-box" style="background: linear-gradient(135deg, #6ee7b7, #34d399); color: #065f46;">
+                                    <strong>第三步：主动融入</strong><br>
+                                    <span style="font-size: 0.9em;">东向发展战略，2019年跻身长三角</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-4">🏢 安徽科创企业矩阵</h3>
+                        <div class="infographic">
+                            <div class="hub-chart">
+                                <div class="hub-center" style="background: linear-gradient(135deg, #10b981, #059669); color: white;">
+                                    合肥创投
+                                </div>
+                                <div class="hub-spokes">
+                                    <div class="hub-spoke" style="background: #d1fae5; color: #065f46;">🚗 蔚来汽车</div>
+                                    <div class="hub-spoke" style="background: #dbeafe; color: #1e40af;">🤖 科大讯飞</div>
+                                    <div class="hub-spoke" style="background: #fef3c7; color: #92400e;">☀️ 阳光电源</div>
+                                    <div class="hub-spoke" style="background: #fce7f3; color: #9d174d;">📺 京东方</div>
+                                    <div class="hub-spoke" style="background: #ede9fe; color: #5b21b6;">💾 长鑫存储</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-4">🎯 四大国家战略红利叠加</h3>
+                        <div class="infographic">
+                            <div class="grid-chart">
+                                <div class="grid-item" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5);">
+                                    <div class="icon">🔗</div>
+                                    <div class="label">长三角一体化</div>
+                                    <div class="desc">2019年正式纳入</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
+                                    <div class="icon">🏔️</div>
+                                    <div class="label">中部崛起战略</div>
+                                    <div class="desc">2006年开始实施</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #ecfdf5, #d1fae5);">
+                                    <div class="icon">🌊</div>
+                                    <div class="label">长江经济带发展</div>
+                                    <div class="desc">深度参与建设</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7);">
+                                    <div class="icon">🌍</div>
+                                    <div class="label">"一带一路"建设</div>
+                                    <div class="desc">重要节点城市</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>安徽案例是研究<strong>地方政府发展型国家特征</strong>的极佳样本。合肥创投模式的成功，并非简单的"赌对了"，而是体现了一套完整的制度能力：<strong>战略定力、产业认知、执行效率、风险管控</strong>的有机结合。</p>
+                            <p>从制度经济学视角分析，安徽的成功有三个关键要素：一是<strong>路径依赖的打破</strong>，主动从农业省份转型；二是<strong>制度企业家精神</strong>，争取中科大落户展现的魄力；三是<strong>政策套利能力</strong>，同时享受四大国家战略红利在全国独此一家。</p>
+                            <p>安徽模式的可复制性需要审慎评估。其成功建立在<strong>特定历史窗口期</strong>的把握上，其他省份复制时需识别自身的比较优势与发展阶段，而非简单模仿投资策略。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章5：稀土——中国反制的王牌 -->
+        <div class="article-card" id="article5">
+            <div class="article-header" onclick="toggleArticle('article5')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-5">05</span>
+                    <span class="article-title">稀土——中国反制的王牌</span>
+                    <div class="article-tags">
+                        <span class="tag tag-5">中美博弈</span>
+                        <span class="tag tag-5">战略资源</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-5">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🌍</span>
+                                <div><strong>储量与产量：</strong>储量占全球40%，产量占70%，消费量占65%，冶炼分离产能占92%</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">✈️</span>
+                                <div><strong>战略价值：</strong>F35战机需400公斤稀土，核潜艇需4吨，电动车需2-3公斤钕铁硼磁体</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🔬</span>
+                                <div><strong>技术突破：</strong>徐光宪"串级萃取"技术，纯度99.999%，成本仅为国外1/5</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">⚖️</span>
+                                <div><strong>博弈公式：</strong>技术自主+资源主控=规则定义权=关键博弈力</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">中东有石油，中国有稀土。真正的战略优势，不在于拥有多少资源，而在于掌控多少不可替代的产业环节。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">⛏️ 中国稀土产业链控制力</h4>
+                        <div class="flow-chart">
+                            <div class="flow-row">
+                                <div class="flow-box" style="background: linear-gradient(135deg, #fef3c7, #fcd34d); color: #92400e; min-width: 140px;">
+                                    <strong>资源开采</strong><br>
+                                    <span style="font-size: 0.85em;">储量占全球40%</span>
+                                </div>
+                                <span class="flow-arrow">→</span>
+                                <div class="flow-box" style="background: linear-gradient(135deg, #fed7aa, #fb923c); color: #9a3412; min-width: 140px;">
+                                    <strong>冶炼分离</strong><br>
+                                    <span style="font-size: 0.85em;">产能占全球92%</span>
+                                </div>
+                                <span class="flow-arrow">→</span>
+                                <div class="flow-box" style="background: linear-gradient(135deg, #fecaca, #f87171); color: #991b1b; min-width: 140px;">
+                                    <strong>深加工</strong><br>
+                                    <span style="font-size: 0.85em;">永磁材料占90%</span>
+                                </div>
+                                <span class="flow-arrow">→</span>
+                                <div class="flow-box" style="background: linear-gradient(135deg, #fca5a5, #ef4444); color: white; min-width: 140px;">
+                                    <strong>终端应用</strong><br>
+                                    <span style="font-size: 0.85em;">全球定价权</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-5">🛡️ 三十年突围之路</h3>
+                        <div class="infographic">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="time">困境期</div>
+                                    <div>被锁定在产业链最低端，技术封锁+价格压制</div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="time">整合期 2014-2021</div>
+                                    <div>六大稀土集团重组→中国稀土集团成立，行业集中度大幅提升</div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="time">技术自立</div>
+                                    <div>"串级萃取"、绿色无铵萃取、超晶格磁体等世界尖端技术</div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="time">当前优势</div>
+                                    <div>全球46.9万条稀土专利中，中国拥有22.2万条</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>稀土案例是理解<strong>资源权力政治化</strong>的典范。文章提炼的公式——"技术自主+资源主控=规则定义权=关键博弈力"——准确揭示了战略资源的权力转化机制。</p>
+                            <p>从国际政治经济学视角分析，中国稀土优势的形成经历了三个阶段：<strong>资源诅咒期</strong>（低价出口原材料）、<strong>产业整合期</strong>（提高集中度）、<strong>技术突破期</strong>（掌握全链条）。这一路径对其他战略资源国家具有示范意义。</p>
+                            <p>尤其值得强调的是，<strong>产业链控制力比资源本身更重要</strong>。中国稀土储量已从90%降至40%，但精炼加工92%的份额确保了实际主导权。这提醒我们：在评估战略资源时，应关注"加工瓶颈"而非仅看资源禀赋。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章6：民生十条与资源再分配 -->
+        <div class="article-card" id="article6">
+            <div class="article-header" onclick="toggleArticle('article6')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-6">06</span>
+                    <span class="article-title">民生十条与资源再分配大趋势</span>
+                    <div class="article-tags">
+                        <span class="tag tag-6">民生保障</span>
+                        <span class="tag tag-6">制度改革</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-6">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🏥</span>
+                                <div><strong>社保突破：</strong>打破参保户籍壁垒，全面取消就业地参保户籍限制，医保个人账户可跨省共济</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🏫</span>
+                                <div><strong>教育改革：</strong>新建改扩建1000所优质高中，扩大"校额到校"政策，优质高校本科扩招</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🏘️</span>
+                                <div><strong>服务下沉：</strong>农村以"县域"为核心词，城市以"社区"为核心词</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">💰</span>
+                                <div><strong>涨工资信号：</strong>三个月内三次提及，健全最低工资调整机制，合理提高最低工资标准</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">要增加经济韧性和社会韧性，需要对国民收入分配和社会资源分配进行更公平的重构，实现消费的提振，社会的兜底，以及更好地向上流动。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">📋 民生十条四大板块</h4>
+                        <div class="grid-chart">
+                            <div class="grid-item" style="background: linear-gradient(135deg, #fef2f2, #fecaca);">
+                                <div class="icon">🛡️</div>
+                                <div class="label">社会保障</div>
+                                <div class="desc">打破户籍壁垒<br>精准兜底低收入群体</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+                                <div class="icon">🏛️</div>
+                                <div class="label">公共服务</div>
+                                <div class="desc">常住地提供服务<br>婚姻登记全国通办</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe);">
+                                <div class="icon">📚</div>
+                                <div class="label">教育医疗</div>
+                                <div class="desc">1000所优质高中<br>县域医共体全覆盖</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
+                                <div class="icon">🤝</div>
+                                <div class="label">社会服务</div>
+                                <div class="desc">家门口服务<br>全龄友好</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-6">🔄 资源倾斜方向</h3>
+                        <div class="infographic">
+                            <div class="grid-chart">
+                                <div class="grid-item" style="background: linear-gradient(135deg, #ffe4e6, #fecdd3);">
+                                    <div class="icon">💵</div>
+                                    <div class="label">现金→中小企业</div>
+                                    <div class="desc">强制60天付款</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #ede9fe, #ddd6fe);">
+                                    <div class="icon">🏦</div>
+                                    <div class="label">金融→科创企业</div>
+                                    <div class="desc">证监会全力支持</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #e0f2fe, #bae6fd);">
+                                    <div class="icon">🗺️</div>
+                                    <div class="label">区域→东部大省</div>
+                                    <div class="desc">长三角珠三角优先</div>
+                                </div>
+                                <div class="grid-item" style="background: linear-gradient(135deg, #fae8ff, #f5d0fe);">
+                                    <div class="icon">⛏️</div>
+                                    <div class="label">矿产→战略行动</div>
+                                    <div class="desc">稀土博弈筹码</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>"民生十条"的密集出台，标志着中国社会政策正经历<strong>从"发展型"向"保护型"的范式转换</strong>。这不是简单的福利扩张，而是国家治理逻辑的深刻调整。</p>
+                            <p>从政治经济学视角分析，"涨工资"信号的三次密集释放具有深层意涵：<strong>当外需不确定性上升、投资边际效益下降时，消费成为稳增长的主引擎</strong>，而提升低收入群体边际消费倾向最高群体的收入，是最有效的需求刺激。</p>
+                            <p>文章提及的"以老助老"模式值得关注，这是<strong>社会资本替代财政投入</strong>的创新尝试。在财政压力与老龄化加速的双重约束下，动员社会力量参与公共服务供给，将成为重要的政策方向。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章7：深圳新改革与金融防御 -->
+        <div class="article-card" id="article7">
+            <div class="article-header" onclick="toggleArticle('article7')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-7">07</span>
+                    <span class="article-title">深圳新改革与金融防御体系</span>
+                    <div class="article-tags">
+                        <span class="tag tag-7">深圳改革</span>
+                        <span class="tag tag-7">金融安全</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-7">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🏛️</span>
+                                <div><strong>深圳定位：</strong>被赋予"探路先锋"使命，为中国经济转型打出"深圳样本"</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🔬</span>
+                                <div><strong>科技创新：</strong>企业为"出题人"，高校科研院所"解题"，科研成果个人可分红</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">💹</span>
+                                <div><strong>重大突破：</strong>香港上市的大湾区企业可在深交所同时上市，享更高估值</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🛡️</span>
+                                <div><strong>金融防御六大动作：</strong>中央汇金整合、独立金融基建、减持美债增持黄金、中概股回归通道、金融稳定法、加密货币布局</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">深圳的新一轮综合改革试点，意义远超一座城市的范畴，而是国家层面的战略动作，它向所有人展示了中国改革开放的新方向和新模式。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">🛡️ 中国金融防御体系六大动作</h4>
+                        <div class="grid-chart">
+                            <div class="grid-item" style="background: linear-gradient(135deg, #d1fae5, #a7f3d0);">
+                                <div class="icon">🏦</div>
+                                <div class="label">中央汇金整合</div>
+                                <div class="desc">控股8家证券类企业<br>打造"金融国家队"</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe);">
+                                <div class="icon">🔗</div>
+                                <div class="label">独立金融基建</div>
+                                <div class="desc">CIPS系统、数字人民币<br>规避SWIFT断网风险</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+                                <div class="icon">🥇</div>
+                                <div class="label">减美债增黄金</div>
+                                <div class="desc">美债降至2009年新低<br>黄金连续7个月增持</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #fce7f3, #fbcfe8);">
+                                <div class="icon">📊</div>
+                                <div class="label">中概股回归</div>
+                                <div class="desc">33家完成港股二次上市<br>预防强制退市风险</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #ede9fe, #ddd6fe);">
+                                <div class="icon">⚖️</div>
+                                <div class="label">金融稳定法</div>
+                                <div class="desc">明确四方责任<br>增设金融制裁反制专章</div>
+                            </div>
+                            <div class="grid-item" style="background: linear-gradient(135deg, #e0f2fe, #bae6fd);">
+                                <div class="icon">₿</div>
+                                <div class="label">加密货币布局</div>
+                                <div class="desc">香港稳定币条例<br>争夺下一代金融制高点</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-7">🔄 深港联动新格局</h3>
+                        <div class="infographic">
+                            <div class="comparison-chart">
+                                <div class="comparison-side" style="background: #ecfdf5;">
+                                    <h4 style="color: #059669;">🏙️ 深圳</h4>
+                                    <ul>
+                                        <li>🔬 产业化能力</li>
+                                        <li>🏭 制造链配套</li>
+                                        <li>📋 政策补贴优势</li>
+                                        <li>⚡ 研发与生产总部</li>
+                                    </ul>
+                                </div>
+                                <div class="comparison-side" style="background: #fef3c7;">
+                                    <h4 style="color: #d97706;">🌆 香港</h4>
+                                    <ul>
+                                        <li>💰 离岸人民币枢纽</li>
+                                        <li>🌍 国际化科研网络</li>
+                                        <li>💱 低税率自由兑换</li>
+                                        <li>📈 融资与国际化总部</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>深圳新改革与金融防御体系的同步推进，揭示了<strong>国家安全与发展战略的深度融合</strong>。这不是简单的"两手抓"，而是将安全嵌入发展的每一个环节。</p>
+                            <p>从国际政治经济学视角分析，金融防御六大动作体现了<strong>"对冲式国际化"策略</strong>：不放弃美元体系，但构建备份系统；不正面挑战美元霸权，但扩大"去美元化"联盟。这种策略的核心是<strong>保持战略模糊，争取最大回旋空间</strong>。</p>
+                            <p>"港股大湾区企业可在深交所上市"这一突破，具有<strong>制度创新的标本意义</strong>。它打破了A股与港股的隔离墙，为未来更大范围的市场融合探路。若能成功，将重塑中国资本市场的国际竞争力。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 文章8：产业内卷与反内卷 -->
+        <div class="article-card" id="article8">
+            <div class="article-header" onclick="toggleArticle('article8')">
+                <div class="article-title-wrapper">
+                    <span class="article-number color-8">08</span>
+                    <span class="article-title">产业内卷与反内卷转折点</span>
+                    <div class="article-tags">
+                        <span class="tag tag-8">产业竞争</span>
+                        <span class="tag tag-8">政策转向</span>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="article-content">
+                <div class="content-inner">
+                    <div class="section">
+                        <h3 class="section-title border-8">💡 核心要点</h3>
+                        <div class="key-points">
+                            <div class="key-point">
+                                <span class="point-icon">🚗</span>
+                                <div><strong>车圈骂战：</strong>长城"恒大论"、比亚迪降价、华为小米互怼——本质是市场争夺的极端化</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">⚠️</span>
+                                <div><strong>供应链压力：</strong>账期普遍延长到200天以上，60天付款承诺成为破局关键</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">🔍</span>
+                                <div><strong>三大深层原因：</strong>房地产下行系统影响、地方政府利益绑定重复建设、同质化创新乏力</div>
+                            </div>
+                            <div class="key-point">
+                                <span class="point-icon">📢</span>
+                                <div><strong>政策信号升级：</strong>从2024年9月"防止"到12月"综合整治"，措辞严厉性明显升级</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-box">
+                        <p class="quote-text">价格战硝烟弥漫，深层次的隐患重重。低价低质产品还会大幅消耗"中国制造"好不容易积攒的国际形象与口碑。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">🔄 产业内卷三大深层原因</h4>
+                        <div class="flow-chart">
+                            <div class="flow-row">
+                                <div class="flow-box" style="background: linear-gradient(135deg, #fae8ff, #f5d0fe); color: #701a75;">
+                                    <strong>原因一</strong><br>
+                                    房地产下行<br>
+                                    <span style="font-size: 0.85em;">消费能力系统性削弱</span>
+                                </div>
+                            </div>
+                            <div class="flow-arrow-down">↓</div>
+                            <div class="flow-row">
+                                <div class="flow-box" style="background: linear-gradient(135deg, #f5d0fe, #e879f9); color: #701a75;">
+                                    <strong>原因二</strong><br>
+                                    地方政府深度绑定<br>
+                                    <span style="font-size: 0.85em;">低效产能难以出清</span>
+                                </div>
+                            </div>
+                            <div class="flow-arrow-down">↓</div>
+                            <div class="flow-row">
+                                <div class="flow-box" style="background: linear-gradient(135deg, #e879f9, #d946ef); color: white;">
+                                    <strong>原因三</strong><br>
+                                    同质化问题<br>
+                                    <span style="font-size: 0.85em;">创新乏力，陷入价格厮杀</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section">
+                        <h3 class="section-title border-8">📈 反内卷政策演进</h3>
+                        <div class="infographic">
+                            <div class="timeline">
+                                <div class="timeline-item">
+                                    <div class="time">2024年9月</div>
+                                    <div>中央政治局会议首次提出<strong>"防止内卷式恶性竞争"</strong></div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="time">2024年12月</div>
+                                    <div>中央经济工作会议升格为<strong>"综合整治内卷式竞争"</strong></div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="time">2025年6月</div>
+                                    <div>国务院修订《保障中小企业款项支付条例》，<strong>强制60天付款</strong></div>
+                                </div>
+                                <div class="timeline-item">
+                                    <div class="time">2025年6月10-11日</div>
+                                    <div>七大车企（含比亚迪）先后承诺<strong>供应商60天付款</strong></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p>产业内卷问题的实质是<strong>制度失灵的综合症候</strong>。文章精准识别了三大深层原因，但更值得关注的是它们之间的<strong>负反馈循环</strong>：房地产下行削弱消费→企业争夺存量市场→价格战加剧→地方政府维护本地企业→阻碍低效产能出清→内卷持续。</p>
+                            <p>从政治经济学视角分析，反内卷的核心难点在于<strong>打破政企利益共同体</strong>。当车企成为地方税收、就业、政绩的载体时，市场化的产能出清就会受阻。解决之道不在于简单的行政干预，而在于<strong>改革地方政绩考核机制</strong>，降低GDP权重，提升创新、环保等指标权重。</p>
+                            <p>60天付款承诺是<strong>供应链金融化的纠偏</strong>，但这只是治标。真正的破局需要<strong>推动行业从价格竞争转向价值竞争</strong>，这要求在基础研究、核心技术上持续投入，而非陷入"冰箱彩电大沙发"的配置内卷。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p>📖 《政经参考》· 马江博专栏</p>
+        <p>聚焦政经，举重若轻 | 让复杂的政经趋势变得清晰可见</p>
+        <p class="copyright">© 2025 政经参考 · 深度解读 | 专业政治经济分析</p>
+    </footer>
+
+    <script>
+        function toggleArticle(articleId) {
+            const article = document.getElementById(articleId);
+            const allArticles = document.querySelectorAll('.article-card');
+            
+            allArticles.forEach(a => {
+                if (a.id !== articleId) {
+                    a.classList.remove('active');
+                }
+            });
+            
+            article.classList.toggle('active');
+            
+            if (article.classList.contains('active')) {
+                setTimeout(() => {
+                    article.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 100);
+            }
+        }
+
+        // 默认展开第一篇文章
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('article1').classList.add('active');
+        });
+    </script>
+</body>
+</html>
