@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LVMH董事长视点：12品牌深度战略对标</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+        :root {
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.85);
+            --text-main: #1d1d1f;
+            --text-sub: #64748b;
+            --brand-cn: #7C3AED;
+            --brand-eu: #475569;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #f5f5f7;
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 极光背景 */
+        .aurora-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 0%, #f8fafc 0%, #ffffff 100%);
+        }
+        
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(90px);
+            opacity: 0.5;
+            animation: float 20s infinite ease-in-out alternate;
+        }
+        .blob-1 { top: -10%; right: 0%; width: 50vw; height: 50vw; background: rgba(167, 139, 250, 0.15); }
+        .blob-2 { bottom: 0%; left: -10%; width: 60vw; height: 60vw; background: rgba(59, 130, 246, 0.1); }
+        .blob-3 { top: 40%; left: 30%; width: 40vw; height: 40vw; background: rgba(249, 115, 22, 0.08); }
+
+        @keyframes float { from { transform: translateY(0); } to { transform: translateY(30px); } }
+
+        /* Bento Card */
+        .bento-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+            overflow: hidden;
+            position: relative;
+        }
+        .bento-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px -8px rgba(0,0,0,0.06);
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        /* 折叠组件 */
+        details summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: relative;
+            z-index: 10;
+        }
+        details summary::-webkit-details-marker { display: none; }
+        
+        .arrow-btn {
+            width: 32px; height: 32px;
+            background: rgba(0,0,0,0.05);
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        details[open] .arrow-btn { transform: rotate(180deg); background: #1d1d1f; color: white; }
+
+        .details-content {
+            padding: 0 1.5rem 1.5rem 1.5rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* 标签 */
+        .tag {
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding: 3px 8px;
+            border-radius: 6px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.05em;
+        }
+        .tag-cn { background: #f3e8ff; color: #7e22ce; border: 1px solid rgba(126, 34, 206, 0.1); }
+        .tag-eu { background: #f1f5f9; color: #475569; border: 1px solid rgba(71, 85, 105, 0.1); }
+
+        /* 思维导图样式 */
+        .mindmap-node {
+            background: white;
+            border: 1px solid rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 12px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.02);
+            z-index: 2;
+        }
+        .mindmap-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05);
+            border-color: #3b82f6;
+        }
+        .mm-line {
+            position: absolute;
+            background: #e2e8f0;
+            z-index: 1;
+        }
+        .mm-root {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            font-weight: bold;
+            padding: 16px 24px;
+            box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.3);
+        }
+
+        /* 品牌信息网格 */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        .info-item {
+            background: rgba(255,255,255,0.5);
+            padding: 0.5rem;
+            border-radius: 8px;
+            font-size: 0.75rem;
+        }
+        .info-label {
+            display: block;
+            color: #94a3b8;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+        .info-value {
+            color: #334155;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="aurora-bg">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-12 pb-24">
+        
+        <!-- Header -->
+        <header class="mb-12 flex flex-col md:flex-row justify-between items-end gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="px-3 py-1 bg-black text-white text-xs font-bold rounded-full tracking-wider">LVMH STRATEGY</span>
+                    <span class="text-slate-500 text-xs font-bold tracking-widest uppercase">Confidential</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-black text-slate-900 leading-[1.1]">
+                    The New <br><span class="text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-blue-600">Luxury Code</span>
+                </h1>
+                <p class="text-slate-500 mt-4 text-lg font-light">2025 中国奢侈品市场深度对标报告</p>
+            </div>
+            <div class="flex items-center gap-4 bg-white/60 p-4 rounded-2xl border border-white backdrop-blur-sm">
+                <div class="w-12 h-12 rounded-full bg-slate-900 text-white flex items-center justify-center font-serif text-xl">BA</div>
+                <div>
+                    <div class="text-xs text-slate-400 font-bold uppercase">Approved By</div>
+                    <div class="text-sm font-bold text-slate-900">Bernard Arnault</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 00 核心提炼 (Executive Summary) -->
+        <details open class="bento-card group mb-8">
+            <summary>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xl">⚡</div>
+                    <h2 class="text-xl font-bold text-slate-900">00. 战略浓缩 (Executive Summary)</h2>
+                </div>
+                <div class="arrow-btn">↓</div>
+            </summary>
+            <div class="details-content">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-blue-50/50 p-6 rounded-2xl border border-blue-100">
+                        <h3 class="text-blue-700 font-bold mb-2">变局 (Shift)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            中国奢侈品市场正在经历一场<strong>“去魅运动”</strong>。消费者不再为西方的“血统”买单，转而寻求本土文化的“归属感”和产品的“极致功能”。
+                        </p>
+                    </div>
+                    <div class="bg-purple-50/50 p-6 rounded-2xl border border-purple-100">
+                        <h3 class="text-purple-700 font-bold mb-2">对标 (Versus)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            <strong>5大新贵 vs 7大豪门</strong>。中国品牌在电商适应性、质价比、叙事能力和工艺追赶四个维度全面超车，构建了新的“高级感”定义。
+                        </p>
+                    </div>
+                    <div class="bg-orange-50/50 p-6 rounded-2xl border border-orange-100">
+                        <h3 class="text-orange-700 font-bold mb-2">终局 (Endgame)</h3>
+                        <p class="text-sm text-slate-600 leading-relaxed">
+                            这是一场<strong>叙事之争</strong>，更是<strong>价值观之争</strong>。未来的高级，不是把消费者带到西方高地，而是把消费者所在的东方生活解释为高级。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- 01 阿尔诺的评价 (Chairman's Note) -->
+        <details open class="bento-card group mb-8">
+            <summary>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-xl font-serif">❝</div>
+                    <h2 class="text-xl font-bold text-slate-900">01. 董事长亲笔信 (Chairman's Note)</h2>
+                </div>
+                <div class="arrow-btn">↓</div>
+            </summary>
+            <div class="details-content">
+                <div class="relative bg-white p-8 rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+                    <p class="text-lg text-slate-700 leading-relaxed font-serif italic mb-6">
+                        “致执行委员会：<br><br>
+                        我在上海的见闻令我警醒。当我走进<span class="text-slate-900 font-bold not-italic">老铺黄金</span>和<span class="text-slate-900 font-bold not-italic">山下有松</span>的门店时，我看到的不仅仅是精美的商品，而是一种我们（西方奢侈品）正在失去的东西——<span class="bg-yellow-100 px-1">与当下生活的真实连接</span>。<br><br>
+                        彭博社的问题是尖锐的：为什么中国消费者不再迷信 LVMH？答案在于，傲慢让我们变得迟钝。中国同行们没有复刻我们的道路，他们改变了游戏规则。他们证明了，高级不等于昂贵和遥远，高级等于‘懂我’和‘在场’。如果我们不能学会用东方的语言讲述奢华，我们将失去未来十年的增长引擎。”
+                    </p>
+                    <div class="flex justify-end">
+                        <div class="text-right">
+                            <img src="https://upload.wikimedia.org/wikipedia/commons/e/ec/Signature_Bernard_Arnault.svg" alt="Signature" class="h-12 opacity-70 ml-auto filter brightness-0">
+                            <span class="text-xs text-slate-400 font-bold uppercase tracking-widest mt-2 block">Bernard Arnault</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <!-- 02 中国五大新贵 (Chinese Brands) -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6 pl-2 border-l-4 border-purple-500">中国五大新贵：重塑规则</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <!-- Songmont -->
+                <details class="bento-card group">
+                    <summary>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">👜</span>
+                            <h3 class="font-bold text-slate-900">山下有松 (Songmont)</h3>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-purple-700 mb-1">COMPANY</strong>
+                                本土原创设计师皮具品牌，以极简东方美学著称。
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">创始人</span>
+                                    <span class="info-value">付崧 (Fu Song)</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">主打产品</span>
+                                    <span class="info-value">菜篮子包、循迹包</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="tag tag-cn">市场战况</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    凭借“大容量”实用主义，在天猫长期霸榜。核心杀手锏是<strong>“姥姥工匠团”</strong>——一群平均年龄60+的退休阿姨。这不仅解决了工艺问题，更输出了极具感染力的温情叙事，击中了中国消费者对“家”和“长辈”的文化软肋。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- ICICLE -->
+                <details class="bento-card group">
+                    <summary>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">👗</span>
+                            <h3 class="font-bold text-slate-900">之禾 (ICICLE)</h3>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-purple-700 mb-1">COMPANY</strong>
+                                高端天然服饰品牌，中国版“Max Mara”，倡导人与自然共生。
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">创始人</span>
+                                    <span class="info-value">叶寿增 & 陶晓马</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">主打产品</span>
+                                    <span class="info-value">原色羊绒大衣</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="tag tag-cn">市场战况</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    老客复购率高达惊人的70%。2013年收购Max Mara代工厂，完成了从设计到供应链的闭环。它的成功在于<strong>“隐形的高贵”</strong>——不靠Logo，靠面料和剪裁说话，完美契合了中国高知女性反消费主义的心态。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- To Summer -->
+                <details class="bento-card group">
+                    <summary>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🕯️</span>
+                            <h3 class="font-bold text-slate-900">观夏 (To Summer)</h3>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-purple-700 mb-1">COMPANY</strong>
+                                东方文化香氛品牌，主打植物香薰和东方意象。
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">创始人</span>
+                                    <span class="info-value">Elvis (沈黎)</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">主打产品</span>
+                                    <span class="info-value">昆仑煮雪、颐和金桂</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="tag tag-cn">市场战况</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    成立4年营收过亿，获欧莱雅投资。观夏用“昆仑”、“桂花”等名字，<strong>抢夺了对香气的文化解释权</strong>。它卖的不是蜡烛，是东方文人的生活方式。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Mao Geping -->
+                <details class="bento-card group">
+                    <summary>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">💄</span>
+                            <h3 class="font-bold text-slate-900">毛戈平 (Mao Geping)</h3>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-purple-700 mb-1">COMPANY</strong>
+                                以专业彩妆培训起家的高端国货美妆品牌。
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">创始人</span>
+                                    <span class="info-value">毛戈平 (彩妆教父)</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">主打产品</span>
+                                    <span class="info-value">光影塑颜高光膏</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="tag tag-cn">市场战况</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    2025上半年营收增速31%。他在专柜提供“整容级”试妆服务，这让其高光粉膏等产品拥有了极高的连带率。他成功将<strong>“技术崇拜”</strong>转化为品牌溢价，解决了西方品牌无法解决的“中国骨相”痛点。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Laopu Gold -->
+                <details class="bento-card group">
+                    <summary>
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl">🥇</span>
+                            <h3 class="font-bold text-slate-900">老铺黄金 (Laopu)</h3>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-purple-700 mb-1">COMPANY</strong>
+                                主打古法手工金器的奢侈珠宝品牌，定位极高。
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">创始人</span>
+                                    <span class="info-value">徐高云</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">主打产品</span>
+                                    <span class="info-value">古法花丝金葫芦</span>
+                                </div>
+                            </div>
+                            <div>
+                                <span class="tag tag-cn">市场战况</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    电商销售暴增1000%。它将黄金从“土气”变成了“贵气”。在经济波动期，老铺黄金兼具了<strong>“审美价值”和“避险资产”</strong>双重属性。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+            </div>
+        </div>
+
+        <!-- 03 西方七大豪门 (Western Giants) -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-slate-900 mb-6 pl-2 border-l-4 border-slate-500">西方七大豪门：守成之困</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                <!-- LVMH -->
+                <details class="bento-card group">
+                    <summary>
+                        <div>
+                            <h3 class="font-bold text-slate-900">LVMH Group</h3>
+                            <div class="text-xs text-slate-500">LV / Dior / Fendi</div>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">国家</span>
+                                    <span class="info-value">🇫🇷 法国</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">创始人/掌门</span>
+                                    <span class="info-value">Arnault Family</span>
+                                </div>
+                                <div class="info-item col-span-2">
+                                    <span class="info-label">王牌产品</span>
+                                    <span class="info-value">Neverfull, Speedy, Lady Dior</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-slate-700 mb-1">全球市场</strong>
+                                绝对霸主，市值第一，掌控全球核心商圈资源。
+                            </div>
+                            <div>
+                                <span class="tag tag-eu">在华困境</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    股价距高点跌去30%。虽然基本盘稳固，但“不仅要贵，还要懂”的门槛在变高。过度依赖涨价策略正在失效，年轻人开始转向更有趣的本土选择。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Kering -->
+                <details class="bento-card group">
+                    <summary>
+                        <div>
+                            <h3 class="font-bold text-slate-900">Kering</h3>
+                            <div class="text-xs text-slate-500">Gucci / YSL / BV</div>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">国家</span>
+                                    <span class="info-value">🇫🇷 法国</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">创始人/掌门</span>
+                                    <span class="info-value">Pinault Family</span>
+                                </div>
+                                <div class="info-item col-span-2">
+                                    <span class="info-label">王牌产品</span>
+                                    <span class="info-value">GG Marmont, YSL Niki</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-slate-700 mb-1">全球市场</strong>
+                                极度依赖 Gucci（贡献超50%利润），目前处于转型阵痛期。
+                            </div>
+                            <div>
+                                <span class="tag tag-eu">在华困境</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    Gucci 手袋在线销售暴跌50%。品牌审美疲劳严重，极繁主义在“静奢”风潮下显得过时。缺乏像老铺黄金那样穿越周期的保值属性。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Richemont -->
+                <details class="bento-card group">
+                    <summary>
+                        <div>
+                            <h3 class="font-bold text-slate-900">Richemont</h3>
+                            <div class="text-xs text-slate-500">Cartier / Van Cleef</div>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">国家</span>
+                                    <span class="info-value">🇨🇭 瑞士</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">创始人/掌门</span>
+                                    <span class="info-value">Rupert Family</span>
+                                </div>
+                                <div class="info-item col-span-2">
+                                    <span class="info-label">王牌产品</span>
+                                    <span class="info-value">LOVE手镯, 猎豹系列, 四叶草</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-slate-700 mb-1">全球市场</strong>
+                                硬奢之王，珠宝腕表领域统治力极强，利润率高。
+                            </div>
+                            <div>
+                                <span class="tag tag-eu">在华困境</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    受到老铺黄金最直接的冲击。当中国消费者发现本土古法金饰既有面子又能保值时，卡地亚的溢价能力受到挑战。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Estée Lauder -->
+                <details class="bento-card group">
+                    <summary>
+                        <div>
+                            <h3 class="font-bold text-slate-900">Estée Lauder</h3>
+                            <div class="text-xs text-slate-500">La Mer / MAC / TF</div>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">国家</span>
+                                    <span class="info-value">🇺🇸 美国</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">创始人</span>
+                                    <span class="info-value">Estée Lauder</span>
+                                </div>
+                                <div class="info-item col-span-2">
+                                    <span class="info-label">王牌产品</span>
+                                    <span class="info-value">小棕瓶, 腊梅面霜</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-slate-700 mb-1">全球市场</strong>
+                                高端美妆巨头，但在旅游零售（免税）市场遭遇重挫。
+                            </div>
+                            <div>
+                                <span class="tag tag-eu">在华困境</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    股价腰斩。过度依赖免税渠道导致价格体系崩盘。在产品力上，面临中国品牌（如珀莱雅、毛戈平）在成分和功效上的贴身肉搏，反应迟缓。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Max Mara -->
+                <details class="bento-card group">
+                    <summary>
+                        <div>
+                            <h3 class="font-bold text-slate-900">Max Mara</h3>
+                            <div class="text-xs text-slate-500">Italian Luxury</div>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">国家</span>
+                                    <span class="info-value">🇮🇹 意大利</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">创始人</span>
+                                    <span class="info-value">Achille Maramotti</span>
+                                </div>
+                                <div class="info-item col-span-2">
+                                    <span class="info-label">王牌产品</span>
+                                    <span class="info-value">101801 经典大衣, 泰迪熊大衣</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-slate-700 mb-1">全球市场</strong>
+                                家族私有企业，以高品质成衣著称，风格稳健。
+                            </div>
+                            <div>
+                                <span class="tag tag-eu">在华困境</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    “平替”受害者。101801大衣是经典，但在中国，用1/3价格就能买到同样面料、更佳版型的之禾。品牌溢价支撑不起巨大的价差。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Capri -->
+                <details class="bento-card group">
+                    <summary>
+                        <div>
+                            <h3 class="font-bold text-slate-900">Capri</h3>
+                            <div class="text-xs text-slate-500">Versace / MK / Jimmy Choo</div>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">国家</span>
+                                    <span class="info-value">🇺🇸/🇬🇧 英美</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">核心人物</span>
+                                    <span class="info-value">Michael Kors</span>
+                                </div>
+                                <div class="info-item col-span-2">
+                                    <span class="info-label">王牌产品</span>
+                                    <span class="info-value">MK托特包, 范思哲美杜莎</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-slate-700 mb-1">全球市场</strong>
+                                轻奢巨头，正在被 Tapestry (Coach母公司) 收购过程中，前途未卜。
+                            </div>
+                            <div>
+                                <span class="tag tag-eu">在华困境</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    轻奢泡沫破裂。Michael Kors 在线销售降40%。在中国市场，它被视为“没钱硬装”的代表，既没有顶奢的身份感，又没有Songmont的松弛感，处境尴尬。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- Chanel -->
+                <details class="bento-card group">
+                    <summary>
+                        <div>
+                            <h3 class="font-bold text-slate-900">Chanel</h3>
+                            <div class="text-xs text-slate-500">Independent</div>
+                        </div>
+                        <div class="arrow-btn">↓</div>
+                    </summary>
+                    <div class="details-content">
+                        <div class="space-y-4">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">国家</span>
+                                    <span class="info-value">🇫🇷 法国</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">创始人/掌门</span>
+                                    <span class="info-value">Wertheimer Family</span>
+                                </div>
+                                <div class="info-item col-span-2">
+                                    <span class="info-label">王牌产品</span>
+                                    <span class="info-value">2.55, CF手袋, No.5香水</span>
+                                </div>
+                            </div>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs">
+                                <strong class="block text-slate-700 mb-1">全球市场</strong>
+                                奢侈品金字塔尖，私人控股，利润率极高，拥有绝对定价权。
+                            </div>
+                            <div>
+                                <span class="tag tag-eu">在华困境</span>
+                                <p class="text-sm text-slate-600 text-justify">
+                                    激进涨价筛选了客户，也推远了大众。虽然依旧强势，但在“老钱风”和“新中式”的夹击下，其标志性的粗花呢美学不再是唯一的优雅标准。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+            </div>
+        </div>
+
+        <!-- 04 可视化思维导图 (Mind Map) -->
+        <details open class="bento-card group">
+            <summary>
+                <div class="flex items-center gap-4">
+                    <div class="w-10 h-10 rounded-full bg-slate-900 text-white flex items-center justify-center text-xl">🧠</div>
+                    <h2 class="text-xl font-bold text-slate-900">04. 全文思维导图 (Strategic Map)</h2>
+                </div>
+                <div class="arrow-btn">↓</div>
+            </summary>
+            <div class="details-content">
+                <div class="relative w-full h-[600px] bg-slate-50 rounded-2xl overflow-hidden border border-slate-200 mt-4">
+                    <!-- Lines (Simulated with absolute positioning) -->
+                    <div class="mm-line" style="top: 50%; left: 15%; width: 10%; height: 2px;"></div>
+                    
+                    <div class="mm-line" style="top: 20%; left: 35%; width: 2px; height: 60%;"></div>
+                    <div class="mm-line" style="top: 20%; left: 35%; width: 10%; height: 2px;"></div>
+                    <div class="mm-line" style="top: 50%; left: 35%; width: 10%; height: 2px;"></div>
+                    <div class="mm-line" style="top: 80%; left: 35%; width: 10%; height: 2px;"></div>
+
+                    <!-- Root -->
+                    <div class="mindmap-node mm-root absolute top-1/2 left-[5%] -translate-y-1/2 w-40">
+                        中国奢侈品<br>市场变局
+                    </div>
+
+                    <!-- Level 1 Nodes -->
+                    <div class="mindmap-node absolute top-[20%] left-[25%] -translate-y-1/2 w-32 bg-purple-50 border-purple-200 text-purple-800 font-bold">
+                        新势力崛起
+                    </div>
+                    <div class="mindmap-node absolute top-[50%] left-[25%] -translate-y-1/2 w-32 bg-blue-50 border-blue-200 text-blue-800 font-bold">
+                        成功因子
+                    </div>
+                    <div class="mindmap-node absolute top-[80%] left-[25%] -translate-y-1/2 w-32 bg-orange-50 border-orange-200 text-orange-800 font-bold">
+                        价值观博弈
+                    </div>
+
+                    <!-- Level 2 Nodes (New Power) -->
+                    <div class="mindmap-node absolute top-[10%] left-[45%] w-48 text-xs text-left">
+                        <strong>山下有松/之禾：</strong><br>实用美学，松弛感
+                    </div>
+                    <div class="mindmap-node absolute top-[20%] left-[45%] w-48 text-xs text-left">
+                        <strong>观夏/老铺黄金：</strong><br>文化主权，避险资产
+                    </div>
+                    <div class="mindmap-node absolute top-[30%] left-[45%] w-48 text-xs text-left">
+                        <strong>毛戈平：</strong><br>极致功能，换头术
+                    </div>
+
+                    <!-- Level 2 Nodes (Success Factors) -->
+                    <div class="mindmap-node absolute top-[45%] left-[45%] w-48 text-xs text-left">
+                        <strong>电商适应：</strong> 直播不是降级，是体验
+                    </div>
+                    <div class="mindmap-node absolute top-[55%] left-[45%] w-48 text-xs text-left">
+                        <strong>质价比：</strong> 聪明消费，反溢价
+                    </div>
+
+                    <!-- Level 2 Nodes (Values) -->
+                    <div class="mindmap-node absolute top-[75%] left-[45%] w-48 text-xs text-left">
+                        <strong>定义高级：</strong> 所在地即高地
+                    </div>
+                    <div class="mindmap-node absolute top-[85%] left-[45%] w-48 text-xs text-left">
+                        <strong>叙事之争：</strong> 东方美学 vs 西方梦幻
+                    </div>
+
+                </div>
+            </div>
+        </details>
+
+        <!-- Footer -->
+        <footer class="mt-12 pt-8 border-t border-slate-200 text-center">
+            <div class="text-xs text-slate-400 font-mono mb-2">RESTRICTED DOCUMENT</div>
+            <p class="text-xs text-slate-300">© 2025 LVMH Strategic Intelligence Unit</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Chart placeholder if needed
+    </script>
+</body>
+</html>

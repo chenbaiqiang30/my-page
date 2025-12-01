@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>埃森哲2025中国消费者洞察 - 终极战略版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap');
+
+        :root {
+            --glass-border: rgba(255, 255, 255, 0.6);
+            --glass-bg: rgba(255, 255, 255, 0.65);
+            --text-main: #0f172a;
+            --text-sub: #475569;
+            --accent-blue: #2563eb;
+            --accent-purple: #7c3aed;
+        }
+
+        body {
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 极光层：更深邃、流动的高级感 */
+        .aurora-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(at 0% 0%, hsla(253,16%,95%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, hsla(225,39%,95%,1) 0, transparent 50%), 
+                radial-gradient(at 100% 100%, hsla(339,49%,95%,1) 0, transparent 50%);
+        }
+        
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: move 20s infinite alternate;
+        }
+        .blob-1 { top: 10%; left: 20%; width: 400px; height: 400px; background: rgba(167, 139, 250, 0.2); }
+        .blob-2 { bottom: 20%; right: 10%; width: 350px; height: 350px; background: rgba(96, 165, 250, 0.2); }
+        .blob-3 { top: 40%; right: 30%; width: 300px; height: 300px; background: rgba(244, 114, 182, 0.15); }
+
+        @keyframes move {
+            from { transform: translate(0, 0) scale(1); }
+            to { transform: translate(20px, -20px) scale(1.1); }
+        }
+
+        /* Bento Card 4.0: 极致磨砂与微交互 */
+        .bento-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            border-radius: 24px;
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.02), 
+                0 2px 4px -1px rgba(0, 0, 0, 0.02),
+                inset 0 0 0 1px rgba(255,255,255,0.6);
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .bento-card:hover {
+            box-shadow: 
+                0 20px 40px -5px rgba(0, 0, 0, 0.05), 
+                inset 0 0 0 1px rgba(255,255,255,0.9);
+            transform: translateY(-2px);
+        }
+
+        /* 字体排印 */
+        .display-font { font-family: 'Inter', sans-serif; letter-spacing: -0.04em; }
+        
+        .gradient-text-title {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4338ca 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 标签系统 */
+        .tag {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 6px 12px;
+            border-radius: 99px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .tag-dark { background: #0f172a; color: white; }
+        .tag-light { background: rgba(255,255,255,0.8); border: 1px solid rgba(0,0,0,0.05); color: #475569; }
+
+        /* 折叠组件核心样式 */
+        details {
+            border-radius: 24px;
+            transition: all 0.3s ease;
+        }
+        
+        details[open] {
+            background: rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px -5px rgba(0,0,0,0.03);
+        }
+
+        details > summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+        details > summary::-webkit-details-marker { display: none; }
+
+        .details-content {
+            padding: 0 2rem 2rem 2rem;
+            opacity: 0;
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .expand-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid rgba(0,0,0,0.05);
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        details[open] .expand-btn {
+            transform: rotate(90deg);
+            background: #0f172a;
+            color: white;
+        }
+
+        /* 3D 装饰 (CSS Only) */
+        .glass-orb {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.9), rgba(255,255,255,0.2));
+            box-shadow: 
+                inset -5px -5px 15px rgba(255,255,255,0.5), 
+                5px 5px 20px rgba(0,0,0,0.05);
+            backdrop-filter: blur(5px);
+        }
+
+        /* 战略金句 */
+        .strategy-quote {
+            border-left: 4px solid #4f46e5;
+            padding-left: 1.5rem;
+            font-size: 1.1rem;
+            color: #334155;
+            font-style: italic;
+            margin: 1.5rem 0;
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.05) 0%, transparent 100%);
+            padding: 1.5rem;
+            border-radius: 0 12px 12px 0;
+        }
+
+        .chart-wrapper {
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="aurora-layer">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <main class="max-w-7xl mx-auto px-4 py-16">
+        
+        <!-- Header: 战略高度 -->
+        <header class="mb-16 flex flex-col md:flex-row justify-between items-end gap-10">
+            <div class="md:w-3/4">
+                <div class="flex items-center gap-3 mb-6">
+                    <span class="tag tag-dark">Accenture Strategy</span>
+                    <span class="tag tag-light">China 2025</span>
+                </div>
+                <h1 class="text-6xl md:text-8xl font-black display-font mb-6 text-slate-900 leading-tight tracking-tight">
+                    Rational<br>
+                    <span class="gradient-text-title">Evolution</span>
+                </h1>
+                <p class="text-2xl text-slate-600 font-light max-w-2xl leading-relaxed">
+                    理性升级与需求重构：中国消费市场的<span class="font-semibold text-slate-900">结构性静变</span>。
+                </p>
+            </div>
+            
+            <div class="bento-card p-6 md:w-1/4 bg-white/70 border-l-4 border-l-blue-600">
+                <div class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">CEO Insight</div>
+                <p class="text-sm font-medium text-slate-700 leading-relaxed">
+                    “这不仅仅是消费预期的调整，更是<strong class="text-slate-900">生活主权的回收</strong>。消费者正在从‘被营销定义’转向‘自我定义’。”
+                </p>
+            </div>
+        </header>
+
+        <!-- Main Content Grid -->
+        <div class="grid grid-cols-1 gap-6">
+
+            <!-- 01 战略洞察：价值重置 -->
+            <details open class="bento-card group">
+                <summary class="flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-blue-600 font-bold">01</span>
+                            <span class="tag tag-light">Market Shift</span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-slate-900">理性升级：品牌溢价的“去魅”时刻</h2>
+                        <p class="text-slate-500 mt-2">从“仰视品牌”到“平视价值”，消费者掌握了定价权。</p>
+                    </div>
+                    <div class="expand-btn">→</div>
+                </summary>
+                
+                <div class="details-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 mt-4">
+                        <!-- Left: Analysis -->
+                        <div>
+                            <div class="glass-orb w-16 h-16 -top-4 -left-4 opacity-30 bg-blue-200"></div>
+                            <h3 class="text-xl font-bold text-slate-800 mb-6 relative z-10">核心论断：心智平权</h3>
+                            <p class="text-slate-600 mb-6 leading-relaxed relative z-10">
+                                过去四年，中国市场完成了一次惊人的“心智平权”。国际品牌曾经代表的“安全感”已被国货的“确定性”取代。消费者不再为单纯的LOGO支付溢价，而是化身为精明的“首席采购官”，用<span class="bg-blue-100 text-blue-800 px-1 rounded font-bold">55%的高频比价率</span>进行严格审计。
+                            </p>
+                            <ul class="space-y-4 mb-6">
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">1</span>
+                                    <span class="text-sm text-slate-600"><strong>护城河消失：</strong> 国际品牌退守高端孤岛，大众市场被国货全面接管。</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <span class="w-6 h-6 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center text-xs font-bold flex-shrink-0">2</span>
+                                    <span class="text-sm text-slate-600"><strong>触点大迁徙：</strong> 直播间超越搜索引擎成为第二大信息源（50%）。</span>
+                                </li>
+                            </ul>
+                            <div class="strategy-quote">
+                                “品牌护城河的定义变了。过去的护城河是‘知名度’，现在的护城河是‘透明度’——你必须向消费者证明，你的溢价是合理的。”
+                            </div>
+                        </div>
+                        
+                        <!-- Right: Data Visualization -->
+                        <div class="chart-wrapper">
+                            <div class="flex justify-between items-end mb-6">
+                                <div>
+                                    <div class="text-xs text-slate-400 uppercase font-bold mb-1">关键数据</div>
+                                    <div class="text-lg font-bold text-slate-800">国货 vs 国际：攻守易势</div>
+                                </div>
+                                <div class="text-xs text-slate-400 bg-slate-100 px-2 py-1 rounded">2021 vs 2025</div>
+                            </div>
+                            <div style="height: 250px;">
+                                <canvas id="brandChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 02 需求重构：防御性资产 -->
+            <details class="bento-card group">
+                <summary class="flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-purple-600 font-bold">02</span>
+                            <span class="tag tag-light">Consumer Mindset</span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-slate-900">需求重构：防御性资产的构建</h2>
+                        <p class="text-slate-500 mt-2">面对VUCA时代，消费者正在进行一场“战略性收缩”。</p>
+                    </div>
+                    <div class="expand-btn">→</div>
+                </summary>
+                
+                <div class="details-content">
+                    <p class="text-lg text-slate-600 mb-10 leading-relaxed max-w-3xl">
+                        中国消费者收缩了对宏大叙事（事业、名望）的投入，转而投资于<span class="text-purple-600 font-bold">“确定性三角”</span>：健康、财富与技能。这是为了在不确定的世界里，重新夺回生活的掌控权。
+                    </p>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
+                        <div class="bg-white/60 p-6 rounded-2xl border border-white shadow-sm hover:shadow-md transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-green-50 text-green-600 flex items-center justify-center text-2xl mb-4">💪</div>
+                            <div class="text-sm font-bold text-slate-400 uppercase mb-1">Body Capital</div>
+                            <div class="text-xl font-bold text-slate-800 mb-2">健康</div>
+                            <div class="text-sm text-slate-500">不仅是无病，更是精力的可持续性。关注度 <span class="text-green-600 font-bold">↑ +9%</span></div>
+                        </div>
+                        <div class="bg-white/60 p-6 rounded-2xl border border-white shadow-sm hover:shadow-md transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-4">💰</div>
+                            <div class="text-sm font-bold text-slate-400 uppercase mb-1">Financial Resilience</div>
+                            <div class="text-xl font-bold text-slate-800 mb-2">财富</div>
+                            <div class="text-sm text-slate-500">从消费主义转向储蓄主义。关注度 <span class="text-green-600 font-bold">↑ +12%</span></div>
+                        </div>
+                        <div class="bg-white/60 p-6 rounded-2xl border border-white shadow-sm hover:shadow-md transition-all">
+                            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mb-4">🧠</div>
+                            <div class="text-sm font-bold text-slate-400 uppercase mb-1">Skill Upgrade</div>
+                            <div class="text-xl font-bold text-slate-800 mb-2">技能</div>
+                            <div class="text-sm text-slate-500">61%的人在学习新技能，作为对抗职业焦虑的武器。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-purple-50/50 p-6 rounded-2xl border border-purple-100 flex gap-4 items-start">
+                        <span class="text-2xl">📉</span>
+                        <div>
+                            <h4 class="font-bold text-slate-800">事业、爱情、个人成长的退潮</h4>
+                            <p class="text-sm text-slate-600 mt-1">这些曾经的“必选项”现在变成了“可选项”。年轻群体（90/00后）对这些领域的关注度下降最为明显，显示出一种极度的务实主义。</p>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 03 体验悖论：深度解析 -->
+            <details class="bento-card group">
+                <summary class="flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-orange-500 font-bold">03</span>
+                            <span class="tag tag-light">Channel Strategy</span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-slate-900">体验的二元悖论：效率与温度</h2>
+                        <p class="text-slate-500 mt-2">线上追求极致效率，线下追求极致温度。中间态正在消亡。</p>
+                    </div>
+                    <div class="expand-btn">→</div>
+                </summary>
+                
+                <div class="details-content">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-6">
+                        <!-- Charting the Paradox -->
+                        <div class="chart-wrapper flex flex-col justify-center">
+                            <h4 class="text-sm font-bold text-slate-500 uppercase mb-6 text-center">中国消费者的购物分裂症</h4>
+                            <div class="space-y-6">
+                                <div>
+                                    <div class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                                        <span>线上逛 (Online Browse)</span>
+                                        <span class="text-blue-600">85%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                                        <div class="bg-blue-600 h-3 rounded-full" style="width: 85%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1">全球最高比例 - 追求全知全能的控制感</p>
+                                </div>
+                                <div>
+                                    <div class="flex justify-between text-sm font-bold text-slate-700 mb-2">
+                                        <span>纯线下买 (Offline Only)</span>
+                                        <span class="text-orange-500">9%</span>
+                                    </div>
+                                    <div class="w-full bg-slate-100 rounded-full h-3 overflow-hidden">
+                                        <div class="bg-orange-500 h-3 rounded-full" style="width: 9%"></div>
+                                    </div>
+                                    <p class="text-xs text-slate-400 mt-1">全球最低比例 - 线下交易功能退化</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Strategic Analysis -->
+                        <div class="space-y-6">
+                            <h3 class="text-xl font-bold text-slate-800">战略启示：线下不是货架，是“充电桩”</h3>
+                            <p class="text-slate-600 leading-relaxed">
+                                43%的中国消费者习惯“线上逛+线上买”闭环，这远高于全球平均。但这并不意味着实体店的死亡，而是实体店功能的<strong>彻底重构</strong>。
+                            </p>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                                    <div class="font-bold text-blue-800 mb-1">线上任务</div>
+                                    <div class="text-xs text-blue-600">提供海量选择、极致比价、退换货便利。<br><strong>关键词：效率</strong></div>
+                                </div>
+                                <div class="bg-orange-50 p-4 rounded-xl border border-orange-100">
+                                    <div class="font-bold text-orange-800 mb-1">线下任务</div>
+                                    <div class="text-xs text-orange-600">提供五感体验、人际互动、即时满足。<br><strong>关键词：温度</strong></div>
+                                </div>
+                            </div>
+                            <div class="strategy-quote text-sm py-4">
+                                “如果你线下的体验不能提供比线上高出10倍的情绪价值，那么消费者就没有理由出门。”
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 04 AI赋能：信任迁移 -->
+            <details class="bento-card group">
+                <summary class="flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-cyan-500 font-bold">04</span>
+                            <span class="tag tag-light">Tech Impact</span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-slate-900">信任的迁移：AI 从工具到家人</h2>
+                        <p class="text-slate-500 mt-2">77%的高频使用率证明，AI已成为中国家庭的“隐形高管”。</p>
+                    </div>
+                    <div class="expand-btn">→</div>
+                </summary>
+                
+                <div class="details-content">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
+                        <!-- Stat Card -->
+                        <div class="md:col-span-1 bg-slate-900 text-white p-8 rounded-2xl relative overflow-hidden flex flex-col justify-center">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-cyan-500 rounded-full filter blur-3xl opacity-30"></div>
+                            <div class="relative z-10">
+                                <div class="text-6xl font-black text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500 mb-2">77%</div>
+                                <div class="font-bold text-xl mb-4">高频使用 AI</div>
+                                <p class="text-sm text-slate-400 leading-relaxed">
+                                    DeepSeek 等工具的爆发，让 AI 跨越了鸿沟。即便在 60 后群体中，使用率也高达 57%。
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Role Analysis -->
+                        <div class="md:col-span-2 space-y-6">
+                            <h3 class="text-xl font-bold text-slate-800">AI 角色的演变</h3>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-cyan-400 transition-colors">
+                                    <div class="text-2xl mb-2">🧠</div>
+                                    <div class="font-bold text-slate-800">顾问 (65%)</div>
+                                    <div class="text-xs text-slate-500">辅助决策，消除信息差</div>
+                                </div>
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-cyan-400 transition-colors">
+                                    <div class="text-2xl mb-2">⚡</div>
+                                    <div class="font-bold text-slate-800">助理 (63%)</div>
+                                    <div class="text-xs text-slate-500">提升效率，处理杂务</div>
+                                </div>
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-cyan-400 transition-colors">
+                                    <div class="text-2xl mb-2">🤝</div>
+                                    <div class="font-bold text-slate-800">伙伴 (46%)</div>
+                                    <div class="text-xs text-slate-500">提供陪伴，缓解孤独</div>
+                                </div>
+                                <div class="p-4 rounded-xl border border-slate-200 bg-white hover:border-cyan-400 transition-colors">
+                                    <div class="text-2xl mb-2">❤️</div>
+                                    <div class="font-bold text-slate-800">好友 (36%)</div>
+                                    <div class="text-xs text-slate-500">情绪价值，深度交流</div>
+                                </div>
+                            </div>
+                            <p class="text-sm text-slate-600 bg-cyan-50 p-4 rounded-xl border border-cyan-100">
+                                <strong>洞察：</strong> AI 正在接管部分情感职能。品牌需要针对 GEO (Generative Engine Optimization) 优化策略，确保你的品牌能被 AI “推荐”给人类。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </details>
+
+            <!-- 05 企业行动指南：CEO 作战地图 -->
+            <details class="bento-card group">
+                <summary class="flex justify-between items-center">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                            <span class="text-red-600 font-bold">05</span>
+                            <span class="tag tag-dark">Playbook 2025</span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-slate-900">企业行动指南：CEO 作战地图</h2>
+                        <p class="text-slate-500 mt-2">在存量竞争时代，如何构建不可替代的生存能力？</p>
+                    </div>
+                    <div class="expand-btn">→</div>
+                </summary>
+                
+                <div class="details-content">
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
+                        
+                        <!-- Pillar 1 -->
+                        <div class="bg-white/80 p-6 rounded-2xl border-t-4 border-t-blue-600 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-slate-900">重塑价值锚点</h3>
+                                <span class="text-2xl">💎</span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4 leading-relaxed h-20">
+                                拒绝无底线的价格战。在“平替”盛行的时代，唯有提供<strong>“有理由的溢价”</strong>才能生存。
+                            </p>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs text-slate-500 space-y-2">
+                                <div class="font-bold text-slate-700 uppercase">Action Plan:</div>
+                                <div class="flex items-center gap-2">✅ 清晰化产品带来的具体收益</div>
+                                <div class="flex items-center gap-2">✅ 像 Noli 一样用专业性对抗比价</div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 2 -->
+                        <div class="bg-white/80 p-6 rounded-2xl border-t-4 border-t-purple-600 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-slate-900">构建情感壁垒</h3>
+                                <span class="text-2xl">🔥</span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4 leading-relaxed h-20">
+                                内容即噪音。不要试图“教育”消费者，而是要通过真实的<strong>生活场景叙事</strong>，提供情绪价值。
+                            </p>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs text-slate-500 space-y-2">
+                                <div class="font-bold text-slate-700 uppercase">Action Plan:</div>
+                                <div class="flex items-center gap-2">✅ 像观夏一样讲好文化故事</div>
+                                <div class="flex items-center gap-2">✅ 创造不可替代的线下氛围</div>
+                            </div>
+                        </div>
+
+                        <!-- Pillar 3 -->
+                        <div class="bg-white/80 p-6 rounded-2xl border-t-4 border-t-cyan-600 shadow-sm">
+                            <div class="flex items-center justify-between mb-4">
+                                <h3 class="text-lg font-bold text-slate-900">人机共生战略</h3>
+                                <span class="text-2xl">🤖</span>
+                            </div>
+                            <p class="text-sm text-slate-600 mb-4 leading-relaxed h-20">
+                                不仅要服务人类，还要<strong>服务 AI</strong>。优化品牌数据结构，确保在 AI 推荐中“被看见”。
+                            </p>
+                            <div class="bg-slate-50 p-3 rounded-lg text-xs text-slate-500 space-y-2">
+                                <div class="font-bold text-slate-700 uppercase">Action Plan:</div>
+                                <div class="flex items-center gap-2">✅ 实施 GEO (生成式引擎优化)</div>
+                                <div class="flex items-center gap-2">✅ 像 Vivino 一样利用行为数据</div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </details>
+
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-20 pt-10 border-t border-slate-200/60 text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm text-xs font-medium text-slate-500 mb-4">
+                <span class="w-2 h-2 rounded-full bg-green-500"></span>
+                Data Source: Accenture 2025 China Consumer Survey (N=5000)
+            </div>
+            <p class="text-slate-400 text-sm">© 2025 埃森哲版权所有 | 终极战略重构版</p>
+        </footer>
+
+    </main>
+
+    <script>
+        // Chart: Brand Preference Trend
+        const ctx = document.getElementById('brandChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: ['3C数码', '美妆护肤', '家用电器', '服饰鞋帽'],
+                datasets: [
+                    {
+                        label: '2025 国货偏好',
+                        data: [40, 42, 54, 43],
+                        backgroundColor: '#2563eb',
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                    },
+                    {
+                        label: '2021 国货偏好',
+                        data: [20, 15, 24, 28],
+                        backgroundColor: '#cbd5e1',
+                        borderRadius: 6,
+                        barPercentage: 0.6,
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: { font: { family: 'Inter', size: 11 }, usePointStyle: true, boxWidth: 8 }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: { display: false },
+                        ticks: { display: false }
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { font: { family: 'Noto Sans SC', size: 11 }, color: '#64748B' }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

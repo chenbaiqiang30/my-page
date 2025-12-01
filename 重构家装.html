@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>【深度商业复盘】家装行业信任链条重构</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@700;900&family=Noto+Sans+SC:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* --- 核心基础设置 --- */
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            color: #1e1b4b; /* 深邃靛蓝 */
+            background-color: #f0f4ff;
+            overflow-x: hidden;
+        }
+
+        .serif-font { font-family: 'Noto Serif SC', serif; }
+
+        /* --- 极光流体背景 (升级版：更柔和、更梦幻) --- */
+        .aurora-bg {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(224, 195, 252, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 90% 10%, rgba(142, 197, 252, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(255, 222, 225, 0.4) 0%, transparent 50%),
+                radial-gradient(circle at 90% 90%, rgba(168, 230, 207, 0.4) 0%, transparent 40%),
+                linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            z-index: -2;
+            filter: blur(40px);
+        }
+        
+        /* 动态噪点层，增加纸张质感 */
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0.03;
+            z-index: -1;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+
+        /* --- 玻璃拟态 (Glassmorphism Pro) --- */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 4px 6px -1px rgba(0, 0, 0, 0.02),
+                0 10px 15px -3px rgba(30, 27, 75, 0.05),
+                inset 0 0 20px rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+        }
+
+        /* --- 标题特效 --- */
+        .hero-title-gradient {
+            background: linear-gradient(135deg, #312e81 0%, #4338ca 40%, #be185d 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+        }
+        
+        /* 装饰性下划线 */
+        .hero-underline {
+            position: relative;
+            display: inline-block;
+        }
+        .hero-underline::after {
+            content: '';
+            position: absolute;
+            bottom: 0px;
+            left: 0;
+            width: 100%;
+            height: 12px;
+            background: rgba(251, 207, 232, 0.6);
+            z-index: -1;
+            transform: skewX(-12deg);
+        }
+
+        /* --- 全景图专用样式 --- */
+        .flow-card {
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 10;
+        }
+        .flow-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(79, 70, 229, 0.15);
+            border-color: #818cf8;
+            z-index: 20;
+        }
+        
+        /* 动态连接管道动画 */
+        .pipeline-flow {
+            stroke-dasharray: 20;
+            animation: dash 30s linear infinite;
+        }
+        @keyframes dash {
+            to { stroke-dashoffset: -1000; }
+        }
+
+        /* 折叠组件优化 */
+        details > summary { list-style: none; cursor: pointer; }
+        details > summary::-webkit-details-marker { display: none; }
+        details[open] > div { animation: slideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="aurora-bg"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- 0. Header: 封面故事级设计 -->
+    <header class="max-w-7xl mx-auto mb-16 pt-12 md:pt-20 px-4 md:px-12 relative">
+        <!-- 装饰性背景字 (极淡) -->
+        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 text-[120px] md:text-[200px] font-black text-indigo-900 opacity-[0.03] pointer-events-none select-none whitespace-nowrap leading-none">
+            TRUST CHAIN
+        </div>
+
+        <div class="text-center relative z-10">
+            <!-- 顶栏标签 -->
+            <div class="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-white/60 border border-white shadow-sm mb-8 backdrop-blur-md animate-fade-in-up">
+                <span class="flex h-3 w-3 relative">
+                    <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                    <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-600"></span>
+                </span>
+                <span class="text-indigo-900 font-bold tracking-widest text-xs md:text-sm uppercase">Business Case Study · 2025 Edition</span>
+            </div>
+
+            <!-- 主标题：排版艺术 -->
+            <h1 class="mb-8 leading-tight">
+                <span class="block text-4xl md:text-5xl font-bold text-slate-600 mb-2 tracking-tight">拒绝流量毒药</span>
+                <span class="block text-6xl md:text-8xl serif-font font-black hero-title-gradient drop-shadow-sm">
+                    重构家装<span class="hero-underline text-indigo-900 mx-2">信任链条</span>
+                </span>
+            </h1>
+
+            <!-- 副标题与数据 -->
+            <div class="max-w-3xl mx-auto flex flex-col md:flex-row items-center justify-center gap-6 md:gap-12 mt-10">
+                <p class="text-lg md:text-xl text-slate-600 font-medium leading-relaxed text-center md:text-right md:w-1/2">
+                    从“百万爆款0咨询”的虚假繁荣，<br>到“高转化率”的组织进化实录。
+                </p>
+                <div class="h-12 w-px bg-slate-300 hidden md:block"></div>
+                <div class="flex gap-8 md:w-1/2 justify-center md:justify-start">
+                    <div class="text-left">
+                        <div class="text-3xl font-black text-indigo-600">5%<span class="text-sm font-bold align-top text-slate-400">↓</span></div>
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wide">获客成本</div>
+                    </div>
+                    <div class="text-left">
+                        <div class="text-3xl font-black text-rose-600">30%<span class="text-sm font-bold align-top text-slate-400">↑</span></div>
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wide">真实转化率</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- 1. 专家深度研判 (Business Review) -->
+    <section class="max-w-7xl mx-auto mb-10">
+        <details open class="group">
+            <summary class="glass-panel p-6 mb-4 hover:bg-white/50 transition-colors flex justify-between items-center select-none cursor-pointer">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 rounded-2xl bg-indigo-600 text-white flex items-center justify-center text-3xl shadow-lg shadow-indigo-200">
+                        <i class="ph-fill ph-strategy"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">专家深度研判</h2>
+                        <p class="text-indigo-600 font-bold text-xs tracking-widest uppercase opacity-80">Insight & Strategy Review</p>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm group-open:rotate-180 transition-transform duration-300">
+                    <i class="ph-bold ph-caret-down"></i>
+                </div>
+            </summary>
+
+            <div class="glass-panel p-8 md:p-12">
+                <div class="grid lg:grid-cols-12 gap-10">
+                    <div class="lg:col-span-5 relative">
+                        <div class="sticky top-6">
+                            <i class="ph-fill ph-quotes text-6xl text-indigo-100 absolute -top-4 -left-4 -z-10"></i>
+                            <h3 class="text-3xl md:text-4xl serif-font font-black text-indigo-950 leading-snug mb-6">
+                                这不仅是一次获客术的胜利，<br>更是一场<span class="text-indigo-600">“反人性”</span>的<br>组织变革。
+                            </h3>
+                            <div class="flex items-center gap-4 mt-8">
+                                <div class="w-12 h-12 rounded-full overflow-hidden border-2 border-white shadow-md">
+                                    <img src="https://api.dicebear.com/9.x/avataaars/svg?seed=Felix" alt="Expert" />
+                                </div>
+                                <div>
+                                    <div class="font-bold text-slate-800">特约商业评论员</div>
+                                    <div class="text-xs text-slate-500">家装行业资深顾问</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="lg:col-span-7 space-y-6">
+                        <div class="bg-white/50 p-6 rounded-2xl border border-white/60 shadow-sm hover:shadow-md transition-shadow">
+                            <h4 class="text-lg font-bold text-rose-700 mb-2 flex items-center gap-2">
+                                <i class="ph-fill ph-warning-circle"></i> 关于“流量毒药”的反思
+                            </h4>
+                            <p class="text-slate-700 leading-relaxed text-justify">
+                                杨柳经历了百万播放0咨询的惨痛教训。这揭示了行业的残酷真相：<strong class="text-indigo-900">泛娱乐流量对低频高客单价行业是有毒的</strong>。它会给团队制造虚假的繁荣感（孔雀心态）。真正的转折点，是她从“做网红”回归到“做老板”，从“拍段子”回归到“拍工地”。
+                            </p>
+                        </div>
+                        <div class="bg-white/50 p-6 rounded-2xl border border-white/60 shadow-sm hover:shadow-md transition-shadow">
+                            <h4 class="text-lg font-bold text-indigo-700 mb-2 flex items-center gap-2">
+                                <i class="ph-fill ph-arrows-merge"></i> 转化的核心是“预期的匹配”
+                            </h4>
+                            <p class="text-slate-700 leading-relaxed text-justify">
+                                300平米大客户接待翻车案例极具警示意义。通过老板IP来的客户，心理预期是VIP待遇。这说明：<strong class="text-indigo-900">线上获客的终点不是到店，而是服务颗粒度的全面对齐</strong>。如果不改变线下的接待流程和组织能力，流量越精准，反而死得越快。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+    </section>
+
+    <!-- 2. 全景图 (Strategic Flywheel) - 重磅升级 -->
+    <section class="max-w-7xl mx-auto mb-10">
+        <details open class="group">
+            <summary class="glass-panel p-6 mb-4 hover:bg-white/50 transition-colors flex justify-between items-center select-none cursor-pointer">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center text-3xl shadow-lg shadow-blue-200">
+                        <i class="ph-fill ph-circuitry"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">增长逻辑全景图</h2>
+                        <p class="text-blue-600 font-bold text-xs tracking-widest uppercase opacity-80">Strategic Pipeline Map</p>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm group-open:rotate-180 transition-transform duration-300">
+                    <i class="ph-bold ph-caret-down"></i>
+                </div>
+            </summary>
+
+            <!-- 全景图画布 -->
+            <div class="glass-panel p-4 md:p-10 relative overflow-hidden">
+                <!-- 动态背景网格 -->
+                <div class="absolute inset-0 opacity-[0.05]" style="background-image: linear-gradient(#4f46e5 1px, transparent 1px), linear-gradient(90deg, #4f46e5 1px, transparent 1px); background-size: 40px 40px;"></div>
+
+                <!-- 管道连接线 (SVG) -->
+                <svg class="absolute inset-0 w-full h-full pointer-events-none hidden lg:block z-0" style="top: 80px;">
+                    <defs>
+                        <linearGradient id="pipeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" stop-color="#818cf8" stop-opacity="0.2" />
+                            <stop offset="50%" stop-color="#4f46e5" stop-opacity="0.8" />
+                            <stop offset="100%" stop-color="#e11d48" stop-opacity="0.2" />
+                        </linearGradient>
+                    </defs>
+                    <!-- 连接线路径 -->
+                    <path d="M 200 150 C 400 150, 450 150, 600 150 S 800 150, 1000 150" fill="none" stroke="url(#pipeGradient)" stroke-width="4" />
+                    <!-- 动态流光 -->
+                    <path d="M 200 150 C 400 150, 450 150, 600 150 S 800 150, 1000 150" fill="none" stroke="#fff" stroke-width="2" class="pipeline-flow" stroke-dasharray="10, 30" opacity="0.6" />
+                </svg>
+
+                <div class="relative z-10 grid grid-cols-1 lg:grid-cols-3 gap-8 items-start pt-10 pb-10">
+                    
+                    <!-- 节点 1: 破局 (蓝色系) -->
+                    <div class="flow-card bg-gradient-to-b from-white to-indigo-50/50 p-6 rounded-3xl border border-white shadow-xl flex flex-col items-center text-center group">
+                        <div class="w-20 h-20 rounded-full bg-indigo-100 flex items-center justify-center text-4xl text-indigo-600 mb-6 shadow-inner ring-4 ring-white relative">
+                            <i class="ph-fill ph-user-focus"></i>
+                            <div class="absolute -bottom-3 bg-indigo-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">INPUT</div>
+                        </div>
+                        <h3 class="text-xl font-black text-indigo-900 mb-1">01. 流量破局</h3>
+                        <p class="text-indigo-500 font-bold text-xs uppercase tracking-wider mb-6">老板 IP 建立信任基石</p>
+                        
+                        <div class="w-full text-left bg-white/60 rounded-xl p-4 border border-indigo-100 mb-4">
+                            <div class="text-xs font-bold text-rose-500 mb-2 flex items-center gap-1"><i class="ph-bold ph-x-circle"></i> 痛点粉碎</div>
+                            <p class="text-xs text-slate-600 mb-1">❌ 剧本演戏 <span class="text-slate-400">-> 0咨询</span></p>
+                            <p class="text-xs text-slate-600">❌ 虚假繁荣 <span class="text-slate-400">-> 流量毒药</span></p>
+                        </div>
+
+                        <div class="w-full text-left bg-indigo-600/5 rounded-xl p-4 border border-indigo-100">
+                            <div class="text-xs font-bold text-green-600 mb-2 flex items-center gap-1"><i class="ph-bold ph-check-circle"></i> 关键动作</div>
+                            <ul class="space-y-2">
+                                <li class="text-xs text-indigo-900 font-medium flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>老板亲临现场
+                                </li>
+                                <li class="text-xs text-indigo-900 font-medium flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>敢报真实底价
+                                </li>
+                                <li class="text-xs text-indigo-900 font-medium flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>直面装修翻车
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- 节点 2: 放大 (紫色系) -->
+                    <div class="flow-card bg-gradient-to-b from-white to-purple-50/50 p-6 rounded-3xl border border-white shadow-xl flex flex-col items-center text-center group mt-0 lg:-mt-6">
+                        <div class="w-20 h-20 rounded-full bg-purple-100 flex items-center justify-center text-4xl text-purple-600 mb-6 shadow-inner ring-4 ring-white relative">
+                            <i class="ph-fill ph-share-network"></i>
+                            <div class="absolute -bottom-3 bg-purple-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">PROCESS</div>
+                        </div>
+                        <h3 class="text-xl font-black text-indigo-900 mb-1">02. 矩阵放大</h3>
+                        <p class="text-purple-500 font-bold text-xs uppercase tracking-wider mb-6">全维度心理战包围</p>
+                        
+                        <div class="w-full grid grid-cols-2 gap-3 mb-4">
+                            <div class="bg-white/60 p-3 rounded-xl border border-purple-100 hover:bg-purple-50 transition-colors">
+                                <div class="text-purple-900 font-bold text-xs mb-1">老板号</div>
+                                <div class="text-[10px] text-slate-500">解决"跑路"担忧</div>
+                            </div>
+                            <div class="bg-white/60 p-3 rounded-xl border border-purple-100 hover:bg-purple-50 transition-colors">
+                                <div class="text-purple-900 font-bold text-xs mb-1">设计师号</div>
+                                <div class="text-[10px] text-slate-500">解决"审美"同频</div>
+                            </div>
+                            <div class="bg-white/60 p-3 rounded-xl border border-purple-100 hover:bg-purple-50 transition-colors">
+                                <div class="text-purple-900 font-bold text-xs mb-1">官方号</div>
+                                <div class="text-[10px] text-slate-500">解决"规模"背书</div>
+                            </div>
+                            <div class="bg-white/60 p-3 rounded-xl border border-purple-100 hover:bg-purple-50 transition-colors">
+                                <div class="text-purple-900 font-bold text-xs mb-1">工地号</div>
+                                <div class="text-[10px] text-slate-500">解决"工艺"透明</div>
+                            </div>
+                        </div>
+                        <div class="w-full text-left bg-purple-600/5 rounded-xl p-3 border border-purple-100 text-center">
+                            <p class="text-xs text-purple-800 font-bold">💡 核心策略：</p>
+                            <p class="text-[10px] text-purple-600 mt-1">不是简单的分发，而是针对不同客户决策心理的饱和式攻击</p>
+                        </div>
+                    </div>
+
+                    <!-- 节点 3: 转化 (红色系) -->
+                    <div class="flow-card bg-gradient-to-b from-white to-rose-50/50 p-6 rounded-3xl border border-white shadow-xl flex flex-col items-center text-center group">
+                        <div class="w-20 h-20 rounded-full bg-rose-100 flex items-center justify-center text-4xl text-rose-600 mb-6 shadow-inner ring-4 ring-white relative">
+                            <i class="ph-fill ph-arrows-clockwise"></i>
+                            <div class="absolute -bottom-3 bg-rose-600 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">OUTPUT</div>
+                        </div>
+                        <h3 class="text-xl font-black text-indigo-900 mb-1">03. 组织转化</h3>
+                        <p class="text-rose-500 font-bold text-xs uppercase tracking-wider mb-6">服务力承接流量</p>
+                        
+                        <div class="w-full text-left bg-white/60 rounded-xl p-4 border border-rose-100 mb-4">
+                            <div class="text-xs font-bold text-rose-500 mb-2 flex items-center gap-1"><i class="ph-bold ph-prohibit"></i> 严禁行为</div>
+                            <p class="text-xs text-slate-600 mb-1">🚫 电话骚扰/逼单</p>
+                            <p class="text-xs text-slate-600">🚫 看人下菜碟报价</p>
+                        </div>
+
+                        <div class="w-full text-left bg-rose-600/5 rounded-xl p-4 border border-rose-100">
+                            <div class="text-xs font-bold text-rose-800 mb-2 flex items-center gap-1"><i class="ph-bold ph-heart"></i> 信任沉淀</div>
+                            <ul class="space-y-2">
+                                <li class="text-xs text-indigo-900 font-medium flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>前置服务(预案)
+                                </li>
+                                <li class="text-xs text-indigo-900 font-medium flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>线上线下同价
+                                </li>
+                                <li class="text-xs text-indigo-900 font-medium flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span>辞退傲慢销冠
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </details>
+    </section>
+
+    <!-- 3. 实战干货挖掘 (Tactics) -->
+    <section class="max-w-7xl mx-auto mb-10">
+        <details open class="group">
+            <summary class="glass-panel p-6 mb-4 hover:bg-white/50 transition-colors flex justify-between items-center select-none cursor-pointer">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-400 to-orange-500 text-white flex items-center justify-center text-3xl shadow-lg shadow-orange-200">
+                        <i class="ph-fill ph-lightning"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">实战干货挖掘</h2>
+                        <p class="text-orange-600 font-bold text-xs tracking-widest uppercase opacity-80">Tactical Execution</p>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm group-open:rotate-180 transition-transform duration-300">
+                    <i class="ph-bold ph-caret-down"></i>
+                </div>
+            </summary>
+
+            <div class="glass-panel p-8 md:p-12">
+                <div class="grid md:grid-cols-2 gap-8">
+                    <!-- 左侧：内容策略 -->
+                    <div class="bg-white/40 rounded-3xl p-8 border border-white/50">
+                        <h3 class="text-xl font-black text-indigo-900 mb-6 flex items-center gap-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded bg-indigo-100 text-indigo-600 text-lg"><i class="ph-bold ph-video-camera"></i></span>
+                            有效内容的“五维法则”
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="flex items-start gap-4">
+                                <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">1</div>
+                                <div>
+                                    <div class="font-bold text-slate-800">老板本人在现场</div>
+                                    <div class="text-sm text-slate-500 mt-1">证明真实性，代表最高重视度，消除“样板间”疑虑。</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">2</div>
+                                <div>
+                                    <div class="font-bold text-slate-800">敢报真实落地价</div>
+                                    <div class="text-sm text-slate-500 mt-1">不藏着掖着，直接筛选预算匹配的精准客户。</div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-4">
+                                <div class="w-6 h-6 rounded-full bg-indigo-600 text-white flex items-center justify-center text-xs font-bold flex-shrink-0 mt-0.5">3</div>
+                                <div>
+                                    <div class="font-bold text-slate-800">直面问题解决</div>
+                                    <div class="text-sm text-slate-500 mt-1">装修不可能不出错。展示**如何解决问题**比展示完美更有信服力。</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 右侧：外科手术式改革 -->
+                    <div class="bg-gradient-to-br from-rose-50 to-white rounded-3xl p-8 border border-white/50">
+                        <h3 class="text-xl font-black text-rose-900 mb-6 flex items-center gap-3">
+                            <span class="flex items-center justify-center w-8 h-8 rounded bg-rose-100 text-rose-600 text-lg"><i class="ph-bold ph-scalpel"></i></span>
+                            转化率翻倍的“外科手术”
+                        </h3>
+                        
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-rose-100 mb-4">
+                            <div class="text-xs font-bold text-rose-500 uppercase tracking-wide mb-2">Crucial Action</div>
+                            <h4 class="font-bold text-slate-800 mb-2">辞退不适应的“传统销冠”</h4>
+                            <p class="text-sm text-slate-600">
+                                传统销冠习惯“逼单+低价签单再增项”，这在透明化时代是致命毒药。即使业绩好，价值观不符也必须切除。
+                            </p>
+                        </div>
+                        
+                        <div class="bg-white p-5 rounded-2xl shadow-sm border border-blue-100">
+                            <div class="text-xs font-bold text-blue-500 uppercase tracking-wide mb-2">Service Upgrade</div>
+                            <h4 class="font-bold text-slate-800 mb-2">前置服务 (Front-loaded)</h4>
+                            <p class="text-sm text-slate-600">
+                                在客户进店前，通过线上简报、提前量房、预案设计，把服务做在前面。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+    </section>
+
+    <!-- 4. 北极星指标 (Metrics) -->
+    <section class="max-w-7xl mx-auto mb-10">
+        <details open class="group">
+            <summary class="glass-panel p-6 mb-4 hover:bg-white/50 transition-colors flex justify-between items-center select-none cursor-pointer">
+                <div class="flex items-center gap-5">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-400 to-teal-500 text-white flex items-center justify-center text-3xl shadow-lg shadow-teal-200">
+                        <i class="ph-fill ph-chart-bar"></i>
+                    </div>
+                    <div>
+                        <h2 class="text-2xl font-bold text-slate-800">北极星指标与成果</h2>
+                        <p class="text-teal-600 font-bold text-xs tracking-widest uppercase opacity-80">Key Results & North Star</p>
+                    </div>
+                </div>
+                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-indigo-600 shadow-sm group-open:rotate-180 transition-transform duration-300">
+                    <i class="ph-bold ph-caret-down"></i>
+                </div>
+            </summary>
+
+            <div class="glass-panel p-8">
+                <div class="flex flex-col md:flex-row items-center gap-8">
+                    <!-- 指标卡片 -->
+                    <div class="w-full md:w-1/3 bg-gradient-to-br from-indigo-900 to-slate-900 rounded-3xl p-8 text-white relative overflow-hidden shadow-2xl">
+                        <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl"><i class="ph-fill ph-star"></i></div>
+                        <div class="text-sm text-indigo-300 font-bold uppercase tracking-widest mb-4">North Star Metric</div>
+                        <h3 class="text-3xl font-black mb-2">优质真实案例数</h3>
+                        <div class="w-12 h-1 bg-teal-400 mb-4"></div>
+                        <p class="text-indigo-200 text-sm leading-relaxed">
+                            不看业绩，不看线索量。<br>
+                            逻辑：案例多 = 设计强 + 交付强 + 满意度高。<br>
+                            这是一个完美的逻辑闭环。
+                        </p>
+                    </div>
+
+                    <!-- 数据展示 -->
+                    <div class="w-full md:w-2/3 grid grid-cols-3 gap-4">
+                        <div class="text-center p-6 bg-white/40 rounded-2xl">
+                            <div class="text-3xl md:text-4xl font-black text-emerald-600 mb-1">&lt;5%</div>
+                            <div class="text-xs md:text-sm font-bold text-slate-600">获客费用率</div>
+                            <div class="text-[10px] text-slate-400 mt-1">行业均值 15%</div>
+                        </div>
+                        <div class="text-center p-6 bg-white/40 rounded-2xl">
+                            <div class="text-3xl md:text-4xl font-black text-indigo-600 mb-1">98.5%</div>
+                            <div class="text-xs md:text-sm font-bold text-slate-600">全员满意度</div>
+                            <div class="text-[10px] text-slate-400 mt-1">覆盖所有岗位</div>
+                        </div>
+                        <div class="text-center p-6 bg-white/40 rounded-2xl">
+                            <div class="text-3xl md:text-4xl font-black text-rose-600 mb-1">80%+</div>
+                            <div class="text-xs md:text-sm font-bold text-slate-600">NPS推荐值</div>
+                            <div class="text-[10px] text-slate-400 mt-1">打分8分以上</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </details>
+    </section>
+
+    <!-- 5. 金句 (Quotes) -->
+    <section class="max-w-7xl mx-auto mb-20">
+        <div class="glass-panel p-10 text-center transform hover:scale-[1.01] transition-transform duration-500">
+            <i class="ph-fill ph-quotes text-6xl text-indigo-200 mb-6 block"></i>
+            <p class="text-2xl md:text-4xl serif-font font-black text-indigo-900 leading-snug mb-8 max-w-4xl mx-auto">
+                “私域不是成交阵地，而是<span class="text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-purple-600">信任阵地</span>。<br>
+                不要在获客环节省钱，而是在<span class="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-blue-600">转化环节赚钱</span>。”
+            </p>
+            <div class="inline-flex items-center gap-3 text-slate-500 font-bold tracking-widest text-sm uppercase">
+                <span class="h-px w-10 bg-slate-300"></span>
+                杨柳 · U家工场创始人
+                <span class="h-px w-10 bg-slate-300"></span>
+            </div>
+        </div>
+    </section>
+
+</body>
+</html>
