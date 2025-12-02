@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MCP 插件开发实战精华 | 企业级应用开发指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0aec0;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #ffe66d;
+            --highlight-tool: #a855f7;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --accent: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-solid: #667eea;
+            --card-hover: rgba(255, 255, 255, 0.12);
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --card-hover: rgba(0, 0, 0, 0.05);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        /* 背景动画 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: -1;
+            overflow: hidden;
+        }
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 40% 60%, rgba(78, 205, 196, 0.1) 0%, transparent 40%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+        @keyframes bgMove {
+            0%, 100% { transform: translate(-10%, -10%); }
+            50% { transform: translate(-20%, -20%); }
+        }
+        .container { 
+            max-width: 1400px; 
+            margin: 0 auto; 
+            padding: 20px;
+            position: relative;
+        }
+        /* 头部英雄区域 */
+        .hero {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 60px 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #4ecdc4, #ffe66d, #ff6b6b);
+            background-size: 200% 100%;
+            animation: gradientMove 3s linear infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--accent);
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(102, 126, 234, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px 5px rgba(102, 126, 234, 0.2); }
+        }
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2, #4ecdc4);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGradient 5s ease infinite;
+        }
+        @keyframes textGradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .hero-subtitle {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            max-width: 700px;
+        }
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+        .meta-item .icon {
+            font-size: 1.2em;
+        }
+        /* 快捷导航 */
+        .quick-nav {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .nav-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.9em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+        .nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+            background: var(--card-hover);
+        }
+        .nav-btn.primary {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+        /* 核心数据卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        .stat-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: block;
+        }
+        .stat-value {
+            font-size: 2.2em;
+            font-weight: 800;
+            background: var(--accent);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        /* 思维导图区域 */
+        .mindmap-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .section-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-title .emoji {
+            font-size: 1.2em;
+        }
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 30px 0;
+        }
+        .center-node {
+            background: var(--accent);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            position: relative;
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .center-node::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--accent-solid), transparent);
+        }
+        .branches-container {
+            width: 100%;
+            position: relative;
+        }
+        .branches-line {
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--accent-solid), var(--accent-solid), transparent);
+        }
+        .branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding-top: 40px;
+        }
+        .branch {
+            position: relative;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.4s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch:nth-child(4) { animation-delay: 0.8s; }
+        .branch::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            width: 3px;
+            height: 40px;
+            background: var(--accent-solid);
+        }
+        .branch-head {
+            background: var(--glass-bg);
+            border: 2px solid var(--accent-solid);
+            padding: 20px 25px;
+            border-radius: 20px;
+            font-size: 1.1em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .branch-head:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .branch-head .icon {
+            font-size: 1.3em;
+            margin-right: 10px;
+        }
+        .sub-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-left: 20px;
+        }
+        .sub-item {
+            padding: 12px 20px;
+            background: rgba(102, 126, 234, 0.08);
+            border-left: 3px solid var(--accent-solid);
+            border-radius: 0 12px 12px 0;
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+        .sub-item:hover {
+            background: rgba(102, 126, 234, 0.15);
+            transform: translateX(5px);
+        }
+        /* 内容板块 */
+        .content-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .content-section:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.25);
+        }
+        .section-header {
+            padding: 30px 40px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--glass-border);
+            transition: background 0.3s ease;
+        }
+        .section-header:hover {
+            background: var(--card-hover);
+        }
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .section-number {
+            width: 50px;
+            height: 50px;
+            background: var(--accent);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            font-weight: 700;
+            color: white;
+        }
+        .section-header-title {
+            font-size: 1.4em;
+            font-weight: 700;
+        }
+        .section-header-subtitle {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        .collapse-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+            color: var(--accent-solid);
+        }
+        .content-section.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+        .section-preview {
+            padding: 0 40px;
+            color: var(--text-secondary);
+            font-style: italic;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .content-section.collapsed .section-preview {
+            max-height: 100px;
+            padding: 20px 40px;
+        }
+        .section-body {
+            padding: 40px;
+            max-height: 3000px;
+            transition: all 0.5s ease;
+        }
+        .content-section.collapsed .section-body {
+            max-height: 0;
+            padding: 0 40px;
+            overflow: hidden;
+        }
+        /* 内容样式 */
+        .content-block {
+            margin-bottom: 30px;
+        }
+        .content-block h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .content-block p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(78, 205, 196, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(255, 230, 109, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-tool {
+            color: var(--highlight-tool);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(168, 85, 247, 0.15);
+            border-radius: 6px;
+        }
+        /* 代码/命令块 */
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin: 20px 0;
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 0.9em;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .code-block code {
+            color: #4ecdc4;
+        }
+        /* 步骤列表 */
+        .steps {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .step {
+            display: flex;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .step:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(10px);
+        }
+        .step-number {
+            width: 36px;
+            height: 36px;
+            background: var(--accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+        .step-content {
+            flex: 1;
+        }
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .step-desc {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        /* 专家点评 */
+        .expert-panel {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            border-radius: 24px;
+            padding: 35px;
+            margin-top: 30px;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            position: relative;
+        }
+        .expert-panel::before {
+            content: '🎯 专家洞察';
+            position: absolute;
+            top: -14px;
+            left: 30px;
+            background: var(--accent);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .expert-panel p {
+            margin-top: 10px;
+        }
+        /* 工具卡片 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .tool-card {
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: all 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2);
+            background: rgba(102, 126, 234, 0.12);
+        }
+        .tool-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        .tool-name {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .tool-desc {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        /* 信息图表区域 */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+        }
+        .flow-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            padding: 30px 0;
+        }
+        .flow-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .flow-node {
+            background: var(--glass-bg);
+            border: 2px solid var(--accent-solid);
+            padding: 20px 30px;
+            border-radius: 20px;
+            text-align: center;
+            min-width: 180px;
+            transition: all 0.3s ease;
+        }
+        .flow-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .flow-node.highlight {
+            background: var(--accent);
+            color: white;
+            border: none;
+        }
+        .flow-node .node-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .flow-node .node-title {
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        .flow-node .node-desc {
+            font-size: 0.85em;
+            opacity: 0.8;
+        }
+        .flow-arrow {
+            font-size: 2em;
+            color: var(--accent-solid);
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+        .flow-arrow.down {
+            transform: rotate(90deg);
+        }
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 18px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .comparison-table th {
+            background: rgba(102, 126, 234, 0.15);
+            font-weight: 700;
+        }
+        .comparison-table th:first-child {
+            border-radius: 16px 0 0 0;
+        }
+        .comparison-table th:last-child {
+            border-radius: 0 16px 0 0;
+        }
+        .comparison-table tr:hover td {
+            background: var(--card-hover);
+        }
+        .comparison-table tr:last-child td:first-child {
+            border-radius: 0 0 0 16px;
+        }
+        .comparison-table tr:last-child td:last-child {
+            border-radius: 0 0 16px 0;
+        }
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--accent);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+        /* 全局控制栏 */
+        .global-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 30px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        .control-btn {
+            padding: 12px 20px;
+            border-radius: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            font-size: 0.85em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        .control-btn:hover {
+            transform: translateY(-3px);
+            background: var(--card-hover);
+        }
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero { padding: 40px 25px; }
+            .hero-meta { flex-direction: column; }
+            .section-header { padding: 20px 25px; }
+            .section-body { padding: 25px; }
+            .branches { grid-template-columns: 1fr; }
+            .branches-line { display: none; }
+            .branch::before { display: none; }
+            .flow-row { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+            .global-controls { left: 10px; bottom: 10px; }
+            .theme-toggle { right: 10px; bottom: 10px; width: 50px; height: 50px; }
+            .back-to-top { right: 10px; bottom: 70px; }
+        }
+        /* 打印优化 */
+        @media print {
+            .theme-toggle, .back-to-top, .global-controls { display: none; }
+            .bg-animation { display: none; }
+            body { background: white; color: black; }
+            .content-section { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="container">
+        <!-- 英雄区域 -->
+        <header class="hero">
+            <div class="hero-badge">
+                <span>🏆</span>
+                <span>MCP 开发大赛 · 冲刺倒计时</span>
+            </div>
+            <h1>MCP 插件开发实战精华</h1>
+            <p class="hero-subtitle">从财务经理到 AI 开发者 —— 两位非技术背景讲师的企业级 MCP 开发全流程揭秘，展示普通人如何借助 AI 完成专业级插件开发</p>
+            
+            <div class="hero-meta">
+                <div class="meta-item">
+                    <span class="icon">📅</span>
+                    <span>2025年12月2日</span>
+                </div>
+                <div class="meta-item">
+                    <span class="icon">⏱️</span>
+                    <span>约 90 分钟精华</span>
+                </div>
+                <div class="meta-item">
+                    <span class="icon">👥</span>
+                    <span>吴昞 · 孔立刚</span>
+                </div>
+                <div class="meta-item">
+                    <span class="icon">🎯</span>
+                    <span>蚂蚁百宝箱赛事</span>
+                </div>
+            </div>
+            
+            <div class="quick-nav">
+                <button class="nav-btn primary" onclick="scrollToSection('mindmap')">🧠 思维导图</button>
+                <button class="nav-btn" onclick="scrollToSection('flow')">📊 开发流程</button>
+                <button class="nav-btn" onclick="scrollToSection('tools')">🛠️ 工具推荐</button>
+                <button class="nav-btn" onclick="scrollToSection('expert')">💡 专家点评</button>
+                <button class="nav-btn" onclick="toggleAll()">📑 展开/收起全部</button>
+            </div>
+        </header>
+
+        <!-- 核心数据 -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-icon">💰</span>
+                <div class="stat-value">16万</div>
+                <div class="stat-label">总奖金池</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🥇</span>
+                <div class="stat-value">3万</div>
+                <div class="stat-label">冠军奖金</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">🎖️</span>
+                <div class="stat-value">前30名</div>
+                <div class="stat-label">均有奖励</div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-icon">⏳</span>
+                <div class="stat-value">6天</div>
+                <div class="stat-label">截止倒计时</div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section" id="mindmap">
+            <h2 class="section-title">
+                <span class="emoji">🧠</span>
+                MCP 开发知识图谱
+            </h2>
+            
+            <div class="mindmap">
+                <div class="center-node">MCP 企业级开发</div>
+                
+                <div class="branches-container">
+                    <div class="branches-line"></div>
+                    <div class="branches">
+                        <div class="branch">
+                            <div class="branch-head">
+                                <span class="icon">💡</span>场景设计
+                            </div>
+                            <div class="sub-items">
+                                <div class="sub-item">🔍 从痛点出发找场景</div>
+                                <div class="sub-item">🤖 用 AI 头脑风暴</div>
+                                <div class="sub-item">📋 参考现有 MCP 市场</div>
+                                <div class="sub-item">🏢 关注企业内部需求</div>
+                            </div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="branch-head">
+                                <span class="icon">🛠️</span>技术选型
+                            </div>
+                            <div class="sub-items">
+                                <div class="sub-item">🐍 Python + FastMCP</div>
+                                <div class="sub-item">📦 Node.js + FastMCP</div>
+                                <div class="sub-item">🌐 HTTP Streamable 模式</div>
+                                <div class="sub-item">☁️ OSS 对象存储</div>
+                            </div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="branch-head">
+                                <span class="icon">🔒</span>数据安全
+                            </div>
+                            <div class="sub-items">
+                                <div class="sub-item">🏠 本地服务器优先</div>
+                                <div class="sub-item">🔐 企业内网部署</div>
+                                <div class="sub-item">📂 文件脱敏处理</div>
+                                <div class="sub-item">🛡️ VPN 认证访问</div>
+                            </div>
+                        </div>
+                        
+                        <div class="branch">
+                            <div class="branch-head">
+                                <span class="icon">🚀</span>部署上线
+                            </div>
+                            <div class="sub-items">
+                                <div class="sub-item">🐳 Docker 容器化</div>
+                                <div class="sub-item">☁️ 云服务器部署</div>
+                                <div class="sub-item">🔗 公网地址配置</div>
+                                <div class="sub-item">📦 百宝箱发布</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 开发流程图 -->
+        <section class="infographic" id="flow">
+            <h2 class="section-title">
+                <span class="emoji">📊</span>
+                MCP 开发标准流程
+            </h2>
+            
+            <div class="flow-chart">
+                <div class="flow-row">
+                    <div class="flow-node highlight">
+                        <div class="node-icon">🎯</div>
+                        <div class="node-title">场景定义</div>
+                        <div class="node-desc">确定要解决的问题</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div class="node-icon">🔍</div>
+                        <div class="node-title">API 寻找</div>
+                        <div class="node-desc">找到合适的接口</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div class="node-icon">📝</div>
+                        <div class="node-title">提示词编写</div>
+                        <div class="node-desc">清晰描述需求</div>
+                    </div>
+                </div>
+                
+                <div class="flow-arrow down">↓</div>
+                
+                <div class="flow-row">
+                    <div class="flow-node">
+                        <div class="node-icon">🤖</div>
+                        <div class="node-title">AI 代码生成</div>
+                        <div class="node-desc">让 AI 写代码</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div class="node-icon">🧪</div>
+                        <div class="node-title">本地测试</div>
+                        <div class="node-desc">Inspector 调试</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node highlight">
+                        <div class="node-icon">🚀</div>
+                        <div class="node-title">服务器部署</div>
+                        <div class="node-desc">Docker 上线</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心内容板块 -->
+        <section class="content-section" id="section-1">
+            <div class="section-header" onclick="toggleSection('section-1')">
+                <div class="section-header-left">
+                    <div class="section-number">01</div>
+                    <div>
+                        <div class="section-header-title">吴昞：政策咨询 MCP 开发实战</div>
+                        <div class="section-header-subtitle">从财务经理视角出发的企业内部知识库方案</div>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">非技术背景如何开发 MCP？用 AI 对话式编程，把公司政策文件变成智能问答系统...</div>
+            <div class="section-body">
+                <div class="content-block">
+                    <h3>💼 场景痛点</h3>
+                    <p>企业内部的报销差旅政策文件，员工<span class="highlight-key">根本不看</span>，HR 被反复询问同样的问题。传统知识库的向量检索存在<span class="highlight-data">召回率问题</span>，且企业数据<span class="highlight-key">不适合上传到第三方平台</span>。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>🎯 解决思路</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">文件 Markdown 化</div>
+                                <div class="step-desc">用 Gemini/千问 将 PDF 政策文件转换为 Markdown 格式，让 AI 更好地理解结构化内容</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">本地文件存储</div>
+                                <div class="step-desc">数据存储在企业自己的服务器上，完全可控，避免合规风险</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">FastMCP 框架开发</div>
+                                <div class="step-desc">使用 HTTP Streamable 模式，支持 Python 和 Node.js 双版本</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <div class="step-title">公网地址暴露</div>
+                                <div class="step-desc">通过 Cloudflare Tunnel 或 Nginx 反代，实现外网安全访问</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🔧 关键代码技巧</h3>
+                    <div class="code-block">
+                        <code># 为什么不用向量知识库？<br>
+# 1. 上下文内容不多，DeepSeek 模型直接读取性价比更高<br>
+# 2. 用户一般问 1-3 次就得到答案，无需复杂检索<br>
+# 3. 企业数据敏感，本地存储更安全</code>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>💡 金句摘录</h3>
+                    <p><span class="highlight-quote">"人类科技进步最大的驱动力是懒惰"</span> —— 正是因为不想写代码，所以让 AI 来写</p>
+                    <p><span class="highlight-quote">"不会的时候不要创新，先去抄"</span> —— 参考 FastMCP 官方示例快速上手</p>
+                    <p><span class="highlight-quote">"你要知道问题发生在哪，会提问题、会找问题"</span> —— 非程序员的核心竞争力</p>
+                </div>
+
+                <div class="expert-panel">
+                    <p><strong>这个案例的核心价值在于「企业级数据安全」思维。</strong></p>
+                    <p>很多人开发 MCP 只考虑功能实现，却忽略了企业实际部署时的合规要求。吴昞老师的方案将敏感文件保留在本地服务器，通过 MCP 协议暴露接口而非数据本身，是一个<span class="highlight-key">可复制的企业内网 AI 应用范式</span>。</p>
+                    <p>另外，他的「让 AI 把 Node.js 代码翻译成 Python」的做法，展示了如何用 AI 降低技术栈切换成本——<span class="highlight-data">一个提示词完成跨语言迁移</span>。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="section-2">
+            <div class="section-header" onclick="toggleSection('section-2')">
+                <div class="section-header-left">
+                    <div class="section-number">02</div>
+                    <div>
+                        <div class="section-header-title">孔立刚：多图生成 MCP 开发实战</div>
+                        <div class="section-header-subtitle">从售后经理视角出发的图像融合 AI 应用</div>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">如何把火山引擎的生图 API 封装成 MCP？提示词工程决定代码质量...</div>
+            <div class="section-body">
+                <div class="content-block">
+                    <h3>🎨 项目目标</h3>
+                    <p>将<span class="highlight-tool">火山引擎</span>的图像生成 API 封装成 MCP 插件，实现<span class="highlight-key">多图融合</span>功能。例如：上传一张人物肖像 + 一张吉卜力风格参考图，生成风格化后的新图像。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>🔑 开发核心要点</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">Project Rules 设置</div>
+                                <div class="step-desc">在 IDE 中添加项目规则文件，让 AI 按照严谨的思维链生成代码</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">提示词工程</div>
+                                <div class="step-desc">详细描述 API 的 cURL 请求示例、输入输出格式，让 AI 有明确参考</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">远程开发部署</div>
+                                <div class="step-desc">使用 VSCode Remote 连接服务器，本地修改直接同步到云端</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <div class="step-title">Docker 容器化</div>
+                                <div class="step-desc">自动生成 Dockerfile 和 docker-compose.yml，一键部署</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>📝 提示词示例结构</h3>
+                    <div class="code-block">
+                        <code>1. 明确开发框架：使用 FastMCP<br>
+2. 指定运行模式：HTTP Streamable<br>
+3. 提供 API 文档：cURL 请求示例 + 返回格式<br>
+4. 测试要求：项目测试成功后再交付<br>
+5. 参数传递：API Key 通过环境变量注入</code>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>💡 金句摘录</h3>
+                    <p><span class="highlight-quote">"提示词写得怎么样，决定了 AI 给你写的代码质量怎么样"</span></p>
+                    <p><span class="highlight-quote">"你不懂就问 AI，一分钟前不懂，一分钟后你就是专家"</span></p>
+                    <p><span class="highlight-quote">"服务器问题搞不定就问客服，专业的人做专业的事"</span></p>
+                </div>
+
+                <div class="expert-panel">
+                    <p><strong>这个案例展示了「API 封装 → MCP」的标准化路径。</strong></p>
+                    <p>MCP 的本质是把各种 API 统一成大模型可调用的标准接口。孔立刚老师用 Postman 测试 API 返回、用 Project Rules 约束代码生成、用 Docker 标准化部署，形成了一套<span class="highlight-key">可复用的开发 SOP</span>。</p>
+                    <p>特别值得注意的是他强调的<span class="highlight-data">「找好的 API」</span>这一点——MCP 开发的核心竞争力不是写代码，而是发现有价值的场景和高质量的数据源。</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="content-section" id="section-3">
+            <div class="section-header" onclick="toggleSection('section-3')">
+                <div class="section-header-left">
+                    <div class="section-number">03</div>
+                    <div>
+                        <div class="section-header-title">两位讲师的共同洞察</div>
+                        <div class="section-header-subtitle">非技术背景人士的 AI 开发方法论</div>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">财务经理和售后经理如何成为 MCP 开发者？他们的方法论可以复制...</div>
+            <div class="section-body">
+                <div class="content-block">
+                    <h3>🎯 核心方法论</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>维度</th>
+                            <th>传统开发思维</th>
+                            <th>AI 辅助开发思维</th>
+                        </tr>
+                        <tr>
+                            <td><strong>技能要求</strong></td>
+                            <td>精通编程语言</td>
+                            <td>会提问、能看懂代码</td>
+                        </tr>
+                        <tr>
+                            <td><strong>学习路径</strong></td>
+                            <td>系统学习 → 实践</td>
+                            <td>以战代练、边做边学</td>
+                        </tr>
+                        <tr>
+                            <td><strong>遇到问题</strong></td>
+                            <td>查文档、搜 Stack Overflow</td>
+                            <td>直接问 AI、让 AI 调试</td>
+                        </tr>
+                        <tr>
+                            <td><strong>代码迁移</strong></td>
+                            <td>重新学习新语言</td>
+                            <td>让 AI 翻译代码</td>
+                        </tr>
+                        <tr>
+                            <td><strong>核心竞争力</strong></td>
+                            <td>编码能力</td>
+                            <td>场景洞察 + 提示词工程</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h3>🚀 可复用的开发流程</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">场景发现</div>
+                                <div class="step-desc">从自己工作中的痛点出发，或用 AI 头脑风暴：「我是 XX 岗位，有哪些场景可以用 MCP 解决？」</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">参考学习</div>
+                                <div class="step-desc">去 mcp.so 或 GitHub FastMCP 仓库看现有示例，抄一个相似的先跑起来</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">AI 对话开发</div>
+                                <div class="step-desc">用 Cursor/通义灵码等 AI IDE，把需求用大白话描述清楚，让 AI 生成代码</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <div class="step-title">调试迭代</div>
+                                <div class="step-desc">用 MCP Inspector 测试连通性，报错了就把错误信息丢给 AI 修复</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <div class="step-title">部署上线</div>
+                                <div class="step-desc">让 AI 生成 Dockerfile，Docker 一键部署到云服务器</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 工具推荐 -->
+        <section class="content-section" id="tools">
+            <div class="section-header" onclick="toggleSection('tools')">
+                <div class="section-header-left">
+                    <div class="section-number">🛠️</div>
+                    <div>
+                        <div class="section-header-title">推荐工具清单</div>
+                        <div class="section-header-subtitle">两位讲师实际使用的开发工具栈</div>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">Cursor、通义灵码、Cherry Studio、MCP Inspector...</div>
+            <div class="section-body">
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-icon">💻</div>
+                        <div class="tool-name">Cursor / 通义灵码</div>
+                        <div class="tool-desc">AI 编程 IDE，对话式生成代码，支持 Project Rules</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🍒</div>
+                        <div class="tool-name">Cherry Studio</div>
+                        <div class="tool-desc">MCP 前端调试工具，可视化测试 MCP 服务连通性</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔍</div>
+                        <div class="tool-name">MCP Inspector</div>
+                        <div class="tool-desc">官方调试工具，无需模型即可测试 MCP 接口</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">📬</div>
+                        <div class="tool-name">Postman</div>
+                        <div class="tool-desc">API 测试工具，验证接口请求和返回格式</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🐳</div>
+                        <div class="tool-name">Docker</div>
+                        <div class="tool-desc">容器化部署，让 AI 生成 Dockerfile 一键上线</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">☁️</div>
+                        <div class="tool-name">Cloudflare</div>
+                        <div class="tool-desc">免费 Tunnel、R2 对象存储、CDN 防护</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🔗</div>
+                        <div class="tool-name">WinSCP</div>
+                        <div class="tool-desc">Windows 文件传输工具，本地与服务器同步</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-icon">🌐</div>
+                        <div class="tool-name">mcp.so</div>
+                        <div class="tool-desc">MCP 插件市场，找灵感、看示例的宝库</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家总评 -->
+        <section class="content-section" id="expert">
+            <div class="section-header" onclick="toggleSection('expert')">
+                <div class="section-header-left">
+                    <div class="section-number">💡</div>
+                    <div>
+                        <div class="section-header-title">MCP 插件专家总评</div>
+                        <div class="section-header-subtitle">对本次直播内容的深度解读与建议</div>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">作为 MCP 领域的深度观察者，我认为这场直播最有价值的三个点是...</div>
+            <div class="section-body">
+                <div class="expert-panel" style="margin-top: 0;">
+                    <h3 style="margin-bottom: 20px;">🎯 核心价值判断</h3>
+                    <p>这场直播最珍贵的不是技术细节，而是<span class="highlight-key">「普通人视角」</span>的 MCP 开发路径展示。两位讲师都强调自己不是技术出身，却能完成企业级 MCP 开发，这本身就是对「AI 降低编程门槛」最好的证明。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>✅ 值得采纳的做法</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">本地优先的数据安全策略</div>
+                                <div class="step-desc">吴昞老师的方案将敏感文件保留在本地，只暴露 MCP 接口，这是企业落地的现实路径。很多人只考虑功能，忽略了 CIO 们关心的合规问题。</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">Project Rules 约束代码生成</div>
+                                <div class="step-desc">孔立刚老师强调的 IDE 规则文件，能让 AI 按照一致的风格和架构生成代码，减少返工。这是「提示词工程」在代码领域的高级应用。</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">用 AI 完成跨语言迁移</div>
+                                <div class="step-desc">一个提示词让 AI 把 Node.js 代码翻译成 Python，展示了 AI 辅助开发的真正威力——技术栈不再是壁垒。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>⚠️ 需要注意的问题</h3>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">!</div>
+                            <div class="step-content">
+                                <div class="step-title">AI 生成代码的「死循环」风险</div>
+                                <div class="step-desc">吴昞老师提到 AI 有时会陷入错误修复的死循环。建议设置迭代次数上限，超过 3 次仍无法解决就换模型或换思路。</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">!</div>
+                            <div class="step-content">
+                                <div class="step-title">Python 服务的持久化运行</div>
+                                <div class="step-desc">Python 版 MCP 需要用 nohup 或 systemd 保持后台运行，否则关闭终端服务就停止。Node.js 相对更简单。</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">!</div>
+                            <div class="step-content">
+                                <div class="step-title">国内服务器的网络限制</div>
+                                <div class="step-desc">Docker 镜像拉取、GitHub 访问可能受限，建议提前配置镜像源或使用 Cloudflare Workers 中转。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🚀 给参赛者的建议</h3>
+                    <p>距离比赛截止只剩 <span class="highlight-data">6 天</span>，如果你还没开始：</p>
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <div class="step-title">选择简单场景</div>
+                                <div class="step-desc">参考聚合数据等平台的免费 API（天气、新闻、翻译），用 FastMCP 框架快速封装</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <div class="step-title">复用现有代码</div>
+                                <div class="step-desc">去 GitHub FastMCP 仓库 clone 示例项目，改改 API 调用逻辑就能用</div>
+                            </div>
+                        </div>
+                        <div class="step">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <div class="step-title">重视场景描述</div>
+                                <div class="step-desc">百宝箱评审会看你解决了什么问题，一个清晰的场景故事比炫酷的技术实现更重要</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-panel">
+                    <h3 style="margin-bottom: 15px;">📌 一句话总结</h3>
+                    <p style="font-size: 1.1em;"><strong>MCP 开发的核心竞争力 = <span class="highlight-key">场景洞察</span> + <span class="highlight-data">高质量 API</span> + <span class="highlight-quote">清晰的提示词</span></strong></p>
+                    <p>技术门槛已经被 AI 拉平，真正的差异化在于：你能不能找到一个<span class="highlight-key">真正有人愿意用</span>的场景？</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer style="text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 0.9em;">
+            <p>内容整理自 WaytoAGI 2025年12月2日直播 · MCP 插件开发大赛系列第三期</p>
+            <p style="margin-top: 10px;">Made with Claude · 致力于让复杂内容变得清晰易懂</p>
+        </footer>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <!-- 返回顶部 -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()" title="返回顶部">
+        ↑
+    </div>
+
+    <!-- 全局控制 -->
+    <div class="global-controls">
+        <button class="control-btn" onclick="toggleAll()">📑 全部展开/收起</button>
+        <button class="control-btn" onclick="window.print()">🖨️ 打印</button>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+
+        // 全部展开/收起
+        let allCollapsed = false;
+        function toggleAll() {
+            const sections = document.querySelectorAll('.content-section');
+            allCollapsed = !allCollapsed;
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.add('collapsed');
+                } else {
+                    s.classList.remove('collapsed');
+                }
+            });
+        }
+
+        // 单个板块切换
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // 滚动到指定板块
+        function scrollToSection(id) {
+            const el = document.getElementById(id);
+            if (el) {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                el.classList.remove('collapsed');
+            }
+        }
+
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 滚动显示返回顶部按钮
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+
+        // 板块入场动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.content-section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
