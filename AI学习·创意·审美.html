@@ -1,0 +1,1611 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI学习·创意·审美 | 分享会精华笔记</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.78);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --highlight-key: #dc2626;
+            --highlight-data: #2563eb;
+            --highlight-quote: #059669;
+            --highlight-warn: #d97706;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.18);
+            --accent: #8b5cf6;
+            --accent-pink: #ec4899;
+            --card-hover: rgba(139, 92, 246, 0.08);
+        }
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-bg: rgba(30, 30, 60, 0.82);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+            --card-hover: rgba(139, 92, 246, 0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.85;
+            min-height: 100vh;
+            padding: 24px;
+        }
+        .container { max-width: 1280px; margin: 0 auto; }
+        
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 48px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.7s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ef4444, #f59e0b, #10b981, #3b82f6, #8b5cf6, #ec4899);
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-size: clamp(2em, 5vw, 3em);
+            font-weight: 800;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+        .header-subtitle {
+            font-size: 1.15em;
+            color: var(--text-secondary);
+            max-width: 800px;
+        }
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 24px;
+            padding-top: 24px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+            color: var(--text-secondary);
+        }
+        .meta-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.25);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            border: none;
+        }
+        
+        /* Expert Overview Card */
+        .expert-overview {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: fadeInUp 0.7s ease 0.1s backwards;
+        }
+        .expert-overview::before {
+            content: '🎓';
+            position: absolute;
+            top: -20px;
+            left: 40px;
+            font-size: 2.5em;
+            background: var(--glass-bg);
+            padding: 8px 20px;
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+        }
+        .expert-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 20px;
+            padding-top: 10px;
+        }
+        .expert-content {
+            display: grid;
+            gap: 20px;
+        }
+        .expert-point {
+            display: flex;
+            gap: 16px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.06), rgba(236, 72, 153, 0.06));
+            border-radius: 16px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+        .expert-point:hover {
+            transform: translateX(8px);
+            background: var(--card-hover);
+        }
+        .expert-icon {
+            font-size: 1.8em;
+            flex-shrink: 0;
+        }
+        .expert-text h4 {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        .expert-text p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        
+        /* Mindmap */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 48px 32px;
+            margin-bottom: 32px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.7s ease 0.2s backwards;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--accent);
+        }
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            padding: 24px 48px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 800;
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.35);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+        }
+        .connector-line {
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            border-radius: 4px;
+        }
+        .branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            width: 100%;
+        }
+        .branch {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.3s; }
+        .branch:nth-child(2) { animation-delay: 0.45s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch:nth-child(4) { animation-delay: 0.75s; }
+        .branch-header {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.12));
+            border: 2px solid var(--accent);
+            padding: 18px 24px;
+            border-radius: 20px;
+            font-size: 1.15em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+            transition: all 0.35s ease;
+            cursor: default;
+        }
+        .branch-header:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.2);
+        }
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .branch-item {
+            background: rgba(139, 92, 246, 0.05);
+            padding: 14px 20px;
+            border-radius: 14px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+        .branch-item:hover {
+            background: var(--card-hover);
+            transform: translateX(6px);
+        }
+        
+        /* Sections */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 32px 40px;
+            transition: background 0.3s ease;
+            user-select: none;
+        }
+        .section-header:hover {
+            background: var(--card-hover);
+        }
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .section-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .collapse-icon {
+            font-size: 1.6em;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .section.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+        .section-preview {
+            padding: 0 40px;
+            color: var(--text-secondary);
+            font-style: italic;
+            font-size: 0.95em;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+        .section.collapsed .section-preview {
+            max-height: 80px;
+            padding-bottom: 24px;
+            opacity: 1;
+        }
+        .section-content {
+            padding: 0 40px 40px;
+            max-height: 8000px;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .section.collapsed .section-content {
+            max-height: 0;
+            padding: 0 40px;
+        }
+        
+        /* Speaker Cards */
+        .speaker-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(236, 72, 153, 0.05));
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            border: 1px solid rgba(139, 92, 246, 0.15);
+            transition: all 0.35s ease;
+        }
+        .speaker-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(139, 92, 246, 0.15);
+        }
+        .speaker-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .speaker-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            color: white;
+            font-weight: 700;
+            flex-shrink: 0;
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);
+        }
+        .speaker-info h3 {
+            font-size: 1.35em;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .speaker-role {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        .speaker-section {
+            margin-bottom: 24px;
+        }
+        .speaker-section:last-child {
+            margin-bottom: 0;
+        }
+        .speaker-section-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .speaker-list {
+            list-style: none;
+        }
+        .speaker-list li {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 12px;
+            line-height: 1.7;
+        }
+        .speaker-list li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 10px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+        }
+        
+        /* Quote Cards */
+        .quote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .quote-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(59, 130, 246, 0.08));
+            border-radius: 20px;
+            padding: 28px;
+            border-left: 5px solid var(--highlight-quote);
+            position: relative;
+            transition: all 0.35s ease;
+        }
+        .quote-card:hover {
+            transform: translateY(-4px) scale(1.01);
+            box-shadow: 0 12px 28px rgba(16, 185, 129, 0.15);
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 12px;
+            right: 20px;
+            font-size: 4em;
+            color: rgba(16, 185, 129, 0.15);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        .quote-text {
+            font-size: 1.1em;
+            font-weight: 600;
+            line-height: 1.7;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        .quote-source {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        
+        /* Highlights */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(220, 38, 38, 0.1);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(37, 99, 235, 0.1);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(5, 150, 105, 0.1);
+            border-radius: 6px;
+        }
+        
+        /* Info Cards Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+        .info-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.08));
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.35s ease;
+            border: 1px solid rgba(139, 92, 246, 0.12);
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 28px rgba(139, 92, 246, 0.18);
+        }
+        .info-card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+            margin-bottom: 18px;
+        }
+        .info-card h4 {
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        .info-card p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+        
+        /* Journey Timeline */
+        .journey-timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+        .journey-timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent), var(--accent-pink), transparent);
+            border-radius: 3px;
+        }
+        .journey-item {
+            position: relative;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 18px;
+            transition: all 0.3s ease;
+        }
+        .journey-item:hover {
+            background: var(--card-hover);
+            transform: translateX(8px);
+        }
+        .journey-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 28px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            box-shadow: 0 0 0 4px var(--glass-bg);
+        }
+        .journey-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+        .journey-content {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* Expert Comment */
+        .expert-comment {
+            margin-top: 32px;
+            padding: 32px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            border-left: 5px solid var(--accent);
+            border-radius: 20px;
+            position: relative;
+        }
+        .expert-comment::before {
+            content: '💡';
+            position: absolute;
+            top: -18px;
+            left: 24px;
+            font-size: 2.2em;
+            background: var(--glass-bg);
+            padding: 6px 18px;
+            border-radius: 14px;
+            box-shadow: var(--shadow);
+        }
+        .expert-comment-title {
+            font-weight: 700;
+            font-size: 1.15em;
+            margin-bottom: 12px;
+            padding-top: 8px;
+            color: var(--accent);
+        }
+        .expert-comment p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+        
+        /* Resource List */
+        .resource-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+        .resource-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .resource-item:hover {
+            background: var(--card-hover);
+            border-color: var(--accent);
+            transform: translateX(6px);
+        }
+        .resource-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            flex-shrink: 0;
+        }
+        .resource-info h5 {
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .resource-info p {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.6em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.35s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        /* Footer */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            margin-top: 32px;
+            box-shadow: var(--shadow);
+            text-align: center;
+        }
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        .footer-highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(28px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            .header, .section-header, .section-content, .section-preview { padding-left: 24px; padding-right: 24px; }
+            .header { padding: 32px 24px; }
+            .section-header { padding: 24px; }
+            .section-content { padding: 0 24px 32px; }
+            h1 { font-size: 1.8em; }
+            .center-node { padding: 18px 28px; font-size: 1.2em; }
+            .branches { grid-template-columns: 1fr; }
+            .speaker-header { flex-direction: column; text-align: center; }
+            .quote-grid { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+            .theme-toggle { width: 52px; height: 52px; bottom: 20px; right: 20px; }
+        }
+        
+        /* Print */
+        @media print {
+            body { background: white; }
+            .theme-toggle, .controls { display: none; }
+            .section.collapsed .section-content { max-height: none; padding: 0 40px 40px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-badge">
+                <span>✨</span>
+                <span>精华笔记</span>
+            </div>
+            <h1>AI学习·创意·审美</h1>
+            <p class="header-subtitle">一场关于如何在AI时代保持学习力、激发创造力、培养审美能力的深度分享。三位嘉宾从不同视角带来真知灼见，帮助我们构建属于自己的AI学习系统。</p>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <div class="meta-icon">👥</div>
+                    <span>邱老师、恋老师、向阳老师</span>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon">⏱️</div>
+                    <span>约65分钟</span>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon">🎯</div>
+                    <span>AI学习方法 · 创意思维 · 审美培养</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">
+                    <span>📂</span>
+                    <span>展开/折叠全部</span>
+                </button>
+                <button class="btn" onclick="window.print()">
+                    <span>🖨️</span>
+                    <span>打印/导出</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Expert Overview -->
+        <div class="expert-overview">
+            <h2 class="expert-title">🎯 学习专家点评</h2>
+            <div class="expert-content">
+                <div class="expert-point">
+                    <span class="expert-icon">💎</span>
+                    <div class="expert-text">
+                        <h4>核心洞察：方法论的永恒价值</h4>
+                        <p>本次分享最珍贵的观点是"<strong>一切知识中最有价值的部分是关于方法的知识</strong>"。在AI日新月异的时代，具体知识随时可能过时，但<span class="highlight-key">学习方法论</span>是可迁移、可复用的底层能力。三位嘉宾虽背景各异，但都强调了这一点。</p>
+                    </div>
+                </div>
+                <div class="expert-point">
+                    <span class="expert-icon">🔬</span>
+                    <div class="expert-text">
+                        <h4>信息素养：追溯信源的重要性</h4>
+                        <p>邱老师提出的"<span class="highlight-data">信息拷贝走样链</span>"概念极具启发性。从原创新闻到N手信息，信息会逐步失真。学会<span class="highlight-key">追踪信源、验证信息</span>，是AI时代最重要的信息素养，也是对抗AI幻觉的有效手段。</p>
+                    </div>
+                </div>
+                <div class="expert-point">
+                    <span class="expert-icon">⚡</span>
+                    <div class="expert-text">
+                        <h4>学习范式转变：从搜索引擎到AI交互</h4>
+                        <p>恋老师的分享揭示了学习范式的根本性转变。AI之前，我们需要将"特定问题抽象为通用问题"才能有效搜索；AI之后，这个抽象过程被大模型接管。<span class="highlight-quote">学习从"定向搜索"变成了"交互式对话"</span>，口袋里装着一个万能专家。</p>
+                    </div>
+                </div>
+                <div class="expert-point">
+                    <span class="expert-icon">🌱</span>
+                    <div class="expert-text">
+                        <h4>可持续成长：输出即最好的输入</h4>
+                        <p>向阳老师实践的"<span class="highlight-key">费曼学习法</span>"——学习后进行分享输出——是最高效的学习方式。分享不仅加深理解，还能吸引同行交流、积累影响力，形成良性循环。这个方法论跨越时代，在AI时代依然适用。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mindmap -->
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">📊 核心知识图谱</h2>
+            <div class="mindmap">
+                <div class="center-node">AI时代的学习力</div>
+                <div class="connector-line"></div>
+                <div class="branches">
+                    <div class="branch">
+                        <div class="branch-header">🎓 学习方法</div>
+                        <div class="branch-items">
+                            <div class="branch-item">追踪信源，验证信息</div>
+                            <div class="branch-item">拒绝隔夜问题</div>
+                            <div class="branch-item">复习 → 理解 → 归纳</div>
+                            <div class="branch-item">与AI交互式学习</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">💡 创意培养</div>
+                        <div class="branch-items">
+                            <div class="branch-item">从提问开始思考</div>
+                            <div class="branch-item">结合熟悉领域探索</div>
+                            <div class="branch-item">识别恒定量与变量</div>
+                            <div class="branch-item">允许试错，学会止损</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">🎨 审美提升</div>
+                        <div class="branch-items">
+                            <div class="branch-item">多看绘本与大师作品</div>
+                            <div class="branch-item">发现生活中的小美好</div>
+                            <div class="branch-item">看非虚构类加强逻辑</div>
+                            <div class="branch-item">模仿 → 归纳 → 形成风格</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">🛠️ AI工具运用</div>
+                        <div class="branch-items">
+                            <div class="branch-item">AI作为杠精/陪练/老师</div>
+                            <div class="branch-item">用AI打造第二大脑</div>
+                            <div class="branch-item">先试用再订阅</div>
+                            <div class="branch-item">AI是工具，人是主导</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section: Speakers -->
+        <section id="speakers" class="section collapsed">
+            <div class="section-header" onclick="toggleSection('speakers')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">👥</div>
+                    <h2 class="section-title">发言人核心观点</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">三位嘉宾从教育者、开发者、投资者视角，分享各自的AI学习心路历程与方法论...</p>
+            <div class="section-content">
+                <!-- Speaker 1: 邱老师 -->
+                <div class="speaker-card">
+                    <div class="speaker-header">
+                        <div class="speaker-avatar">邱</div>
+                        <div class="speaker-info">
+                            <h3>邱老师</h3>
+                            <p class="speaker-role">教育者 · AI教育探索者 · 主讲人</p>
+                        </div>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">🧠 核心观点</h4>
+                        <ul class="speaker-list">
+                            <li><span class="highlight-key">方法论优先</span>：一切知识里面最有价值的部分，是关于方法的知识，而不是知识本身</li>
+                            <li><span class="highlight-data">信息拷贝走样链</span>：从A(原创新闻/官方报告)到N手信息，会逐步失真，要尽量找信息源头</li>
+                            <li><span class="highlight-quote">内容是核心，审美是滋养，创意是生长</span>——创作者的三层价值</li>
+                            <li>识别<span class="highlight-key">恒定量</span>（自身优势）与<span class="highlight-key">变量</span>（外部环境），在恒定量上下功夫</li>
+                        </ul>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">🚀 学习方法</h4>
+                        <ul class="speaker-list">
+                            <li><strong>追踪信源</strong>：看到推特/公众号内容，要找原作者、原链接</li>
+                            <li><strong>拒绝隔夜问题</strong>：发现问题要设置节点，不让问题堆积</li>
+                            <li><strong>复习归纳</strong>：自学→复习→理解→归纳，沉淀为自己的知识</li>
+                            <li><strong>多看多想多干</strong>：看绘本/大师作品提升审美，提问思考，从模仿开始实践</li>
+                        </ul>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">💫 心路历程</h4>
+                        <div class="journey-timeline">
+                            <div class="journey-item">
+                                <div class="journey-title">作为教师的思考</div>
+                                <div class="journey-content">观察到学霸的特质是"主动倾听、主动思考"，不会因为对老师印象不好或学科困难就放弃</div>
+                            </div>
+                            <div class="journey-item">
+                                <div class="journey-title">审美培养的实践</div>
+                                <div class="journey-content">推荐学生看绘本、法国绘本、杨永清大师作品、金正基速写，用多看来滋养审美</div>
+                            </div>
+                            <div class="journey-item">
+                                <div class="journey-title">AI工具的探索</div>
+                                <div class="journey-content">用优麦的(Yumade)打造第二大脑，结合知识库进行创作，做了大量教育类AI应用探索</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Speaker 2: 恋老师 -->
+                <div class="speaker-card">
+                    <div class="speaker-header">
+                        <div class="speaker-avatar">恋</div>
+                        <div class="speaker-info">
+                            <h3>恋老师（福之境）</h3>
+                            <p class="speaker-role">程序员 · 开源开发者 · 公众号作者</p>
+                        </div>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">🧠 核心观点</h4>
+                        <ul class="speaker-list">
+                            <li><span class="highlight-key">学习本质是解决问题</span>，AI之前靠搜索引擎，但搜索引擎无法解决特定化问题</li>
+                            <li>AI出现后，<span class="highlight-data">学习路径变成与AI交互式学习</span>，不再需要手动抽象问题</li>
+                            <li><span class="highlight-quote">幻觉问题是大模型架构决定的</span>，核心架构不变，幻觉会一直存在，所以人的校验必不可少</li>
+                            <li>现在感觉<span class="highlight-key">口袋里装着一个AI万能专家</span>，可以快速了解任何领域知识</li>
+                        </ul>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">🚀 学习方法</h4>
+                        <ul class="speaker-list">
+                            <li>遇到编程报错可以<strong>直接把错误丢给AI</strong>，让AI搜索解决</li>
+                            <li>学习方法没有固定形式，<strong>不要囤积大量资源</strong>——99%可能都不会看</li>
+                            <li>AI帮你抹平了"特定问题→通用问题"的抽象过程</li>
+                            <li>关键是<strong>人的校验</strong>，让知识变得权威</li>
+                        </ul>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">💫 心路历程</h4>
+                        <div class="journey-timeline">
+                            <div class="journey-item">
+                                <div class="journey-title">2022年末 · ChatGPT发布</div>
+                                <div class="journey-content">在ChatGPT发布后7天，为其做了一个桌面应用，在开源社区获得5万多Star</div>
+                            </div>
+                            <div class="journey-item">
+                                <div class="journey-title">从零开始学AI</div>
+                                <div class="journey-content">做桌面应用之前对AI一窍不通，从那一刻开始学习AI相关的一切</div>
+                            </div>
+                            <div class="journey-item">
+                                <div class="journey-title">持续输出</div>
+                                <div class="journey-content">截至目前在公众号输出了200多篇AI相关内容，通过输出来深化学习</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Speaker 3: 向阳老师 -->
+                <div class="speaker-card">
+                    <div class="speaker-header">
+                        <div class="speaker-avatar">阳</div>
+                        <div class="speaker-info">
+                            <h3>向阳老师</h3>
+                            <p class="speaker-role">AI社群主理人 · 投资者视角</p>
+                        </div>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">🧠 核心观点</h4>
+                        <ul class="speaker-list">
+                            <li><span class="highlight-key">费曼学习法</span>：把学到的东西进行分享，加深理解的同时吸引同行交流</li>
+                            <li><span class="highlight-data">看最底层论文</span>的人，能比竞争对手早半年到一年预判AI发展方向</li>
+                            <li>输出分享能<span class="highlight-quote">积累影响力</span>，对找工作、创业都有帮助</li>
+                            <li>用<span class="highlight-key">NotebookLM</span>等工具辅助读论文，让AI用简洁语言逐段解释</li>
+                        </ul>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">🚀 学习方法</h4>
+                        <ul class="speaker-list">
+                            <li><strong>关注顶级研究员</strong>：在推特关注OpenAI研究员、AK大佬等</li>
+                            <li><strong>输出倒逼输入</strong>：看多了就想总结分享，分享后获得反馈也是学习</li>
+                            <li><strong>读核心论文</strong>：看Transformer、扩散模型等底层论文，理解原理</li>
+                            <li><strong>动手实践</strong>：觉得工具好就去试，体验后输出文章或推特分享</li>
+                        </ul>
+                    </div>
+                    <div class="speaker-section">
+                        <h4 class="speaker-section-title">💫 心路历程</h4>
+                        <div class="journey-timeline">
+                            <div class="journey-item">
+                                <div class="journey-title">2022年末 · 震撼时刻</div>
+                                <div class="journey-content">ChatGPT出来后特别震撼，开始在推特关注AI研究员</div>
+                            </div>
+                            <div class="journey-item">
+                                <div class="journey-title">从关注到分享</div>
+                                <div class="journey-content">看多了忍不住想总结分享，开始在推特上分享AI内容</div>
+                            </div>
+                            <div class="journey-item">
+                                <div class="journey-title">社群运营</div>
+                                <div class="journey-content">通过分享吸引同好交流，建立AI社群，形成良性循环</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4 class="expert-comment-title">专家点评：三种学习路径的互补</h4>
+                    <p>三位嘉宾代表了三种典型的AI学习路径：<strong>邱老师</strong>从教育者视角强调方法论和审美培养；<strong>恋老师</strong>从开发者视角揭示AI带来的学习范式变革；<strong>向阳老师</strong>从投资者视角强调底层原理和输出分享的价值。三种路径相互补充，共同指向一个结论：<span class="highlight-key">AI时代，学会学习比学会知识更重要</span>。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Golden Quotes -->
+        <section id="quotes" class="section collapsed">
+            <div class="section-header" onclick="toggleSection('quotes')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">💬</div>
+                    <h2 class="section-title">金句集锦</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">从分享中提炼的最具启发性的观点，值得反复品味...</p>
+            <div class="section-content">
+                <div class="quote-grid">
+                    <div class="quote-card">
+                        <p class="quote-text">一切知识里面最有价值的部分，是关于方法的知识，而不是知识本身。</p>
+                        <p class="quote-source">—— 邱老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">内容是核心，审美是滋养，创意是生长。</p>
+                        <p class="quote-source">—— 邱老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">改变都是从自己开始的，不要靠外力去改变。你说服一个人是非常非常难的。</p>
+                        <p class="quote-source">—— 邱老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">年轻就是会犯错，越年轻你的试错成本越低。</p>
+                        <p class="quote-source">—— 邱老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">我好像有一个AI万能专家在口袋一样，可以用它解决任何领域的问题。</p>
+                        <p class="quote-source">—— 恋老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">幻觉问题是大模型的核心架构决定的，架构不变，幻觉会一直存在。</p>
+                        <p class="quote-source">—— 恋老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">收藏了很多东西，百分之九十九可能都不会去看。</p>
+                        <p class="quote-source">—— 恋老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">看最底层论文的人，能比竞争对手早半年到一年预判AI发展方向。</p>
+                        <p class="quote-source">—— 向阳老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">费曼学习法：把学到的分享出来，加深理解的同时吸引同行交流。</p>
+                        <p class="quote-source">—— 向阳老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">人的创造力是可以一直深挖的，是没有天花板的。</p>
+                        <p class="quote-source">—— 引自李飞飞采访</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">AI不是凌驾于人之上，能胜任工作的是会善用AI工具的人。</p>
+                        <p class="quote-source">—— 邱老师</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">永恒的价值观不变：做一个善良的人，做一个诚实的人。</p>
+                        <p class="quote-source">—— 邱老师</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Learning Methods -->
+        <section id="methods" class="section collapsed">
+            <div class="section-header" onclick="toggleSection('methods')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">📚</div>
+                    <h2 class="section-title">AI学习方法论</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">从信息素养到知识沉淀，构建完整的AI学习体系...</p>
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-icon">🔍</div>
+                        <h4>追踪信源</h4>
+                        <p>从A（原创新闻/官方报告）到N手信息会逐步失真。看到公众号/推特内容，要找原作者、原链接，尽量获取第一手信息。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">⏰</div>
+                        <h4>拒绝隔夜问题</h4>
+                        <p>发现问题要给自己设置节点，用电子或纸质记录下来。问题不解决会堆积，靠自己、AI或他人都要想办法解决掉。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🔄</div>
+                        <h4>复习归纳体系</h4>
+                        <p>自学 → 复习 → 理解 → 归纳。归纳下来的才是你真正的知识点，这套方法论是拿不走的，不管AI节奏多快。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🤖</div>
+                        <h4>与AI交互学习</h4>
+                        <p>AI帮你抹平了"特定问题→通用问题"的抽象过程。可以直接把编程报错丢给AI，让它搜索解决。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">✅</div>
+                        <h4>人的校验</h4>
+                        <p>幻觉问题是大模型架构决定的，会一直存在。AI给结果后，人的校验必不可少，这样知识才权威。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">📢</div>
+                        <h4>输出倒逼输入</h4>
+                        <p>费曼学习法：把学到的分享出来。加深理解 + 吸引同行交流 + 积累影响力，形成良性循环。</p>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4 class="expert-comment-title">方法论的底层逻辑</h4>
+                    <p>这些方法论的共同底层逻辑是：<strong>主动性</strong>。追踪信源是主动验证，拒绝隔夜问题是主动解决，复习归纳是主动沉淀，输出分享是主动贡献。AI时代不缺信息，缺的是<span class="highlight-key">主动处理信息的能力</span>。学霸的特质不是聪明，而是愿意主动倾听、主动思考。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Creativity -->
+        <section id="creativity" class="section collapsed">
+            <div class="section-header" onclick="toggleSection('creativity')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">💡</div>
+                    <h2 class="section-title">创意与审美培养</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">写不出内容？没有灵感？从提问开始，构建你的AI创造系统...</p>
+            <div class="section-content">
+                <h3 style="font-size: 1.3em; margin-bottom: 24px; color: var(--accent);">🎯 为什么写不出内容？</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-icon">📖</div>
+                        <h4>看得不够多</h4>
+                        <p>信息很多但没有深度阅读。广度和深度都不够，观察和思考的点还不够多。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🤔</div>
+                        <h4>纠结细节</h4>
+                        <p>有灵感但过度推敲，推着推着就变成了隔夜问题，第二天又面临新问题。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">😰</div>
+                        <h4>预估能力不足</h4>
+                        <p>有想法但觉得自己没能力做下去，在评估阶段就放弃了。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🍂</div>
+                        <h4>觉得普通</h4>
+                        <p>就像看到银杏叶掉落觉得是自然规律，不会多问一个为什么。牛顿看苹果落地会思考。</p>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.3em; margin: 40px 0 24px; color: var(--accent);">✨ 破解方法：多看·多想·多干</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-icon">👀</div>
+                        <h4>多看</h4>
+                        <p><strong>看好看的东西</strong>：绘本（全年龄段）、法国绘本、大师作品。<strong>走出去</strong>：发现生活中的小美好。<strong>看非虚构类</strong>：新闻、论文，加强逻辑感和人文意识。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🧠</div>
+                        <h4>多想</h4>
+                        <p><strong>从提问开始</strong>：是什么、为什么、什么时候、谁、怎么样。先自己想问题，不要直接扔给AI。<strong>结合熟悉领域</strong>：从你有经验的地方开始挖掘。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🛠️</div>
+                        <h4>多干</h4>
+                        <p><strong>从模仿开始</strong>：向审美能力强的人学习。<strong>允许试错</strong>：年轻试错成本低。<strong>学会止损</strong>：给自己设deadline，到期后评估是否继续。</p>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.3em; margin: 40px 0 24px; color: var(--accent);">🎨 审美提升资源</h3>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <div class="resource-icon">🖼️</div>
+                        <div class="resource-info">
+                            <h5>杨永清大师</h5>
+                            <p>独特风格，AI难以模仿的传统大师</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">✏️</div>
+                        <div class="resource-info">
+                            <h5>金正基（韩国）</h5>
+                            <p>速写大师，空间感强，视角独特</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🌸</div>
+                        <div class="resource-info">
+                            <h5>克里姆特</h5>
+                            <p>装饰艺术大师，金色与图案</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🌻</div>
+                        <div class="resource-info">
+                            <h5>莫奈</h5>
+                            <p>印象派大师，光影与色彩</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📚</div>
+                        <div class="resource-info">
+                            <h5>法国绘本</h5>
+                            <p>插画精美，全年龄段适读</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📰</div>
+                        <div class="resource-info">
+                            <h5>浙江宣传</h5>
+                            <p>选题有共鸣，站在大众观点思考</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4 class="expert-comment-title">恒定量与变量的智慧</h4>
+                    <p>邱老师提出的"恒定量与变量"概念极具洞察力。<strong>变量</strong>是不可控的：宏观环境、行业变化、他人想法。<strong>恒定量</strong>是可控的：自身优势、学习方法、价值观。聪明人在恒定量上下功夫，把自己的质量提升，而不是试图改变变量。<span class="highlight-key">改变自己最亲近的人都是不可能的，何况改变世界？</span></p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: AI Tools -->
+        <section id="tools" class="section collapsed">
+            <div class="section-header" onclick="toggleSection('tools')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🛠️</div>
+                    <h2 class="section-title">AI工具与实践</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">把AI当成杠精、陪练、老师，用AI打造你的第二大脑...</p>
+            <div class="section-content">
+                <h3 style="font-size: 1.3em; margin-bottom: 24px; color: var(--accent);">🤖 AI的四种角色</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-icon">🥊</div>
+                        <h4>杠精</h4>
+                        <p>设定让AI每次都来反驳你，发现你说话里的漏洞，帮助你完善思考。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🤗</div>
+                        <h4>陪练</h4>
+                        <p>给你情绪价值，有苦恼的事情可以跟AI倾诉，它甚至会鼓励激励你。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">👨‍🏫</div>
+                        <h4>线上老师</h4>
+                        <p>用Google/NotebookLM等，把内容喂给AI，进行学习互动、深度搜索。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🧠</div>
+                        <h4>第二大脑</h4>
+                        <p>让知识沉淀下来，帮助创作属于自己的作品。AI是工具，人是主导。</p>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.3em; margin: 40px 0 24px; color: var(--accent);">📦 推荐工具</h3>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <div class="resource-icon">📔</div>
+                        <div class="resource-info">
+                            <h5>NotebookLM</h5>
+                            <p>Google出品，适合学习和整理知识</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">✨</div>
+                        <div class="resource-info">
+                            <h5>优麦的(Yumade)</h5>
+                            <p>知识库+创作，打造第二大脑</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🔎</div>
+                        <div class="resource-info">
+                            <h5>Gemini深度搜索</h5>
+                            <p>支持深度搜索和学习互动</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🎨</div>
+                        <div class="resource-info">
+                            <h5>香蕉(Banana)</h5>
+                            <p>AI出图工具，本次PPT图片来源</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.3em; margin: 40px 0 24px; color: var(--accent);">💡 实践案例（邱老师分享）</h3>
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-icon">🎬</div>
+                        <h4>辩论训练</h4>
+                        <p>让AI整理新闻热点，选择正方或反方观点，与AI进行互动辩论，锻炼思考能力。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🏛️</div>
+                        <h4>哲学对话</h4>
+                        <p>从孔子等诸子百家的角度考虑问题，与AI进行哲学对话。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🕵️</div>
+                        <h4>游戏化学习</h4>
+                        <p>把学习内容做成谜案游戏，适合学生"玩中学"。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">🚀</div>
+                        <h4>可视化教学</h4>
+                        <p>用建模和图形化方法，把抽象的数学、大模型原理变简单。</p>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4 class="expert-comment-title">工具使用的正确姿势</h4>
+                    <p>邱老师强调：<strong>先试用再订阅</strong>。AI工具太多了，不建议直接购买会员。可以通过邀请码获取积分先测试，确认适合自己再订阅。这也是一种"试错成本控制"。另外，<span class="highlight-key">AI是工具，人是主导</span>。能胜任未来工作的，是会善用AI工具的人，而不是被AI取代的人。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Resources -->
+        <section id="resources" class="section collapsed">
+            <div class="section-header" onclick="toggleSection('resources')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">📌</div>
+                    <h2 class="section-title">学习资源推荐</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">推特账号、公众号、播客、纪录片等优质信息源...</p>
+            <div class="section-content">
+                <h3 style="font-size: 1.3em; margin-bottom: 24px; color: var(--accent);">🐦 推特关注列表</h3>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <div class="resource-icon">🔥</div>
+                        <div class="resource-info">
+                            <h5>AK大佬</h5>
+                            <p>AI领域活跃分享者</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">☀️</div>
+                        <div class="resource-info">
+                            <h5>向阳老师</h5>
+                            <p>本次分享嘉宾，AI社群主理人</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🎯</div>
+                        <div class="resource-info">
+                            <h5>归藏老师</h5>
+                            <p>AI内容分享者</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">💎</div>
+                        <div class="resource-info">
+                            <h5>保育老师</h5>
+                            <p>AI领域创作者</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.3em; margin: 40px 0 24px; color: var(--accent);">📱 公众号推荐</h3>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <div class="resource-icon">🌳</div>
+                        <div class="resource-info">
+                            <h5>福之境</h5>
+                            <p>恋老师主理，200+篇AI内容</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🎨</div>
+                        <div class="resource-info">
+                            <h5>美术学校公众号</h5>
+                            <p>大师美学介绍，学生作品展示</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📰</div>
+                        <div class="resource-info">
+                            <h5>浙江宣传</h5>
+                            <p>选题有共鸣，观点站在大众角度</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="font-size: 1.3em; margin: 40px 0 24px; color: var(--accent);">🎧 其他资源</h3>
+                <div class="resource-list">
+                    <div class="resource-item">
+                        <div class="resource-icon">🎙️</div>
+                        <div class="resource-info">
+                            <h5>硅谷101播客</h5>
+                            <p>AI信息+资本+科普，多方面内容</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🎬</div>
+                        <div class="resource-info">
+                            <h5>富豪谷底求翻身</h5>
+                            <p>纪录片，讲述价值观和商业思维</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">🎥</div>
+                        <div class="resource-info">
+                            <h5>李飞飞彭博采访</h5>
+                            <p>YouTube原版，谈人的创造力无天花板</p>
+                        </div>
+                    </div>
+                    <div class="resource-item">
+                        <div class="resource-icon">📖</div>
+                        <div class="resource-info">
+                            <h5>李沐老师论文精讲</h5>
+                            <p>YouTube/B站，Transformer等核心论文</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4 class="expert-comment-title">信息源筛选原则</h4>
+                    <p>时间有限，每天能花在学习AI上的时间可能只有1-3小时。要把时间效率最大化，就要<strong>找优质的、适合自己的信息源</strong>。根据自己的侧重点（开发/创业/创作/投资）来关注。还可以看你关注的人follow了谁，从他们的名单里发现新的优质信息源。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section: Takeaways -->
+        <section id="takeaways" class="section collapsed">
+            <div class="section-header" onclick="toggleSection('takeaways')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🎯</div>
+                    <h2 class="section-title">行动清单</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">听完分享，你可以立即采取的行动...</p>
+            <div class="section-content">
+                <div class="info-grid">
+                    <div class="info-card">
+                        <div class="info-card-icon">1️⃣</div>
+                        <h4>建立信源追踪习惯</h4>
+                        <p>下次看到公众号/推特内容，尝试找到原作者和原链接，培养验证信息的能力。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">2️⃣</div>
+                        <h4>创建问题记录本</h4>
+                        <p>用电子笔记或纸质本，记录每天遇到的问题，设置解决节点，拒绝隔夜问题。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">3️⃣</div>
+                        <h4>尝试输出分享</h4>
+                        <p>把最近学到的一个AI知识点写成文章或推特，实践费曼学习法。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">4️⃣</div>
+                        <h4>看一部纪录片</h4>
+                        <p>观看《富豪谷底求翻身》，思考里面的价值观和方法论，练习归纳能力。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">5️⃣</div>
+                        <h4>与AI进行一次深度对话</h4>
+                        <p>把AI设定为杠精，让它反驳你最近的一个观点，锻炼批判性思维。</p>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-card-icon">6️⃣</div>
+                        <h4>识别你的恒定量与变量</h4>
+                        <p>列出你的优势（恒定量）和不可控因素（变量），决定在哪里下功夫。</p>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4 class="expert-comment-title">最后的话</h4>
+                    <p>这场分享的核心信息是：<span class="highlight-key">AI时代，方法论比知识更重要，主动性比工具更重要，价值观比技能更持久</span>。不要焦虑AI会取代你，而要思考如何用AI放大你的优势。记住邱老师的话："人的创造力是没有天花板的"，"永恒的价值观不变：做一个善良的人，做一个诚实的人"。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p class="footer-text">
+                基于 <span class="footer-highlight">AI学习创意与审美分享会</span> 内容整理<br>
+                使用 Claude AI 结合 video-transcript-to-premium-html 技能生成
+            </p>
+        </footer>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+            }
+        }
+
+        // Toggle All Sections
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+
+        // Toggle Single Section
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.classList.toggle('collapsed');
+        }
+
+        // Smooth scroll for internal links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add entrance animations on scroll
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(20px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+
+        // Initialize - make sections visible
+        setTimeout(() => {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.opacity = '1';
+                section.style.transform = 'translateY(0)';
+            });
+        }, 100);
+    </script>
+</body>
+</html>
