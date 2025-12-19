@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI短剧训练营 | 第五课复习笔记</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #e8f4fd 0%, #f0e6ff 50%, #fce4ec 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.8;
+            font-size: 16px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+
+        /* 毛玻璃头部 */
+        .header {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px rgba(138, 43, 226, 0.1);
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+        }
+
+        .header .subtitle {
+            font-size: 1.3em;
+            color: #6c5ce7;
+            margin-bottom: 10px;
+        }
+
+        .header .meta {
+            color: #7f8c8d;
+            font-size: 0.95em;
+        }
+
+        /* 专家点评卡片 */
+        .expert-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-left: 5px solid #764ba2;
+        }
+
+        .expert-card h2 {
+            color: #5b21b6;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .expert-card p {
+            color: #4a5568;
+            font-size: 1.1em;
+        }
+
+        /* 可折叠区块 */
+        .section {
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            margin-bottom: 25px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2) 0%, rgba(118, 75, 162, 0.2) 100%);
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.3) 100%);
+        }
+
+        .section-header h2 {
+            font-size: 1.4em;
+            color: #5b21b6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-header .toggle {
+            font-size: 1.5em;
+            color: #764ba2;
+            transition: transform 0.3s ease;
+        }
+
+        .section-header.active .toggle {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .section-content.show {
+            display: block;
+        }
+
+        /* 金句样式 */
+        .quote-box {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin: 20px 0;
+            position: relative;
+            border-left: 4px solid #e17055;
+        }
+
+        .quote-box::before {
+            content: '"';
+            font-size: 4em;
+            color: rgba(225, 112, 85, 0.3);
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-family: Georgia, serif;
+        }
+
+        .quote-box p {
+            font-size: 1.15em;
+            color: #6d4c41;
+            font-weight: 500;
+            padding-left: 30px;
+        }
+
+        .quote-box .author {
+            text-align: right;
+            color: #8d6e63;
+            margin-top: 10px;
+            font-size: 0.95em;
+        }
+
+        /* 知识点卡片 */
+        .knowledge-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .knowledge-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.9) 100%);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .knowledge-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+        }
+
+        .knowledge-card h3 {
+            color: #667eea;
+            font-size: 1.2em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .knowledge-card p {
+            color: #4a5568;
+            font-size: 1em;
+        }
+
+        .knowledge-card ul {
+            color: #4a5568;
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .knowledge-card li {
+            margin-bottom: 6px;
+        }
+
+        /* 图表容器 */
+        .chart-container {
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 16px;
+            padding: 30px;
+            margin: 25px 0;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            overflow-x: auto;
+        }
+
+        .chart-title {
+            text-align: center;
+            color: #5b21b6;
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            color: #4a5568;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            margin: 3px;
+        }
+
+        .tag-primary {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .tag-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .tag-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .tag-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .tag-info {
+            background: #e0f2fe;
+            color: #0369a1;
+        }
+
+        /* 工具列表 */
+        .tool-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .tool-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+
+        /* 重点提示 */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+
+        .highlight-box.warning {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(217, 119, 6, 0.1) 100%);
+            border-color: rgba(245, 158, 11, 0.3);
+        }
+
+        .highlight-box h4 {
+            color: #059669;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .highlight-box.warning h4 {
+            color: #d97706;
+        }
+
+        /* Mermaid 图表样式覆盖 */
+        .mermaid {
+            text-align: center;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+            font-size: 0.9em;
+        }
+
+        /* 流程步骤 */
+        .step-list {
+            counter-reset: step-counter;
+            list-style: none;
+            padding: 0;
+        }
+
+        .step-list li {
+            counter-increment: step-counter;
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 20px;
+        }
+
+        .step-list li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            width: 35px;
+            height: 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .step-list li h4 {
+            color: #5b21b6;
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <h1>🎬 AI短剧训练营 · 第五课</h1>
+            <p class="subtitle">视频生成与镜头组接 | 从分镜到成片的完整流程</p>
+            <p class="meta">📅 2025年12月19日 | 🎤 主讲：大鹏老师 | ⏱️ 约3小时</p>
+        </div>
+
+        <!-- AI专家点评 -->
+        <div class="expert-card">
+            <h2>🤖 AI短剧专家点评</h2>
+            <p>这节课是整个训练营的核心技术课程，系统地讲解了从静态分镜到动态视频的完整转化流程。大鹏老师将复杂的视频生成技术分解为<strong>文生、单帧、首尾帧、智能多帧、参考生视频</strong>五种方式，并特别强调了"多参宗"这一邪修流派的强大威力。课程最大的价值在于：不仅教会工具使用，更传授了<strong>导演思维</strong>——理解每种生成方式的适用场景，才能在实战中做出正确选择。镜头组接部分对蒙太奇原理的讲解，让学员理解了"剪辑的力量"，这是从技术执行者进阶为创作者的关键认知。
+            </p>
+        </div>
+
+        <!-- 目录导航 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>📚 课程目录</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content show">
+                <div class="knowledge-grid">
+                    <div class="knowledge-card">
+                        <h3>📹 第一部分</h3>
+                        <p>镜头语言回顾</p>
+                        <ul>
+                            <li>景别：全景到特写</li>
+                            <li>角度：仰拍俯拍鸟瞰</li>
+                            <li>运镜：推拉摇移跟踪</li>
+                            <li>升格与降格</li>
+                        </ul>
+                    </div>
+                    <div class="knowledge-card">
+                        <h3>🎨 第二部分</h3>
+                        <p>分镜技巧进阶</p>
+                        <ul>
+                            <li>赛璐璐方式</li>
+                            <li>素体/白膜方式</li>
+                            <li>比例控制技巧</li>
+                        </ul>
+                    </div>
+                    <div class="knowledge-card">
+                        <h3>🎥 第三部分</h3>
+                        <p>视频生成方式</p>
+                        <ul>
+                            <li>文生视频</li>
+                            <li>单帧生成(首/尾帧)</li>
+                            <li>首尾帧生成</li>
+                            <li>智能多帧</li>
+                            <li>参考生视频</li>
+                        </ul>
+                    </div>
+                    <div class="knowledge-card">
+                        <h3>✂️ 第四部分</h3>
+                        <p>镜头组接艺术</p>
+                        <ul>
+                            <li>时间控制三法</li>
+                            <li>动静接法则</li>
+                            <li>分镜意识培养</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一部分：镜头语言 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>📹 镜头语言回顾</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-box">
+                    <p>众人皆可创作的时代，你觉得什么是导演？</p>
+                    <div class="author">—— 新片场经典视频</div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🎬 景别分类与应用</div>
+                    <div class="mermaid">
+                        graph LR
+                        A[景别] --> B[全景]
+                        A --> C[中全景]
+                        A --> D[中景]
+                        A --> E[近景]
+                        A --> F[特写]
+
+                        B --> B1[展示人物整体<br>从头到脚]
+                        C --> C1[膝上景<br>Cowboy镜头<br>西部片常用]
+                        D --> D1[腰上景<br>短剧最常用<br>人物叙事]
+                        E --> E1[肩上景<br>减少分散<br>表情+动作]
+                        F --> F1[突出情绪<br>道具特写<br>关键细节]
+
+                        style A fill:#667eea,stroke:#333,color:#fff
+                        style B fill:#74b9ff,stroke:#333,color:#fff
+                        style C fill:#81ecec,stroke:#333,color:#000
+                        style D fill:#a29bfe,stroke:#333,color:#fff
+                        style E fill:#fd79a8,stroke:#333,color:#fff
+                        style F fill:#fdcb6e,stroke:#333,color:#000
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>💡 AI生图小技巧</h4>
+                    <p>写全景提示词时，要额外描写人物的<strong>鞋或脚</strong>，以及头部，否则AI可能只给你砍半截。描述"从上到下都要"才能确保完整全景。</p>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">📐 拍摄角度与情绪表达</div>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>角度类型</th>
+                            <th>视觉效果</th>
+                            <th>情绪/用途</th>
+                            <th>应用场景</th>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-primary">贴地角度</span></td>
+                            <td>看不到我是谁</td>
+                            <td>神秘感</td>
+                            <td>重要人物登场、悬疑氛围</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-success">仰拍镜头</span></td>
+                            <td>向上看人物</td>
+                            <td>力量、高大</td>
+                            <td>英雄出场、权威展示</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-warning">俯拍镜头</span></td>
+                            <td>向下看人物</td>
+                            <td>削弱、渺小</td>
+                            <td>弱势角色、压迫感</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-danger">鸟瞰镜头</span></td>
+                            <td>正上方视角</td>
+                            <td>审判感</td>
+                            <td>宏大场景、上帝视角</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="quote-box">
+                    <p>规则是规则，但打破规则的人，懂了规则又能打破它，又知道为什么打破它，那就是很厉害。</p>
+                    <div class="author">—— 大鹏老师</div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🎥 运镜方式解析</div>
+                    <div class="mermaid">
+                        graph TB
+                        subgraph 基础运镜
+                        A[摇] --> A1[定轴转动<br>手腕转≈脑袋转<br>建立人物联系]
+                        B[移] --> B1[整体位移<br>身子动≈手臂动<br>换场景过渡]
+                        C[推] --> C1[向前靠近<br>展示更多细节]
+                        D[拉] --> D1[向后远离<br>扩大画面信息量]
+                        end
+
+                        subgraph 进阶运镜
+                        E[跟踪] --> E1[跟随人物<br>身临其境感<br>沉浸式体验]
+                        F[升格] --> F1[高帧率拍摄+慢放<br>子弹时间效果<br>细节颗粒度↑]
+                        G[降格] --> G1[低帧率+加速<br>模糊流光效果<br>王家卫惯用]
+                        end
+
+                        style A fill:#667eea,stroke:#333,color:#fff
+                        style B fill:#74b9ff,stroke:#333,color:#fff
+                        style C fill:#a29bfe,stroke:#333,color:#fff
+                        style D fill:#fd79a8,stroke:#333,color:#fff
+                        style E fill:#00b894,stroke:#333,color:#fff
+                        style F fill:#fdcb6e,stroke:#333,color:#000
+                        style G fill:#e17055,stroke:#333,color:#fff
+                    </div>
+                </div>
+
+                <div class="highlight-box warning">
+                    <h4>⚠️ 升格与降格的区别</h4>
+                    <p><strong>升格</strong>：先用高帧率拍摄（如120帧），再以正常帧率（如24帧）播放 = 慢动作效果，细节丰富<br>
+                        <strong>降格</strong>：低帧率拍摄，产生拖影和断续感 = 艺术表达，但风险极高<br>
+                        <em>"升格谁都敢用，降格的人极少用。升格用不好是包子和难吃的包子，降格用不好是包子和一坨屎。"</em>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二部分：分镜技巧 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🎨 分镜技巧进阶（邪修入门）</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="knowledge-grid">
+                    <div class="knowledge-card">
+                        <h3>🎭 赛璐璐方式</h3>
+                        <p><strong>原理：</strong>透明塑料片分层叠加，人物一层+场景一层</p>
+                        <p><strong>AI实现：</strong></p>
+                        <ul>
+                            <li>用Banana抠图/其他工具抠出人物</li>
+                            <li>单独准备场景背景图</li>
+                            <li>PS叠加调整比例</li>
+                            <li>可用Nano Banana加光影</li>
+                        </ul>
+                        <p><strong>优势：</strong>解决人物进场景比例不对的问题</p>
+                    </div>
+                    <div class="knowledge-card">
+                        <h3>🦴 素体/白膜方式</h3>
+                        <p><strong>原理：</strong>用3D素体摆出想要的姿势，作为参考图</p>
+                        <p><strong>操作：</strong></p>
+                        <ul>
+                            <li>访问3D素体网站</li>
+                            <li>搜索/摆出需要的动作姿势</li>
+                            <li>截图作为参考图</li>
+                            <li>配合提示词生成最终效果</li>
+                        </ul>
+                        <p><strong>适用：</strong>复杂动作、打斗场景、提示词难以描述的姿势</p>
+                    </div>
+                </div>
+
+                <div class="quote-box">
+                    <p>你脑子里有个画面的概念，又描述不出来，就用素体的方式就好了。</p>
+                    <div class="author">—— 大鹏老师</div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>💡 素体使用技巧</h4>
+                    <p>使用素体参考时，如果只写"按照姿势"，AI只会模仿动作。如果你还需要相同的<strong>镜头角度</strong>，必须在提示词中明确写出"按照图X的镜头角度构图"。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三部分：视频生成方式 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🎥 视频生成方式（核心内容）</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="chart-container">
+                    <div class="chart-title">🎬 五种视频生成方式对比</div>
+                    <div class="mermaid">
+                        graph TB
+                        A[视频生成方式] --> B[文生视频]
+                        A --> C[单帧生成]
+                        A --> D[首尾帧生成]
+                        A --> E[智能多帧]
+                        A --> F[参考生视频]
+
+                        B --> B1[✅ 效果最自然<br>❌ 控制力最弱<br>📍 适合空镜/意境]
+
+                        C --> C1[首帧生成]
+                        C --> C2[尾帧生成]
+                        C1 --> C1a[✅ 主流方式<br>✅ 所有模型支持<br>📍 复杂提示词可完成]
+                        C2 --> C2a[✅ 人物一致性强<br>❌ 支持模型少<br>📍 海螺2.0/VO3.1]
+
+                        D --> D1[✅ 变化效果<br>✅ 运镜控制<br>📍 三帧法/五帧法]
+
+                        E --> E1[❌ 商业很少用<br>📍 自媒体可用<br>📍 一人一生类视频]
+
+                        F --> F1[动作参考]
+                        F --> F2[主体参考/多参]
+                        F1 --> F1a[可灵O1/即梦<br>动作模仿]
+                        F2 --> F2a[⚡ 多参宗邪修<br>不用分镜直接出片]
+
+                        style A fill:#667eea,stroke:#333,color:#fff
+                        style B fill:#74b9ff,stroke:#333,color:#fff
+                        style C fill:#a29bfe,stroke:#333,color:#fff
+                        style D fill:#fd79a8,stroke:#333,color:#fff
+                        style E fill:#81ecec,stroke:#333,color:#000
+                        style F fill:#fdcb6e,stroke:#333,color:#000
+                    </div>
+                </div>
+
+                <div class="quote-box">
+                    <p>能用单帧，别用多帧；能用首帧，别用首尾；能用首尾，别用多帧。对AI的控制限制性越小，整体流畅度就越好。</p>
+                    <div class="author">—— 大鹏老师</div>
+                </div>
+
+                <!-- 文生视频 -->
+                <h3 style="color: #5b21b6; margin: 25px 0 15px; font-size: 1.3em;">1️⃣ 文生视频</h3>
+                <div class="knowledge-grid">
+                    <div class="knowledge-card">
+                        <h3>📝 特点</h3>
+                        <ul>
+                            <li>所有模型都支持</li>
+                            <li>模型自由度最高</li>
+                            <li>流畅度最好</li>
+                            <li>但控制力最弱</li>
+                        </ul>
+                    </div>
+                    <div class="knowledge-card">
+                        <h3>🎯 适用场景</h3>
+                        <ul>
+                            <li>空镜头</li>
+                            <li>看不清内容的镜头</li>
+                            <li>剪影/意境画面</li>
+                            <li>不重要但必需的过场</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- 首帧/尾帧 -->
+                <h3 style="color: #5b21b6; margin: 25px 0 15px; font-size: 1.3em;">2️⃣ 单帧生成（首帧/尾帧）</h3>
+                <table class="comparison-table">
+                    <tr>
+                        <th>类型</th>
+                        <th>原理</th>
+                        <th>优势</th>
+                        <th>支持平台</th>
+                        <th>使用场景</th>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-primary">首帧生成</span></td>
+                        <td>给定第一帧，AI向后生成</td>
+                        <td>主流方式，复杂提示词也能完成</td>
+                        <td>几乎所有平台</td>
+                        <td>大多数场景的首选</td>
+                    </tr>
+                    <tr>
+                        <td><span class="tag tag-success">尾帧生成</span></td>
+                        <td>给定最后一帧，AI向前生成</td>
+                        <td>保证人物一致性</td>
+                        <td>海螺2.0、VO3.1</td>
+                        <td>背影转正脸、人物登场</td>
+                    </tr>
+                </table>
+
+                <div class="quote-box">
+                    <p>为什么用尾帧？因为人物一致性。你给一个背影转过来，首帧生成不知道转过来是谁。</p>
+                    <div class="author">—— 大鹏老师</div>
+                </div>
+
+                <!-- 首尾帧 -->
+                <h3 style="color: #5b21b6; margin: 25px 0 15px; font-size: 1.3em;">3️⃣ 首尾帧生成</h3>
+                <div class="knowledge-grid">
+                    <div class="knowledge-card">
+                        <h3>🔄 用途一：变化</h3>
+                        <p>让角色/场景发生形态变化</p>
+                        <p><em>案例：秦始皇变成星空秦始皇</em></p>
+                    </div>
+                    <div class="knowledge-card">
+                        <h3>🎥 用途二：运镜</h3>
+                        <p>精确控制镜头运动轨迹</p>
+                        <p><em>案例：从A场景运镜到B场景</em></p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>📝 三帧法写提示词</h4>
+                    <ol class="step-list">
+                        <li>
+                            <h4>描述整体变化过程</h4>
+                            <p>详细写出从开始到结束的完整变化</p>
+                        </li>
+                        <li>
+                            <h4>描述首帧画面</h4>
+                            <p>写清楚第一帧的所有细节</p>
+                        </li>
+                        <li>
+                            <h4>描述中间帧状态</h4>
+                            <p>告诉AI变化过程中应该是什么样子</p>
+                        </li>
+                        <li>
+                            <h4>描述尾帧画面</h4>
+                            <p>写清楚最后一帧的所有细节</p>
+                        </li>
+                    </ol>
+                </div>
+
+                <!-- 智能多帧 -->
+                <h3 style="color: #5b21b6; margin: 25px 0 15px; font-size: 1.3em;">4️⃣ 智能多帧</h3>
+                <div class="highlight-box warning">
+                    <h4>⚠️ 使用建议</h4>
+                    <p><strong>商业项目：</strong>基本不用<br>
+                        <strong>自媒体：</strong>可以玩，如"某某演员的一生"类视频<br>
+                        <strong>特殊场景：</strong>在剧情中需要回溯历史/记忆时可作为巧思使用
+                    </p>
+                </div>
+
+                <!-- 参考生视频 -->
+                <h3 style="color: #5b21b6; margin: 25px 0 15px; font-size: 1.3em;">5️⃣ 参考生视频（多参宗邪修）</h3>
+                <div class="chart-container">
+                    <div class="chart-title">⚔️ 多参宗 vs 传统方式</div>
+                    <div class="mermaid">
+                        graph LR
+                        subgraph 传统气宗
+                        A[分镜图] --> B[提示词] --> C[生成视频]
+                        A1[一板一眼] --> A2[内力积累] --> A3[功底扎实]
+                        end
+
+                        subgraph 邪修剑宗
+                        D[人物三视图] --> E[场景图] --> F[提示词]
+                        F --> G[直接出片]
+                        D1[省略分镜] --> D2[跑批出片] --> D3[效率极高]
+                        end
+
+                        style A fill:#74b9ff,stroke:#333,color:#fff
+                        style D fill:#e17055,stroke:#333,color:#fff
+                        style G fill:#fdcb6e,stroke:#333,color:#000
+                    </div>
+                </div>
+
+                <div class="quote-box">
+                    <p>多参宗里面还有更邪的，就是BOT Agent修。场景放那，人站这，说完戏，你自己演吧。</p>
+                    <div class="author">—— 大鹏老师</div>
+                </div>
+
+                <div class="knowledge-grid">
+                    <div class="knowledge-card">
+                        <h3>✅ 多参优势</h3>
+                        <ul>
+                            <li>不用画分镜图</li>
+                            <li>人物+场景+提示词直接出</li>
+                            <li>复杂动作轻松实现</li>
+                            <li>微度闲时跑批免费</li>
+                        </ul>
+                    </div>
+                    <div class="knowledge-card">
+                        <h3>❌ 多参劣势</h3>
+                        <ul>
+                            <li>需要大量跑批（30:1出片率）</li>
+                            <li>效果不稳定</li>
+                            <li>分辨率可能略低</li>
+                            <li>容易废掉基本功</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="highlight-box warning">
+                    <h4>⚠️ 大鹏老师警告</h4>
+                    <p>邪修劲很大，但如果前期不提高分镜能力，你就只是个BOT工具人。<br>
+                        <strong>真正的高手都是融会贯通的</strong>——首帧、尾帧、首尾帧、多参全都会，只是更擅长某一种。<br>
+                        BOT/Agent只给拿到结业证的同学，避免大家拿了就自嗨，废掉学习能力。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四部分：镜头组接 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>✂️ 镜头组接艺术</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="chart-container">
+                    <div class="chart-title">⏰ 时间控制三法</div>
+                    <div class="mermaid">
+                        graph TB
+                        A[时间控制] --> B[压缩时间]
+                        A --> C[改变时序]
+                        A --> D[放大时间]
+
+                        B --> B1[几个分镜讲完<br>一段漫长过程<br>如：出门→到火车站]
+
+                        C --> C1[打破线性时间<br>闪回/回溯<br>如：回忆五天前]
+
+                        D --> D1[一个动作<br>用多个分镜展示<br>增强紧张感]
+
+                        D --> E[经典案例]
+                        E --> E1[足球小将射门]
+                        E --> E2[灌篮高手扣篮]
+                        E --> E3[美少女战士变身]
+
+                        style A fill:#667eea,stroke:#333,color:#fff
+                        style B fill:#74b9ff,stroke:#333,color:#fff
+                        style C fill:#a29bfe,stroke:#333,color:#fff
+                        style D fill:#fd79a8,stroke:#333,color:#fff
+                        style E fill:#fdcb6e,stroke:#333,color:#000
+                    </div>
+                </div>
+
+                <div class="quote-box">
+                    <p>怎么让节奏变快？把时间放大，再把分镜切碎。每个分镜占的时间很短，紧张感就来了。</p>
+                    <div class="author">—— 大鹏老师</div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🔗 镜头接法法则</div>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>接法类型</th>
+                            <th>含义</th>
+                            <th>要点</th>
+                            <th>示例</th>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-primary">动接动</span></td>
+                            <td>动态镜头接动态镜头</td>
+                            <td>必须找到最佳剪辑点</td>
+                            <td>拔枪→枪口冒烟→子弹特写→人倒下</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-success">静接静</span></td>
+                            <td>静态镜头接静态镜头</td>
+                            <td>适合叙事和氛围</td>
+                            <td>西湖远景→睫毛结冰特写</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-warning">静接动/动接静</span></td>
+                            <td>动静状态切换</td>
+                            <td>必须带情绪和节奏</td>
+                            <td>远景静态→嘴角笑起（有情绪）</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="quote-box">
+                    <p>最佳剪辑点就像喜剧抛包袱——一辆疾驰的列车，中间有一节空车厢，你骑马要从那缝隙穿过去。错过了就卡住了。</p>
+                    <div class="author">—— 大鹏老师引用喜剧大师比喻</div>
+                </div>
+
+                <div class="highlight-box">
+                    <h4>💡 分镜意识的重要性</h4>
+                    <p><strong>没有分镜意识：</strong>固定机位，拿瓶子→拧瓶子→喝水（像监控录像）<br>
+                        <strong>有分镜意识：</strong>多机位多角度，景别变化、镜头变化、运镜变化<br>
+                        <em>最好的分镜是感觉不到分镜，就像身体健康时感觉不到身体一样。</em>
+                    </p>
+                </div>
+
+                <div class="quote-box">
+                    <p>同样的分镜，通过不同的剪辑顺序，能讲出千千万万不同的故事。这就是剪辑的力量，蒙太奇的力量。</p>
+                    <div class="author">—— 大鹏老师</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五部分：商业应用 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>💰 商业应用与行情</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="chart-container">
+                    <div class="chart-title">📊 AI视频商业报价参考</div>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>类型</th>
+                            <th>价格区间</th>
+                            <th>备注</th>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-primary">全AI漫剧</span></td>
+                            <td>约 1万/分钟</td>
+                            <td>高品质，如凡人修仙传AI版</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-success">传统漫剧</span></td>
+                            <td>3-10万/分钟</td>
+                            <td>非AI方式</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-warning">AI真人短剧</span></td>
+                            <td>1K-1.5K/分钟</td>
+                            <td>新人入门价格</td>
+                        </tr>
+                        <tr>
+                            <td><span class="tag tag-info">自媒体广告单</span></td>
+                            <td>约 50元/秒</td>
+                            <td>简单商单起步</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="highlight-box warning">
+                    <h4>⚠️ 商业项目双超分流程</h4>
+                    <p><strong>图片超分：</strong>生成图片后用TOPAS/Eleven超分 → PS修细节 → 再生成视频<br>
+                        <strong>视频超分：</strong>视频生成后再用TOPAS视频超分<br>
+                        <em>普通项目不用双超，商用必须双超</em>
+                    </p>
+                </div>
+
+                <div class="quote-box">
+                    <p>看人下菜——一看你自己这个人，二看对方这个人。</p>
+                    <div class="author">—— 大鹏老师谈报价</div>
+                </div>
+
+                <h3 style="color: #5b21b6; margin: 25px 0 15px;">🎵 音乐版权</h3>
+                <div class="highlight-box">
+                    <h4>Suno商用要点</h4>
+                    <p><strong>关键：</strong>先充值后生成才有版权！<br>
+                        充任意金额即可获得商用版权。先生成再充值 = 没有版权</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第六部分：工具推荐 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🛠️ 工具推荐汇总</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <h3 style="color: #5b21b6; margin-bottom: 15px;">🎨 图像生成与处理</h3>
+                <div class="tool-list">
+                    <span class="tool-item">Midjourney</span>
+                    <span class="tool-item">Nano Banana Pro</span>
+                    <span class="tool-item">即梦</span>
+                    <span class="tool-item">PS</span>
+                </div>
+
+                <h3 style="color: #5b21b6; margin: 20px 0 15px;">🎥 视频生成</h3>
+                <div class="tool-list">
+                    <span class="tool-item">海螺 2.0/2.3</span>
+                    <span class="tool-item">微度</span>
+                    <span class="tool-item">可灵 O1</span>
+                    <span class="tool-item">即梦</span>
+                    <span class="tool-item">Lovart</span>
+                    <span class="tool-item">JAAZ</span>
+                    <span class="tool-item">通义万象 2.6</span>
+                </div>
+
+                <h3 style="color: #5b21b6; margin: 20px 0 15px;">⬆️ 超分工具</h3>
+                <div class="tool-list">
+                    <span class="tool-item">TOPAS（免费可本地）</span>
+                    <span class="tool-item">Eleven（付费）</span>
+                </div>
+
+                <h3 style="color: #5b21b6; margin: 20px 0 15px;">🎵 音频</h3>
+                <div class="tool-list">
+                    <span class="tool-item">Suno（音乐生成）</span>
+                    <span class="tool-item">MiniMax（声音克隆）</span>
+                    <span class="tool-item">剪映（基础克隆）</span>
+                </div>
+
+                <h3 style="color: #5b21b6; margin: 20px 0 15px;">🦴 素体参考</h3>
+                <div class="tool-list">
+                    <span class="tool-item">3D素体网站（课件中链接）</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金句集锦 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>💎 金句集锦</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-box">
+                    <p>剪辑的每一刀都要感觉剪在自己身上，但留下的每个东西都要是精华。</p>
+                </div>
+                <div class="quote-box">
+                    <p>你用AI的话，导演的事、摄像的事，什么事你就都干了。</p>
+                </div>
+                <div class="quote-box">
+                    <p>所有的叙事，有的是给观众看的，有的是给屏幕里的人看的，有的是给屏幕外的人看的。</p>
+                </div>
+                <div class="quote-box">
+                    <p>越是重要的人物出场，越要藏得越好，越微妙越好。</p>
+                </div>
+                <div class="quote-box">
+                    <p>一镜到底在传统电影特别高级，在AI里面是最简单的事。</p>
+                </div>
+                <div class="quote-box">
+                    <p>前期一定要自己写提示词，你知道怎么写了，再把思路做成智能体。</p>
+                </div>
+                <div class="quote-box">
+                    <p>你的工具多，有的东西你才能做。因为你知道工具能做什么，你才敢跟甲方承诺。</p>
+                </div>
+                <div class="quote-box">
+                    <p>自电影之初有了蒙太奇，电影就是蒙太奇的艺术。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 作业提醒 -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>📝 作业要求</h2>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="highlight-box">
+                    <h4>✅ 本课作业</h4>
+                    <ol class="step-list">
+                        <li>
+                            <h4>尝试五种视频生成方式</h4>
+                            <p>文生、单帧(首帧)、尾帧、首尾帧、智能多帧（前三个必做）</p>
+                        </li>
+                        <li>
+                            <h4>完成分镜视频</h4>
+                            <p>将之前的分镜图生成为视频素材</p>
+                        </li>
+                        <li>
+                            <h4>准备交给剪辑</h4>
+                            <p>下节课王佳老师将讲解剪辑流程</p>
+                        </li>
+                    </ol>
+                </div>
+
+                <div class="highlight-box warning">
+                    <h4>⏰ 时间节点</h4>
+                    <p><strong>21号：</strong>剪辑课程<br>
+                        <strong>22号：</strong>自习室<br>
+                        <strong>23号：</strong>第七节课<br>
+                        <strong>25号：</strong>第八节课<br>
+                        <strong>28号：</strong>切磋大会<br>
+                        <strong>31号：</strong>结营 - 所有作业截止日期
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <div class="footer">
+            <p>📚 WaytoAGI · AI短剧训练营 · 第三期</p>
+            <p>让更多人因AI而强大 💪</p>
+        </div>
+    </div>
+
+    <script>
+        // 初始化Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'base',
+            themeVariables: {
+                primaryColor: '#667eea',
+                primaryTextColor: '#fff',
+                primaryBorderColor: '#764ba2',
+                lineColor: '#a29bfe',
+                secondaryColor: '#f0e6ff',
+                tertiaryColor: '#e8f4fd'
+            }
+        });
+
+        // 折叠功能
+        function toggleSection(header) {
+            header.classList.toggle('active');
+            const content = header.nextElementSibling;
+            content.classList.toggle('show');
+        }
+
+        // 默认展开第一个section
+        document.addEventListener('DOMContentLoaded', function () {
+            const firstHeader = document.querySelector('.section .section-header');
+            if (firstHeader) {
+                firstHeader.classList.add('active');
+            }
+        });
+    </script>
+</body>
+
+</html>
