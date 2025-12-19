@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>火山引擎2025冬季开发者大会 | Agent时代的开发新纪元</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #FF6B35;
+            --primary-dark: #E85A2A;
+            --secondary: #4ECDC4;
+            --accent: #FFE66D;
+            --dark: #1a1a2e;
+            --darker: #0f0f1a;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --gradient-fire: linear-gradient(135deg, #FF6B35 0%, #F7931E 50%, #FFE66D 100%);
+            --gradient-ocean: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
+            --gradient-night: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --shadow-glow: 0 0 40px rgba(255, 107, 53, 0.3);
+            --shadow-soft: 0 20px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--darker);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: var(--gradient-night);
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(255, 107, 53, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(78, 205, 196, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(255, 230, 109, 0.05) 0%, transparent 60%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(-10%, -10%) rotate(0deg); }
+            33% { transform: translate(-15%, -5%) rotate(2deg); }
+            66% { transform: translate(-5%, -15%) rotate(-2deg); }
+        }
+
+        /* 粒子效果 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--primary);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: particleFloat 15s infinite;
+        }
+
+        @keyframes particleFloat {
+            0%, 100% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        }
+
+        /* 头部区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 2rem;
+        }
+
+        .hero-content {
+            text-align: center;
+            max-width: 1000px;
+            animation: heroFadeIn 1.5s ease-out;
+        }
+
+        @keyframes heroFadeIn {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            animation: badgePulse 3s ease-in-out infinite;
+        }
+
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 107, 53, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 107, 53, 0.4); }
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--secondary);
+            border-radius: 50%;
+            animation: dotBlink 2s infinite;
+        }
+
+        @keyframes dotBlink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 700;
+            background: var(--gradient-fire);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            letter-spacing: -2px;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.1rem, 3vw, 1.5rem);
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            font-weight: 300;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            min-width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 900;
+            background: var(--gradient-fire);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* 滚动指示器 */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            animation: scrollBounce 2s infinite;
+        }
+
+        @keyframes scrollBounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        .scroll-indicator span {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .scroll-arrow {
+            width: 24px;
+            height: 24px;
+            border-right: 2px solid var(--primary);
+            border-bottom: 2px solid var(--primary);
+            transform: rotate(45deg);
+        }
+
+        /* 导航栏 */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(15, 15, 26, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            transform: translateY(-100%);
+            transition: transform 0.3s ease;
+        }
+
+        .nav.visible {
+            transform: translateY(0);
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-weight: 700;
+            font-size: 1.2rem;
+            background: var(--gradient-fire);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .theme-toggle {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        /* 主内容区 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 章节通用样式 */
+        .section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            background: var(--gradient-fire);
+            color: var(--dark);
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            padding: 6rem 0;
+            overflow: hidden;
+        }
+
+        .mindmap-container {
+            position: relative;
+            min-height: 800px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mindmap {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .mindmap-center {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            width: 200px;
+            height: 200px;
+            background: var(--gradient-fire);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: var(--shadow-glow), 0 0 60px rgba(255, 107, 53, 0.5);
+            z-index: 10;
+            animation: centerPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes centerPulse {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.05); }
+        }
+
+        .mindmap-branch {
+            position: absolute;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            max-width: 280px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .mindmap-branch:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--primary);
+        }
+
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+
+        .branch-1 { top: 5%; left: 5%; }
+        .branch-1::before { right: -80px; top: 50%; }
+        
+        .branch-2 { top: 5%; right: 5%; }
+        .branch-2::before { left: -80px; top: 50%; transform: rotate(180deg); }
+        
+        .branch-3 { top: 35%; left: 0; }
+        .branch-3::before { right: -80px; top: 50%; }
+        
+        .branch-4 { top: 35%; right: 0; }
+        .branch-4::before { left: -80px; top: 50%; transform: rotate(180deg); }
+        
+        .branch-5 { bottom: 20%; left: 5%; }
+        .branch-5::before { right: -80px; top: 50%; }
+        
+        .branch-6 { bottom: 20%; right: 5%; }
+        .branch-6::before { left: -80px; top: 50%; transform: rotate(180deg); }
+
+        .branch-icon {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-fire);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .branch-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .branch-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 核心洞察卡片 */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+        }
+
+        .insight-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-fire);
+        }
+
+        .insight-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-soft);
+            border-color: var(--primary);
+        }
+
+        .insight-number {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 4rem;
+            font-weight: 900;
+            opacity: 0.1;
+            background: var(--gradient-fire);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .insight-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-fire);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .insight-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .insight-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .insight-highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .insight-data {
+            color: var(--secondary);
+            font-weight: 700;
+        }
+
+        /* 金句区块 */
+        .quotes-section {
+            background: linear-gradient(180deg, transparent, rgba(255, 107, 53, 0.05), transparent);
+            padding: 8rem 0;
+        }
+
+        .quotes-slider {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-card {
+            background: var(--glass);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 4rem;
+            text-align: center;
+            position: relative;
+            margin: 2rem auto;
+            max-width: 900px;
+        }
+
+        .quote-marks {
+            font-size: 6rem;
+            position: absolute;
+            top: -1rem;
+            left: 2rem;
+            opacity: 0.1;
+            background: var(--gradient-fire);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: clamp(1.3rem, 3vw, 1.8rem);
+            font-weight: 500;
+            line-height: 1.8;
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-fire);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .author-info {
+            text-align: left;
+        }
+
+        .author-name {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        .author-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 产品矩阵 */
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .product-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .product-card.featured {
+            grid-column: span 2;
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.1), rgba(78, 205, 196, 0.05));
+        }
+
+        .product-badge {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            background: var(--gradient-fire);
+            color: var(--dark);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .product-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-icon.ark { background: linear-gradient(135deg, #FF6B35, #F7931E); }
+        .product-icon.coze { background: linear-gradient(135deg, #4ECDC4, #44A08D); }
+        .product-icon.tree { background: linear-gradient(135deg, #9B59B6, #8E44AD); }
+        .product-icon.agentkate { background: linear-gradient(135deg, #3498DB, #2980B9); }
+
+        .product-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-tagline {
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .feature-tag {
+            background: rgba(255, 107, 53, 0.1);
+            color: var(--primary);
+            padding: 0.4rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* 专家评论 */
+        .expert-section {
+            background: linear-gradient(180deg, rgba(78, 205, 196, 0.05), transparent);
+            padding: 6rem 0;
+        }
+
+        .expert-container {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 3rem;
+            align-items: start;
+        }
+
+        .expert-profile {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            text-align: center;
+            position: sticky;
+            top: 100px;
+        }
+
+        .expert-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient-ocean);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            box-shadow: 0 0 40px rgba(78, 205, 196, 0.3);
+        }
+
+        .expert-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .expert-role {
+            color: var(--secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .expert-bio {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .expert-comments {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .comment-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .comment-card:hover {
+            border-color: var(--secondary);
+            transform: translateX(10px);
+        }
+
+        .comment-card::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: var(--gradient-ocean);
+            border-radius: 4px 0 0 4px;
+        }
+
+        .comment-topic {
+            display: inline-block;
+            background: rgba(78, 205, 196, 0.1);
+            color: var(--secondary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .comment-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .comment-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        .comment-verdict {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .verdict-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-ocean);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .verdict-text {
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        /* 时间线 */
+        .timeline-section {
+            padding: 6rem 0;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: flex-end;
+            padding-right: calc(50% + 30px);
+            position: relative;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item:nth-child(even) {
+            justify-content: flex-start;
+            padding-right: 0;
+            padding-left: calc(50% + 30px);
+        }
+
+        .timeline-content {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-content:hover {
+            transform: scale(1.02);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .timeline-dot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 4px solid var(--darker);
+            right: calc(50% - 10px);
+            top: 2rem;
+            z-index: 1;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: calc(50% - 10px);
+            right: auto;
+        }
+
+        .timeline-time {
+            color: var(--primary);
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 数据可视化 */
+        .data-section {
+            padding: 6rem 0;
+        }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 2rem;
+        }
+
+        .data-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .data-card::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--fill, 30%);
+            background: linear-gradient(180deg, transparent, rgba(255, 107, 53, 0.2));
+            transition: height 0.5s ease;
+        }
+
+        .data-card:hover::before {
+            height: 100%;
+        }
+
+        .data-value {
+            font-size: 3rem;
+            font-weight: 900;
+            background: var(--gradient-fire);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .data-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .data-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            margin-top: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            background: rgba(78, 205, 196, 0.1);
+            border-radius: 50px;
+            font-size: 0.75rem;
+            color: var(--secondary);
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 可折叠内容 */
+        .collapsible-section {
+            padding: 4rem 0;
+        }
+
+        .collapsible-grid {
+            display: grid;
+            gap: 1.5rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .collapsible-item {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-item.active {
+            border-color: var(--primary);
+        }
+
+        .collapsible-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(255, 107, 53, 0.05);
+        }
+
+        .collapsible-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .collapsible-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-fire);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .collapsible-arrow {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible-item.active .collapsible-arrow {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-preview {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-left: auto;
+            margin-right: 1rem;
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .collapsible-item.active .collapsible-content {
+            max-height: 1000px;
+        }
+
+        .collapsible-body {
+            padding: 0 2rem 2rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            line-height: 1.8;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid var(--glass-border);
+            padding: 4rem 2rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+        }
+
+        .footer-brand h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            background: var(--gradient-fire);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .footer-brand p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        .footer-links h4 {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        .footer-bottom {
+            max-width: 1400px;
+            margin: 3rem auto 0;
+            padding-top: 2rem;
+            border-top: 1px solid var(--glass-border);
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .mindmap-container {
+                min-height: auto;
+            }
+            
+            .mindmap-branch {
+                position: relative;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                max-width: 100%;
+            }
+            
+            .mindmap-branch::before {
+                display: none;
+            }
+            
+            .mindmap {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.5rem;
+            }
+            
+            .mindmap-center {
+                position: relative;
+                left: auto;
+                top: auto;
+                transform: none;
+                grid-column: span 2;
+                width: 100%;
+                height: auto;
+                padding: 2rem;
+                border-radius: 20px;
+            }
+            
+            .expert-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .expert-profile {
+                position: relative;
+                top: auto;
+            }
+            
+            .data-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-stats {
+                gap: 1.5rem;
+            }
+            
+            .stat-item {
+                min-width: 120px;
+                padding: 1rem;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+            
+            .mindmap {
+                grid-template-columns: 1fr;
+            }
+            
+            .mindmap-center {
+                grid-column: span 1;
+            }
+            
+            .product-card.featured {
+                grid-column: span 1;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                padding-left: 50px;
+                padding-right: 0;
+            }
+            
+            .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 10px;
+                right: auto;
+            }
+            
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+
+        /* 动画类 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .slide-in-left {
+            opacity: 0;
+            transform: translateX(-50px);
+            transition: all 0.8s ease;
+        }
+
+        .slide-in-left.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .slide-in-right {
+            opacity: 0;
+            transform: translateX(50px);
+            transition: all 0.8s ease;
+        }
+
+        .slide-in-right.visible {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--darker);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--glass);
+            border-radius: 10px;
+            border: 2px solid var(--darker);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+
+        /* 浅色主题 */
+        body.light-theme {
+            --dark: #ffffff;
+            --darker: #f5f5f7;
+            --glass: rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1a1a2e;
+            --text-secondary: rgba(26, 26, 46, 0.7);
+        }
+
+        body.light-theme .bg-animation {
+            background: linear-gradient(135deg, #f5f5f7 0%, #e8e8ed 50%, #ffffff 100%);
+        }
+
+        body.light-theme .bg-animation::before {
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(255, 107, 53, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(78, 205, 196, 0.08) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景动画 -->
+    <div class="bg-animation"></div>
+    <div class="particles" id="particles"></div>
+
+    <!-- 导航栏 -->
+    <nav class="nav" id="nav">
+        <div class="nav-content">
+            <div class="nav-logo">🔥 火山引擎 2025</div>
+            <ul class="nav-links">
+                <li><a href="#mindmap">核心架构</a></li>
+                <li><a href="#products">产品矩阵</a></li>
+                <li><a href="#insights">深度洞察</a></li>
+                <li><a href="#expert">专家视角</a></li>
+            </ul>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+        </div>
+    </nav>
+
+    <!-- 头部区域 -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="dot"></span>
+                <span>2025 冬季开发者大会 · 现场直播</span>
+            </div>
+            <h1>Agent时代的<br>开发新纪元</h1>
+            <p class="hero-subtitle">
+                从拖拽到心流，从代码到创造<br>
+                火山引擎重新定义AI原生开发范式
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">160万+</div>
+                    <div class="stat-label">Tree月活用户</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">300万</div>
+                    <div class="stat-label">扣子开发者</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">96%</div>
+                    <div class="stat-label">代码量减少</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">8分钟</div>
+                    <div class="stat-label">Agent部署时间</div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>向下滚动</span>
+            <div class="scroll-arrow"></div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 金句区块 -->
+        <section class="quotes-section">
+            <div class="section-header">
+                <span class="section-tag">💎 大会金句</span>
+                <h2 class="section-title">重新定义开发的未来</h2>
+            </div>
+            <div class="quotes-slider">
+                <div class="quote-card fade-in">
+                    <span class="quote-marks">"</span>
+                    <p class="quote-text">
+                        我们希望让开发者能真正把精力集中在<span style="color: var(--primary)">创造业务价值</span>上，<br>
+                        而不是被繁琐的周边代码所困扰。
+                    </p>
+                    <div class="quote-author">
+                        <div class="author-avatar">谭</div>
+                        <div class="author-info">
+                            <div class="author-name">谭岱</div>
+                            <div class="author-title">火山引擎总裁</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quote-card fade-in" style="animation-delay: 0.2s">
+                    <span class="quote-marks">"</span>
+                    <p class="quote-text">
+                        从今天起，<span style="color: var(--secondary)">告别拖拽，拥抱心流</span>。<br>
+                        回到编程最本质的乐趣——<span style="color: var(--primary)">创造本身</span>。
+                    </p>
+                    <div class="quote-author">
+                        <div class="author-avatar">乔</div>
+                        <div class="author-info">
+                            <div class="author-name">乔宇</div>
+                            <div class="author-title">扣子负责人</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="quote-card fade-in" style="animation-delay: 0.4s">
+                    <span class="quote-marks">"</span>
+                    <p class="quote-text">
+                        Build like an Agent, <span style="color: var(--primary)">feel like a system</span>。<br>
+                        模型是大脑，而<span style="color: var(--secondary)">工程体系</span>决定了它们能否成为长期可信赖的系统。
+                    </p>
+                    <div class="quote-author">
+                        <div class="author-avatar">田</div>
+                        <div class="author-info">
+                            <div class="author-name">田涛涛</div>
+                            <div class="author-title">云基础产品负责人</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section section" id="mindmap">
+            <div class="section-header">
+                <span class="section-tag">🧠 核心架构</span>
+                <h2 class="section-title">火山引擎AI原生架构全景图</h2>
+                <p class="section-desc">以大模型为核心，构建完整的Agent开发生态</p>
+            </div>
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-center">
+                        <div>
+                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🔥</div>
+                            火山引擎<br>AI原生架构
+                        </div>
+                    </div>
+                    <div class="mindmap-branch branch-1 fade-in">
+                        <div class="branch-icon">🧠</div>
+                        <div class="branch-title">模型层 - 豆包家族</div>
+                        <div class="branch-desc">覆盖编程、创作、音视频生成、多模态全场景，支持主流开源模型</div>
+                    </div>
+                    <div class="mindmap-branch branch-2 fade-in">
+                        <div class="branch-icon">🚀</div>
+                        <div class="branch-title">火山方舟</div>
+                        <div class="branch-desc">高效MaaS服务 + Response API + Serverless强化学习 + Viking向量库</div>
+                    </div>
+                    <div class="mindmap-branch branch-3 fade-in">
+                        <div class="branch-icon">🎨</div>
+                        <div class="branch-title">扣子编程</div>
+                        <div class="branch-desc">Vibe Agent + Vibe Workflow + Vibe App + Vibe Infra，全链路自然语言编程</div>
+                    </div>
+                    <div class="mindmap-branch branch-4 fade-in">
+                        <div class="branch-icon">⚙️</div>
+                        <div class="branch-title">Agent Kate</div>
+                        <div class="branch-desc">企业级Agent基础设施：身份管理、安全围栏、沙箱执行、Skills工具链</div>
+                    </div>
+                    <div class="mindmap-branch branch-5 fade-in">
+                        <div class="branch-icon">🌲</div>
+                        <div class="branch-title">Tree企业版</div>
+                        <div class="branch-desc">AI驱动的企业级IDE：安全合规、高性能、深度语言优化</div>
+                    </div>
+                    <div class="mindmap-branch branch-6 fade-in">
+                        <div class="branch-icon">📊</div>
+                        <div class="branch-title">可观测 & 评估</div>
+                        <div class="branch-desc">全链路追踪、50+内置评测体系、护栏体系闭环</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 产品矩阵 -->
+        <section class="section" id="products">
+            <div class="section-header">
+                <span class="section-tag">🎯 产品矩阵</span>
+                <h2 class="section-title">重磅产品发布</h2>
+                <p class="section-desc">面向不同开发者需求的全栈AI开发工具</p>
+            </div>
+            <div class="products-grid">
+                <div class="product-card featured fade-in">
+                    <span class="product-badge">🔥 重磅升级</span>
+                    <div class="product-icon coze">🎨</div>
+                    <div class="product-name">扣子编程</div>
+                    <div class="product-tagline">告别拖拽，拥抱心流</div>
+                    <div class="product-desc">
+                        从"扣子开发平台"全面升级为"扣子编程"，拥抱Vibe Coding新范式。
+                        用自然语言描述需求，AI自动生成Agent、Workflow和跨端应用。
+                        Agent自己写提示词、装知识库、开发工具，实现真正的自我进化。
+                    </div>
+                    <div class="product-features">
+                        <span class="feature-tag">Vibe Agent</span>
+                        <span class="feature-tag">Vibe Workflow</span>
+                        <span class="feature-tag">Vibe App</span>
+                        <span class="feature-tag">Vibe Infra</span>
+                        <span class="feature-tag">跨端部署</span>
+                        <span class="feature-tag">免费公测</span>
+                    </div>
+                </div>
+                <div class="product-card fade-in">
+                    <span class="product-badge">新发布</span>
+                    <div class="product-icon ark">🚀</div>
+                    <div class="product-name">Response API</div>
+                    <div class="product-tagline">多模态统一，成本直降80%</div>
+                    <div class="product-desc">
+                        原生上下文管理，多轮对话链式管理，文本图像混合模态无缝衔接。
+                        结合缓存能力，企业应用成本下降高达80%。
+                    </div>
+                    <div class="product-features">
+                        <span class="feature-tag">上下文管理</span>
+                        <span class="feature-tag">工具组合调用</span>
+                        <span class="feature-tag">缓存优化</span>
+                    </div>
+                </div>
+                <div class="product-card fade-in">
+                    <span class="product-badge">开源</span>
+                    <div class="product-icon ark">⚡</div>
+                    <div class="product-name">VRL强化学习框架</div>
+                    <div class="product-tagline">460+贡献者，最有影响力的RL框架</div>
+                    <div class="product-desc">
+                        字节跳动内部打磨后开源，已有40+框架基于VRL衍生构建。
+                        火山方舟提供Serverless强化学习体验，开发者专注业务逻辑。
+                    </div>
+                    <div class="product-features">
+                        <span class="feature-tag">多模型支持</span>
+                        <span class="feature-tag">仿真环境</span>
+                        <span class="feature-tag">可视化调试</span>
+                    </div>
+                </div>
+                <div class="product-card fade-in">
+                    <div class="product-icon agentkate">⚙️</div>
+                    <div class="product-name">Agent Kate</div>
+                    <div class="product-tagline">8分钟部署生产级Agent</div>
+                    <div class="product-desc">
+                        企业级Agent基础设施三层架构：Agent层(VE SDK)、Master层(智能核心)、
+                        Tap层(身份管理、网关、沙箱、Skills)。安全围栏全程守护。
+                    </div>
+                    <div class="product-features">
+                        <span class="feature-tag">VE SDK</span>
+                        <span class="feature-tag">安全围栏</span>
+                        <span class="feature-tag">Skills 3.0</span>
+                    </div>
+                </div>
+                <div class="product-card fade-in">
+                    <div class="product-icon tree">🌲</div>
+                    <div class="product-name">Tree企业版</div>
+                    <div class="product-tagline">效能领先的企业级AI IDE</div>
+                    <div class="product-desc">
+                        600万注册用户，70%为专业开发者。提供项目级安全管控、
+                        VPC专属模式，针对Go等主流语言深度优化，代码采纳率提升30%。
+                    </div>
+                    <div class="product-features">
+                        <span class="feature-tag">安全合规</span>
+                        <span class="feature-tag">高性能</span>
+                        <span class="feature-tag">Go优化</span>
+                    </div>
+                </div>
+                <div class="product-card fade-in">
+                    <div class="product-icon ark">💾</div>
+                    <div class="product-name">Viking记忆库</div>
+                    <div class="product-tagline">有记忆、有温度的AI体验</div>
+                    <div class="product-desc">
+                        支持多模态内容记忆，超大规模吞吐处理，极致记忆压缩。
+                        与知识库深度融合，实现1+1>2的上下文管理效果。
+                    </div>
+                    <div class="product-features">
+                        <span class="feature-tag">图文记忆</span>
+                        <span class="feature-tag">用户画像</span>
+                        <span class="feature-tag">个性化召回</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心洞察 -->
+        <section class="section" id="insights">
+            <div class="section-header">
+                <span class="section-tag">💡 深度洞察</span>
+                <h2 class="section-title">Agent开发的范式转变</h2>
+                <p class="section-desc">从本次大会提炼的三大核心变革</p>
+            </div>
+            <div class="insights-grid">
+                <div class="insight-card fade-in">
+                    <span class="insight-number">01</span>
+                    <div class="insight-icon">👥</div>
+                    <h3 class="insight-title">开发者门槛的颠覆</h3>
+                    <div class="insight-content">
+                        <p>从<span class="insight-highlight">专业技术人员</span>扩展到<span class="insight-highlight">人人编程</span>。</p>
+                        <p style="margin-top: 1rem;">过去：学数据结构、算法、操作系统、数据库...</p>
+                        <p>现在：借助Vibe Coding，<span class="insight-data">没有编程基础的业务人员</span>也可以通过自然语言实现创意。</p>
+                        <p style="margin-top: 1rem; font-style: italic; color: var(--primary);">"让软件生产力平权"——这是扣子的初心和起点。</p>
+                    </div>
+                </div>
+                <div class="insight-card fade-in">
+                    <span class="insight-number">02</span>
+                    <div class="insight-icon">🎯</div>
+                    <h3 class="insight-title">开发模式的转变</h3>
+                    <div class="insight-content">
+                        <p>从<span class="insight-highlight">指令式编码</span>变成<span class="insight-highlight">目标导向的AI Coding</span>。</p>
+                        <p style="margin-top: 1rem;">过去：程序员理解业务逻辑，通过Excel、判断语句指定程序执行路径。</p>
+                        <p>现在：通过Prompt告诉Agent"你是一个出色的销售"，<span class="insight-data">模型自己规划、思考、执行、调用工具</span>。</p>
+                        <p style="margin-top: 1rem;">效果优化不再靠代码调试，而是通过<span class="insight-data">评测不断调优</span>。</p>
+                    </div>
+                </div>
+                <div class="insight-card fade-in">
+                    <span class="insight-number">03</span>
+                    <div class="insight-icon">📊</div>
+                    <h3 class="insight-title">数据处理逻辑的革新</h3>
+                    <div class="insight-content">
+                        <p>从<span class="insight-highlight">数据库/数仓</span>到<span class="insight-highlight">上下文管理</span>。</p>
+                        <p style="margin-top: 1rem;">核心任务：做好上下文管理，充分利用大模型窗口。</p>
+                        <p>目标：让大模型处理<span class="insight-data">长期任务</span>、<span class="insight-data">企业内部知识</span>，持续提升效果。</p>
+                        <p style="margin-top: 1rem;"><span class="insight-highlight">2026年预测</span>：生图、生视频等多模态能力将有跃升，<span class="insight-data">参考图片库和视频库</span>将成为企业核心基础设施。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论区 -->
+        <section class="expert-section" id="expert">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">🎤 专家视角</span>
+                    <h2 class="section-title">火山引擎AI专家深度点评</h2>
+                </div>
+                <div class="expert-container">
+                    <div class="expert-profile fade-in">
+                        <div class="expert-avatar">🤖</div>
+                        <div class="expert-name">AI行业观察者</div>
+                        <div class="expert-role">火山引擎技术生态专家</div>
+                        <div class="expert-bio">
+                            深耕AI基础设施与开发工具领域，专注Agent架构设计、
+                            企业AI落地策略及开发者生态建设研究。
+                        </div>
+                    </div>
+                    <div class="expert-comments">
+                        <div class="comment-card slide-in-right">
+                            <span class="comment-topic">战略判断</span>
+                            <h4 class="comment-title">🔥 Vibe Coding是真正的范式革命</h4>
+                            <div class="comment-content">
+                                <p>扣子从"开发平台"到"编程"的命名变化，不是简单的品牌升级，而是<strong>产品哲学的根本转变</strong>。</p>
+                                <p style="margin-top: 1rem;">关键洞察：传统低代码工具的核心问题是"门槛降低了，但天花板也降低了"。专业开发者觉得不够灵活，小白用户遇到复杂逻辑依然卡壳。</p>
+                                <p style="margin-top: 1rem;">扣子编程的解法很巧妙：<strong>Vibe Workflow依然保留可视化流程</strong>，让用户既能享受自然语言的便利，又能分节点调试和修改。这解决了"Vibe Coding是黑盒"的核心焦虑。</p>
+                            </div>
+                            <div class="comment-verdict">
+                                <div class="verdict-icon">✅</div>
+                                <div class="verdict-text">战略级产品升级，值得重点关注</div>
+                            </div>
+                        </div>
+                        <div class="comment-card slide-in-right">
+                            <span class="comment-topic">技术分析</span>
+                            <h4 class="comment-title">⚡ 8分钟Demo的真正含义</h4>
+                            <div class="comment-content">
+                                <p>田涛涛的现场Demo非常有说服力。让豆包自己判断"8分钟能否从零开发部署Agent"，豆包的回答是"完全不可能"——然后他现场做到了。</p>
+                                <p style="margin-top: 1rem;">这背后的技术栈值得拆解：</p>
+                                <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                    <li><strong>VE SDK</strong>：提供声明式Agent定义，几十行代码定义完整Agent</li>
+                                    <li><strong>Agent Kate Runtime</strong>：Serverless架构，分钟级构建10万实例</li>
+                                    <li><strong>内置工具链</strong>：15组预封装工具，开箱即用</li>
+                                </ul>
+                                <p style="margin-top: 1rem;">但要注意：这是在火山引擎生态内的效率，<strong>迁移成本是需要评估的</strong>。</p>
+                            </div>
+                            <div class="comment-verdict">
+                                <div class="verdict-icon">💡</div>
+                                <div class="verdict-text">工程化能力领先，但生态锁定需评估</div>
+                            </div>
+                        </div>
+                        <div class="comment-card slide-in-right">
+                            <span class="comment-topic">市场洞察</span>
+                            <h4 class="comment-title">📊 三个值得深挖的数据信号</h4>
+                            <div class="comment-content">
+                                <p><strong>1. Tree 160万月活，70%是专业开发者</strong></p>
+                                <p>这说明AI IDE不是"给小白用的玩具"，专业开发者正在大规模采用。字节内部Go语言优化的积累是差异化优势。</p>
+                                <p style="margin-top: 1rem;"><strong>2. 齐星集团用Response API，商品上架效率提升80%</strong></p>
+                                <p>B2B电商场景的真实落地案例。错漏率降至2%以下，这是可以量化ROI的。</p>
+                                <p style="margin-top: 1rem;"><strong>3. VRL开源后，40+框架基于其衍生构建</strong></p>
+                                <p>强化学习框架的生态位正在建立。配合Serverless RL，降低了强化学习的工程门槛。</p>
+                            </div>
+                            <div class="comment-verdict">
+                                <div class="verdict-icon">📈</div>
+                                <div class="verdict-text">数据验证产品价值，生态效应初现</div>
+                            </div>
+                        </div>
+                        <div class="comment-card slide-in-right">
+                            <span class="comment-topic">风险提示</span>
+                            <h4 class="comment-title">⚠️ 需要关注的三个问题</h4>
+                            <div class="comment-content">
+                                <p><strong>1. "反模式"清单暴露的问题</strong></p>
+                                <p>田涛涛分享的Agent开发反模式（传统API不等于Agent API、缺乏Human-in-the-loop等），说明当前Agent开发的最佳实践还在摸索中。早期采用者需要踩的坑依然不少。</p>
+                                <p style="margin-top: 1rem;"><strong>2. Skills 3.0的成熟度</strong></p>
+                                <p>"Skills会是下一代非常关键的能力"这个判断我认同，但技术演进速度很快，现在押注的架构可能很快被更新的范式替代。</p>
+                                <p style="margin-top: 1rem;"><strong>3. 存量应用智能化的复杂性</strong></p>
+                                <p>"渐进式改造vs AI Native重构"的讨论很务实，但企业身份权限整合这块的复杂度，绝对比Demo展示的要高得多。</p>
+                            </div>
+                            <div class="comment-verdict">
+                                <div class="verdict-icon">⚠️</div>
+                                <div class="verdict-text">技术演进快速，建议保持敏捷迭代</div>
+                            </div>
+                        </div>
+                        <div class="comment-card slide-in-right">
+                            <span class="comment-topic">总体评价</span>
+                            <h4 class="comment-title">🎯 这场大会的核心信息</h4>
+                            <div class="comment-content">
+                                <p>火山引擎这场开发者大会，<strong>核心信息非常清晰</strong>：</p>
+                                <p style="margin-top: 1rem;"><strong>1. 定位明确</strong>：不是通用云厂商，而是"AI原生开发基础设施"提供商</p>
+                                <p><strong>2. 工具链完整</strong>：从模型(豆包)到开发(扣子/Tree)到部署(Agent Kate)到运维(可观测)，全栈覆盖</p>
+                                <p><strong>3. 战略聚焦</strong>：All in Agent，围绕Agent开发做深做透</p>
+                                <p style="margin-top: 1rem;">对于开发者来说，<strong>现在是入局Agent开发的好时机</strong>。火山引擎提供的免费公测、核心开发者计划、城市社区项目，都是值得关注的资源。</p>
+                                <p style="margin-top: 1rem;color: var(--secondary);font-weight: 600;">建议：先从扣子编程的Vibe Workflow入手，它是"黑盒焦虑最低"的入口。</p>
+                            </div>
+                            <div class="comment-verdict">
+                                <div class="verdict-icon">🚀</div>
+                                <div class="verdict-text">值得关注，建议积极试用</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据面板 -->
+        <section class="data-section">
+            <div class="section-header">
+                <span class="section-tag">📊 关键数据</span>
+                <h2 class="section-title">大会核心数据一览</h2>
+            </div>
+            <div class="data-grid">
+                <div class="data-card fade-in" style="--fill: 80%">
+                    <div class="data-value">600万</div>
+                    <div class="data-label">Tree注册用户</div>
+                    <div class="data-trend">↑ 持续增长</div>
+                </div>
+                <div class="data-card fade-in" style="--fill: 70%">
+                    <div class="data-value">70%</div>
+                    <div class="data-label">专业开发者占比</div>
+                    <div class="data-trend">企业场景主导</div>
+                </div>
+                <div class="data-card fade-in" style="--fill: 96%">
+                    <div class="data-value">96%</div>
+                    <div class="data-label">Agent代码减少</div>
+                    <div class="data-trend">仅需70行代码</div>
+                </div>
+                <div class="data-card fade-in" style="--fill: 80%">
+                    <div class="data-value">80%</div>
+                    <div class="data-label">成本下降幅度</div>
+                    <div class="data-trend">Response API</div>
+                </div>
+                <div class="data-card fade-in" style="--fill: 40%">
+                    <div class="data-value">460+</div>
+                    <div class="data-label">VRL贡献者</div>
+                    <div class="data-trend">开源生态</div>
+                </div>
+                <div class="data-card fade-in" style="--fill: 30%">
+                    <div class="data-value">30%</div>
+                    <div class="data-label">代码采纳率提升</div>
+                    <div class="data-trend">语言优化后</div>
+                </div>
+                <div class="data-card fade-in" style="--fill: 50%">
+                    <div class="data-value">50+</div>
+                    <div class="data-label">内置评测体系</div>
+                    <div class="data-trend">开箱即用</div>
+                </div>
+                <div class="data-card fade-in" style="--fill: 15%">
+                    <div class="data-value">10+</div>
+                    <div class="data-label">城市社区规划</div>
+                    <div class="data-trend">2026年目标</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 开发者举措 -->
+        <section class="collapsible-section">
+            <div class="section-header">
+                <span class="section-tag">🎁 开发者福利</span>
+                <h2 class="section-title">三大重要举措</h2>
+            </div>
+            <div class="collapsible-grid">
+                <div class="collapsible-item active">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <div class="collapsible-title">
+                            <div class="collapsible-icon">🏠</div>
+                            开发者社区全面升级
+                        </div>
+                        <span class="collapsible-preview">围绕Agent开发提供全方位成长路径</span>
+                        <div class="collapsible-arrow">▼</div>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-body">
+                            <p><strong>火山引擎开发者社区正式升级为"Agent开发者社区"</strong></p>
+                            <p style="margin-top: 1rem;">这标志着更明确的战略方向：围绕Agent开发，为开发者提供从学习到实践的全方位成长路径。</p>
+                            <p style="margin-top: 1rem;">社区将提供：</p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                <li>Agent开发学习资源</li>
+                                <li>实战案例库（100个目标）</li>
+                                <li>技术交流论坛</li>
+                                <li>开发者活动</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapsible-item">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <div class="collapsible-title">
+                            <div class="collapsible-icon">⭐</div>
+                            核心开发者计划启动
+                        </div>
+                        <span class="collapsible-preview">代金券+培训+布道师身份</span>
+                        <div class="collapsible-arrow">▼</div>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-body">
+                            <p><strong>诚邀社区中的技术辅导师和专家加入核心开发者计划</strong></p>
+                            <p style="margin-top: 1rem;">入选核心开发者可获得：</p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                <li>火山引擎代金券</li>
+                                <li>全方位技术培训</li>
+                                <li>多层支持资源</li>
+                                <li>成为Agent技术布道师</li>
+                            </ul>
+                            <p style="margin-top: 1rem;">目标：通过核心开发者影响更多开发者，构建Agent开发生态。</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="collapsible-item">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <div class="collapsible-title">
+                            <div class="collapsible-icon">🌆</div>
+                            城市社区项目
+                        </div>
+                        <span class="collapsible-preview">北上深成 → 2026年10+城市</span>
+                        <div class="collapsible-arrow">▼</div>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-body">
+                            <p><strong>线下Agent兴趣社区网络建设</strong></p>
+                            <p style="margin-top: 1rem;">已启动城市：北京、上海、深圳、成都</p>
+                            <p style="margin-top: 1rem;">2026年计划：扩展到全国10+城市</p>
+                            <p style="margin-top: 1rem;">运营模式：</p>
+                            <ul style="margin-top: 0.5rem; padding-left: 1.5rem;">
+                                <li>本地志愿者自发发起和参与</li>
+                                <li>建设本地Agent兴趣社区</li>
+                                <li>帮助更多本地开发者学习Agent开发</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 时间线 -->
+        <section class="timeline-section">
+            <div class="section-header">
+                <span class="section-tag">📅 大会议程</span>
+                <h2 class="section-title">精彩回顾</h2>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">开场</div>
+                        <div class="timeline-title">谭岱：Agent时代的开发新纪元</div>
+                        <div class="timeline-desc">火山引擎总裁阐述AI原生架构战略，发布开发者三大举措</div>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">火山方舟</div>
+                        <div class="timeline-title">吴迪：从工具到创新</div>
+                        <div class="timeline-desc">Response API、VRL强化学习框架、Viking向量库与记忆库深度解读</div>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">扣子编程</div>
+                        <div class="timeline-title">乔宇：告别拖拽，拥抱心流</div>
+                        <div class="timeline-desc">扣子开发平台升级为扣子编程，全面拥抱Vibe Coding</div>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">Agent Kate</div>
+                        <div class="timeline-title">田涛涛：Build like an Agent</div>
+                        <div class="timeline-desc">8分钟现场Demo，VE SDK + Agent Kate全栈演示</div>
+                    </div>
+                </div>
+                <div class="timeline-item fade-in">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-time">Tree企业版</div>
+                        <div class="timeline-title">王涛：AI驱动的企业级IDE</div>
+                        <div class="timeline-desc">安全、性能、管理、集成四大核心能力详解</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <h3>🔥 火山引擎 2025 冬季开发者大会</h3>
+                <p>
+                    本页面基于大会实录内容生成，由AI智能分析提炼核心观点。
+                    内容仅供参考，具体产品能力以官方文档为准。
+                </p>
+            </div>
+            <div class="footer-links">
+                <h4>快速链接</h4>
+                <ul>
+                    <li><a href="#mindmap">核心架构</a></li>
+                    <li><a href="#products">产品矩阵</a></li>
+                    <li><a href="#insights">深度洞察</a></li>
+                    <li><a href="#expert">专家视角</a></li>
+                </ul>
+            </div>
+            <div class="footer-links">
+                <h4>相关资源</h4>
+                <ul>
+                    <li><a href="https://www.volcengine.com/" target="_blank">火山引擎官网</a></li>
+                    <li><a href="https://www.coze.cn/" target="_blank">扣子编程</a></li>
+                    <li><a href="https://www.volcengine.com/product/ark" target="_blank">火山方舟</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2025 火山引擎开发者大会 · 内容由AI生成 · 保留所有权利</p>
+        </div>
+    </footer>
+
+    <script>
+        // 粒子效果
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // 导航栏显示/隐藏
+        let lastScroll = 0;
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('nav');
+            const currentScroll = window.pageYOffset;
+            
+            if (currentScroll > 100) {
+                nav.classList.add('visible');
+            } else {
+                nav.classList.remove('visible');
+            }
+            
+            lastScroll = currentScroll;
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in, .slide-in-left, .slide-in-right').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+        }
+
+        // 折叠面板
+        function toggleCollapsible(header) {
+            const item = header.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            // 关闭所有其他面板
+            document.querySelectorAll('.collapsible-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            // 如果当前面板不是活动的，则打开它
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+
+        // 数字动画
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.data-value, .stat-number');
+            numbers.forEach(num => {
+                const text = num.textContent;
+                const hasPercent = text.includes('%');
+                const hasWan = text.includes('万');
+                const hasPlus = text.includes('+');
+                
+                let value = parseFloat(text.replace(/[^0-9.]/g, ''));
+                let suffix = '';
+                
+                if (hasPercent) suffix = '%';
+                if (hasWan) suffix = '万' + (hasPlus ? '+' : '');
+                if (hasPlus && !hasWan) suffix = '+';
+                
+                let current = 0;
+                const increment = value / 50;
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= value) {
+                        current = value;
+                        clearInterval(timer);
+                    }
+                    num.textContent = Math.floor(current) + suffix;
+                }, 30);
+            });
+        }
+
+        // 页面加载完成后启动数字动画
+        window.addEventListener('load', () => {
+            setTimeout(animateNumbers, 500);
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
