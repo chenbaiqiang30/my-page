@@ -1,0 +1,1429 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美国特色资本主义：硅谷巨头的新游戏规则</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gold: #ffd700;
+            --accent-red: #ff4757;
+            --accent-blue: #3742fa;
+            --accent-green: #2ed573;
+            --accent-purple: #9b59b6;
+            --accent-orange: #ff6b35;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+        }
+
+        /* 动态背景粒子 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 215, 0, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 头部区域 */
+        .hero {
+            position: relative;
+            padding: 80px 20px 60px;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.3) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 24px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 107, 53, 0.2));
+            border: 1px solid rgba(255, 215, 0, 0.5);
+            border-radius: 50px;
+            color: #ffd700;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.5); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #ffd700 50%, #ff6b35 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto 40px;
+        }
+
+        /* 控制面板 */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+        }
+
+        .control-btn {
+            padding: 12px 24px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .control-btn.active {
+            background: var(--primary-gradient);
+            border-color: transparent;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 核心金句卡片 */
+        .quote-banner {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 107, 53, 0.15));
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-banner::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 150px;
+            color: rgba(255, 215, 0, 0.1);
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            margin-top: 15px;
+            color: #ffd700;
+            font-size: 0.9rem;
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .mindmap-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mindmap-title::before {
+            content: '🧠';
+            font-size: 1.8rem;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .mindmap-center {
+            background: var(--primary-gradient);
+            padding: 20px 40px;
+            border-radius: 50px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+        }
+
+        .mindmap-branch {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .mindmap-branch:hover {
+            transform: translateX(5px);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .mindmap-branch.branch-1 { border-color: #ff4757; }
+        .mindmap-branch.branch-2 { border-color: #3742fa; }
+        .mindmap-branch.branch-3 { border-color: #2ed573; }
+        .mindmap-branch.branch-4 { border-color: #ffd700; }
+
+        .branch-title {
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .branch-items {
+            list-style: none;
+        }
+
+        .branch-items li {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 5px 0;
+            font-size: 0.9rem;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .branch-items li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: inherit;
+        }
+
+        /* 信息图表区域 */
+        .infographic {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+        }
+
+        .infographic-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .infographic-title::before {
+            content: '📊';
+            font-size: 1.8rem;
+        }
+
+        /* 铁索连环图 */
+        .chain-diagram {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .chain-node {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border: 2px solid;
+            border-radius: 16px;
+            padding: 15px 20px;
+            text-align: center;
+            min-width: 120px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .chain-node:hover {
+            transform: scale(1.05);
+        }
+
+        .chain-node.nvidia { border-color: #76b900; }
+        .chain-node.openai { border-color: #10a37f; }
+        .chain-node.oracle { border-color: #f80000; }
+        .chain-node.amd { border-color: #ed1c24; }
+        .chain-node.apple { border-color: #555; }
+        .chain-node.intel { border-color: #0071c5; }
+
+        .chain-node-name {
+            font-weight: 700;
+            color: #fff;
+            font-size: 0.9rem;
+        }
+
+        .chain-node-value {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+        .chain-arrow {
+            display: flex;
+            align-items: center;
+            color: #ffd700;
+            font-size: 1.5rem;
+            animation: arrow-pulse 1.5s infinite;
+        }
+
+        @keyframes arrow-pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* 数据对比 */
+        .data-comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .data-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+        }
+
+        .data-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffd700, #ff6b35);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .data-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.85rem;
+            margin-top: 8px;
+        }
+
+        .data-sub {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.75rem;
+            margin-top: 5px;
+        }
+
+        /* 可折叠板块 */
+        .collapsible-section {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-section:hover {
+            border-color: rgba(255, 215, 0, 0.3);
+        }
+
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .section-icon.icon-1 { background: linear-gradient(135deg, #ff4757, #ff6b81); }
+        .section-icon.icon-2 { background: linear-gradient(135deg, #3742fa, #5352ed); }
+        .section-icon.icon-3 { background: linear-gradient(135deg, #2ed573, #7bed9f); }
+        .section-icon.icon-4 { background: linear-gradient(135deg, #ffd700, #ffbe76); }
+        .section-icon.icon-5 { background: linear-gradient(135deg, #9b59b6, #8e44ad); }
+        .section-icon.icon-6 { background: linear-gradient(135deg, #ff6b35, #ff9f43); }
+
+        .section-title {
+            color: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .section-preview {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .section-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .section-toggle::before {
+            content: '+';
+            color: #fff;
+            font-size: 1.5rem;
+            font-weight: 300;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible-section.active .section-toggle::before {
+            content: '−';
+        }
+
+        .collapsible-section.active .section-toggle {
+            background: var(--primary-gradient);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .collapsible-section.active .section-content {
+            max-height: 3000px;
+        }
+
+        .section-body {
+            padding: 0 30px 30px;
+        }
+
+        /* 内容样式 */
+        .content-block {
+            margin-bottom: 25px;
+        }
+
+        .content-block p {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 1rem;
+            line-height: 2;
+            margin-bottom: 15px;
+        }
+
+        /* 语义高亮 */
+        .highlight-red {
+            color: #ff4757;
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: #5dade2;
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: #2ed573;
+            font-weight: 600;
+        }
+
+        .highlight-gold {
+            color: #ffd700;
+            font-weight: 600;
+        }
+
+        .highlight-purple {
+            color: #a29bfe;
+            font-weight: 600;
+        }
+
+        /* 金句块 */
+        .golden-quote {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 107, 53, 0.1));
+            border-left: 4px solid #ffd700;
+            padding: 20px 25px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .golden-quote p {
+            color: #ffd700 !important;
+            font-size: 1.1rem !important;
+            font-weight: 600;
+            font-style: italic;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.15), rgba(142, 68, 173, 0.15));
+            border: 1px solid rgba(155, 89, 182, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .expert-info h4 {
+            color: #fff;
+            font-size: 1rem;
+        }
+
+        .expert-info span {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+        }
+
+        .expert-text {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.95rem;
+            line-height: 1.8;
+            padding-left: 65px;
+        }
+
+        /* 关键人物卡片 */
+        .person-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .person-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .person-card:hover {
+            transform: translateY(-5px);
+            border-color: #ffd700;
+        }
+
+        .person-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 5px;
+        }
+
+        .person-title {
+            color: #ffd700;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .person-status {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .status-danger { background: rgba(255, 71, 87, 0.2); color: #ff4757; }
+        .status-warning { background: rgba(255, 215, 0, 0.2); color: #ffd700; }
+        .status-success { background: rgba(46, 213, 115, 0.2); color: #2ed573; }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 25px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #ffd700, #ff6b35, #ff4757);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 15px 0 15px 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -36px;
+            top: 20px;
+            width: 12px;
+            height: 12px;
+            background: #ffd700;
+            border-radius: 50%;
+            border: 3px solid #1a1a2e;
+        }
+
+        .timeline-date {
+            color: #ffd700;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.95rem;
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table th {
+            color: #ffd700;
+            font-weight: 600;
+            font-size: 0.9rem;
+            background: rgba(255, 215, 0, 0.1);
+        }
+
+        .comparison-table td {
+            color: rgba(255, 255, 255, 0.85);
+            font-size: 0.9rem;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 总结区域 */
+        .summary-section {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 24px;
+            padding: 40px;
+            margin-top: 40px;
+        }
+
+        .summary-title {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-title::before {
+            content: '💎';
+            font-size: 1.8rem;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .summary-item h4 {
+            color: #ffd700;
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        .summary-item p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            line-height: 1.7;
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 15px 40px;
+            }
+
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+
+            .mindmap-branches {
+                grid-template-columns: 1fr;
+            }
+
+            .chain-diagram {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .chain-arrow {
+                transform: rotate(90deg);
+            }
+
+            .section-header {
+                padding: 20px;
+            }
+
+            .section-body {
+                padding: 0 20px 20px;
+            }
+
+            .expert-text {
+                padding-left: 0;
+                margin-top: 10px;
+            }
+        }
+
+        /* 浅色模式 */
+        body.light-mode .hero h1 {
+            background: linear-gradient(135deg, #1a1a2e, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        body.light-mode .section-title,
+        body.light-mode .mindmap-title,
+        body.light-mode .infographic-title,
+        body.light-mode .summary-title {
+            color: var(--text-primary);
+        }
+
+        body.light-mode .content-block p,
+        body.light-mode .branch-items li,
+        body.light-mode .expert-text {
+            color: var(--text-secondary);
+        }
+
+        body.light-mode .collapsible-section,
+        body.light-mode .mindmap-section,
+        body.light-mode .infographic {
+            background: rgba(255, 255, 255, 0.8);
+            border-color: rgba(0, 0, 0, 0.1);
+        }
+
+        /* 打印样式 */
+        @media print {
+            .controls, .particles {
+                display: none;
+            }
+
+            body {
+                background: white !important;
+            }
+
+            .collapsible-section {
+                break-inside: avoid;
+            }
+
+            .section-content {
+                max-height: none !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 头部区域 -->
+    <header class="hero">
+        <div class="hero-badge">🇺🇸 深度解读 · 2025</div>
+        <h1>美国特色资本主义<br>硅谷巨头的新游戏规则</h1>
+        <p class="hero-subtitle">当AI成为国家战略，当政府开始出题，苹果、英伟达、英特尔如何在新规则下求生？</p>
+        
+        <div class="controls">
+            <button class="control-btn" onclick="toggleAllSections(true)">📖 全部展开</button>
+            <button class="control-btn" onclick="toggleAllSections(false)">📕 全部折叠</button>
+            <button class="control-btn" onclick="toggleTheme()">🌓 切换主题</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 核心金句 -->
+        <div class="quote-banner">
+            <p class="quote-text">"美国的当前现实：新资本与新权力正在合流，美国资本主义正朝着'国家出题、企业解题'的形态演变。"</p>
+            <p class="quote-author">—— 核心洞察</p>
+        </div>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section">
+            <h2 class="mindmap-title">核心逻辑架构</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">美国特色资本主义</div>
+                <div class="mindmap-branches">
+                    <div class="mindmap-branch branch-1">
+                        <div class="branch-title">🎯 特朗普三大关切</div>
+                        <ul class="branch-items">
+                            <li>选民支持率下滑</li>
+                            <li>美债泡沫风险</li>
+                            <li>产业空心化危机</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch branch-2">
+                        <div class="branch-title">🏛️ AI国家战略</div>
+                        <ul class="branch-items">
+                            <li>加速AI创新</li>
+                            <li>扩大AI基建</li>
+                            <li>推广技术外交</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch branch-3">
+                        <div class="branch-title">💰 企业解题模式</div>
+                        <ul class="branch-items">
+                            <li>英伟达：投资换许可</li>
+                            <li>苹果：回流换豁免</li>
+                            <li>英特尔：股权换生存</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch branch-4">
+                        <div class="branch-title">⚠️ 潜在后果</div>
+                        <ul class="branch-items">
+                            <li>政府入股芯片企业</li>
+                            <li>自由市场精神退潮</li>
+                            <li>全球供应链重构</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 信息图：AI铁索连环 -->
+        <section class="infographic">
+            <h2 class="infographic-title">AI铁索连环：资本互锁游戏</h2>
+            <div class="chain-diagram">
+                <div class="chain-node nvidia">
+                    <div class="chain-node-name">英伟达</div>
+                    <div class="chain-node-value">市值4.6万亿</div>
+                </div>
+                <div class="chain-arrow">⇄</div>
+                <div class="chain-node openai">
+                    <div class="chain-node-name">OpenAI</div>
+                    <div class="chain-node-value">1000亿投资</div>
+                </div>
+                <div class="chain-arrow">⇄</div>
+                <div class="chain-node oracle">
+                    <div class="chain-node-name">甲骨文</div>
+                    <div class="chain-node-value">3000亿合同</div>
+                </div>
+                <div class="chain-arrow">⇄</div>
+                <div class="chain-node amd">
+                    <div class="chain-node-name">AMD</div>
+                    <div class="chain-node-value">10%认股权</div>
+                </div>
+            </div>
+            <p style="text-align: center; color: rgba(255,255,255,0.7); font-size: 0.9rem;">
+                "你投我、我买你、一起来市值管理"——预期叠预期，单日拉出两个阿里巴巴体量
+            </p>
+
+            <div class="data-comparison" style="margin-top: 30px;">
+                <div class="data-card">
+                    <div class="data-value">1000亿</div>
+                    <div class="data-label">五大科技公司</div>
+                    <div class="data-sub">2025年发债总额</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">48.5万</div>
+                    <div class="data-label">微软GPU采购</div>
+                    <div class="data-sub">2024年英伟达芯片</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">23.5亿</div>
+                    <div class="data-label">苹果活跃设备</div>
+                    <div class="data-sub">最优质AI入口</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">15%</div>
+                    <div class="data-label">收入分成</div>
+                    <div class="data-sub">英伟达对华销售税</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 板块1：库克困局 -->
+        <section class="collapsible-section active">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-header-left">
+                    <div class="section-icon icon-1">🍎</div>
+                    <div>
+                        <div class="section-title">库克困局：最优质的不合作者</div>
+                        <div class="section-preview">苹果为何成为AI盛宴的异类？</div>
+                    </div>
+                </div>
+                <div class="section-toggle"></div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="content-block">
+                        <p>2025年11月，<span class="highlight-red">库克卸任</span>的传闻开始在华尔街流传。这不是简单的八卦——当一个全球最重要科技公司的CEO，<span class="highlight-gold">核心团队流失、身体状况被质疑</span>，这些信号叠加在一起，正在形成美国AI产业界、资本市场和政界的某个<span class="highlight-purple">共同隐秘期待</span>。</p>
+                    </div>
+
+                    <div class="golden-quote">
+                        <p>"苹果是当下这场盛大的AI叙事的最优质接盘者，但也是最消极的接盘者。"</p>
+                    </div>
+
+                    <div class="person-cards">
+                        <div class="person-card">
+                            <div class="person-name">蒂姆·库克</div>
+                            <div class="person-title">苹果CEO · 供应链管理大师</div>
+                            <span class="person-status status-danger">政治压力增大</span>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 15px;">
+                                "无情的控制型中场"——在AI时代，市场需要的不是精打细算的管家，而是敢于豪赌的冒险家。
+                            </p>
+                        </div>
+                        <div class="person-card">
+                            <div class="person-name">苹果公司</div>
+                            <div class="person-title">全球市值最高企业</div>
+                            <span class="person-status status-warning">战略转型期</span>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 15px;">
+                                持有<span class="highlight-blue">1330亿美元</span>现金，<span class="highlight-green">23.5亿</span>活跃设备，却是GPU采购的"旁观者"。
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎓</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>美国特色资本主义研究视角</span>
+                            </div>
+                        </div>
+                        <p class="expert-text">
+                            库克的困境本质上是<strong>两种时代基因的冲突</strong>：乔布斯时代强调个人选择与个人体验，库克时代追求全球供应链最优——这两者都与当前美国"AI国家工程"格格不入。苹果正站在历史断点上，坚守初心可能遭遇政治孤立，融入体系又可能丧失竞争优势。这是"美国特色资本主义"下，企业被迫做出的艰难抉择。
+                        </p>
+                    </div>
+
+                    <table class="comparison-table">
+                        <tr>
+                            <th>指标</th>
+                            <th>苹果</th>
+                            <th>微软</th>
+                            <th>Meta</th>
+                        </tr>
+                        <tr>
+                            <td>2024 GPU采购量</td>
+                            <td style="color: #ff4757;">未进前三</td>
+                            <td style="color: #2ed573;">48.5万张</td>
+                            <td style="color: #5dade2;">22.4万张</td>
+                        </tr>
+                        <tr>
+                            <td>AI战略</td>
+                            <td>设备端小模型</td>
+                            <td>云算力+通用大模型</td>
+                            <td>云算力+通用大模型</td>
+                        </tr>
+                        <tr>
+                            <td>资本态度</td>
+                            <td style="color: #ffd700;">审慎低调</td>
+                            <td>激进举债</td>
+                            <td>激进举债</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 板块2：特朗普的交易艺术 -->
+        <section class="collapsible-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-header-left">
+                    <div class="section-icon icon-2">🎭</div>
+                    <div>
+                        <div class="section-title">特朗普的交易艺术</div>
+                        <div class="section-preview">国家出题，企业解题的新范式</div>
+                    </div>
+                </div>
+                <div class="section-toggle"></div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="golden-quote">
+                        <p>"黄仁勋、库克、陈立武三个故事，并不是孤立的个案，而是同一道题目的三种答法。"</p>
+                    </div>
+
+                    <div class="content-block">
+                        <p>特朗普第二任期最操心的<span class="highlight-red">三件事</span>：选民支持率下滑、美债泡沫破灭、美国产业空心化。对抗这三类风险，就是他心愿单上的前三条。而硅谷巨头们，正在他划定的考场上重新谋求经营空间。</p>
+                    </div>
+
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">2025年4月</div>
+                            <div class="timeline-content">商务部长指点黄仁勋，开启政治投靠觉悟；中美关税战打响</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2025年5月</div>
+                            <div class="timeline-content">特朗普中东访问，当众点名批评库克"不是我的朋友"</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2025年7月</div>
+                            <div class="timeline-content">英伟达、AMD获得H20对华销售许可</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2025年8月6日</div>
+                            <div class="timeline-content">苹果宣布6000亿美国投资；库克送特朗普24K黄金底座玻璃</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2025年8月7日</div>
+                            <div class="timeline-content">特朗普公开要求英特尔CEO陈立武辞职</div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">2025年8月22日</div>
+                            <div class="timeline-content">英特尔将9.9%股权出售给美国政府，价值110亿美元</div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">⚖️</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>政治经济学视角</span>
+                            </div>
+                        </div>
+                        <p class="expert-text">
+                            特朗普的策略堪称"<strong>政治期权定价</strong>"的典范——通过制造不确定性（关税威胁、CEO指控），迫使企业主动"认购"政治安全。库克一份黄金底座的礼物，换来25%-50%的印度关税豁免；英伟达的5000亿投资承诺，本质是用来"回答特朗普出好的题"。这不是传统意义上的政商博弈，而是<strong>一种新型的国家资本主义治理模式</strong>。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 板块3：三巨头的答卷 -->
+        <section class="collapsible-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-header-left">
+                    <div class="section-icon icon-3">📝</div>
+                    <div>
+                        <div class="section-title">三巨头的答卷</div>
+                        <div class="section-preview">黄仁勋、库克、陈立武如何解题</div>
+                    </div>
+                </div>
+                <div class="section-toggle"></div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="person-cards">
+                        <div class="person-card">
+                            <div class="person-name">黄仁勋 · 英伟达</div>
+                            <div class="person-title">解题模式：投资换许可</div>
+                            <span class="person-status status-success">顺利过关</span>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 15px;">
+                                <span class="highlight-gold">5000亿</span>美国AI基建投资 + <span class="highlight-blue">500兆瓦</span>中东沙特投资 + <span class="highlight-red">15%</span>在华销售收入分成
+                            </p>
+                        </div>
+                        <div class="person-card">
+                            <div class="person-name">蒂姆·库克 · 苹果</div>
+                            <div class="person-title">解题模式：回流换豁免</div>
+                            <span class="person-status status-warning">艰难过关</span>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 15px;">
+                                <span class="highlight-gold">6000亿</span>美国制造投资 + <span class="highlight-blue">2万</span>新雇员 + 一块24K黄金底座康宁玻璃
+                            </p>
+                        </div>
+                        <div class="person-card">
+                            <div class="person-name">陈立武 · 英特尔</div>
+                            <div class="person-title">解题模式：股权换生存</div>
+                            <span class="person-status status-danger">代价最重</span>
+                            <p style="color: rgba(255,255,255,0.7); font-size: 0.85rem; margin-top: 15px;">
+                                <span class="highlight-red">9.9%</span>股权出售给美国政府，价值<span class="highlight-gold">110亿</span>美元，用《芯片法案》补贴抵扣
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        <p>"库克送出一份礼物，带走了25%到50%的印度关税豁免。而特朗普什么也没有付出，就拿到了心愿单上的两份奖品。"</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🔮</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>企业战略视角</span>
+                            </div>
+                        </div>
+                        <p class="expert-text">
+                            三种答卷代表了企业在"美国特色资本主义"下的三种生存策略：<strong>主动融入</strong>（英伟达）、<strong>被动妥协</strong>（苹果）、<strong>股权让渡</strong>（英特尔）。但无论哪种策略，都意味着企业自主权的边界在收缩。值得注意的是，台积电听闻美国政府可能入股的消息后，已经在讨论退还补贴——这说明<strong>并非所有企业都愿意接受这种新游戏规则</strong>。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 板块4：AI泡沫的底层逻辑 -->
+        <section class="collapsible-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-header-left">
+                    <div class="section-icon icon-4">💹</div>
+                    <div>
+                        <div class="section-title">AI泡沫的底层逻辑</div>
+                        <div class="section-preview">美股核心利益的闭环游戏</div>
+                    </div>
+                </div>
+                <div class="section-toggle"></div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="golden-quote">
+                        <p>"美国长期的核心利益在美股，美股当前的核心利益在AI泡沫，而AI泡沫的核心利益在于产业信心和新增资本的持续涌入。"</p>
+                    </div>
+
+                    <div class="content-block">
+                        <p>2025年以来，亚马逊、Alphabet、微软、Meta、甲骨文<span class="highlight-gold">合计发行近1000亿美元债务</span>，是过往9年平均水平的<span class="highlight-red">3倍多</span>。其中近<span class="highlight-blue">900亿美元</span>是在9月以后发行的。</p>
+                        <p>借这么多钱干嘛用？<span class="highlight-purple">买GPU、建数据中心、投AI工厂</span>。资本成本很高，但大家不在乎。因为硅谷和资本市场都相信，只要AI投资继续扩大，美股估值就不会掉。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">📈</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>资本市场视角</span>
+                            </div>
+                        </div>
+                        <p class="expert-text">
+                            这是一场<strong>"预期叠预期"的信心游戏</strong>。CoreWeave和OpenAI合作、OpenAI和英伟达合作、甲骨文和OpenAI合作——每一笔合作都是纸面承诺，但每一笔承诺都能拉动股价。这种"铁索连环"的本质是<strong>用未来的预期为今天的估值背书</strong>。问题在于：当所有人都在借钱押注同一个方向时，这场游戏的最终买单者会是谁？
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 板块5：美国特色国家资本主义 -->
+        <section class="collapsible-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-header-left">
+                    <div class="section-icon icon-5">🏛️</div>
+                    <div>
+                        <div class="section-title">美国特色国家资本主义</div>
+                        <div class="section-preview">自由市场精神的巨变</div>
+                    </div>
+                </div>
+                <div class="section-toggle"></div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="content-block">
+                        <p>《华尔街日报》定义：这是一种<span class="highlight-purple">介于社会主义和资本主义之间的混合体</span>，国家会指导企业决策。这跟美国曾经体现的自由市场精神相比，无异于<span class="highlight-red">一场巨变</span>。</p>
+                    </div>
+
+                    <div class="golden-quote">
+                        <p>"中国网友开玩笑说，美国这是要搞'球资委'——全球资产监督管理委员会。"</p>
+                    </div>
+
+                    <table class="comparison-table">
+                        <tr>
+                            <th>行动</th>
+                            <th>对象</th>
+                            <th>政府获得</th>
+                        </tr>
+                        <tr>
+                            <td>1.5万亿招商引资</td>
+                            <td>日韩欧盟企业</td>
+                            <td>产业回流承诺</td>
+                        </tr>
+                        <tr>
+                            <td>收购审批附加条件</td>
+                            <td>日本制铁→美国钢铁</td>
+                            <td>黄金股（决策影响权）</td>
+                        </tr>
+                        <tr>
+                            <td>政府直接收购</td>
+                            <td>MP Materials</td>
+                            <td>15%优先股</td>
+                        </tr>
+                        <tr>
+                            <td>补贴转股权</td>
+                            <td>英特尔</td>
+                            <td>9.9%股权</td>
+                        </tr>
+                        <tr>
+                            <td>拟补贴转股权</td>
+                            <td>美光、三星、台积电</td>
+                            <td>待定（台积电考虑退还补贴）</td>
+                        </tr>
+                    </table>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🌐</div>
+                            <div class="expert-info">
+                                <h4>专家点评</h4>
+                                <span>地缘政治经济学视角</span>
+                            </div>
+                        </div>
+                        <p class="expert-text">
+                            加密平台BitMEX联合创始人Arthur Hayes早在2024年就预言："特朗普上任后，可能会推动<strong>'具有中国特色的美国资本主义'</strong>。"这个预言正在成真。美国正处于<strong>重回国家主义、重回工业基础设施</strong>的大周期阶段。黄金股、政府入股、收入分成——这些工具过去被认为是"非市场经济"的标志，如今却成为美国政府的常规操作。历史的吊诡之处在于：<strong>美国正在用它曾经批评的方式来捍卫它的利益</strong>。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 板块6：投资启示 -->
+        <section class="collapsible-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-header-left">
+                    <div class="section-icon icon-6">💡</div>
+                    <div>
+                        <div class="section-title">投资启示与风险提示</div>
+                        <div class="section-preview">2026年需要留心的信号</div>
+                    </div>
+                </div>
+                <div class="section-toggle"></div>
+            </div>
+            <div class="section-content">
+                <div class="section-body">
+                    <div class="content-block">
+                        <p>苹果会不会通过更换CEO来再次更改公司基因？谷歌最近的动作是否在直接拆AI泡沫的台？台积电能扛住美国的入股要求吗？这些都是<span class="highlight-gold">2026年要留个心眼儿的事</span>。</p>
+                    </div>
+
+                    <div class="golden-quote">
+                        <p>"当前的苹果，正站在一个历史断点上。坚守初心，可能会遭遇政治和资本的孤立；融入体系，又可能在同行当中失去竞争优势。"</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>专家总评</h4>
+                                <span>美国特色资本主义研究</span>
+                            </div>
+                        </div>
+                        <p class="expert-text">
+                            作为研究美国特色资本主义的观察者，我认为当前最重要的认知是：<strong>游戏规则已经改变</strong>。过去我们分析美国科技公司，主要看技术、产品、市场；现在还必须加上一个维度——<strong>政治站位</strong>。企业不再只是股东的资产，也正在成为国家战略的工具。这既是风险（政策不确定性），也是机会（政策红利）。对于投资者而言，理解"特朗普出什么题、企业怎么答题"的逻辑，可能比理解财报更重要。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 总结区域 -->
+        <section class="summary-section">
+            <h2 class="summary-title">核心洞察速览</h2>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <h4>🎯 新游戏规则</h4>
+                    <p>国家出题、企业解题。投资换许可、回流换豁免、股权换生存成为新常态。</p>
+                </div>
+                <div class="summary-item">
+                    <h4>⚠️ 苹果困境</h4>
+                    <p>最优质的AI入口，最消极的接盘者。库克的供应链基因与AI国家工程格格不入。</p>
+                </div>
+                <div class="summary-item">
+                    <h4>💰 资本闭环</h4>
+                    <p>美股→AI泡沫→产业信心→新增资本→美股。铁索连环，预期叠预期。</p>
+                </div>
+                <div class="summary-item">
+                    <h4>🔮 关注信号</h4>
+                    <p>苹果换帅、台积电抉择、谷歌动向——2026年的关键观察点。</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>基于《蔡钰·商业参考4》内容深度解读 | 专家评论仅代表分析视角</p>
+        <p style="margin-top: 10px;">💎 美国特色资本主义研究 · 2025</p>
+    </footer>
+
+    <script>
+        // 生成粒子背景
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+
+        // 切换板块展开/折叠
+        function toggleSection(section) {
+            section.classList.toggle('active');
+        }
+
+        // 全部展开/折叠
+        function toggleAllSections(expand) {
+            const sections = document.querySelectorAll('.collapsible-section');
+            sections.forEach(section => {
+                if (expand) {
+                    section.classList.add('active');
+                } else {
+                    section.classList.remove('active');
+                }
+            });
+        }
+
+        // 切换主题
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createParticles();
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吴军教育智慧 · 理性探索之旅</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1e3a5f 0%, #2d1b69 50%, #1a1a2e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f0f4f8;
+            --text-secondary: #a0aec0;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #ffe66d;
+            --highlight-action: #a8e6cf;
+            --highlight-warning: #ff8a5b;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --accent: #667eea;
+            --accent2: #764ba2;
+            --gold: #ffd700;
+            --emerald: #10b981;
+            --rose: #f472b6;
+            --cyan: #22d3ee;
+            --orange: #fb923c;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #e0e5ec 0%, #f5f7fa 50%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* 头部设计 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInDown 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--highlight-key), var(--highlight-data), var(--highlight-quote), var(--emerald), var(--rose));
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.15) 0%, transparent 70%);
+            animation: float 6s ease-in-out infinite;
+        }
+        h1 {
+            font-size: 2.8em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--gold), var(--orange), var(--rose));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .meta-info {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.15);
+            border-radius: 20px;
+            font-size: 0.95em;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--accent);
+            color: var(--accent);
+            box-shadow: none;
+        }
+        .btn-outline:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        /* 金句展示区 */
+        .quotes-showcase {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+        .quotes-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gold);
+        }
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .quote-card {
+            background: linear-gradient(145deg, rgba(255,215,0,0.08), rgba(251,146,60,0.05));
+            border: 1px solid rgba(255,215,0,0.2);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: default;
+        }
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(255,215,0,0.15);
+            border-color: var(--gold);
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4em;
+            color: var(--gold);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        .quote-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+            padding-top: 20px;
+        }
+        .quote-source {
+            margin-top: 15px;
+            font-size: 0.9em;
+            color: var(--highlight-quote);
+            font-weight: 600;
+        }
+
+        /* 思维导图区域 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--cyan), var(--emerald));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--accent2), var(--rose));
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 800;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            animation: pulse 3s ease-in-out infinite;
+            text-align: center;
+        }
+        .branches-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.3s; }
+        .branch:nth-child(2) { animation-delay: 0.5s; }
+        .branch:nth-child(3) { animation-delay: 0.7s; }
+        .branch-main {
+            text-align: center;
+            padding: 18px 25px;
+            border-radius: 20px;
+            font-size: 1.2em;
+            font-weight: 700;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .branch-main::before {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            width: 3px;
+            height: 25px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+        }
+        .branch-main:hover {
+            transform: scale(1.05);
+        }
+        .branch-1 .branch-main { 
+            background: linear-gradient(135deg, rgba(255,107,107,0.2), rgba(255,107,107,0.05));
+            border: 2px solid var(--highlight-key);
+            color: var(--highlight-key);
+        }
+        .branch-2 .branch-main { 
+            background: linear-gradient(135deg, rgba(78,205,196,0.2), rgba(78,205,196,0.05));
+            border: 2px solid var(--highlight-data);
+            color: var(--highlight-data);
+        }
+        .branch-3 .branch-main { 
+            background: linear-gradient(135deg, rgba(255,230,109,0.2), rgba(255,230,109,0.05));
+            border: 2px solid var(--highlight-quote);
+            color: var(--highlight-quote);
+        }
+        .sub-nodes {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .sub-node {
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            background: var(--glass-bg);
+            border-left: 3px solid;
+            transition: all 0.3s ease;
+        }
+        .sub-node:hover {
+            transform: translateX(8px);
+        }
+        .branch-1 .sub-node { border-color: var(--highlight-key); }
+        .branch-2 .sub-node { border-color: var(--highlight-data); }
+        .branch-3 .sub-node { border-color: var(--highlight-quote); }
+
+        /* 信息图表区 */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+        .info-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        .stat-card {
+            background: linear-gradient(145deg, rgba(102,126,234,0.1), rgba(118,75,162,0.05));
+            border: 1px solid rgba(102,126,234,0.2);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.2);
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--cyan), var(--emerald));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+        .stat-source {
+            font-size: 0.8em;
+            color: var(--text-secondary);
+            opacity: 0.7;
+            margin-top: 5px;
+        }
+        .comparison-bar {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+        .bar-item {
+            margin-bottom: 20px;
+        }
+        .bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .bar-track {
+            height: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .bar-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1.5s ease;
+        }
+        .bar-fill-1 { background: linear-gradient(90deg, var(--highlight-key), var(--orange)); width: 85%; }
+        .bar-fill-2 { background: linear-gradient(90deg, var(--highlight-data), var(--cyan)); width: 65%; }
+        .bar-fill-3 { background: linear-gradient(90deg, var(--emerald), var(--highlight-quote)); width: 45%; }
+
+        /* 内容板块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 30px 35px;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid transparent;
+        }
+        .section-header:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+        .section-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        .icon-1 { background: linear-gradient(135deg, var(--highlight-key), var(--orange)); }
+        .icon-2 { background: linear-gradient(135deg, var(--highlight-data), var(--cyan)); }
+        .icon-3 { background: linear-gradient(135deg, var(--emerald), var(--highlight-action)); }
+        .icon-4 { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+        .icon-5 { background: linear-gradient(135deg, var(--rose), var(--highlight-key)); }
+        .icon-6 { background: linear-gradient(135deg, var(--gold), var(--orange)); }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        .section-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+        }
+        .badge-qa { background: rgba(255,107,107,0.2); color: var(--highlight-key); }
+        .badge-insight { background: rgba(78,205,196,0.2); color: var(--highlight-data); }
+        .badge-case { background: rgba(16,185,129,0.2); color: var(--emerald); }
+        .badge-expert { background: rgba(102,126,234,0.2); color: var(--accent); }
+        .collapse-icon {
+            font-size: 1.8em;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            padding: 0 35px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+        .collapsed .section-preview {
+            max-height: 100px;
+            padding: 15px 35px 25px;
+            opacity: 1;
+        }
+        .section-content {
+            padding: 0 35px 35px;
+            max-height: 5000px;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+            padding: 0 35px;
+        }
+
+        /* 文字高亮样式 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(78, 205, 196, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(255, 230, 109, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-action {
+            color: var(--highlight-action);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(168, 230, 207, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-warning {
+            color: var(--highlight-warning);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(255, 138, 91, 0.15);
+            border-radius: 6px;
+        }
+
+        /* 内容样式 */
+        .content-block {
+            margin-bottom: 25px;
+        }
+        .content-block h3 {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .content-block p {
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 18px;
+            background: rgba(102,126,234,0.08);
+            border-radius: 14px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--accent);
+        }
+        .key-point-icon {
+            font-size: 1.3em;
+            flex-shrink: 0;
+        }
+        .key-point-text {
+            flex: 1;
+        }
+        .case-study {
+            background: linear-gradient(145deg, rgba(16,185,129,0.1), rgba(168,230,207,0.05));
+            border: 1px solid rgba(16,185,129,0.2);
+            border-radius: 16px;
+            padding: 22px;
+            margin: 20px 0;
+        }
+        .case-title {
+            font-weight: 700;
+            color: var(--emerald);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(145deg, rgba(102,126,234,0.12), rgba(118,75,162,0.08));
+            border-left: 5px solid var(--accent);
+            border-radius: 0 20px 20px 0;
+            position: relative;
+        }
+        .expert-comment::before {
+            content: '🎓';
+            position: absolute;
+            top: -18px;
+            left: 25px;
+            font-size: 2.2em;
+            background: var(--glass-bg);
+            padding: 8px 18px;
+            border-radius: 15px;
+            border: 1px solid var(--glass-border);
+        }
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 18px;
+            margin-top: 15px;
+        }
+        .expert-label {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.1em;
+        }
+        .expert-text {
+            color: var(--text-primary);
+            line-height: 1.9;
+        }
+        .expert-text p {
+            margin-bottom: 12px;
+        }
+
+        /* 行动建议 */
+        .action-box {
+            background: linear-gradient(145deg, rgba(255,215,0,0.1), rgba(251,146,60,0.05));
+            border: 1px solid rgba(255,215,0,0.25);
+            border-radius: 18px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+        .action-title {
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.1em;
+        }
+        .action-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .action-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .action-item:hover {
+            background: rgba(255,215,0,0.08);
+            transform: translateX(5px);
+        }
+        .action-number {
+            width: 28px;
+            height: 28px;
+            background: var(--gold);
+            color: #1a1a2e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 16px 20px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .comparison-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+        }
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+        .comparison-table tr:hover td {
+            background: rgba(102,126,234,0.1);
+        }
+
+        /* 底部 */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 35px;
+            margin-top: 40px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        .footer-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.6em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 回到顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 15px 50px rgba(102, 126, 234, 0.5); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .header { padding: 30px 25px; border-radius: 24px; }
+            h1 { font-size: 1.8em; }
+            .branches-row { grid-template-columns: 1fr; }
+            .branch-main::before { display: none; }
+            .quotes-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .section-header { padding: 20px; }
+            .section-content { padding: 0 20px 25px; }
+            .section-title { font-size: 1.2em; }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body { background: white; color: black; }
+            .theme-toggle, .back-to-top, .controls { display: none; }
+            .section { break-inside: avoid; }
+            .collapsed .section-content { max-height: none; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>📚 吴军教育智慧</h1>
+            <p class="subtitle">理性探索之旅 · 课程精华提炼</p>
+            <div class="meta-info">
+                <span class="meta-item">👨‍🏫 讲师：吴军</span>
+                <span class="meta-item">📅 内容类型：课程问答 + 加餐</span>
+                <span class="meta-item">🎯 主题：教育观念 · 人才培养 · 精英教育</span>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="toggleAll()">📂 展开/折叠全部</button>
+                <button class="btn btn-outline" onclick="scrollToMindmap()">🧠 查看思维导图</button>
+            </div>
+        </header>
+
+        <!-- 金句展示 -->
+        <section class="quotes-showcase">
+            <h2 class="quotes-title">💎 核心金句</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p class="quote-text">与其指望别人接纳你，不如让自己变得出色。世界不欠任何人的。</p>
+                    <p class="quote-source">—— 论融入圈子</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">前20%的孩子背后，往往站着前20%的家长。</p>
+                    <p class="quote-source">—— 论家庭教育</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">所谓财商，不过是生活态度和生活习惯在投资方面的投影。</p>
+                    <p class="quote-source">—— 引芒格之言</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">作为父母，和孩子搞好关系，比考试多考两分更重要。</p>
+                    <p class="quote-source">—— 论亲子关系</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">能够提出好问题、开创研究领域，是对宗师的要求。不善于提出问题，最多算是一个好的跟随者。</p>
+                    <p class="quote-source">—— 论创新能力</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">接受不了精英教育，也不要太在意，毕竟一个国家需要的精英，数量很有限。</p>
+                    <p class="quote-source">—— 论精英教育</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-container" id="mindmap">
+            <h2 class="mindmap-title">🧠 核心观点导图</h2>
+            <div class="mindmap">
+                <div class="center-node">吴军教育观</div>
+                <div class="branches-row">
+                    <div class="branch branch-1">
+                        <div class="branch-main">🎯 个人成长</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">特立独行优于随波逐流</div>
+                            <div class="sub-node">出色自己 vs 融入圈子</div>
+                            <div class="sub-node">相对进步比绝对排名重要</div>
+                            <div class="sub-node">基础概念是突破口</div>
+                        </div>
+                    </div>
+                    <div class="branch branch-2">
+                        <div class="branch-main">🔬 教育问题</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">被标准答案绑架</div>
+                            <div class="sub-node">不善于提出问题</div>
+                            <div class="sub-node">天才被迫等待大多数</div>
+                            <div class="sub-node">缺乏灵活分层机制</div>
+                        </div>
+                    </div>
+                    <div class="branch branch-3">
+                        <div class="branch-main">🏛️ 精英教育</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">德国：过度公平致精英稀释</div>
+                            <div class="sub-node">法国：双轨制保留精英通道</div>
+                            <div class="sub-node">美国：课程灵活，按能力分班</div>
+                            <div class="sub-node">筛选 + 培养缺一不可</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 信息图表 -->
+        <section class="infographic">
+            <h2 class="info-title">📊 关键数据洞察</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">5.3h</div>
+                    <div class="stat-label">中国人日均使用电子产品时间</div>
+                    <div class="stat-source">大部分用于社交媒体</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4-4.5%</div>
+                    <div class="stat-label">重度社交用户认知能力差距</div>
+                    <div class="stat-source">JAMA研究 · 95%置信度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">巴黎高师校友菲尔兹奖数</div>
+                    <div class="stat-source">截止2024年</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">50h/周</div>
+                    <div class="stat-label">法国精英预科班课时</div>
+                    <div class="stat-source">普通大学仅30小时</div>
+                </div>
+            </div>
+            <div class="comparison-bar">
+                <h3 style="margin-bottom: 20px; color: var(--cyan);">📈 教育投入效果对比</h3>
+                <div class="bar-item">
+                    <div class="bar-label">
+                        <span>🇺🇸 美国高中AP课程覆盖</span>
+                        <span style="color: var(--highlight-data);">丰富多元</span>
+                    </div>
+                    <div class="bar-track"><div class="bar-fill bar-fill-1"></div></div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">
+                        <span>🇫🇷 法国精英学校选拔强度</span>
+                        <span style="color: var(--highlight-data);">严格精准</span>
+                    </div>
+                    <div class="bar-track"><div class="bar-fill bar-fill-2"></div></div>
+                </div>
+                <div class="bar-item">
+                    <div class="bar-label">
+                        <span>🇩🇪 德国大学精英密度</span>
+                        <span style="color: var(--highlight-warning);">稀释下降</span>
+                    </div>
+                    <div class="bar-track"><div class="bar-fill bar-fill-3"></div></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第一部分：学历与发展 -->
+        <section class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-left">
+                    <div class="section-icon icon-1">🎓</div>
+                    <span class="section-title">第一学历焦虑：如何破局？</span>
+                    <span class="section-badge badge-qa">问答</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">专科起点也能逆袭？关键在于做出成就，而非学历补丁...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🌍 问题本质</h3>
+                    <p>学历歧视是<span class="highlight-key">世界性现象</span>，存在于中国、美国、英国、法国、日本、韩国等国。这不仅是用人单位的偏好，也是某些群体"维持荣誉"的方式。</p>
+                    
+                    <div class="case-study">
+                        <div class="case-title">📍 硅谷案例</div>
+                        <p>除斯坦福和伯克利外，硅谷雇佣人数第三多的是<span class="highlight-data">圣荷西州立大学</span>（相当于国内二本）。原因？<span class="highlight-action">地理位置好</span>，而且一旦做出成绩，没人在意你的出身。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>💡 破局策略</h3>
+                    <div class="key-point">
+                        <span class="key-point-icon">1️⃣</span>
+                        <div class="key-point-text">
+                            <strong>靠成就说话</strong>：这是正道。做出名堂后，别人不会在意学校背景。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="key-point-icon">2️⃣</span>
+                        <div class="key-point-text">
+                            <strong>研究生选校要精准</strong>：211硕士作用有限，<span class="highlight-key">C9学校</span>更被认可。但要有心理准备——名校硕士含金量普遍不如本科。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="key-point-icon">3️⃣</span>
+                        <div class="key-point-text">
+                            <strong>学术路线选博士</strong>：如果志在学术，拿下顶尖学校的博士学位才能真正证明自己。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <span class="expert-label">教育专家点评</span>
+                    </div>
+                    <div class="expert-text">
+                        <p>吴军的观点直击要害：<span class="highlight-key">学历只是入场券，能力才是通行证</span>。在知识经济时代，「做出成就」的价值正在被市场重新定价。</p>
+                        <p>值得注意的是，他提到的「排他性群体」现象，本质上是<span class="highlight-data">社会资本的积累与传递</span>。对于起点较低的人，与其纠结于融入这些圈子，不如专注于建立自己的专业壁垒和独特价值网络。</p>
+                        <p>一个务实的建议：在选择读研学校时，考虑的优先级应该是——<span class="highlight-action">行业认可度 > 综合排名 > 学校名气</span>。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第二部分：青春期教育 -->
+        <section class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-left">
+                    <div class="section-icon icon-2">👨‍👩‍👧</div>
+                    <span class="section-title">青春期困境：成绩平平、想融入圈子怎么办？</span>
+                    <span class="section-badge badge-qa">问答</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">孩子成绩一般又想融入追星圈子，家长该如何智慧引导...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>📈 关于成绩</h3>
+                    <div class="key-point">
+                        <span class="key-point-icon">✨</span>
+                        <div class="key-point-text">
+                            <strong>看相对进步，不要横向比较</strong>：请家教后有进步，这就是好事。用"投资心态"看成绩——一万本金每年增长5-10%，比百万富翁的参照更有意义。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="key-point-icon">🔧</span>
+                        <div class="key-point-text">
+                            <strong>不及格说明基本概念没搞懂</strong>：物理补习要从基本概念补起，而不是刷题。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>👥 关于圈子</h3>
+                    <p>吴军的核心观点：<span class="highlight-key">很多圈子是不用融入的</span>。</p>
+                    
+                    <div class="case-study">
+                        <div class="case-title">🎤 个人经历</div>
+                        <p>年轻时很多人追港台剧、烫头、穿钉皮鞋，但他做到了<span class="highlight-quote">特立独行</span>。当你在某些地方做得出色了，就是别人要融入你的圈子了。</p>
+                    </div>
+
+                    <p style="margin-top: 20px;">芒格的智慧：<span class="highlight-quote">"我喜欢作为资本家所具有的特立独行"</span>——大家都以为对的事情，大概率是错的。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>📱 社交媒体的代价</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>使用程度</th>
+                            <th>认知能力差距</th>
+                            <th>数据来源</th>
+                        </tr>
+                        <tr>
+                            <td>几乎不使用 vs 轻度（1h/天）</td>
+                            <td><span class="highlight-data">高2%</span></td>
+                            <td>JAMA 2025.10</td>
+                        </tr>
+                        <tr>
+                            <td>几乎不使用 vs 重度（3h/天）</td>
+                            <td><span class="highlight-key">高4-4.5%</span></td>
+                            <td>加州大学旧金山分校</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 15px; color: var(--text-secondary);">与其花大价钱上补习班多考几分，不如培养孩子的自制力，少玩电子产品。</p>
+                </div>
+
+                <div class="action-box">
+                    <div class="action-title">🎯 给家长的行动建议</div>
+                    <div class="action-list">
+                        <div class="action-item">
+                            <span class="action-number">1</span>
+                            <span>帮孩子分辨什么值得投入时间，培养抵制诱惑的能力</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">2</span>
+                            <span>如果孩子离开圈子就痛苦，不要强逼——等高中或大学再说</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">3</span>
+                            <span><span class="highlight-key">和孩子搞好关系，比多考两分更重要</span></span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <span class="expert-label">教育专家点评</span>
+                    </div>
+                    <div class="expert-text">
+                        <p>吴军提出了一个家长常忽视的逻辑：<span class="highlight-key">如果80%的家长都办不到的事情，却期待孩子进入前20%，这是不现实的</span>。这实际上是在说——家长的认知天花板，往往就是孩子发展的上限。</p>
+                        <p>关于社交媒体的研究数据非常有说服力。<span class="highlight-data">每天3小时社交媒体使用</span>造成的认知损失，可能需要大量补习时间才能弥补。这揭示了一个简单但被忽视的真相：<span class="highlight-action">减法有时比加法更有效</span>。</p>
+                        <p>特别值得肯定的是他对亲子关系的态度——在「鸡娃」焦虑蔓延的当下，这种「关系优先」的理念难能可贵。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三部分：时间分配 -->
+        <section class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-left">
+                    <div class="section-icon icon-3">⏰</div>
+                    <span class="section-title">技术深耕与育儿陪伴：如何平衡？</span>
+                    <span class="section-badge badge-qa">问答</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">因材施教能省时间，关键是补上知识缺口...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>⚡ 核心观点</h3>
+                    <p>因材施教后，孩子学习标准化内容的时间会<span class="highlight-action">大大缩短</span>。过去需要100%时间才能学懂的内容，可能只要<span class="highlight-data">50%-80%</span>的时间就能达到同样水平。</p>
+                    
+                    <div class="key-point">
+                        <span class="key-point-icon">⚠️</span>
+                        <div class="key-point-text">
+                            <strong>假期必须补上落下的课程</strong>：否则知识缺口会越来越大，以后学习越来越吃力。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🎯 学霸与学渣的真正差异</h3>
+                    <p>他们之间<span class="highlight-key">不存在多大能力差异</span>，主要差异在于：</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-top: 15px;">
+                        <div style="padding: 15px; background: rgba(102,126,234,0.1); border-radius: 12px; text-align: center;">
+                            <span style="font-size: 1.5em;">📚</span>
+                            <p style="margin-top: 8px; font-weight: 600;">学习习惯</p>
+                        </div>
+                        <div style="padding: 15px; background: rgba(78,205,196,0.1); border-radius: 12px; text-align: center;">
+                            <span style="font-size: 1.5em;">🎯</span>
+                            <p style="margin-top: 8px; font-weight: 600;">对自己的要求</p>
+                        </div>
+                        <div style="padding: 15px; background: rgba(255,215,0,0.1); border-radius: 12px; text-align: center;">
+                            <span style="font-size: 1.5em;">🧠</span>
+                            <p style="margin-top: 8px; font-weight: 600;">学习方法</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <span class="expert-label">教育专家点评</span>
+                    </div>
+                    <div class="expert-text">
+                        <p>吴军点出了一个被普遍忽视的问题：<span class="highlight-warning">很多家长宁可让孩子在假期超前学，却不愿意补上过去不懂的内容</span>。这就像建房子不打地基，越往上盖越危险。</p>
+                        <p>「因材施教省时间」这个观点非常务实。它意味着高质量的教育投入（理解孩子特点、找准方法）比单纯增加时间投入更有效。这对忙碌的职场父母来说，是一个重要的思维转换。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第四部分：中国教育的一大问题 -->
+        <section class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-left">
+                    <div class="section-icon icon-4">🔍</div>
+                    <span class="section-title">为什么中国难出诺奖？一大问题与一个短板</span>
+                    <span class="section-badge badge-insight">加餐洞察</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">被标准答案绑架、不善于提问，是阻碍顶尖人才涌现的核心障碍...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>❌ 一大问题：被标准答案绑架</h3>
+                    <p>中国教育的核心问题：<span class="highlight-key">不善于提出问题</span>，这是妨碍获得诺奖级成就的第一大障碍。</p>
+                    
+                    <div class="key-point">
+                        <span class="key-point-icon">💡</span>
+                        <div class="key-point-text">
+                            <strong>宗师级人物的标准</strong>：能够提出好问题，开创研究领域。不善于提出问题，最多算是一个好的跟随者，很难成为宗师。
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 15px;">这个逻辑同样适用于：</p>
+                    <ul style="list-style: none; padding-left: 0; margin-top: 10px;">
+                        <li style="padding: 8px 0;">🏢 <strong>创业</strong>：伟大公司的创始人往往是善于发现问题的人</li>
+                        <li style="padding: 8px 0;">📖 <strong>写作</strong>：好的选题比写作本身更重要</li>
+                    </ul>
+                </div>
+
+                <div class="content-block">
+                    <h3>⚡ 一个短板：天才被迫等待</h3>
+                    <p>当前中学教育为了照顾绝大多数孩子，导致<span class="highlight-warning">真正的学霸浪费了太多时间</span>。</p>
+                    
+                    <div class="case-study">
+                        <div class="case-title">📍 北京高考状元案例</div>
+                        <p>2024年，吴军的学弟成为北京市高考状元，两门课满分。但吴军的反应是：「这简直是<span class="highlight-key">浪费人才</span>」——这样优秀的学生，不应该等到高三才上大学。</p>
+                    </div>
+
+                    <p style="margin-top: 20px;">吴军自己的经历：初中毕业那个暑假，他和几十名尖子生花一个暑假多一点，把<span class="highlight-data">高中全部数学内容学完了</span>。整个高中三年，数学课对他来说都是炒回锅饭。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>✅ 理想的培养方式（美国私立学校做法）</h3>
+                    <div class="action-list" style="margin-top: 15px;">
+                        <div class="action-item">
+                            <span class="action-number">1</span>
+                            <span><strong>承认差异</strong>：每个学生每门课上几年级，视真实水平而定</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">2</span>
+                            <span><strong>专业评估</strong>：每年评估决定是否跳级，决定权在专业委员会</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">3</span>
+                            <span><strong>丰富选择</strong>：开设大学课程（微积分、线性代数、经济学等）给学有余力者</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">4</span>
+                            <span><strong>因材选课</strong>：除通识课外，根据特长选修深度课程</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="case-study" style="margin-top: 25px;">
+                    <div class="case-title">📋 吴军女儿的高中课程</div>
+                    <p>高中四年选了<span class="highlight-data">14门大学先修课程(AP)</span>，其余大部分是荣誉课（提高型课程）。这些只是学校开设的上百门课程中的一小部分。</p>
+                    <p style="margin-top: 10px;">结果：进入大学后跳过约一个学期的基础课，大女儿大四就转入研究生学习，小女儿三年学完两个学位。</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <span class="expert-label">教育专家点评</span>
+                    </div>
+                    <div class="expert-text">
+                        <p>吴军提出的两个问题切中要害：<span class="highlight-key">问题意识缺失</span>和<span class="highlight-key">天才时间浪费</span>是中国教育的结构性问题。</p>
+                        <p>「标准答案」文化的危害不仅在于压制创造力，更在于它培养了一种「等待正确答案」的思维惰性。而真正的创新往往始于「提出正确的问题」。</p>
+                        <p>关于天才培养，他提出的美国模式值得借鉴：<span class="highlight-action">不是让天才跳级（揠苗助长），而是让课程适应天才</span>。这种「人在原地，课程可变」的模式，既尊重了整体发育规律，又释放了学术潜能。</p>
+                        <p>当然，他也清醒地指出：这与现行高考制度不完全兼容。但至少，作为家长，我们可以在假期和课外时间，为有能力的孩子创造「提前学、深入学」的机会。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第五部分：精英教育 -->
+        <section class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <div class="section-left">
+                    <div class="section-icon icon-5">🏛️</div>
+                    <span class="section-title">德法对比：精英教育的两条路</span>
+                    <span class="section-badge badge-case">加餐案例</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">德国过度公平导致精英稀释，法国双轨制保留精英通道...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🇩🇪 德国：过度公平的代价</h3>
+                    <p>历史上，德国是现代高等教育样板，二战前科技水平领先世界。但今天，德国大学的地位已大不如前。</p>
+                    
+                    <div class="key-point">
+                        <span class="key-point-icon">❌</span>
+                        <div class="key-point-text">
+                            <strong>问题根源</strong>：过分强调公平性，导致大学录取近乎抽签，丧失了筛选和选拔功能，尖子学生数量锐减。
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 15px; color: var(--text-secondary);">教授也吃大锅饭，不像美国和中国分三六九等。结果？今天主要科技成就，很少来自德国大学。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>🇫🇷 法国：双轨制的智慧</h3>
+                    <p>法国公立大学同样过于讲究平等，但保留了一个<span class="highlight-key">精英小缺口</span>——Grande École（高等专科学院）。</p>
+                    
+                    <table class="comparison-table">
+                        <tr>
+                            <th>学校</th>
+                            <th>特点</th>
+                            <th>成就</th>
+                        </tr>
+                        <tr>
+                            <td>巴黎高等师范学院</td>
+                            <td>每年招本科生不足百名</td>
+                            <td>12个菲尔兹奖、10+诺奖</td>
+                        </tr>
+                        <tr>
+                            <td>巴黎政治学院</td>
+                            <td>培养政界精英</td>
+                            <td>自1981年起所有总统</td>
+                        </tr>
+                        <tr>
+                            <td>巴黎综合理工学院</td>
+                            <td>培养商界精英</td>
+                            <td>法国500强半数CEO</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h3>📚 进入精英学校的路径</h3>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-top: 15px;">
+                        <div style="flex: 1; min-width: 250px; padding: 20px; background: rgba(102,126,234,0.08); border-radius: 16px;">
+                            <h4 style="color: var(--accent); margin-bottom: 10px;">1️⃣ 预科班（Pre Bac）</h4>
+                            <p>高中毕业后接受<span class="highlight-data">2年预科培训</span>，每周上课50小时（普通大学仅30小时）</p>
+                        </div>
+                        <div style="flex: 1; min-width: 250px; padding: 20px; background: rgba(78,205,196,0.08); border-radius: 16px;">
+                            <h4 style="color: var(--highlight-data); margin-bottom: 10px;">2️⃣ 联合考试</h4>
+                            <p>同类精英学校联合出卷，录取基本看成绩，录取率常常<span class="highlight-key">低于5%</span></p>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 20px;">竞争从高中就开始：最好的两所高中（亨利四世中学、路易勒格朗中学）各自招200多人，报考学生来自100-200所初中——<span class="highlight-warning">一所初中只能有一两个被录取</span>。</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <span class="expert-label">教育专家点评</span>
+                    </div>
+                    <div class="expert-text">
+                        <p>德法对比揭示了一个深刻的矛盾：<span class="highlight-key">教育公平与精英选拔如何共存</span>？</p>
+                        <p>德国的教训在于，当「公平」被推到极致（录取近乎抽签），选拔功能就会丧失，这实际上损害了国家的长远竞争力。</p>
+                        <p>法国的智慧在于「双轨制」：对大多数人讲公平，对少数精英讲择优。虽然这意味着<span class="highlight-warning">很多人的命运在20岁就被决定</span>，但它确保了顶尖人才不被埋没。</p>
+                        <p>对于个人的启示是：如果你想走精英路线，就要有心理准备迎接激烈竞争；如果竞争失败，也不必太在意——<span class="highlight-quote">毕竟一个国家需要的精英，数量很有限</span>。找到自己的位置，活得精彩，同样是成功的人生。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 总结与行动 -->
+        <section class="section" id="section6">
+            <div class="section-header" onclick="toggleSection('section6')">
+                <div class="section-left">
+                    <div class="section-icon icon-6">🎯</div>
+                    <span class="section-title">核心启示与行动框架</span>
+                    <span class="section-badge badge-expert">专家总结</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">综合吴军观点，提炼可落地的行动建议...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🔑 三大核心启示</h3>
+                    <div style="display: grid; gap: 20px; margin-top: 15px;">
+                        <div style="padding: 25px; background: linear-gradient(135deg, rgba(255,107,107,0.1), rgba(255,107,107,0.02)); border-radius: 16px; border-left: 4px solid var(--highlight-key);">
+                            <h4 style="color: var(--highlight-key); margin-bottom: 10px;">1. 成就 > 学历</h4>
+                            <p>学历是入场券，但做出成就才是通行证。与其焦虑出身，不如专注创造价值。</p>
+                        </div>
+                        <div style="padding: 25px; background: linear-gradient(135deg, rgba(78,205,196,0.1), rgba(78,205,196,0.02)); border-radius: 16px; border-left: 4px solid var(--highlight-data);">
+                            <h4 style="color: var(--highlight-data); margin-bottom: 10px;">2. 特立独行 > 融入圈子</h4>
+                            <p>不值得融入的圈子不必强求。当你足够出色，别人会来融入你。</p>
+                        </div>
+                        <div style="padding: 25px; background: linear-gradient(135deg, rgba(255,215,0,0.1), rgba(255,215,0,0.02)); border-radius: 16px; border-left: 4px solid var(--gold);">
+                            <h4 style="color: var(--gold); margin-bottom: 10px;">3. 提问能力 > 解题能力</h4>
+                            <p>善于提出好问题，是从跟随者到宗师的分水岭。培养问题意识是教育的核心目标。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-box">
+                    <div class="action-title">📋 给家长的行动清单</div>
+                    <div class="action-list">
+                        <div class="action-item">
+                            <span class="action-number">1</span>
+                            <span>关注孩子的相对进步，建立「投资心态」看成绩</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">2</span>
+                            <span>假期补上知识缺口，比超前学更重要</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">3</span>
+                            <span>控制电子产品使用时间，减法比加法有效</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">4</span>
+                            <span>培养孩子的问题意识，鼓励提问而非只给答案</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number">5</span>
+                            <span>亲子关系优先，比多考两分更重要</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="action-box" style="background: linear-gradient(145deg, rgba(102,126,234,0.1), rgba(118,75,162,0.05)); border-color: rgba(102,126,234,0.25);">
+                    <div class="action-title" style="color: var(--accent);">🚀 给个人的成长建议</div>
+                    <div class="action-list">
+                        <div class="action-item">
+                            <span class="action-number" style="background: var(--accent);">1</span>
+                            <span>与其纠结第一学历，不如专注于可证明的成就</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number" style="background: var(--accent);">2</span>
+                            <span>读研选校考虑：行业认可度 > 综合排名 > 学校名气</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number" style="background: var(--accent);">3</span>
+                            <span>学术路线：博士才能真正证明自己</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number" style="background: var(--accent);">4</span>
+                            <span>培养「提出问题」的能力，这是跨越阶层的关键</span>
+                        </div>
+                        <div class="action-item">
+                            <span class="action-number" style="background: var(--accent);">5</span>
+                            <span>接受不了精英教育也没关系——找到自己的位置同样精彩</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <span class="expert-label">教育专家总评</span>
+                    </div>
+                    <div class="expert-text">
+                        <p>吴军的教育观有三个鲜明特点：<span class="highlight-key">务实</span>、<span class="highlight-data">理性</span>、<span class="highlight-quote">不焦虑</span>。</p>
+                        <p>他既清醒地看到中国教育的结构性问题（标准答案绑架、天才时间浪费），也不鼓吹所有人都要挤独木桥。他反复强调「做出成就是正道」，这是对焦虑时代的一剂解药。</p>
+                        <p>对于家长，他的核心信息是：<span class="highlight-action">前20%的孩子背后站着前20%的家长</span>——与其焦虑孩子的排名，不如先提升自己的认知水平和教育方法。</p>
+                        <p>对于个人，他传递的是一种<span class="highlight-quote">「特立独行」的底气</span>——不必随波逐流融入所有圈子，专注于让自己变得出色，自然会吸引志同道合的人。</p>
+                        <p style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--glass-border); font-style: italic;">这套内容的价值不在于提供标准答案，而在于帮助我们建立理性的教育观——看清现实、接受差异、专注成长、保持从容。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <p class="footer-text">
+                内容来源：吴军《教育的理性探索》课程 · 问答+加餐精华<br>
+                整理制作：AI教育助手 · 2025年12月
+            </p>
+        </footer>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <!-- 回到顶部 -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+
+        // 折叠/展开全部
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+
+        // 单个板块折叠
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // 滚动到思维导图
+        function scrollToMindmap() {
+            document.getElementById('mindmap').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 回到顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 监听滚动显示回到顶部按钮
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 进度条动画
+            setTimeout(() => {
+                document.querySelectorAll('.bar-fill').forEach(bar => {
+                    bar.style.width = bar.style.width;
+                });
+            }, 500);
+        });
+    </script>
+</body>
+</html>

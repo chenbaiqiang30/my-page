@@ -1,0 +1,1229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI知声圆桌会 | 普通人AI创业实战指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0aec0;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #ffe66d;
+            --highlight-action: #a29bfe;
+            --highlight-warning: #fd79a8;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #667eea;
+            --accent2: #f093fb;
+            --gold: #ffd700;
+            --success: #00b894;
+            --fire: #e17055;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #ffe66d, #a29bfe, #f093fb);
+        }
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--fire), var(--accent2));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-size: 2.6em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4, #ffe66d);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .header-subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(102, 126, 234, 0.2);
+            padding: 10px 18px;
+            border-radius: 15px;
+            font-size: 0.95em;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            border: none;
+        }
+        .quote-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        .quote-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .quote-card:nth-child(1) { animation-delay: 0.1s; }
+        .quote-card:nth-child(2) { animation-delay: 0.2s; }
+        .quote-card:nth-child(3) { animation-delay: 0.3s; }
+        .quote-card:nth-child(4) { animation-delay: 0.4s; }
+        .quote-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 5em;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            color: var(--accent);
+        }
+        .quote-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            line-height: 1.7;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .author-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+        .avatar-lu { background: linear-gradient(135deg, #ff6b6b, #ee5a24); }
+        .avatar-zhou { background: linear-gradient(135deg, #4ecdc4, #00b894); }
+        .avatar-dahu { background: linear-gradient(135deg, #a29bfe, #6c5ce7); }
+        .author-info { flex: 1; }
+        .author-name { font-weight: 700; font-size: 1em; }
+        .author-role { font-size: 0.85em; color: var(--text-secondary); }
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 30px 10px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, #667eea, #f093fb, #ff6b6b);
+            background-size: 200% 200%;
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.5em;
+            font-weight: 800;
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 35px;
+            width: 100%;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.3s; }
+        .branch:nth-child(2) { animation-delay: 0.5s; }
+        .branch:nth-child(3) { animation-delay: 0.7s; }
+        .branch:nth-child(4) { animation-delay: 0.9s; }
+        .branch-node {
+            background: var(--glass-bg);
+            border: 2px solid;
+            padding: 18px 28px;
+            border-radius: 22px;
+            font-size: 1.15em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .branch-node:hover { transform: translateY(-5px) scale(1.03); }
+        .branch-1 .branch-node { border-color: #ff6b6b; color: #ff6b6b; }
+        .branch-2 .branch-node { border-color: #4ecdc4; color: #4ecdc4; }
+        .branch-3 .branch-node { border-color: #ffe66d; color: #ffe66d; }
+        .branch-4 .branch-node { border-color: #a29bfe; color: #a29bfe; }
+        .sub-node {
+            background: rgba(102, 126, 234, 0.08);
+            padding: 14px 22px;
+            border-radius: 14px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .sub-node:hover {
+            transform: translateX(8px);
+            background: rgba(102, 126, 234, 0.15);
+        }
+        .branch-1 .sub-node { border-left-color: #ff6b6b; }
+        .branch-2 .sub-node { border-left-color: #4ecdc4; }
+        .branch-3 .sub-node { border-left-color: #ffe66d; }
+        .branch-4 .sub-node { border-left-color: #a29bfe; }
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+        }
+        .info-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #4ecdc4, #00b894);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .info-card {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+        .info-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+        }
+        .info-icon { font-size: 2.5em; margin-bottom: 15px; display: block; }
+        .info-number { font-size: 2.5em; font-weight: 800; margin-bottom: 8px; }
+        .info-number.red { color: #ff6b6b; }
+        .info-number.green { color: #00b894; }
+        .info-number.blue { color: #4ecdc4; }
+        .info-number.gold { color: #ffd700; }
+        .info-number.purple { color: #a29bfe; }
+        .info-label { font-size: 1em; color: var(--text-secondary); }
+        .info-desc { font-size: 0.9em; color: var(--text-secondary); margin-top: 10px; line-height: 1.6; }
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            transition: all 0.4s ease;
+        }
+        .section:hover { box-shadow: 0 15px 50px rgba(102, 126, 234, 0.2); }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            cursor: pointer;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 25px;
+        }
+        .section-header-left { flex: 1; }
+        .section-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .tag-mindset { background: linear-gradient(135deg, #ff6b6b, #ee5a24); color: white; }
+        .tag-strategy { background: linear-gradient(135deg, #4ecdc4, #00b894); color: white; }
+        .tag-practice { background: linear-gradient(135deg, #a29bfe, #6c5ce7); color: white; }
+        .tag-insight { background: linear-gradient(135deg, #ffd700, #f39c12); color: #333; }
+        .tag-action { background: linear-gradient(135deg, #fd79a8, #e84393); color: white; }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .section-subtitle { font-size: 1em; color: var(--text-secondary); }
+        .collapse-icon {
+            font-size: 1.8em;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--accent);
+            margin-left: 20px;
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            padding: 0;
+            margin-top: 0;
+            border-left: 3px solid var(--accent);
+            padding-left: 15px;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 150px;
+            margin-top: 20px;
+            padding: 15px;
+            padding-left: 20px;
+        }
+        .section-content {
+            max-height: 10000px;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(78, 205, 196, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(255, 230, 109, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-action {
+            color: var(--highlight-action);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(162, 155, 254, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-warning {
+            color: var(--highlight-warning);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(253, 121, 168, 0.15);
+            border-radius: 6px;
+        }
+        .expert-comment {
+            margin-top: 35px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(240, 147, 251, 0.12));
+            border-left: 5px solid var(--accent);
+            border-radius: 18px;
+            position: relative;
+        }
+        .expert-comment::before {
+            content: '';
+            position: absolute;
+            top: -18px;
+            left: 25px;
+            font-size: 2.2em;
+            background: var(--glass-bg);
+            padding: 8px 18px;
+            border-radius: 14px;
+            border: 1px solid var(--glass-border);
+        }
+        .expert-comment.ai::before { content: '🤖'; }
+        .expert-comment.ecommerce::before { content: '🛒'; }
+        .expert-comment.creator::before { content: '🎬'; }
+        .expert-comment.strategy::before { content: '🎯'; }
+        .expert-comment.money::before { content: '💰'; }
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+            padding-top: 5px;
+        }
+        .expert-badge {
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        .badge-ai { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .badge-ecommerce { background: linear-gradient(135deg, #00b894, #00cec9); color: white; }
+        .badge-creator { background: linear-gradient(135deg, #e17055, #d63031); color: white; }
+        .badge-strategy { background: linear-gradient(135deg, #fdcb6e, #f39c12); color: #333; }
+        .expert-content { line-height: 1.9; color: var(--text-primary); }
+        .expert-content p { margin-bottom: 12px; }
+        .expert-content strong { color: var(--highlight-key); }
+        .key-points { display: grid; gap: 18px; margin: 25px 0; }
+        .key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .key-point:hover {
+            transform: translateX(10px);
+            background: rgba(102, 126, 234, 0.15);
+        }
+        .point-icon { font-size: 1.5em; flex-shrink: 0; }
+        .point-content { flex: 1; }
+        .point-title { font-weight: 700; font-size: 1.1em; margin-bottom: 8px; }
+        .point-desc { color: var(--text-secondary); font-size: 0.95em; }
+        .flow-chart {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            padding: 30px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 20px;
+        }
+        .flow-step { display: flex; align-items: center; gap: 15px; }
+        .step-box {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .step-box:hover { transform: scale(1.05); }
+        .flow-arrow { font-size: 1.5em; color: var(--accent); }
+        .compare-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .compare-table th {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .compare-table td {
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+        }
+        .compare-table tr:hover td { background: rgba(102, 126, 234, 0.1); }
+        .action-list {
+            background: linear-gradient(135deg, rgba(0, 184, 148, 0.1), rgba(0, 206, 201, 0.1));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+        }
+        .action-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px dashed rgba(0, 184, 148, 0.3);
+        }
+        .action-item:last-child { border-bottom: none; }
+        .action-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid var(--success);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .action-checkbox.checked { background: var(--success); color: white; }
+        .action-text { flex: 1; }
+        .warning-box {
+            background: linear-gradient(135deg, rgba(253, 121, 168, 0.15), rgba(232, 67, 147, 0.15));
+            border-left: 5px solid var(--highlight-warning);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 25px 0;
+        }
+        .warning-title {
+            font-weight: 700;
+            color: var(--highlight-warning);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .data-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        .data-card {
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .data-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        .data-value { font-size: 2em; font-weight: 800; margin-bottom: 8px; }
+        .data-label { color: var(--text-secondary); font-size: 0.95em; }
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.6em;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        .theme-toggle:hover { transform: scale(1.1) rotate(15deg); }
+        .back-to-top {
+            position: fixed;
+            bottom: 105px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        .back-to-top.visible { opacity: 1; }
+        .back-to-top:hover { transform: translateY(-5px); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        @media (max-width: 768px) {
+            .header { padding: 30px 20px; }
+            h1 { font-size: 1.7em; }
+            .section { padding: 25px 20px; }
+            .mindmap-container { padding: 25px 15px; }
+            .quote-gallery { grid-template-columns: 1fr; }
+            .info-grid { grid-template-columns: 1fr; }
+            .flow-chart { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+        @media print {
+            body { background: white; color: black; }
+            .theme-toggle, .back-to-top, .controls { display: none; }
+            .section, .mindmap-container, .infographic { box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <span class="header-badge">🔥 2025年最后一期 · 干货满满</span>
+            <h1>AI知声圆桌会：普通人AI创业实战指南</h1>
+            <p class="header-subtitle">从零基础到商业变现，一线创作者与甲方视角的深度碰撞</p>
+            <div class="header-meta">
+                <span class="meta-item">📅 2024年12月19日</span>
+                <span class="meta-item">⏱️ 20:46 - 23:10</span>
+                <span class="meta-item">👥 108+在线</span>
+                <span class="meta-item">🎤 红泥小火炉 · 周忘川 · 大狐</span>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">📑 全部展开/折叠</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印保存</button>
+            </div>
+        </header>
+
+        <div class="quote-gallery">
+            <div class="quote-card">
+                <p class="quote-text">最扎心的真相：赚不到钱的人通常都在做同一件事——<span class="highlight-key">用学习和思考来逃避真正的行动</span></p>
+                <div class="quote-author">
+                    <div class="author-avatar avatar-lu">🔥</div>
+                    <div class="author-info">
+                        <div class="author-name">红泥小火炉</div>
+                        <div class="author-role">AI创作者 · Video Battle常胜将军</div>
+                    </div>
+                </div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">热点的本质就是<span class="highlight-data">生意</span>，你们看到的所有热点都是为商家服务的</p>
+                <div class="quote-author">
+                    <div class="author-avatar avatar-zhou">💰</div>
+                    <div class="author-info">
+                        <div class="author-name">周忘川</div>
+                        <div class="author-role">电商甲方 · 千川资深操盘手</div>
+                    </div>
+                </div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">100多粉丝时我接到第一个商单，<span class="highlight-quote">一两万</span>。先让甲方看到，这是关键。</p>
+                <div class="quote-author">
+                    <div class="author-avatar avatar-dahu">✨</div>
+                    <div class="author-info">
+                        <div class="author-name">大狐</div>
+                        <div class="author-role">AI知声主理人</div>
+                    </div>
+                </div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">AI的未来更加精彩，但<span class="highlight-warning">身体才是见证AI的本钱</span>，不要熬夜</p>
+                <div class="quote-author">
+                    <div class="author-avatar avatar-lu">❤️</div>
+                    <div class="author-info">
+                        <div class="author-name">红泥小火炉</div>
+                        <div class="author-role">温馨寄语</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">🧠 本期核心内容思维导图</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">AI普通人创业实战</div>
+                <div class="mindmap-branches">
+                    <div class="branch branch-1">
+                        <div class="branch-node">🔥 心态认知</div>
+                        <div class="sub-node">学别人的教训，不是经验</div>
+                        <div class="sub-node">不要用学习逃避行动</div>
+                        <div class="sub-node">有商单就接，做中学</div>
+                        <div class="sub-node">年龄不是障碍，30-50都可以</div>
+                    </div>
+                    <div class="branch branch-2">
+                        <div class="branch-node">📱 自媒体策略</div>
+                        <div class="sub-node">小红书粉丝有效度1:1</div>
+                        <div class="sub-node">封面决定点击率=流量入口</div>
+                        <div class="sub-node">黄金三秒+记忆锚点</div>
+                        <div class="sub-node">打造个人IP，露脸更好</div>
+                    </div>
+                    <div class="branch branch-3">
+                        <div class="branch-node">💰 甲方思维</div>
+                        <div class="sub-node">热点=生意，为商家服务</div>
+                        <div class="sub-node">千川新选：AIGC素材需求爆发</div>
+                        <div class="sub-node">巨量算数找趋势关键词</div>
+                        <div class="sub-node">甲方懒=愿意直接买成品</div>
+                    </div>
+                    <div class="branch branch-4">
+                        <div class="branch-node">🛠️ 实操工具</div>
+                        <div class="sub-node">纳米Banana Pro：图文+视频</div>
+                        <div class="sub-node">U-Mind：结构化提示词</div>
+                        <div class="sub-node">Web Coding：一人公司产品</div>
+                        <div class="sub-node">提示词库：抄作业+魔改</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="infographic">
+            <h2 class="info-title">📊 本期核心数据洞察</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <span class="info-icon">💎</span>
+                    <div class="info-number gold">2万</div>
+                    <div class="info-label">卢导用AI省下的彩礼钱</div>
+                    <div class="info-desc">Web Coding做订婚网站，情绪价值拉满</div>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">📈</span>
+                    <div class="info-number red">1:1</div>
+                    <div class="info-label">小红书粉丝有效度</div>
+                    <div class="info-desc">对比抖音1:3，快手1:10</div>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">💰</span>
+                    <div class="info-number green">60-80万</div>
+                    <div class="info-label">头部达人单条视频报价</div>
+                    <div class="info-desc">800万-1200万粉丝量级</div>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">🎯</span>
+                    <div class="info-number blue">300元</div>
+                    <div class="info-label">水下达人单条稿费</div>
+                    <div class="info-desc">千川新选后将大幅提升</div>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">🚀</span>
+                    <div class="info-number purple">30元/张</div>
+                    <div class="info-label">AI写真定价策略</div>
+                    <div class="info-desc">影楼160-300，AI降维打击</div>
+                </div>
+                <div class="info-card">
+                    <span class="info-icon">⚡</span>
+                    <div class="info-number gold">7位数</div>
+                    <div class="info-label">周佬2个月AI副业收入</div>
+                    <div class="info-desc">财报分析工具+云图策略专家</div>
+                </div>
+            </div>
+        </div>
+
+        <section class="section" id="section-1">
+            <div class="section-header" onclick="toggleSection('section-1')">
+                <div class="section-header-left">
+                    <span class="section-tag tag-mindset">💡 认知升级</span>
+                    <h2 class="section-title">红泥小火炉：普通人如何从0开始学AI</h2>
+                    <p class="section-subtitle">Video Battle常胜将军的实战心得与踩坑教训</p>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"学别人的教训比学经验更重要，因为每个人成功的原因不同，但教训是通用的..."</div>
+            <div class="section-content">
+                <div class="key-points">
+                    <div class="key-point">
+                        <span class="point-icon">🎯</span>
+                        <div class="point-content">
+                            <div class="point-title">核心认知：学教训，不学经验</div>
+                            <div class="point-desc">每个人成功的原因在于<span class="highlight-key">个人独特素质</span>，这无法复制。但教训是通用的——知道什么<span class="highlight-warning">不该做</span>，比知道该做什么更有价值。</div>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="point-icon">🧠</span>
+                        <div class="point-content">
+                            <div class="point-title">解决AI幻觉的实战方法</div>
+                            <div class="point-desc">在个性化设置中输入提示词：<span class="highlight-data">"删除emoji、废话、夸张语气、客套话，以绝对直接模式输出关键点，不做情绪陪伴，如不确定请直接说不知道"</span></div>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="point-icon">📏</span>
+                        <div class="point-content">
+                            <div class="point-title">上下文窗口管理</div>
+                            <div class="point-desc">免费版约<span class="highlight-data">2.5万中文字</span>上限，超过后AI会"降智"。解决方案：<span class="highlight-action">开新窗口，复制关键内容继续对话</span></div>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="point-icon">📚</span>
+                        <div class="point-content">
+                            <div class="point-title">提示词学习方法：抄作业+魔改</div>
+                            <div class="point-desc">收藏好的提示词网站，解构大神的结构化提示词逻辑，根据需求微调。推荐三个提示词库网站（见工具部分）</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="warning-box">
+                    <div class="warning-title">⚠️ 关于培训的警告</div>
+                    <p>现在AI培训还没有形成定论，培训内容都是<span class="highlight-warning">过去式的理论</span>。等你学完，AI又往前窜了一大截。凡是跟你说"学会就能赚钱"的，<span class="highlight-key">100%是割韭菜</span>。</p>
+                </div>
+                <div class="expert-comment ai">
+                    <div class="expert-header">
+                        <span class="expert-badge badge-ai">🤖 AI创作专家点评</span>
+                    </div>
+                    <div class="expert-content">
+                        <p><strong>卢导的分享直击AI学习的核心痛点</strong>——很多人陷入"学习-焦虑-再学习"的死循环。他提出的"学教训不学经验"是非常务实的方法论。</p>
+                        <p>关于AI幻觉的解决方案非常实用：通过<strong>预设提示词</strong>约束AI的输出风格，能有效减少"AI胡说八道"的情况。补充建议：<strong>多模型交叉验证</strong>同样重要，重要信息建议用Claude、GPT、Deepseek分别回答，取交集作为可信结论。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section-2">
+            <div class="section-header" onclick="toggleSection('section-2')">
+                <div class="section-header-left">
+                    <span class="section-tag tag-strategy">📱 自媒体</span>
+                    <h2 class="section-title">自媒体实战：从0到1的变现路径</h2>
+                    <p class="section-subtitle">小红书起号秘籍 + 封面设计心法 + 平台选择策略</p>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"自媒体是普通人最容易让甲方看到的途径，100多粉丝时我就接到了第一个商单..."</div>
+            <div class="section-content">
+                <h3 style="color: var(--highlight-data); margin: 25px 0 15px; font-size: 1.2em;">📊 平台粉丝有效度对比</h3>
+                <table class="compare-table">
+                    <tr><th>平台</th><th>粉丝有效度</th><th>含义</th><th>推荐</th></tr>
+                    <tr><td><span class="highlight-key">小红书</span></td><td><span class="highlight-data">1:1</span></td><td>1个粉丝=1个有效用户</td><td>⭐⭐⭐⭐⭐</td></tr>
+                    <tr><td>抖音</td><td>1:3</td><td>3个粉丝≈1个有效用户</td><td>⭐⭐⭐⭐</td></tr>
+                    <tr><td>快手</td><td>1:10</td><td>10个粉丝≈1个有效用户</td><td>⭐⭐⭐</td></tr>
+                </table>
+                <h3 style="color: var(--highlight-quote); margin: 30px 0 15px; font-size: 1.2em;">🎨 封面设计核心法则</h3>
+                <div class="key-points">
+                    <div class="key-point">
+                        <span class="point-icon">🔴</span>
+                        <div class="point-content">
+                            <div class="point-title">颜色心理学</div>
+                            <div class="point-desc"><span class="highlight-key">红色</span>让大脑产生更强反应。建议封面用<span class="highlight-quote">浅色黄色+红色</span>系，文字用<span class="highlight-data">白色大字</span>更直观。</div>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="point-icon">⚡</span>
+                        <div class="point-content">
+                            <div class="point-title">黄金三秒法则</div>
+                            <div class="point-desc">视频开头用<span class="highlight-action">水滴声/敲钟声/固定口头禅</span>增加记忆锚点。参考：小林的"嗨"、秋之的"雷猴"。</div>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="point-icon">📈</span>
+                        <div class="point-content">
+                            <div class="point-title">实测数据对比</div>
+                            <div class="point-desc">卢导历史账号：花哨封面<span class="highlight-warning">200浏览</span> → 优化后浅色直观封面<span class="highlight-data">1.9万浏览</span>，提升近<span class="highlight-key">100倍</span>！</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flow-chart">
+                    <div class="flow-step"><div class="step-box">封面点击率</div><span class="flow-arrow">→</span></div>
+                    <div class="flow-step"><div class="step-box">互动数据</div><span class="flow-arrow">→</span></div>
+                    <div class="flow-step"><div class="step-box">算法推流量</div><span class="flow-arrow">→</span></div>
+                    <div class="flow-step"><div class="step-box">🔥 爆款</div></div>
+                </div>
+                <p style="text-align: center; color: var(--text-secondary); font-size: 0.95em;">小红书推荐逻辑：封面是内容的营销入口，"先栽梧桐树，后引凤凰来"</p>
+                <div class="expert-comment creator">
+                    <div class="expert-header">
+                        <span class="expert-badge badge-creator">🎬 内容创作专家点评</span>
+                    </div>
+                    <div class="expert-content">
+                        <p><strong>封面优化是被严重低估的增长杠杆。</strong>卢导的实测数据（200→19000）说明一切。很多创作者把精力放在内容打磨上，却忽略了"门面"。</p>
+                        <p>补充建议：<strong>A/B测试</strong>很重要。同一条内容可以准备2-3个封面，分时段发布测试。另外，<strong>账号人设一致性</strong>比单条爆款更重要——卢导的历史IP做得很好，所有内容都围绕"AI复活历史人物"这个垂直定位。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section-3" style="border: 2px solid var(--gold);">
+            <div class="section-header" onclick="toggleSection('section-3')">
+                <div class="section-header-left">
+                    <span class="section-tag tag-insight">👑 甲方视角</span>
+                    <h2 class="section-title">周忘川：甲方思维与抖音电商新机遇</h2>
+                    <p class="section-subtitle">千川资深操盘手揭秘热点本质 + AIGC素材蓝海 + 年货节实战</p>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"热点就等于生意，你们看到的所有热点都是为我们商家服务的..."</div>
+            <div class="section-content">
+                <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-radius: 20px; padding: 30px; margin-bottom: 30px; border-left: 5px solid var(--gold);">
+                    <h3 style="color: var(--gold); margin-bottom: 15px; font-size: 1.3em;">⚡ 核心认知颠覆：热点的本质</h3>
+                    <p style="font-size: 1.15em; line-height: 1.8;">
+                        热点 = <span class="highlight-key">生意</span><br>
+                        所有热点的出现，都是为了<span class="highlight-data">商家卖货</span>服务的。<br>
+                        当你看到一个热点已经火了，说明<span class="highlight-warning">这个热点的生意已经被做完了</span>。
+                    </p>
+                </div>
+                <h3 style="color: var(--highlight-data); margin: 30px 0 20px; font-size: 1.2em;">🚀 抖音电商三大趋势（千川大会最新）</h3>
+                <div class="data-cards">
+                    <div class="data-card" style="border-left: 4px solid #ff6b6b;">
+                        <div class="data-value" style="color: #ff6b6b; font-size: 1.5em;">千川新选</div>
+                        <div class="data-label">水下达人即将上浮</div>
+                        <div class="info-desc">之前水下300元/条，新政策后价值将大幅提升</div>
+                    </div>
+                    <div class="data-card" style="border-left: 4px solid #4ecdc4;">
+                        <div class="data-value" style="color: #4ecdc4; font-size: 1.5em;">AIGC板块</div>
+                        <div class="data-label">素材需求爆发</div>
+                        <div class="info-desc">广告素材需要混剪AIGC内容，巨大缺口</div>
+                    </div>
+                    <div class="data-card" style="border-left: 4px solid #a29bfe;">
+                        <div class="data-value" style="color: #a29bfe; font-size: 1.5em;">千川乘方</div>
+                        <div class="data-label">需要更多达人素材</div>
+                        <div class="info-desc">甲方需要大量达人帮助生产内容</div>
+                    </div>
+                </div>
+                <h3 style="color: var(--highlight-quote); margin: 30px 0 20px; font-size: 1.2em;">💡 三大赚钱机会（周佬亲授）</h3>
+                <div class="key-points">
+                    <div class="key-point" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(238, 90, 36, 0.1));">
+                        <span class="point-icon">1️⃣</span>
+                        <div class="point-content">
+                            <div class="point-title" style="color: #ff6b6b;">培训宝妈做AIGC素材</div>
+                            <div class="point-desc">达人会做口播，但不会用AI做素材。你教他们用<span class="highlight-data">即梦、Sora、纳米Banana</span>做电商素材，这是<span class="highlight-key">刚需市场</span>。官方培训覆盖不了，知识付费空间巨大。</div>
+                        </div>
+                    </div>
+                    <div class="key-point" style="background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(0, 184, 148, 0.1));">
+                        <span class="point-icon">2️⃣</span>
+                        <div class="point-content">
+                            <div class="point-title" style="color: #4ecdc4;">自己做AIGC账号卖货/卖素材</div>
+                            <div class="point-desc">像"砂糖橘"账号那样：AIGC混剪内容 → 开橱窗卖货 → 同时卖素材给甲方。<span class="highlight-quote">一鱼多吃</span>，既能带货分佣<span class="highlight-data">6-8%</span>，又能卖素材给商家。</div>
+                        </div>
+                    </div>
+                    <div class="key-point" style="background: linear-gradient(135deg, rgba(162, 155, 254, 0.1), rgba(108, 92, 231, 0.1));">
+                        <span class="point-icon">3️⃣</span>
+                        <div class="point-content">
+                            <div class="point-title" style="color: #a29bfe;">AI写真批量变现</div>
+                            <div class="point-desc">注册公司 → 抖音企业号 → 用纳米Banana做写真 → 定价<span class="highlight-data">30元/张</span>（影楼160-300）→ 投广告获客。一天100单=<span class="highlight-key">3000元</span>，成本几乎为0。</div>
+                        </div>
+                    </div>
+                </div>
+                <h3 style="color: var(--highlight-action); margin: 30px 0 20px; font-size: 1.2em;">🔧 实操方法：如何找必爆热点</h3>
+                <div class="flow-chart" style="flex-direction: column; align-items: stretch;">
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 15px; flex-wrap: wrap;">
+                        <div class="step-box" style="background: linear-gradient(135deg, #667eea, #764ba2);">打开巨量算数</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="step-box" style="background: linear-gradient(135deg, #4ecdc4, #00b894);">搜索"年货/过年"</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="step-box" style="background: linear-gradient(135deg, #f39c12, #e74c3c);">看涨幅最快的词</div>
+                        <span class="flow-arrow">→</span>
+                        <div class="step-box" style="background: linear-gradient(135deg, #e84393, #fd79a8);">找实体词=商家要卖的</div>
+                    </div>
+                </div>
+                <div style="background: rgba(102, 126, 234, 0.1); padding: 25px; border-radius: 16px; margin-top: 20px;">
+                    <p style="font-size: 1.1em; margin-bottom: 15px;"><strong>年货节必爆关键词示例：</strong></p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                        <span class="highlight-key">砂糖橘</span>
+                        <span class="highlight-data">糖葫芦</span>
+                        <span class="highlight-quote">腊肉</span>
+                        <span class="highlight-action">灌肠</span>
+                        <span class="highlight-warning">红包</span>
+                        <span class="highlight-key">压岁钱</span>
+                        <span class="highlight-data">新衣服</span>
+                        <span class="highlight-quote">火龙果</span>
+                    </div>
+                    <p style="margin-top: 15px; color: var(--text-secondary);">💡 这些都是<span class="highlight-key">实体词</span>，对应着商家要卖的商品。做这些内容，平台有流量扶持！</p>
+                </div>
+                <h3 style="color: var(--gold); margin: 30px 0 20px; font-size: 1.2em;">💰 周佬副业收入案例</h3>
+                <div class="data-cards">
+                    <div class="data-card">
+                        <div class="data-value" style="color: var(--gold);">6位数</div>
+                        <div class="data-label">广告词包生成软件</div>
+                        <div class="info-desc">DeepSeek充值20元</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-value" style="color: var(--success);">6位数</div>
+                        <div class="data-label">云图策略专家</div>
+                        <div class="info-desc">单价3万/人</div>
+                    </div>
+                    <div class="data-card">
+                        <div class="data-value" style="color: #ff6b6b;">7位数</div>
+                        <div class="data-label">财报分析工具</div>
+                        <div class="info-desc">2个月，给投资人定制</div>
+                    </div>
+                </div>
+                <div class="warning-box" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 165, 0, 0.15)); border-left-color: var(--gold);">
+                    <div class="warning-title" style="color: var(--gold);">💎 周佬金句集锦</div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li style="padding: 8px 0; border-bottom: 1px dashed rgba(255, 215, 0, 0.3);">📌 "抖音没有自然流量了，全都是商家花的钱"</li>
+                        <li style="padding: 8px 0; border-bottom: 1px dashed rgba(255, 215, 0, 0.3);">📌 "甲方比较懒，懒得在花钱上考虑性价比"</li>
+                        <li style="padding: 8px 0; border-bottom: 1px dashed rgba(255, 215, 0, 0.3);">📌 "你们做什么，平台需要什么，比你幻想哪些能爆重要"</li>
+                        <li style="padding: 8px 0;">📌 "AI这块我没你们专业，但我躺着挣钱"</li>
+                    </ul>
+                </div>
+                <div class="expert-comment ecommerce">
+                    <div class="expert-header">
+                        <span class="expert-badge badge-ecommerce">🛒 电商专家深度点评</span>
+                    </div>
+                    <div class="expert-content">
+                        <p><strong>周佬这段分享是本期最具商业价值的内容，值得反复研读。</strong></p>
+                        <p>他揭示了一个残酷真相：<strong>抖音的流量本质上是"商业流量"</strong>。所谓"自然流量"只是商家投放的溢出效应。这意味着：</p>
+                        <ul style="margin: 15px 0; padding-left: 25px;">
+                            <li>追热点不如<strong>造热点</strong>（或者说，跟着商家的钱走）</li>
+                            <li>巨量算数不是看"什么火了"，而是看<strong>"商家要卖什么"</strong></li>
+                            <li>千川新选政策红利期，0粉丝也能开星图接单</li>
+                        </ul>
+                        <p><strong>三个变现路径的可行性分析：</strong></p>
+                        <p>1️⃣ <strong>培训宝妈</strong>：门槛低，但需要教学能力和流量获取能力。</p>
+                        <p>2️⃣ <strong>AIGC账号</strong>：最推荐。砂糖橘案例非常典型——用AI混剪内容成本极低，但能同时赚<strong>带货佣金+素材采买费</strong>。</p>
+                        <p>3️⃣ <strong>AI写真</strong>：需要注册公司，适合想做长期生意的人。30元/张的定价是降维打击。</p>
+                        <p style="background: rgba(255, 215, 0, 0.1); padding: 15px; border-radius: 10px; margin-top: 15px;"><strong>⚠️ 核心提醒：</strong>周佬说"甲方懒得考虑性价比"，这是真的。但前提是你的内容要<strong>能被甲方看到</strong>。所以，账号标签和类目选择非常关键，要让算法把你推给对的人。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section-4">
+            <div class="section-header" onclick="toggleSection('section-4')">
+                <div class="section-header-left">
+                    <span class="section-tag tag-practice">🛠️ 工具资源</span>
+                    <h2 class="section-title">本期提到的工具与资源汇总</h2>
+                    <p class="section-subtitle">提示词库 + AI工具 + 数据平台</p>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"这三个提示词网站我每天都在用，收藏起来经常看，绝对有帮助..."</div>
+            <div class="section-content">
+                <h3 style="color: var(--highlight-quote); margin: 20px 0 15px; font-size: 1.2em;">🔧 AI工具推荐</h3>
+                <table class="compare-table">
+                    <tr><th>工具</th><th>用途</th><th>特点</th></tr>
+                    <tr><td><span class="highlight-key">纳米Banana Pro</span></td><td>AI绘画</td><td>国内最强，语义理解好</td></tr>
+                    <tr><td><span class="highlight-data">U-Mind</span></td><td>结构化内容生成</td><td>卢导做历史人物卡片用的</td></tr>
+                    <tr><td><span class="highlight-quote">海螺AI</span></td><td>语音生成</td><td>语气自然，适合配音</td></tr>
+                    <tr><td><span class="highlight-action">DeepSeek</span></td><td>大模型对话/开发</td><td>性价比极高，周佬充20元做出6位数产品</td></tr>
+                    <tr><td><span class="highlight-warning">可灵/即梦</span></td><td>AI视频</td><td>12月更新7次，能力飞跃</td></tr>
+                </table>
+                <h3 style="color: var(--highlight-action); margin: 30px 0 15px; font-size: 1.2em;">📊 数据分析平台（周佬推荐）</h3>
+                <div class="key-points">
+                    <div class="key-point">
+                        <span class="point-icon">📈</span>
+                        <div class="point-content">
+                            <div class="point-title">巨量算数</div>
+                            <div class="point-desc">搜索关键词看涨幅，找<span class="highlight-key">实体词</span>=商家要卖的东西=必爆内容方向</div>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <span class="point-icon">🔥</span>
+                        <div class="point-content">
+                            <div class="point-title">抖音热点宝</div>
+                            <div class="point-desc">看热点关联的<span class="highlight-data">相关商品</span>，理解热点背后的商业逻辑</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section-5">
+            <div class="section-header" onclick="toggleSection('section-5')">
+                <div class="section-header-left">
+                    <span class="section-tag tag-action">✅ 行动清单</span>
+                    <h2 class="section-title">听完就能做：本期实操行动清单</h2>
+                    <p class="section-subtitle">把认知转化为行动，从今天开始</p>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"不要用学习和思考来逃避行动，有商单就接，接完再说..."</div>
+            <div class="section-content">
+                <div class="action-list">
+                    <div class="action-title">🚀 今天就能做</div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">注册一个抖音账号，开通星图</div></div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">打开巨量算数，搜索"年货"/"过年"，截图保存涨幅最快的关键词</div></div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">用纳米Banana Pro生成1张年货相关的AI图片</div></div>
+                </div>
+                <div class="action-list" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(240, 147, 251, 0.1));">
+                    <div class="action-title" style="color: var(--accent);">📅 本周计划</div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">选定一个垂直方向（历史/年货/写真/其他），注册小红书账号</div></div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">用AI生成5-10条内容，按卢导的封面法则优化后发布</div></div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">如果有人询价/合作，不要拒绝，先接下来再说！</div></div>
+                </div>
+                <div class="action-list" style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1));">
+                    <div class="action-title" style="color: var(--gold);">🎯 长期目标</div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">打造个人IP，建立记忆锚点</div></div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">学习Web Coding，做出自己的产品</div></div>
+                    <div class="action-item"><div class="action-checkbox" onclick="this.classList.toggle('checked')">✓</div><div class="action-text">保重身体，不熬夜，见证AI的未来！</div></div>
+                </div>
+                <div class="expert-comment money">
+                    <div class="expert-header"><span class="expert-badge badge-ecommerce">💰 变现路径总结</span></div>
+                    <div class="expert-content">
+                        <table class="compare-table" style="margin-top: 15px;">
+                            <tr><th>难度</th><th>路径</th><th>预期收入</th><th>适合人群</th></tr>
+                            <tr><td>⭐</td><td>AIGC账号+带货</td><td>几百-几千/月</td><td>零基础新手</td></tr>
+                            <tr><td>⭐⭐</td><td>素材卖给甲方</td><td>几千-几万/月</td><td>有一定作品的创作者</td></tr>
+                            <tr><td>⭐⭐⭐</td><td>AI写真批量变现</td><td>几千-几万/月</td><td>愿意注册公司投广告</td></tr>
+                            <tr><td>⭐⭐⭐⭐</td><td>培训达人做AIGC</td><td>几万-几十万/月</td><td>有教学能力和粉丝</td></tr>
+                            <tr><td>⭐⭐⭐⭐⭐</td><td>AI产品/工具开发</td><td>六位数-七位数</td><td>有产品思维和开发能力</td></tr>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section-6" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(240, 147, 251, 0.2));">
+            <div class="section-header" onclick="toggleSection('section-6')">
+                <div class="section-header-left">
+                    <span class="section-tag tag-insight">✨ 结语</span>
+                    <h2 class="section-title">2025年最后一期的温馨寄语</h2>
+                    <p class="section-subtitle">感谢每一位参与者，明年再见！</p>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"AI的未来更加精彩，但身体才是见证AI的本钱..."</div>
+            <div class="section-content">
+                <div style="text-align: center; padding: 30px;">
+                    <p style="font-size: 1.2em; line-height: 2; margin-bottom: 30px;">
+                        🎄 今年最后一期AI知声圆桌会圆满结束<br>
+                        感谢<span class="highlight-key">红泥小火炉</span>的真诚分享<br>
+                        感谢<span class="highlight-data">周忘川</span>的甲方视角干货<br>
+                        感谢<span class="highlight-quote">大狐</span>的精心组织
+                    </p>
+                    <div style="background: rgba(255, 107, 107, 0.1); padding: 25px; border-radius: 20px; margin: 30px 0;">
+                        <p style="font-size: 1.15em; color: var(--highlight-key); font-weight: 700;">
+                            "AI的未来更加精彩，但身体才是见证AI的本钱。<br>
+                            不要熬夜，养好身体，我们明年再见！"
+                        </p>
+                        <p style="color: var(--text-secondary); margin-top: 15px;">—— 红泥小火炉</p>
+                    </div>
+                    <p style="font-size: 1.1em; color: var(--text-secondary);">
+                        💡 记住：不要用学习和思考逃避行动<br>
+                        🚀 有商单就接，做中学<br>
+                        💪 2025，无限进步！
+                    </p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <div class="theme-toggle" onclick="toggleTheme()"><span id="theme-icon">☀️</span></div>
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => { allCollapsed ? s.classList.remove('collapsed') : s.classList.add('collapsed'); });
+        }
+        function toggleSection(id) { document.getElementById(id).classList.toggle('collapsed'); }
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }); }
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            backToTop.classList.toggle('visible', window.scrollY > 500);
+        });
+    </script>
+</body>
+</html>

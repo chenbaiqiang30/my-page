@@ -1,0 +1,1701 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>未来硅世界 Vol.008 | AI工具干货速递</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --accent: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(30, 27, 75, 0.9);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --light: #0f0a1e;
+            --dark: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 50%, #2d2d44 100%);
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-animation::before,
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation::before {
+            background: var(--gradient-2);
+            top: -200px;
+            left: -200px;
+        }
+
+        .bg-animation::after {
+            background: var(--gradient-3);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(0, 100px) rotate(180deg); }
+            75% { transform: translate(-50px, 50px) rotate(270deg); }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            margin-bottom: 40px;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: var(--gradient-1);
+            color: white;
+            padding: 8px 24px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 20px 10px rgba(99, 102, 241, 0); }
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            text-shadow: 0 0 60px rgba(99, 102, 241, 0.5);
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        .meta-item svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            color: var(--dark);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--shadow);
+        }
+
+        /* 玻璃卡片 */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(31, 38, 135, 0.2);
+        }
+
+        /* 可折叠板块 */
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        .section-preview {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 5px;
+            max-width: 500px;
+        }
+
+        [data-theme="dark"] .section-preview {
+            color: #aaa;
+        }
+
+        .section-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(99, 102, 241, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .section-toggle svg {
+            width: 20px;
+            height: 20px;
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .section-header.active .section-toggle svg {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section-content.active {
+            max-height: 5000px;
+        }
+
+        .section-inner {
+            padding: 0 30px 30px;
+        }
+
+        /* 金句卡片 */
+        .quote-card {
+            background: var(--gradient-1);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 150px;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            color: white;
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            color: white;
+            font-weight: 600;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            display: flex;
+            gap: 20px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(236, 72, 153, 0.08) 100%);
+            border-radius: 20px;
+            margin: 20px 0;
+            border-left: 4px solid var(--primary);
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .expert-content {
+            flex: 1;
+        }
+
+        .expert-name {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .expert-badge {
+            font-size: 11px;
+            padding: 3px 10px;
+            background: var(--gradient-2);
+            color: white;
+            border-radius: 20px;
+        }
+
+        .expert-text {
+            color: #555;
+            line-height: 1.8;
+        }
+
+        [data-theme="dark"] .expert-text {
+            color: #ccc;
+        }
+
+        /* 工具卡片网格 */
+        .tool-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .tool-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .tool-card {
+            background: rgba(30, 27, 75, 0.6);
+        }
+
+        .tool-card:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.2);
+        }
+
+        .tool-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .tool-card:nth-child(1)::before { background: var(--gradient-1); }
+        .tool-card:nth-child(2)::before { background: var(--gradient-2); }
+        .tool-card:nth-child(3)::before { background: var(--gradient-3); }
+        .tool-card:nth-child(4)::before { background: var(--gradient-4); }
+        .tool-card:nth-child(5)::before { background: var(--gradient-5); }
+        .tool-card:nth-child(6)::before { background: var(--gradient-1); }
+
+        .tool-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .tool-category {
+            font-size: 11px;
+            padding: 4px 12px;
+            background: rgba(99, 102, 241, 0.1);
+            color: var(--primary);
+            border-radius: 20px;
+        }
+
+        .tool-desc {
+            color: #666;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+        }
+
+        [data-theme="dark"] .tool-desc {
+            color: #aaa;
+        }
+
+        .tool-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tool-feature {
+            font-size: 12px;
+            padding: 4px 10px;
+            background: rgba(16, 185, 129, 0.1);
+            color: var(--accent);
+            border-radius: 8px;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            padding: 40px 20px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 800px;
+        }
+
+        .mindmap-center {
+            background: var(--gradient-1);
+            color: white;
+            padding: 25px 40px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--primary), transparent);
+        }
+
+        .branch-node {
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 15px;
+            text-align: center;
+            min-width: 140px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .branch-node.color-1 { background: var(--gradient-2); }
+        .branch-node.color-2 { background: var(--gradient-3); }
+        .branch-node.color-3 { background: var(--gradient-4); }
+        .branch-node.color-4 { background: var(--gradient-5); }
+        .branch-node.color-5 { background: var(--gradient-1); }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .branch-item {
+            background: white;
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 13px;
+            color: #444;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .branch-item {
+            background: rgba(30, 27, 75, 0.8);
+            color: #ddd;
+        }
+
+        .branch-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        /* 高亮文本 */
+        .highlight-red {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: var(--info);
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .highlight-purple {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .highlight-orange {
+            color: var(--warning);
+            font-weight: 600;
+        }
+
+        /* 数据统计 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .stat-card {
+            background: rgba(30, 27, 75, 0.6);
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            opacity: 0.05;
+        }
+
+        .stat-card:nth-child(1)::before { background: var(--gradient-1); }
+        .stat-card:nth-child(2)::before { background: var(--gradient-2); }
+        .stat-card:nth-child(3)::before { background: var(--gradient-3); }
+        .stat-card:nth-child(4)::before { background: var(--gradient-4); }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        [data-theme="dark"] .stat-label {
+            color: #aaa;
+        }
+
+        /* 信息图 */
+        .infographic {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(236, 72, 153, 0.05) 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .infographic-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary), var(--accent));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+        }
+
+        .timeline-item:nth-child(2)::before { border-color: var(--secondary); }
+        .timeline-item:nth-child(3)::before { border-color: var(--accent); }
+        .timeline-item:nth-child(4)::before { border-color: var(--warning); }
+
+        .timeline-title {
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .timeline-desc {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        [data-theme="dark"] .timeline-desc {
+            color: #aaa;
+        }
+
+        /* 洞察卡片 */
+        .insight-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .insight-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        [data-theme="dark"] .insight-card {
+            background: rgba(30, 27, 75, 0.6);
+        }
+
+        .insight-number {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            font-size: 80px;
+            font-weight: 900;
+            opacity: 0.05;
+            color: var(--primary);
+        }
+
+        .insight-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+
+        .insight-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .insight-text {
+            color: #666;
+            line-height: 1.7;
+        }
+
+        [data-theme="dark"] .insight-text {
+            color: #aaa;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #818cf8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header { padding: 40px 15px; }
+            .section-header { padding: 20px; }
+            .section-inner { padding: 0 20px 20px; }
+            .expert-comment { flex-direction: column; }
+            .mindmap { min-width: 100%; }
+            .mindmap-branches { flex-direction: column; align-items: center; }
+            .theme-toggle { top: 10px; right: 10px; padding: 8px 15px; font-size: 12px; }
+        }
+
+        /* 打印样式 */
+        @media print {
+            .theme-toggle, .back-to-top, .bg-animation { display: none; }
+            body { background: white; }
+            .glass-card { box-shadow: none; border: 1px solid #eee; }
+            .section-content { max-height: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span class="theme-icon">🌙</span>
+        <span class="theme-text">深色模式</span>
+    </button>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-badge">🚀 WaytoAGI 共学系列</div>
+            <h1>未来硅世界 Vol.008</h1>
+            <p class="header-subtitle">深挖近两年AI进化真相，解锁常用AI工具清单 —— 一场关于AI时代生存法则的深度对话</p>
+            <div class="header-meta">
+                <span class="meta-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                    2025年12月20日
+                </span>
+                <span class="meta-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    时长 2.5小时
+                </span>
+                <span class="meta-item">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    嘉宾：天火翼王、乔向阳、姚金刚、尼克西、元子
+                </span>
+            </div>
+        </header>
+
+        <!-- 核心金句 -->
+        <div class="glass-card">
+            <div class="section-header active" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-5);">💎</div>
+                    <div>
+                        <div class="section-title">本期核心金句</div>
+                        <div class="section-preview">AI时代的生存智慧与思维转变</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content active">
+                <div class="section-inner">
+                    <div class="quote-card">
+                        <p class="quote-text">"AI时代不要被时代告知答案，你要提前看见问题。"</p>
+                        <p class="quote-author">—— 天火翼王（安涛）</p>
+                    </div>
+                    
+                    <div class="quote-card" style="background: var(--gradient-3);">
+                        <p class="quote-text">"有价值的资产不能轻易获得。用API一秒生成的东西不是资产，你写提示词的方法才是资产。三生万物的那个'三'，才是资产。"</p>
+                        <p class="quote-author">—— 尼克西</p>
+                    </div>
+                    
+                    <div class="quote-card" style="background: var(--gradient-4);">
+                        <p class="quote-text">"不要自我设限，不管你是什么年纪、什么学历、什么社会地位。新浪潮出现的时候，反倒是原来在社会非主体的边缘性人群有更大的机会。"</p>
+                        <p class="quote-author">—— 天火翼王（安涛）</p>
+                    </div>
+                    
+                    <div class="quote-card" style="background: var(--gradient-2);">
+                        <p class="quote-text">"AI就像一把吉他，我用的时候表现不好，是我自己不会用，不是吉他不好。AI产品只要不要我的小命，我就立刻去试。"</p>
+                        <p class="quote-author">—— 尼克西</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI专家评论 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-1);">🤖</div>
+                    <div>
+                        <div class="section-title">AI专家深度解读</div>
+                        <div class="section-preview">Claude对本期内容的专业分析与洞察</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="expert-comment">
+                        <div class="expert-avatar">🎯</div>
+                        <div class="expert-content">
+                            <div class="expert-name">
+                                Claude AI Expert
+                                <span class="expert-badge">核心观点</span>
+                            </div>
+                            <p class="expert-text">
+                                这场对话展现了<span class="highlight-red">中国AI实践者群体的真实生态</span>。最令我印象深刻的是"雪巴人与登山者"的比喻——当前阶段AI是协助我们实现梦想的专业向导，而非取代者。天火翼王从ChatGPT发布第二个月就给顶级企业老板们做AI趋势分享，却遭遇"嗤之以鼻"，这种先知的孤独感在科技变革史上反复出现。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="expert-comment">
+                        <div class="expert-avatar">📊</div>
+                        <div class="expert-content">
+                            <div class="expert-name">
+                                Claude AI Expert
+                                <span class="expert-badge">数据洞察</span>
+                            </div>
+                            <p class="expert-text">
+                                姚金刚老师分享的数据令人震撼：<span class="highlight-blue">12月份用AI写了3000多万行代码</span>，环比增长几十倍。这不是简单的效率提升，而是<span class="highlight-purple">生产力范式的根本性转变</span>。当一个人可以在一个月内完成过去需要数十人团队的工作量时，"超级个体"不再是概念，而是正在发生的现实。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="expert-comment">
+                        <div class="expert-avatar">💡</div>
+                        <div class="expert-content">
+                            <div class="expert-name">
+                                Claude AI Expert
+                                <span class="expert-badge">方法论</span>
+                            </div>
+                            <p class="expert-text">
+                                本期最具实操价值的是<span class="highlight-green">"问对问题"的思维框架</span>。很多企业老板在数字化转型中问错问题——他们问"数据怎么保存、怎么变现"，而不是问"如何降本增效"。这种本末倒置在AI时代会被放大。提示词工程的本质，其实就是问对问题的艺术。
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="expert-comment">
+                        <div class="expert-avatar">⚠️</div>
+                        <div class="expert-content">
+                            <div class="expert-name">
+                                Claude AI Expert
+                                <span class="expert-badge">风险提示</span>
+                            </div>
+                            <p class="expert-text">
+                                天火翼王提出的<span class="highlight-orange">"统一场"理论值得警惕</span>——当ASI时代来临，所有大模型可能合并为少数巨头控制的统一计算单位。届时，普通人获取AI能力的算力来源将被寡头掌控，人的价值可能被边缘化。这不是科幻，而是需要现在就开始思考的问题。我们如何在技术红利与潜在风险之间找到平衡？
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-avatar">🌟</div>
+                        <div class="expert-content">
+                            <div class="expert-name">
+                                Claude AI Expert
+                                <span class="expert-badge">行动建议</span>
+                            </div>
+                            <p class="expert-text">
+                                基于本期讨论，我给出三点行动建议：<span class="highlight-red">1)</span> 立即开始用AI，试错成本极低但不行动的机会成本极高；<span class="highlight-blue">2)</span> 培养审美能力——每天听5小时音乐、看顶级设计作品，量变引发质变；<span class="highlight-green">3)</span> 学会"问对问题"，把第一性原理内化为思维习惯。AI时代的竞争，本质上是认知和行动力的竞争。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-3);">🧠</div>
+                    <div>
+                        <div class="section-title">内容思维导图</div>
+                        <div class="section-preview">本期核心内容的可视化呈现</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="mindmap-container">
+                        <div class="mindmap">
+                            <div class="mindmap-center">🚀 AI时代生存法则</div>
+                            <div class="mindmap-branches">
+                                <div class="mindmap-branch">
+                                    <div class="branch-node color-1">🎯 思维转变</div>
+                                    <div class="branch-items">
+                                        <div class="branch-item">问对问题比找答案更重要</div>
+                                        <div class="branch-item">第一性原理思维</div>
+                                        <div class="branch-item">不自我设限</div>
+                                        <div class="branch-item">拥抱而非等待</div>
+                                    </div>
+                                </div>
+                                <div class="mindmap-branch">
+                                    <div class="branch-node color-2">🛠️ 工具哲学</div>
+                                    <div class="branch-items">
+                                        <div class="branch-item">百无禁忌地尝试</div>
+                                        <div class="branch-item">用顶级工具提高效率</div>
+                                        <div class="branch-item">国际优先但国产有特长</div>
+                                        <div class="branch-item">根据场景选工具</div>
+                                    </div>
+                                </div>
+                                <div class="mindmap-branch">
+                                    <div class="branch-node color-3">💎 真正资产</div>
+                                    <div class="branch-items">
+                                        <div class="branch-item">方法论 > 具体产出</div>
+                                        <div class="branch-item">脑海中的积累</div>
+                                        <div class="branch-item">不断抽象的能力</div>
+                                        <div class="branch-item">"三生万物"的"三"</div>
+                                    </div>
+                                </div>
+                                <div class="mindmap-branch">
+                                    <div class="branch-node color-4">🎨 审美培养</div>
+                                    <div class="branch-items">
+                                        <div class="branch-item">量变到质变</div>
+                                        <div class="branch-item">每天5-8小时听音乐</div>
+                                        <div class="branch-item">看顶级设计作品</div>
+                                        <div class="branch-item">刻意练习+有意识筛选</div>
+                                    </div>
+                                </div>
+                                <div class="mindmap-branch">
+                                    <div class="branch-node color-5">🔮 未来洞察</div>
+                                    <div class="branch-items">
+                                        <div class="branch-item">2025年工具体验提升</div>
+                                        <div class="branch-item">螺旋上升的竞争态势</div>
+                                        <div class="branch-item">超级个体的边界</div>
+                                        <div class="branch-item">人与AI的平衡关系</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 关键数据 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-4);">📊</div>
+                    <div>
+                        <div class="section-title">震撼数据</div>
+                        <div class="section-preview">本期嘉宾分享的关键数字</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-value">3000万+</div>
+                            <div class="stat-label">姚金刚12月AI写代码行数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">600+</div>
+                            <div class="stat-label">天火翼王体验过的AI工具数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">5-8h</div>
+                            <div class="stat-label">天火翼王每天听音乐时长</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">30个</div>
+                            <div class="stat-label">AI辅助一天可完成的商业计划书评估</div>
+                        </div>
+                    </div>
+                    
+                    <div class="infographic">
+                        <div class="infographic-title">📈 代码产出增长曲线（姚金刚）</div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-title">7月份</div>
+                                <div class="timeline-desc">代码量约 <span class="highlight-blue">10万行</span> 量级</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">10-11月份</div>
+                                <div class="timeline-desc">环比增长 <span class="highlight-purple">数倍</span></div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">12月份</div>
+                                <div class="timeline-desc">达到 <span class="highlight-red">3000万+行</span>，环比增长几十倍</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">关键转折</div>
+                                <div class="timeline-desc">VSCode + Augment + Claude 组合 + WARP终端的高效配置</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人与AI关系六要素 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-2);">🔑</div>
+                    <div>
+                        <div class="section-title">人与AI的六大分界线</div>
+                        <div class="section-preview">天火翼王提出的人类独特价值框架</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="insight-cards">
+                        <div class="insight-card">
+                            <div class="insight-number">01</div>
+                            <div class="insight-icon" style="background: var(--gradient-1);">🌟</div>
+                            <div class="insight-title">人生经历</div>
+                            <div class="insight-text">每个人不可替代的人生体验，是你独有的故事和感悟，AI无法复制你真实走过的路。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">02</div>
+                            <div class="insight-icon" style="background: var(--gradient-2);">🎨</div>
+                            <div class="insight-title">品位与审美</div>
+                            <div class="insight-text">对好坏、善恶、美丑的基本判断能力，需要大量积累和内化形成的独特视角。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">03</div>
+                            <div class="insight-icon" style="background: var(--gradient-3);">🔍</div>
+                            <div class="insight-title">无目的好奇心</div>
+                            <div class="insight-text">完全源于人性的、对外部世界探索的天性，不带功利心的纯粹求知欲。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">04</div>
+                            <div class="insight-icon" style="background: var(--gradient-4);">❓</div>
+                            <div class="insight-title">问对问题的能力</div>
+                            <div class="insight-text">更高的提炼问题能力和问对问题的能力培养，用第一性原理直击本质。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">05</div>
+                            <div class="insight-icon" style="background: var(--gradient-5);">🎯</div>
+                            <div class="insight-title">创造力</div>
+                            <div class="insight-text">在AGI/ASI时代，创造力是保持个人独特性的基点，是人类价值的核心体现。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">06</div>
+                            <div class="insight-icon" style="background: var(--gradient-1);">💭</div>
+                            <div class="insight-title">定义意义的权利</div>
+                            <div class="insight-text">人类目前依然可以定义"为什么"——我们为什么要做某事，这是与AI和平共处的关键。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 工具推荐 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-1);">🛠️</div>
+                    <div>
+                        <div class="section-title">嘉宾工具推荐清单</div>
+                        <div class="section-preview">经过实战检验的AI工具推荐</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <h3 style="color: var(--primary); margin-bottom: 20px; font-size: 1.1rem;">📝 文本与对话</h3>
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Claude 4.5 Sonnet/Opus
+                                <span class="tool-category">顶级</span>
+                            </div>
+                            <div class="tool-desc">当前最强编程与写作模型，Sonnet单次输出可达3万字，Opus编程能力最强</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">长文输出</span>
+                                <span class="tool-feature">代码质量高</span>
+                                <span class="tool-feature">推理能力强</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Gemini 3 Pro
+                                <span class="tool-category">推荐</span>
+                            </div>
+                            <div class="tool-desc">文风流畅，长上下文能力强，Deep Research功能极其实用</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">文风自然</span>
+                                <span class="tool-feature">长上下文</span>
+                                <span class="tool-feature">Deep Research</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Raycast AI
+                                <span class="tool-category">效率神器</span>
+                            </div>
+                            <div class="tool-desc">乔向阳首推！快捷启动器+AI，让AI融入日常生活每个角落</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">快速唤起</span>
+                                <span class="tool-feature">多模型</span>
+                                <span class="tool-feature">提高使用频率</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--secondary); margin: 30px 0 20px; font-size: 1.1rem;">💻 AI编程工具</h3>
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Claude Code (CC)
+                                <span class="tool-category">YYDS</span>
+                            </div>
+                            <div class="tool-desc">不只是编程工具，是可定制的Agent系统，支持MCP、Subagent、Skills</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">Agent能力</span>
+                                <span class="tool-feature">高度定制</span>
+                                <span class="tool-feature">全能型</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Augment
+                                <span class="tool-category">记忆管理</span>
+                            </div>
+                            <div class="tool-desc">记忆管理系统优秀，会索引代码库并记住配置要求和习惯</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">代码索引</span>
+                                <span class="tool-feature">习惯记忆</span>
+                                <span class="tool-feature">减少返工</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                VSCode + Augment + Claude
+                                <span class="tool-category">黄金组合</span>
+                            </div>
+                            <div class="tool-desc">姚金刚的高效组合，配合WARP终端实现并行多任务处理</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">并行处理</span>
+                                <span class="tool-feature">效率极高</span>
+                                <span class="tool-feature">实战验证</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--accent); margin: 30px 0 20px; font-size: 1.1rem;">🔍 深度研究</h3>
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Gemini Deep Research
+                                <span class="tool-category">必用</span>
+                            </div>
+                            <div class="tool-desc">获取真正有价值内容的利器，用满额度！结合DeepSeek更强</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">深度调研</span>
+                                <span class="tool-feature">高质量</span>
+                                <span class="tool-feature">用满额度</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Notebook LM
+                                <span class="tool-category">经典</span>
+                            </div>
+                            <div class="tool-desc">谷歌明星项目，可整本书问答，大海捞针做得很好</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">RAG</span>
+                                <span class="tool-feature">整书问答</span>
+                                <span class="tool-feature">引用溯源</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Get笔记（得到）
+                                <span class="tool-category">国产良心</span>
+                            </div>
+                            <div class="tool-desc">3小时录音转文本，支持小宇宙/YouTube链接，性价比高</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">录音转写</span>
+                                <span class="tool-feature">链接转写</span>
+                                <span class="tool-feature">便宜好用</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--warning); margin: 30px 0 20px; font-size: 1.1rem;">🎨 创意与设计</h3>
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Suno 4.0
+                                <span class="tool-category">音乐革命</span>
+                            </div>
+                            <div class="tool-desc">天火翼王：成品率达80%，写歌词变成音乐只需30分钟-1小时</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">高成品率</span>
+                                <span class="tool-feature">快速创作</span>
+                                <span class="tool-feature">审美满足</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Nano Banana Pro
+                                <span class="tool-category">图像生成</span>
+                            </div>
+                            <div class="tool-desc">X平台2000万流量的秘密武器，创意都来源于碎片化理解的积累</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">高质量</span>
+                                <span class="tool-feature">创意激发</span>
+                                <span class="tool-feature">易出爆款</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Banana Slides
+                                <span class="tool-category">PPT自由</span>
+                            </div>
+                            <div class="tool-desc">基于Nano Banana的开源PPT工具，姚金刚力推"实现PPT自由"</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">开源</span>
+                                <span class="tool-feature">图片PPT</span>
+                                <span class="tool-feature">可接多API</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="color: var(--danger); margin: 30px 0 20px; font-size: 1.1rem;">🗣️ 语音与交互（国产强项）</h3>
+                    <div class="tool-grid">
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                豆包语音聊天
+                                <span class="tool-category">国产之光</span>
+                            </div>
+                            <div class="tool-desc">中文语音聊天最顺畅，可视频指导训练动作，远超海外体验</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">中文最优</span>
+                                <span class="tool-feature">实时视频</span>
+                                <span class="tool-feature">非国产不可</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                豆包输入法
+                                <span class="tool-category">语音识别</span>
+                            </div>
+                            <div class="tool-desc">打字功能一般但语音识别准确度最高，适合口嗨输入</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">语音精准</span>
+                                <span class="tool-feature">口嗨神器</span>
+                            </div>
+                        </div>
+                        <div class="tool-card">
+                            <div class="tool-name">
+                                Ola Friends 耳机
+                                <span class="tool-category">硬件+AI</span>
+                            </div>
+                            <div class="tool-desc">运动耳机+豆包交互，语音点歌体验优秀</div>
+                            <div class="tool-features">
+                                <span class="tool-feature">运动场景</span>
+                                <span class="tool-feature">语音交互</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 编程方法论 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-5);">⚡</div>
+                    <div>
+                        <div class="section-title">AI编程实战方法论</div>
+                        <div class="section-preview">来自实战派的经验总结</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="quote-card" style="background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);">
+                        <p class="quote-text">"迭代三次，换不同的模型和工具都改不明白的情况下，推翻重来！不要觉得之前浪费的时间和Token很可惜，继续改下去只会越改越烂。"</p>
+                        <p class="quote-author">—— 天火翼王的编程血泪经验</p>
+                    </div>
+
+                    <div class="insight-cards">
+                        <div class="insight-card">
+                            <div class="insight-number">01</div>
+                            <div class="insight-icon" style="background: var(--gradient-1);">📋</div>
+                            <div class="insight-title">SPEC编程法</div>
+                            <div class="insight-text">不要直接和AI对话开发。先聊几轮确定技术架构，产出包含PRD和技术文档的需求文档，再丢给AI。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">02</div>
+                            <div class="insight-icon" style="background: var(--gradient-2);">🎯</div>
+                            <div class="insight-title">MVP约束</div>
+                            <div class="insight-text">强制指定模块颗粒度到最小可验证功能单位(MVP)，避免开放式开发导致的失控。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">03</div>
+                            <div class="insight-icon" style="background: var(--gradient-3);">🔄</div>
+                            <div class="insight-title">三次迭代原则</div>
+                            <div class="insight-text">迭代三次后还改不好？重新写项目说明书！一定是有约束没讲清楚，而不是继续硬改。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">04</div>
+                            <div class="insight-icon" style="background: var(--gradient-4);">🎨</div>
+                            <div class="insight-title">审美提示词</div>
+                            <div class="insight-text">AI默认蓝紫配色是训练语料导致的。专门写一个提示词做前端界面优化，去除AI味。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">05</div>
+                            <div class="insight-icon" style="background: var(--gradient-5);">🚀</div>
+                            <div class="insight-title">部署前置</div>
+                            <div class="insight-text">部署方案(如Supabase数据库、Vercel部署)要在需求讨论阶段就定下来，否则后续改动成本很高。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">06</div>
+                            <div class="insight-icon" style="background: var(--gradient-1);">🔧</div>
+                            <div class="insight-title">油猴脚本</div>
+                            <div class="insight-text">用AI写油猴脚本解决日常使用互联网的小痛点，让使用过程更丝滑，这是提升AI使用率的好方法。</div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-avatar">💡</div>
+                        <div class="expert-content">
+                            <div class="expert-name">
+                                姚金刚的编程技巧
+                                <span class="expert-badge">实战总结</span>
+                            </div>
+                            <p class="expert-text">
+                                <span class="highlight-red">1. 说清楚需求</span><br>
+                                <span class="highlight-blue">2. 给出3套解决方案</span><br>
+                                <span class="highlight-green">3. 写的时候按模块写</span><br>
+                                <span class="highlight-purple">4. 不满意就重写代码</span><br>
+                                <span class="highlight-orange">5. 选最好的模型+好的IDE</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2025趋势预测 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-3);">🔮</div>
+                    <div>
+                        <div class="section-title">2025年AI趋势预测</div>
+                        <div class="section-preview">来自深度从业者的前瞻判断</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="infographic">
+                        <div class="infographic-title">📅 天火翼王的2025预测</div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-title">市场格局稳定期</div>
+                                <div class="timeline-desc">明年不会像今年如此爆发，竞争态势相对稳定</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">木桶效应补齐</div>
+                                <div class="timeline-desc">有资源的大公司会快速弥补前端应用的各种不足，把木桶做扎实</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">体验提升年</div>
+                                <div class="timeline-desc">工具体验更好、效率更高、成本更低，但不会有跃迁式变化</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">螺旋上升</div>
+                                <div class="timeline-desc">此消彼长的螺旋上升竞争态势，单一工具持续领先的情况不会出现</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-card" style="background: var(--gradient-4);">
+                        <p class="quote-text">"今年主要是跃迁，明年是提升。真正使用AI之前，要明确自己的目的。"</p>
+                        <p class="quote-author">—— 乔向阳</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-avatar">🎯</div>
+                        <div class="expert-content">
+                            <div class="expert-name">
+                                关键判断
+                                <span class="expert-badge">共识</span>
+                            </div>
+                            <p class="expert-text">
+                                • <span class="highlight-red">国产模型的Agentic能力还有很大差距</span>，期待明年有特别大的改进<br>
+                                • 国产胜在<span class="highlight-blue">便宜</span>，要求不太高的场景下可用<br>
+                                • <span class="highlight-green">语音领域是国产强项</span>，豆包远超海外体验<br>
+                                • AI泡沫论是<span class="highlight-purple">无稀之谈</span>——需求远未满足，问题只是投入不够和产品体验不足
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 超级个体的边界 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-2);">🦸</div>
+                    <div>
+                        <div class="section-title">超级个体的边界与陷阱</div>
+                        <div class="section-preview">AI时代个人能力的天花板在哪里？</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="insight-cards">
+                        <div class="insight-card">
+                            <div class="insight-number">⚠️</div>
+                            <div class="insight-icon" style="background: var(--gradient-5);">🎯</div>
+                            <div class="insight-title">超级个体的真实边界</div>
+                            <div class="insight-text">天火翼王提醒：如果想以超级个体去撬动生态级、平台级应用，目前靠AI还实现不了。牛逼的想法需要庞大的社会资源支撑，这时候要进入正常商业游戏流程——找融资、找团队。</div>
+                        </div>
+                        <div class="insight-card">
+                            <div class="insight-number">💡</div>
+                            <div class="insight-icon" style="background: var(--gradient-1);">🔄</div>
+                            <div class="insight-title">AI的正确定位</div>
+                            <div class="insight-text">在复杂项目上，AI顶多是帮你节省成本，但基础配置（团队、资金）还是需要的。超级个体这个概念，注意要当心——不要高估AI当前能力的边界。</div>
+                        </div>
+                    </div>
+
+                    <div class="quote-card" style="background: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);">
+                        <p class="quote-text">"我们是在一艘船上，在惊涛骇浪中看到船下有人在水里挣扎。我能做到的是伸手，但绝不会跳下水去救他。没有可能去拯救所有的人，但我们有一个善良的心态和悲悯的情怀，去做一些努力就够了。"</p>
+                        <p class="quote-author">—— 天火翼王的AI时代处世哲学</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行动指南 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-title-group">
+                    <div class="section-icon" style="background: var(--gradient-4);">🚀</div>
+                    <div>
+                        <div class="section-title">立即行动指南</div>
+                        <div class="section-preview">听完就能执行的具体步骤</div>
+                    </div>
+                </div>
+                <div class="section-toggle">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="infographic">
+                        <div class="infographic-title">✅ 本周就可以开始的5件事</div>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-title">1. 下载一个AI编程工具</div>
+                                <div class="timeline-desc">推荐Cursor或Augment，写一个解决你日常痛点的小脚本（比如文件整理、浏览器插件）</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">2. 用满Deep Research额度</div>
+                                <div class="timeline-desc">Gemini或ChatGPT的深度研究功能，为你感兴趣的话题做一次完整调研</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">3. 给父母安装豆包</div>
+                                <div class="timeline-desc">让他们体验语音对话的便捷，问问题之前先"给豆包打个电话"</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">4. 开始审美积累</div>
+                                <div class="timeline-desc">每天至少听2小时音乐，看10个顶级设计作品（Pinterest、Dribbble、博物馆官网）</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">5. 写一个元提示词</div>
+                                <div class="timeline-desc">针对你最常做的一类任务，写一个可以复用的提示词模板，这才是真正的资产</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-card" style="background: var(--gradient-1);">
+                        <p class="quote-text">"对任何新工具不要有任何畏惧感，直接下手去试用。最低成本的前提之下去不断试错，让自己有体感。这个东西比任何人教你都来得更重要。"</p>
+                        <p class="quote-author">—— 天火翼王</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <div class="footer-brand">未来硅世界 | WaytoAGI</div>
+            <p>每双周六晚八点，带着行业故事和AI故事，一起唠唠嗑</p>
+            <p style="margin-top: 20px; font-size: 12px;">
+                本页面由 Claude AI 基于直播内容精华提炼生成<br>
+                © 2025 WaytoAGI 通往AGI之路
+            </p>
+        </footer>
+    </div>
+
+    <!-- 返回顶部 -->
+    <div class="back-to-top" onclick="scrollToTop()">
+        <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path>
+        </svg>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            
+            const toggle = document.querySelector('.theme-toggle');
+            toggle.querySelector('.theme-icon').textContent = newTheme === 'dark' ? '☀️' : '🌙';
+            toggle.querySelector('.theme-text').textContent = newTheme === 'dark' ? '浅色模式' : '深色模式';
+            
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // 加载保存的主题
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.querySelector('.theme-toggle .theme-icon').textContent = '☀️';
+            document.querySelector('.theme-toggle .theme-text').textContent = '浅色模式';
+        }
+
+        // 板块折叠
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const isActive = header.classList.contains('active');
+            
+            header.classList.toggle('active');
+            content.classList.toggle('active');
+        }
+
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 监听滚动显示返回顶部按钮
+        window.addEventListener('scroll', () => {
+            const backToTop = document.querySelector('.back-to-top');
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // 默认展开第一个板块
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstSection = document.querySelector('.section-header');
+            if (firstSection && !firstSection.classList.contains('active')) {
+                // 第一个板块已在HTML中设置为active
+            }
+        });
+    </script>
+</body>
+</html>

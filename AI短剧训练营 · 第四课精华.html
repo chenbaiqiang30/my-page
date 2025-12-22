@@ -1,0 +1,1530 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 AI短剧训练营 · 第四课精华 | 三视图与分镜融合术</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f0f4f8;
+            --text-secondary: #a0aec0;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #ffd93d;
+            --highlight-tip: #a8e6cf;
+            --highlight-warn: #ff8b94;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --accent: #667eea;
+            --accent2: #764ba2;
+            --accent3: #f093fb;
+            --accent4: #f5576c;
+            --gold: linear-gradient(135deg, #f5af19, #f12711);
+            --cyan: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            --purple: linear-gradient(135deg, #667eea, #764ba2);
+            --pink: linear-gradient(135deg, #f093fb, #f5576c);
+            --green: linear-gradient(135deg, #11998e, #38ef7d);
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #e0e5ec 0%, #f5f7fa 50%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 头部样式 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #ffd93d, #667eea, #f093fb);
+            background-size: 200% 100%;
+            animation: gradientMove 3s ease infinite;
+        }
+        .header::after {
+            content: '🎬';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 80px;
+            opacity: 0.15;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        h1 {
+            font-size: 2.8em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #667eea, #f093fb, #ff6b6b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .meta-info {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+        .meta-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: rgba(102, 126, 234, 0.2);
+            border-radius: 30px;
+            font-size: 0.9em;
+            color: #4ecdc4;
+            border: 1px solid rgba(102, 126, 234, 0.3);
+        }
+        
+        /* 按钮组 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 16px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn:hover::before { left: 100%; }
+        .btn:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+        .btn-primary {
+            background: var(--purple);
+            color: white;
+        }
+        
+        /* 金句卡片 */
+        .golden-quotes {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        .golden-quotes::before {
+            content: '✨';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 120px;
+            opacity: 0.1;
+        }
+        .quotes-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quotes-title span {
+            background: var(--gold);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .quote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+        }
+        .quote-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .quote-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 215, 0, 0.5);
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.15);
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            font-size: 60px;
+            color: rgba(255, 215, 0, 0.3);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+        .quote-text {
+            font-size: 1.1em;
+            color: #ffd93d;
+            font-weight: 600;
+            padding-left: 35px;
+            line-height: 1.7;
+        }
+        .quote-author {
+            text-align: right;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 15px;
+        }
+        
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .mindmap-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            text-align: center;
+            background: var(--cyan);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 30px;
+        }
+        .center-node {
+            background: var(--purple);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 800;
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+            position: relative;
+        }
+        .center-node::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.4s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch-node {
+            padding: 20px 30px;
+            border-radius: 24px;
+            font-size: 1.15em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            color: white;
+        }
+        .branch:nth-child(1) .branch-node { background: var(--pink); }
+        .branch:nth-child(2) .branch-node { background: var(--cyan); }
+        .branch:nth-child(3) .branch-node { background: var(--green); }
+        .branch-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12px 35px rgba(0,0,0,0.3);
+        }
+        .sub-node {
+            background: rgba(255,255,255,0.05);
+            padding: 14px 22px;
+            border-radius: 14px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .branch:nth-child(1) .sub-node { border-color: #f5576c; }
+        .branch:nth-child(2) .sub-node { border-color: #4ecdc4; }
+        .branch:nth-child(3) .sub-node { border-color: #38ef7d; }
+        .sub-node:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(8px);
+        }
+        
+        /* 信息图表 */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        .infographic-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 35px;
+            text-align: center;
+            background: var(--pink);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .workflow-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 20px;
+            flex-wrap: wrap;
+            position: relative;
+            padding: 20px 0;
+        }
+        .workflow-steps::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 10%;
+            right: 10%;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #ffd93d, #667eea);
+            z-index: 0;
+            border-radius: 2px;
+        }
+        .step {
+            flex: 1;
+            min-width: 180px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        .step-number {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 20px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            position: relative;
+        }
+        .step:nth-child(1) .step-number { background: var(--pink); }
+        .step:nth-child(2) .step-number { background: var(--cyan); }
+        .step:nth-child(3) .step-number { background: var(--gold); }
+        .step:nth-child(4) .step-number { background: var(--purple); }
+        .step:nth-child(5) .step-number { background: var(--green); }
+        .step-content {
+            background: rgba(255,255,255,0.05);
+            padding: 20px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .step-content:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateY(-5px);
+        }
+        .step-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            color: #4ecdc4;
+        }
+        .step-desc {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        
+        /* 内容板块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            transition: all 0.4s ease;
+        }
+        .section:hover {
+            box-shadow: 0 12px 45px rgba(0,0,0,0.25);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding-bottom: 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 25px;
+            user-select: none;
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        .section:nth-child(odd) .section-icon { background: var(--purple); }
+        .section:nth-child(even) .section-icon { background: var(--pink); }
+        .section-title-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .collapse-icon {
+            font-size: 1.8em;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 150px;
+        }
+        .collapsed .section-header {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+        .section-content {
+            max-height: 8000px;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+            opacity: 1;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+        
+        /* 高亮样式 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 6px;
+            border-bottom: 2px solid var(--highlight-key);
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(78, 205, 196, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(255, 217, 61, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-tip {
+            color: var(--highlight-tip);
+            font-weight: 600;
+            padding: 3px 10px;
+            background: rgba(168, 230, 207, 0.15);
+            border-radius: 6px;
+        }
+        
+        /* 专家评论 */
+        .expert-comment {
+            margin-top: 35px;
+            padding: 30px;
+            background: linear-gradient(145deg, rgba(102, 126, 234, 0.15), rgba(240, 147, 251, 0.1));
+            border-left: 5px solid var(--accent);
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .expert-comment::before {
+            content: '🎬';
+            position: absolute;
+            top: -10px;
+            left: 25px;
+            font-size: 2.5em;
+            background: var(--glass-bg);
+            padding: 8px 18px;
+            border-radius: 16px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        .expert-comment::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.2), transparent);
+            border-radius: 50%;
+        }
+        .expert-label {
+            font-size: 0.85em;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+        .expert-text {
+            font-size: 1.05em;
+            line-height: 1.9;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 要点列表 */
+        .point-list {
+            list-style: none;
+            margin: 25px 0;
+        }
+        .point-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 18px;
+            padding: 18px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s ease;
+        }
+        .point-item:hover {
+            padding-left: 15px;
+            background: rgba(255,255,255,0.03);
+            border-radius: 12px;
+        }
+        .point-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+        .point-icon.pink { background: var(--pink); }
+        .point-icon.cyan { background: var(--cyan); }
+        .point-icon.gold { background: var(--gold); }
+        .point-icon.purple { background: var(--purple); }
+        .point-icon.green { background: var(--green); }
+        .point-text {
+            flex: 1;
+            padding-top: 8px;
+        }
+        .point-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 6px;
+            color: #4ecdc4;
+        }
+        
+        /* 技巧卡片 */
+        .tip-card {
+            background: linear-gradient(145deg, rgba(17, 153, 142, 0.15), rgba(56, 239, 125, 0.1));
+            border: 1px solid rgba(56, 239, 125, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+        }
+        .tip-card::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 1.8em;
+            background: var(--glass-bg);
+            padding: 5px 12px;
+            border-radius: 10px;
+        }
+        .tip-title {
+            font-weight: 700;
+            color: #38ef7d;
+            margin-bottom: 12px;
+            padding-top: 10px;
+        }
+        
+        /* 警告卡片 */
+        .warn-card {
+            background: linear-gradient(145deg, rgba(255, 107, 107, 0.15), rgba(255, 139, 148, 0.1));
+            border: 1px solid rgba(255, 107, 107, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+        }
+        .warn-card::before {
+            content: '⚠️';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 1.8em;
+            background: var(--glass-bg);
+            padding: 5px 12px;
+            border-radius: 10px;
+        }
+        .warn-title {
+            font-weight: 700;
+            color: #ff6b6b;
+            margin-bottom: 12px;
+            padding-top: 10px;
+        }
+        
+        /* 代码/提示词展示 */
+        .prompt-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(102, 126, 234, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            font-family: "SF Mono", "Fira Code", monospace;
+            font-size: 0.95em;
+            line-height: 1.8;
+            overflow-x: auto;
+            position: relative;
+        }
+        .prompt-label {
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: var(--accent);
+            color: white;
+            padding: 4px 15px;
+            border-radius: 8px;
+            font-size: 0.8em;
+            font-weight: 700;
+            font-family: -apple-system, sans-serif;
+        }
+        
+        /* 对比表格 */
+        .compare-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .compare-table th {
+            background: var(--purple);
+            color: white;
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 700;
+        }
+        .compare-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            background: rgba(255,255,255,0.03);
+        }
+        .compare-table tr:hover td {
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.8em;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 12px 40px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 110px;
+            right: 30px;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--purple);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            color: white;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            opacity: 0;
+            visibility: hidden;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 60px rgba(102, 126, 234, 0.5); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .mindmap-branches { grid-template-columns: 1fr; }
+            .workflow-steps { flex-direction: column; align-items: center; }
+            .workflow-steps::before { display: none; }
+        }
+        @media (max-width: 768px) {
+            body { padding: 15px; }
+            .header { padding: 30px; }
+            h1 { font-size: 2em; }
+            .section { padding: 30px; }
+            .quote-grid { grid-template-columns: 1fr; }
+            .meta-info { flex-direction: column; gap: 10px; }
+        }
+        
+        /* 打印优化 */
+        @media print {
+            body { background: white; color: black; }
+            .theme-toggle, .back-to-top, .controls { display: none; }
+            .section { break-inside: avoid; box-shadow: none; border: 1px solid #ddd; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>🎬 AI短剧训练营 · 第四课精华</h1>
+            <p class="subtitle">三视图与分镜融合术 — 从角色设计到场景控制的完整工作流</p>
+            <div class="meta-info">
+                <span class="meta-tag">📅 2024年12月14日</span>
+                <span class="meta-tag">👨‍🏫 夜游榊老师 主讲</span>
+                <span class="meta-tag">⏱️ 约2.5小时</span>
+                <span class="meta-tag">🎯 WaytoAGI</span>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">📑 全部展开/折叠</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印笔记</button>
+                <button class="btn" onclick="scrollToMindmap()">🧠 查看思维导图</button>
+            </div>
+        </header>
+        
+        <!-- 金句板块 -->
+        <section class="golden-quotes">
+            <h2 class="quotes-title">✨ <span>本课金句</span></h2>
+            <div class="quote-grid">
+                <div class="quote-card">
+                    <p class="quote-text">AI所有东西其实都是可以试出来的，没有一定之规，也没有特别固定的玩法。大胆尝试！</p>
+                    <p class="quote-author">— 夜游榊</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">你不能否认风格一致，但又觉得不够帅。我们要有意识地把主角调成最帅的，主角要有主角感！</p>
+                    <p class="quote-author">— 夜游榊</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">不是高效的问题，是看这个本是什么要求。我们做剧第一要注意的就是叙事，本质上我们做的是给观众看的故事。</p>
+                    <p class="quote-author">— 夜游榊</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">最怕的就是自己没有想法，做一半的时候就没有耐心了。有问题我们去解决，这个东西才做得出来。</p>
+                    <p class="quote-author">— 夜游榊</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">选演员有的都选好几个月，咱们这才几分钟。形象定了之后可以积累、复用。</p>
+                    <p class="quote-author">— 夜游榊</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">生图都是随机抽卡，我们把词加进去，在固定范围内抽卡，词加得越多，范围控得越准越小。</p>
+                    <p class="quote-author">— 夜游榊</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 思维导图 -->
+        <section class="mindmap-container" id="mindmap">
+            <h2 class="mindmap-title">🧠 核心知识架构</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">🎬 AI短剧制作<br>三视图 → 分镜 → 融图</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">🎨 角色三视图</div>
+                        <div class="sub-node">📐 正面 + 侧面 + 背面 + 近景</div>
+                        <div class="sub-node">🎭 风格词置前保持一致性</div>
+                        <div class="sub-node">✍️ 角色描述词精简50字内</div>
+                        <div class="sub-node">📏 比例选择21:9长图</div>
+                        <div class="sub-node">🔄 多角色复用同一风格词</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🏞️ 场景生成</div>
+                        <div class="sub-node">🌄 远景空镜交代大环境</div>
+                        <div class="sub-node">🚪 近景锚定关键位置</div>
+                        <div class="sub-node">🔗 场景间需有逻辑关联</div>
+                        <div class="sub-node">↔️ 扩图/转角度衔接场景</div>
+                        <div class="sub-node">📸 反推画风保持统一</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🎞️ 分镜融图</div>
+                        <div class="sub-node">🖼️ 角色垫图 + 场景参考</div>
+                        <div class="sub-node">👥 最多融合2个角色</div>
+                        <div class="sub-node">🎯 构图、透视关系要描述</div>
+                        <div class="sub-node">🔧 迭代修复不合理细节</div>
+                        <div class="sub-node">✨ Banana更强融图能力</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 工作流信息图 -->
+        <section class="infographic">
+            <h2 class="infographic-title">📊 短剧制作完整工作流</h2>
+            <div class="workflow-steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <div class="step-title">剧本分析</div>
+                        <div class="step-desc">拆解角色、场景、道具需求</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <div class="step-title">角色三视图</div>
+                        <div class="step-desc">定风格词+角色描述出图</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <div class="step-title">场景资产</div>
+                        <div class="step-desc">空镜→近景锚定关键位置</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <div class="step-content">
+                        <div class="step-title">分镜融图</div>
+                        <div class="step-desc">角色+场景参考生成画面</div>
+                    </div>
+                </div>
+                <div class="step">
+                    <div class="step-number">5</div>
+                    <div class="step-content">
+                        <div class="step-title">视频生成</div>
+                        <div class="step-desc">图生视频→剪辑成片</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 板块1：三视图核心技法 -->
+        <section class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-title">
+                    <span class="section-icon">🎨</span>
+                    <span class="section-title-text">三视图核心技法</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 掌握角色三视图的标准出图方法，保持多角色风格一致性的关键技巧...</div>
+            <div class="section-content">
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon purple">📐</span>
+                        <div class="point-text">
+                            <div class="point-title">三视图标准构成</div>
+                            <p>角色三视图包含<span class="highlight-key">正面、侧面、背面</span>三个朝向，习惯上额外加一个<span class="highlight-data">近景半身图</span>作为细节参考。比例建议选择<span class="highlight-data">21:9</span>长图格式。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon pink">🎭</span>
+                        <div class="point-text">
+                            <div class="point-title">提示词结构三段式</div>
+                            <p><span class="highlight-key">前段放风格词</span>（如"动漫风格，半厚涂"）→ <span class="highlight-data">中段放格式词</span>（如"角色设计表，三视图合一，正侧背+近景"）→ <span class="highlight-tip">后段放角色描述</span>（精简至50字内）</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">🔄</span>
+                        <div class="point-text">
+                            <div class="point-title">多角色一致性保持</div>
+                            <p>风格词复用是关键！<span class="highlight-quote">前面的风格词不动，只改角色描述词</span>，就能保证多个角色在同一画风体系下。这是整部剧视觉统一的基础。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon gold">✍️</span>
+                        <div class="point-text">
+                            <div class="point-title">角色描述词提炼</div>
+                            <p>从剧本角色设定中提取外貌关键词，用AI辅助精简到<span class="highlight-data">50字以内</span>。避免写"穷屌丝"这类抽象词，而要转化为具体可视化描述，如"五官立体，棱角分明，眼下厚重眼袋"。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="prompt-box">
+                    <span class="prompt-label">📝 三视图参考提示词</span>
+                    <br><br>
+                    <span style="color:#4ecdc4">动漫风格，半厚涂，</span><span style="color:#ffd93d">角色设计表，三视图合一，展示角色全身正面、侧面、背面，额外加上角色近景图，白色背景，</span><span style="color:#ff6b6b">男性角色，亚洲人，25岁，五官立体，棱角分明，帅气的脸，眼下厚重的眼袋，穿着旧T恤，挽起的裤脚</span>
+                </div>
+                
+                <div class="tip-card">
+                    <div class="tip-title">模型选择建议</div>
+                    <p>即梦<span class="highlight-data">4.0/4.5</span>模型较稳定，新模型可能提示词框架需要重新调试。<span class="highlight-tip">Banana在融图方面更强</span>，但即梦在生图能力上表现更好。</p>
+                </div>
+                
+                <div class="expert-comment">
+                    <div class="expert-label">🎬 短剧专家点评</div>
+                    <p class="expert-text">三视图是整个AI短剧制作的<span class="highlight-key">基石资产</span>。很多新手直接跳过这一步去生分镜，结果角色一致性完全失控。老师强调的"风格词复用"方法非常实用——<span class="highlight-quote">把风格词当作一个"模板头"，所有角色都用同一个头，只换身体描述</span>。这个思路可以迁移到场景、道具的生成中。另外，21:9的比例选择也很讲究，因为三视图本质是"多画面拼接"，长图才能容纳完整信息。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 板块2：场景生成与锚点控制 -->
+        <section class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-title">
+                    <span class="section-icon">🏞️</span>
+                    <span class="section-title-text">场景生成与锚点控制</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 从远景到近景的场景搭建逻辑，如何用锚点图控制整场戏的视觉统一...</div>
+            <div class="section-content">
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon green">🌄</span>
+                        <div class="point-text">
+                            <div class="point-title">场景生成的锚点思维</div>
+                            <p>先确定<span class="highlight-key">关键锚点图</span>（通常是主要场景的中景），然后以此为参照向"上下游扩展"——往远景方向生成环境交代图，往近景方向生成细节图。<span class="highlight-quote">只要锚点对了，往外扩就不会跑偏。</span></p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">🔗</span>
+                        <div class="point-text">
+                            <div class="point-title">镜头间的逻辑关系</div>
+                            <p>分镜不是孤立的画面堆砌。例如"农村远景→门的近景"，要想象<span class="highlight-data">镜头往前推</span>的过程，远景里要能看到门的位置，近景要和远景里的门一致。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon purple">↔️</span>
+                        <div class="point-text">
+                            <div class="point-title">场景扩展与衔接技巧</div>
+                            <p>室内多角度场景可以：① 先生成东西两头的图，再参考两图生成衔接部分；② 以一张图为基础，让AI"往左/往右转多少度"；③ 使用<span class="highlight-tip">扩图功能</span>延伸画面。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon gold">📸</span>
+                        <div class="point-text">
+                            <div class="point-title">反推画风的实用技巧</div>
+                            <p>如果有喜欢的风格图但不知道怎么描述，可以把图扔给豆包/DeepSeek，让它<span class="highlight-data">"反推画风提示词"</span>，再把这些词应用到场景生成中。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="prompt-box">
+                    <span class="prompt-label">📝 场景生成参考提示词</span>
+                    <br><br>
+                    <span style="color:#4ecdc4">动漫风格，半厚涂，数字绘画，柔和笔触，</span><span style="color:#ffd93d">农村远景空镜头，</span><span style="color:#ff6b6b">村庄错落有致，简陋的农家小院，镜头对准小院院门，白色背景</span>
+                </div>
+                
+                <div class="warn-card">
+                    <div class="warn-title">场景一致性陷阱</div>
+                    <p>很多同学场景出得五花八门，根本原因是<span class="highlight-key">没有先定锚点</span>。正确做法是：先出一张主场景图定调，再基于这张图的风格和元素去生成其他角度/景别。不要每张都从零开始生成！</p>
+                </div>
+                
+                <div class="expert-comment">
+                    <div class="expert-label">🎬 短剧专家点评</div>
+                    <p class="expert-text">场景生成的<span class="highlight-key">"锚点思维"</span>是本课最值得反复体会的概念。传统影视制作中，美术指导会先做概念图，然后所有场景设计都参照这个概念图。AI短剧制作完全可以复用这个思路——<span class="highlight-quote">先出一张"定调图"，这张图就是你的视觉锚点</span>。老师演示的"参考图生成大远景"的方法特别实用，本质上是在告诉AI："我要的东西长这样，你帮我往更大的范围扩展"。这种"以点带面"的生成策略，效率远高于"每张图都重新描述"。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 板块3：分镜融图实战 -->
+        <section class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-title">
+                    <span class="section-icon">🎞️</span>
+                    <span class="section-title-text">分镜融图实战</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 角色与场景的融合技巧，迭代修复分镜细节的完整流程...</div>
+            <div class="section-content">
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon pink">🖼️</span>
+                        <div class="point-text">
+                            <div class="point-title">融图的基本操作</div>
+                            <p>将场景图和角色三视图作为<span class="highlight-key">参考图</span>同时上传，通过提示词描述角色在场景中的动作和位置。例如："图2中的角色捂着脸哭，从图1的大门里走出来"。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">👥</span>
+                        <div class="point-text">
+                            <div class="point-title">多角色融图的限制</div>
+                            <p>即梦融图<span class="highlight-warn">最多2个角色</span>，超过容易崩。多角色场景建议：① 改变视角只露两人正脸；② 使用Banana融图；③ 分层生成再合成。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon gold">🔧</span>
+                        <div class="point-text">
+                            <div class="point-title">迭代修复思路</div>
+                            <p>融图结果必然有问题，关键是<span class="highlight-quote">能发现问题并知道怎么改</span>。常见问题：比例不对（加"角色应该比门略小"）、透视错误（加"注意构图和透视关系"）、细节缺失（局部重绘或扩图修复）。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon purple">🎯</span>
+                        <div class="point-text">
+                            <div class="point-title">绑定角色的处理</div>
+                            <p>剧本中如果角色与某物/某人绑定（如"母亲领着女儿"），可以把绑定对象当作<span class="highlight-tip">角色的"外挂道具"</span>，在三视图阶段就把两者作为整体出图。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <table class="compare-table">
+                    <tr>
+                        <th>工具</th>
+                        <th>生图能力</th>
+                        <th>融图能力</th>
+                        <th>速度/成本</th>
+                        <th>适用场景</th>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-data">即梦</span></td>
+                        <td>⭐⭐⭐⭐⭐</td>
+                        <td>⭐⭐⭐</td>
+                        <td>快/低</td>
+                        <td>日常漫剧制作</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-tip">Banana</span></td>
+                        <td>⭐⭐⭐</td>
+                        <td>⭐⭐⭐⭐⭐</td>
+                        <td>中/中</td>
+                        <td>复杂融图场景</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-quote">可灵</span></td>
+                        <td>⭐⭐⭐⭐</td>
+                        <td>⭐⭐⭐⭐</td>
+                        <td>慢/高</td>
+                        <td>高质感TVC/宣传片</td>
+                    </tr>
+                </table>
+                
+                <div class="tip-card">
+                    <div class="tip-title">分镜缺失的补救</div>
+                    <p>做完发现缺分镜？如果你用的是<span class="highlight-data">多维表格</span>管理分镜，直接选中某行插入新镜头即可。提前规划分镜能力（编导能力）越强，后期补救越少。</p>
+                </div>
+                
+                <div class="expert-comment">
+                    <div class="expert-label">🎬 短剧专家点评</div>
+                    <p class="expert-text">融图是AI短剧制作中<span class="highlight-key">最吃功力的环节</span>。老师反复强调的"迭代修复"思路非常关键——<span class="highlight-quote">不要期望一次出图完美，而是要建立"出图→发现问题→定位原因→修改提示词→重新出图"的循环</span>。这个过程看似繁琐，实际上是在训练你对AI的"沟通能力"。融图结果不对时，90%的原因是提示词没写清楚。老师演示的"门太小→加'角色应比门略小'"的例子特别生动，说明了AI理解的是字面意思，你想要什么效果就得写什么效果。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 板块4：工具与提示词优化 -->
+        <section class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-title">
+                    <span class="section-icon">🛠️</span>
+                    <span class="section-title-text">工具与提示词优化</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 AI辅助写提示词、抄参考词的实用技巧，模型选择与参数调优...</div>
+            <div class="section-content">
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon green">🤖</span>
+                        <div class="point-text">
+                            <div class="point-title">AI辅助写描述词</div>
+                            <p>剧本角色设定太抽象？把设定扔给豆包/DeepSeek，让它<span class="highlight-data">"描述这个角色的外貌，50字以内"</span>。AI会帮你转化为可视化的具体描述。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">📋</span>
+                        <div class="point-text">
+                            <div class="point-title">跨平台抄提示词</div>
+                            <p>不会写提示词？去<span class="highlight-tip">悠船、即梦社区</span>等平台找同风格的优秀作品，直接参考他们的提示词框架，替换成自己的角色描述即可。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon gold">🎨</span>
+                        <div class="point-text">
+                            <div class="point-title">风格词的积累</div>
+                            <p>常用风格词要形成<span class="highlight-key">知识沉淀</span>。例如日漫类：宫崎骏、新海诚、半厚涂、赛璐璐风；国漫类：3D国风、水墨风、东方仙侠。风格词决定画面调性。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon purple">⚙️</span>
+                        <div class="point-text">
+                            <div class="point-title">模型版本的影响</div>
+                            <p>不同模型版本对同一提示词的理解有差异。<span class="highlight-warn">模型升级后旧提示词可能失效</span>，需要重新调试。建议在稳定版本（如4.0）上形成自己的提示词框架。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="prompt-box">
+                    <span class="prompt-label">📝 让AI帮你写提示词</span>
+                    <br><br>
+                    <span style="color:#a0aec0">角色设定原文：</span><span style="color:#ff6b6b">落崖生，男主，32岁，西红柿，一穷屌丝，长相帅气，仪表堂堂，善良刚强，一身傲骨</span>
+                    <br><br>
+                    <span style="color:#a0aec0">→ 对豆包说：</span><span style="color:#4ecdc4">"帮我把这个角色描述转化为外貌描述，50字以内"</span>
+                    <br><br>
+                    <span style="color:#a0aec0">→ AI输出：</span><span style="color:#ffd93d">五官立体，棱角分明，眉眼间透着倔强，身形挺拔但衣着朴素，旧T恤微微泛黄，眼神中带着不甘的微光</span>
+                </div>
+                
+                <div class="expert-comment">
+                    <div class="expert-label">🎬 短剧专家点评</div>
+                    <p class="expert-text">老师分享的<span class="highlight-key">"抄作业"方法论</span>非常接地气。AI创作不是闭门造车，而是站在巨人肩膀上。去各大平台看优秀作品的提示词，本质上是在学习别人的"AI沟通经验"。但要注意<span class="highlight-quote">不是照搬，而是理解框架后替换内容</span>。另外，"知识沉淀"的提醒很重要——每次调试出好用的提示词组合，一定要记录下来，形成自己的素材库。这才是提效的根本。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 板块5：常见问题与避坑 -->
+        <section class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <div class="section-title">
+                    <span class="section-icon">⚠️</span>
+                    <span class="section-title-text">常见问题与避坑指南</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 学员作业常见错误分析，以及如何规避这些问题...</div>
+            <div class="section-content">
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon pink">❌</span>
+                        <div class="point-text">
+                            <div class="point-title">问题1：风格不统一</div>
+                            <p>作业中多角色画风跳跃严重。<span class="highlight-key">原因</span>：没有复用风格词，每个角色单独写风格。<span class="highlight-tip">解决</span>：建立通用风格词模板，所有角色共用。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">❌</span>
+                        <div class="point-text">
+                            <div class="point-title">问题2：三视图比例错误</div>
+                            <p>出的图是全半身或大头照，不是全身三视图。<span class="highlight-key">原因</span>：提示词缺少"全身"、"全景"等关键词。<span class="highlight-tip">解决</span>：明确写"展示角色全身"。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon gold">❌</span>
+                        <div class="point-text">
+                            <div class="point-title">问题3：融图时角色崩坏</div>
+                            <p>一致性还行但脸崩了。<span class="highlight-key">原因</span>：融入太多角色或参考图质量不够。<span class="highlight-tip">解决</span>：最多2角色，用高清近景图做参考。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon purple">❌</span>
+                        <div class="point-text">
+                            <div class="point-title">问题4：场景与分镜脱节</div>
+                            <p>场景图漂亮但和分镜对不上。<span class="highlight-key">原因</span>：没有建立场景的"锚点图"。<span class="highlight-tip">解决</span>：先定主场景，再由此扩展。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon green">❌</span>
+                        <div class="point-text">
+                            <div class="point-title">问题5：角色太刻板印象</div>
+                            <p>"穷屌丝"就一定要发际线后退、邋遢脏乱？<span class="highlight-key">原因</span>：用了太刻板的描述词。<span class="highlight-tip">解决</span>：主角要有主角感，即使落魄也要帅。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="warn-card">
+                    <div class="warn-title">最致命的错误</div>
+                    <p><span class="highlight-key">缺乏耐心，没做完就放弃。</span>AI出图必然需要迭代，从不完美到完美是正常过程。只要能发现问题并坚持修改，最终一定能出好图。最怕的是"觉得AI不行"然后放弃尝试。</p>
+                </div>
+                
+                <div class="expert-comment">
+                    <div class="expert-label">🎬 短剧专家点评</div>
+                    <p class="expert-text">老师在课上花了大量时间点评学员作业，这些"错误示范"其实是最宝贵的学习资源。我总结一个规律：<span class="highlight-key">90%的出图问题都是提示词问题，90%的提示词问题都是"没写清楚"或"写了AI不理解的词"</span>。比如"穷屌丝"这个词，AI会按刻板印象出一个邋遢形象，但我们想要的是"虽然穷但依然帅"的主角。所以提示词要写的是视觉效果，不是抽象概念。另外，<span class="highlight-quote">"主角要有主角感"</span>这个提醒非常重要——观众会本能地把最好看的角色当主角，这是人性。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 板块6：Q&A精选 -->
+        <section class="section" id="section6">
+            <div class="section-header" onclick="toggleSection('section6')">
+                <div class="section-title">
+                    <span class="section-icon">💬</span>
+                    <span class="section-title-text">学员Q&A精选</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 课程答疑环节的精华问题与解答...</div>
+            <div class="section-content">
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon cyan">❓</span>
+                        <div class="point-text">
+                            <div class="point-title">Q：穿越剧穿越前后是两个三视图吗？</div>
+                            <p><span class="highlight-tip">A：看剧本设定。</span>魂穿（灵魂穿越）的角色确实需要两套三视图。但如果穿越前没有戏份，就不需要出。一切以剧本需求为准。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon gold">❓</span>
+                        <div class="point-text">
+                            <div class="point-title">Q：先出完所有图再做视频，还是边出边做？</div>
+                            <p><span class="highlight-tip">A：不是效率问题，是分镜能力问题。</span>如果分镜规划清晰，先出完图效率更高；如果分镜能力不足，容易出现"出了图用不上"或"做一半发现缺镜头"的情况。建议加强拉片学习。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon purple">❓</span>
+                        <div class="point-text">
+                            <div class="point-title">Q：室内场景不同角度怎么保持一致？</div>
+                            <p><span class="highlight-tip">A：三种方法。</span>① 先出东西两头的图，再参考两图生成中间衔接；② 以一张图为基础让AI"往左/往右转多少度"；③ 使用扩图功能延伸画面。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon pink">❓</span>
+                        <div class="point-text">
+                            <div class="point-title">Q：用AI把老年人还原成年轻样子总是不像？</div>
+                            <p><span class="highlight-tip">A：因为你太熟悉这个人了。</span>AI生成的是"可能的样子"，而你熟悉的那个版本只是无数可能中的一个。换一个不熟悉的人做测试，你就会觉得像了。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon green">❓</span>
+                        <div class="point-text">
+                            <div class="point-title">Q：生成的人物形象会有版权问题吗？</div>
+                            <p><span class="highlight-tip">A：避免和真人一样。</span>不要故意生成明星、政治人物的形象。AI生成的原创角色一般没有版权问题，但要注意避免"撞脸"风险。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">❓</span>
+                        <div class="point-text">
+                            <div class="point-title">Q：物品大小比例怎么精准控制？</div>
+                            <p><span class="highlight-tip">A：用参照物描述相对关系。</span>例如"人物只有门的一半大小"。AI理解的是相对值，不是绝对值。也可以用参考图垫入来控制比例。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="expert-comment">
+                    <div class="expert-label">🎬 短剧专家点评</div>
+                    <p class="expert-text">答疑环节暴露了很多学员的<span class="highlight-key">底层认知误区</span>。比如"AI还原年轻样子不像"这个问题，本质上是对AI生成原理的误解——AI不是在"还原"，而是在"生成可能性"。还有"先出图还是边出边做"的问题，老师的回答直指核心：<span class="highlight-quote">这是分镜/编导能力的问题，不是流程问题</span>。如果你脑子里有清晰的画面，自然知道需要出什么图；如果没有，再高效的流程也救不了你。这提醒我们：AI工具只是放大器，放大的是你原有的能力。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 板块7：作业与下节预告 -->
+        <section class="section" id="section7">
+            <div class="section-header" onclick="toggleSection('section7')">
+                <div class="section-title">
+                    <span class="section-icon">📝</span>
+                    <span class="section-title-text">本课作业与下节预告</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 第四课作业要求、提交标准，以及第五课视频生成预告...</div>
+            <div class="section-content">
+                <div class="tip-card">
+                    <div class="tip-title">📋 第四课作业要求</div>
+                    <p style="margin-top:10px"><span class="highlight-key">1. 补全角色三视图</span>：为你选择的剧本出完所有主要角色的三视图（正侧背+近景）</p>
+                    <p><span class="highlight-key">2. 补全场景三视图</span>：出完主要场景的空镜图（远景+近景锚点）</p>
+                    <p><span class="highlight-key">3. 分镜图至少10张</span>：包含空镜、角色融入场景的分镜图</p>
+                    <p><span class="highlight-data">提交位置</span>：搭子团作业表格的"分镜图"列</p>
+                    <p><span class="highlight-warn">截止时间</span>：下节课（12月17日）前</p>
+                </div>
+                
+                <div class="warn-card">
+                    <div class="warn-title">作业不合格将影响结业证书</div>
+                    <p>不交作业或作业不合格会被记录，影响最终的结业证书发放。作业是可以<span class="highlight-tip">重复修改</span>的，在结营前（12月31日）补齐所有作业即可。</p>
+                </div>
+                
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon purple">📅</span>
+                        <div class="point-text">
+                            <div class="point-title">第五课预告：视频生成</div>
+                            <p>下节课将讲解<span class="highlight-data">图生视频</span>的完整流程，包括视频生成、镜头衔接、多镜头组合等内容。请确保在此之前完成分镜图的准备。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">📅</span>
+                        <div class="point-text">
+                            <div class="point-title">明日自习室</div>
+                            <p>12月15日晚有自习室安排，会有助教老师带着大家从第一课开始复盘，适合进度落后的同学补课。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div class="expert-comment">
+                    <div class="expert-label">🎬 短剧专家点评</div>
+                    <p class="expert-text">作业设置非常科学——<span class="highlight-key">强制你完成"资产积累"环节</span>。很多人想直接跳到视频生成，但没有三视图和场景图的积累，视频阶段必然一致性崩塌。老师强调的"最少10张分镜图"不是随便定的数字，而是保证你至少经历一次完整的"出图→发现问题→修改→再出图"的循环。<span class="highlight-quote">做一次和做十次的差距是质变的</span>。建议大家认真对待作业，这是免费训练营难得的"被push"机会。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 总结板块 -->
+        <section class="section" id="section8" style="background: linear-gradient(145deg, rgba(102, 126, 234, 0.15), rgba(240, 147, 251, 0.1));">
+            <div class="section-header" onclick="toggleSection('section8')">
+                <div class="section-title">
+                    <span class="section-icon" style="background: var(--gold);">🎯</span>
+                    <span class="section-title-text">短剧专家总评</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">📌 作为短剧行业从业者，对本节课内容的整体评价与建议...</div>
+            <div class="section-content">
+                <p style="font-size:1.1em; line-height:2; margin-bottom:25px;">
+                    这节课的<span class="highlight-key">信息密度极高</span>，夜游榊老师用了大量实操演示来讲解三视图到分镜融图的完整流程。作为短剧制作从业者，我认为这节课有以下几个<span class="highlight-data">核心价值点</span>：
+                </p>
+                
+                <ul class="point-list">
+                    <li class="point-item">
+                        <span class="point-icon gold">1</span>
+                        <div class="point-text">
+                            <div class="point-title">建立了正确的资产思维</div>
+                            <p>三视图不是"可有可无的准备工作"，而是整个AI短剧制作的<span class="highlight-key">基石资产</span>。传统影视有美术指导、造型指导，AI短剧的三视图就相当于这些角色的工作成果。没有这个基础，后面的一致性根本无从谈起。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon pink">2</span>
+                        <div class="point-text">
+                            <div class="point-title">传授了实用的迭代方法论</div>
+                            <p>老师在课上反复强调<span class="highlight-quote">"发现问题→定位原因→修改提示词→重新出图"</span>的循环。这才是AI时代的核心能力——不是一次出完美图的能力，而是快速迭代到完美的能力。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon cyan">3</span>
+                        <div class="point-text">
+                            <div class="point-title">点破了关键的认知误区</div>
+                            <p>"主角要有主角感"、"AI出的是可能性而非还原"、"风格词复用才能保一致"……这些看似简单的道理，很多人做了几个月都没想明白。老师用学员作业的错误示范来讲解，印象深刻。</p>
+                        </div>
+                    </li>
+                    <li class="point-item">
+                        <span class="point-icon purple">4</span>
+                        <div class="point-text">
+                            <div class="point-title">给出了明确的工具选择建议</div>
+                            <p>即梦生图强、Banana融图强、可灵画质高但贵——这种<span class="highlight-data">基于实际生产经验的工具评价</span>非常宝贵，能帮新手少走很多弯路。</p>
+                        </div>
+                    </li>
+                </ul>
+                
+                <div style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); border-radius: 20px; padding: 30px; margin-top: 30px;">
+                    <h3 style="color: #ffd93d; margin-bottom: 15px; font-size: 1.3em;">💡 给学员的建议</h3>
+                    <p style="line-height: 2;">
+                        <span class="highlight-key">1. 不要跳过作业。</span>做10张分镜图的过程就是在训练你和AI的沟通能力，这个能力是不可替代的。<br>
+                        <span class="highlight-data">2. 建立自己的素材库。</span>每次调试出好用的提示词组合，记下来。几个月后你会有一个无价的"自用提示词库"。<br>
+                        <span class="highlight-tip">3. 多看优秀作品。</span>去各大平台看同类型作品的提示词，学习别人的框架，比自己从零摸索快10倍。<br>
+                        <span class="highlight-quote">4. 保持耐心和好奇心。</span>AI出图必然需要迭代，接受这个事实，享受调试的过程。每一次"终于出对了"都是技能的提升。
+                    </p>
+                </div>
+                
+                <p style="font-size: 1.15em; text-align: center; margin-top: 35px; color: #4ecdc4; font-weight: 700;">
+                    🎬 AI短剧制作的核心能力 = 分镜思维 + 提示词沟通 + 迭代耐心
+                </p>
+            </div>
+        </section>
+    </div>
+    
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+        
+        // 全部展开/折叠
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+        
+        // 单个板块折叠
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+        
+        // 滚动到思维导图
+        function scrollToMindmap() {
+            document.getElementById('mindmap').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 返回顶部按钮显示/隐藏
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+        
+        // 金句卡片点击效果
+        document.querySelectorAll('.quote-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+        
+        // 添加页面加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.section').forEach((section, index) => {
+                section.style.animationDelay = `${0.1 * index}s`;
+            });
+        });
+    </script>
+</body>
+</html>

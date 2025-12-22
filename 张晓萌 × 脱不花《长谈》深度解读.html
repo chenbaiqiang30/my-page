@@ -1,0 +1,1526 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>启动自己的韧性飞轮 | 张晓萌 × 脱不花《长谈》</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #f43f5e;
+            --accent-light: #fb7185;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #0ea5e9;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --shadow-glow: 0 0 40px rgba(99, 102, 241, 0.15);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(30, 27, 75, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --light: #0f0d1a;
+            --dark: #f8fafc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.8;
+            padding: 20px;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-soft), var(--shadow-glow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 50%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: #64748b;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(244, 63, 94, 0.1));
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Cards */
+        .card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-soft), var(--shadow-glow);
+        }
+
+        .card-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
+            border-bottom: 1px solid var(--glass-border);
+            user-select: none;
+        }
+
+        .card-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-header .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .card-header .toggle-icon {
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .card.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .card-content {
+            padding: 25px;
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s ease;
+        }
+
+        .card.collapsed .card-content {
+            max-height: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
+        .card-preview {
+            padding: 15px 25px;
+            background: rgba(99, 102, 241, 0.05);
+            font-size: 0.9rem;
+            color: #64748b;
+            display: none;
+        }
+
+        .card.collapsed .card-preview {
+            display: block;
+        }
+
+        /* Highlight Styles */
+        .hl-red {
+            background: linear-gradient(120deg, rgba(244, 63, 94, 0.2) 0%, rgba(244, 63, 94, 0.1) 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .hl-blue {
+            background: linear-gradient(120deg, rgba(14, 165, 233, 0.2) 0%, rgba(14, 165, 233, 0.1) 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: var(--info);
+            font-weight: 600;
+        }
+
+        .hl-green {
+            background: linear-gradient(120deg, rgba(16, 185, 129, 0.2) 0%, rgba(16, 185, 129, 0.1) 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        /* Quote Blocks */
+        .quote-block {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(244, 63, 94, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 0 16px 16px 0;
+            position: relative;
+        }
+
+        .quote-block::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 4rem;
+            color: var(--primary);
+            opacity: 0.2;
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: 1.15rem;
+            font-style: italic;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-align: right;
+        }
+
+        /* Expert Comment */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(14, 165, 233, 0.05));
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), var(--info));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .expert-title {
+            font-size: 0.85rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .expert-text {
+            font-size: 0.95rem;
+            line-height: 1.9;
+        }
+
+        /* Mind Map */
+        .mindmap-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 800px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 25px 35px;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-left: -20px;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            align-items: center;
+        }
+
+        .branch-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--primary-light));
+            border-radius: 2px;
+        }
+
+        .branch-node {
+            background: var(--glass-bg);
+            border: 2px solid var(--primary-light);
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            white-space: nowrap;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .branch-subnodes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 15px;
+        }
+
+        .subnode {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 8px 15px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--primary-light);
+        }
+
+        /* Key Points Grid */
+        .points-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .point-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--glass-border);
+            transition: transform 0.3s ease;
+        }
+
+        [data-theme="dark"] .point-card {
+            background: linear-gradient(135deg, rgba(30,27,75,0.9), rgba(30,27,75,0.7));
+        }
+
+        .point-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .point-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .point-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .point-desc {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        /* Golden Quotes */
+        .golden-quotes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .golden-quote {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(244, 63, 94, 0.1));
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .golden-quote::before {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 1.5rem;
+        }
+
+        .golden-quote p {
+            font-size: 1.05rem;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--primary);
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        /* Data Highlight */
+        .data-highlight {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(16, 185, 129, 0.1));
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            color: var(--info);
+        }
+
+        /* Infographic */
+        .infographic {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(244, 63, 94, 0.03));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+        }
+
+        .info-title {
+            text-align: center;
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .info-item {
+            text-align: center;
+            padding: 20px;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .info-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .info-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* Clock Diagram */
+        .clock-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+        }
+
+        .resilience-clock {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(244, 63, 94, 0.05));
+            border: 4px solid var(--primary);
+            position: relative;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .clock-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            z-index: 10;
+        }
+
+        .clock-hand {
+            position: absolute;
+            bottom: 50%;
+            left: 50%;
+            transform-origin: bottom center;
+            border-radius: 4px;
+        }
+
+        .hour-hand {
+            width: 6px;
+            height: 70px;
+            background: linear-gradient(180deg, var(--accent), var(--primary));
+            transform: translateX(-50%) rotate(-30deg);
+        }
+
+        .minute-hand {
+            width: 4px;
+            height: 100px;
+            background: linear-gradient(180deg, var(--info), var(--success));
+            transform: translateX(-50%) rotate(60deg);
+        }
+
+        .clock-label {
+            position: absolute;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .clock-label.top { top: 15px; left: 50%; transform: translateX(-50%); }
+        .clock-label.right { right: 15px; top: 50%; transform: translateY(-50%); }
+        .clock-label.bottom { bottom: 15px; left: 50%; transform: translateX(-50%); }
+        .clock-label.left { left: 15px; top: 50%; transform: translateY(-50%); }
+
+        .clock-legend {
+            margin-left: 40px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .legend-color {
+            width: 40px;
+            height: 8px;
+            border-radius: 4px;
+        }
+
+        /* Flywheel Diagram */
+        .flywheel-container {
+            display: flex;
+            justify-content: center;
+            padding: 40px;
+        }
+
+        .flywheel {
+            position: relative;
+            width: 320px;
+            height: 320px;
+        }
+
+        .flywheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .flywheel-ring {
+            position: absolute;
+            border-radius: 50%;
+            border: 3px dashed rgba(99, 102, 241, 0.3);
+            animation: rotate 20s linear infinite;
+        }
+
+        .flywheel-ring.ring1 {
+            width: 200px;
+            height: 200px;
+            top: 60px;
+            left: 60px;
+        }
+
+        .flywheel-ring.ring2 {
+            width: 280px;
+            height: 280px;
+            top: 20px;
+            left: 20px;
+            animation-direction: reverse;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .flywheel-node {
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 2px solid var(--primary-light);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+            box-shadow: var(--shadow-soft);
+        }
+
+        .flywheel-node.node1 { top: -10px; left: 50%; transform: translateX(-50%); }
+        .flywheel-node.node2 { bottom: 30px; right: -20px; }
+        .flywheel-node.node3 { bottom: 30px; left: -20px; }
+
+        .flywheel-node .emoji {
+            font-size: 1.5rem;
+            margin-bottom: 5px;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 30px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .meta-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .mindmap {
+                min-width: auto;
+                flex-direction: column;
+            }
+            
+            .mindmap-branches {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+            
+            .clock-container {
+                flex-direction: column;
+            }
+            
+            .clock-legend {
+                margin-left: 0;
+                margin-top: 30px;
+            }
+        }
+
+        /* Animations */
+        .fade-in {
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Content Sections */
+        .section-intro {
+            font-size: 1.05rem;
+            color: #64748b;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 1px dashed var(--glass-border);
+        }
+
+        .content-block {
+            margin-bottom: 25px;
+        }
+
+        .content-block h3 {
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-block p {
+            margin-bottom: 12px;
+        }
+
+        ul.styled-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul.styled-list li {
+            padding: 10px 0 10px 30px;
+            position: relative;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        ul.styled-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(244, 63, 94, 0.05));
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+    
+    <div class="container">
+        <!-- Header -->
+        <header class="header fade-in">
+            <h1>🌟 启动自己的韧性飞轮</h1>
+            <p class="subtitle">张晓萌 × 脱不花《长谈》深度解读</p>
+            <div class="meta-info">
+                <span class="meta-item">👤 嘉宾：张晓萌教授</span>
+                <span class="meta-item">🎯 主题：心理韧性</span>
+                <span class="meta-item">📊 18万份问卷研究</span>
+                <span class="meta-item">⏱️ 6年追踪数据</span>
+            </div>
+        </header>
+
+        <!-- Expert Analysis Card -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #10b981, #0ea5e9);">🎓</span>
+                    组织行为学专家视角
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">从行为心理学角度解读韧性的本质与培养方法...</div>
+            <div class="card-content">
+                <div class="expert-comment">
+                    <div class="expert-avatar">🔬</div>
+                    <div class="expert-title">
+                        <span>📚 组织行为学 × 社会心理学 专业分析</span>
+                    </div>
+                    <div class="expert-text">
+                        <p>作为研究组织行为与社会心理的学者，我认为张晓萌教授的这场访谈展现了<span class="hl-red">三个突破性洞见</span>：</p>
+                        <br>
+                        <p><strong>第一，"韧性时钟"模型的科学性。</strong>将情绪韧性比作分针（快速反应）、思维韧性比作时针（方向把控），这种类比精准捕捉了人类心理系统的双过程理论特征。在组织管理实践中，我们常见领导者情绪失控导致决策失误，本质上就是"两针错配"——情绪分针跑得太快，理性时针跟不上。</p>
+                        <br>
+                        <p><strong>第二，"主观掌控感"的核心地位。</strong>访谈中反复强调的掌控感，与自我决定理论(Self-Determination Theory)高度契合。<span class="hl-blue">人的内在动机来源于自主、胜任和连接三大需求</span>，而掌控感正是自主需求的核心体现。当员工感到失控时，不是能力问题，而是意识被环境焦虑包裹——这个洞察对组织管理具有重要启示。</p>
+                        <br>
+                        <p><strong>第三，"滞后效应"对组织健康的警示。</strong>张教授用6年追踪数据证明心理复原的滞后性，这提醒管理者：<span class="hl-green">团队在危机过后的"正常运转"可能只是表象</span>。就像911事件亲历者十几年后仍有PTSD，组织经历重大变革后，员工心理问题可能数年后才爆发。预防性心理建设比事后干预重要得多。</p>
+                        <br>
+                        <p>最让我感动的是张教授选择"勇敢的脆弱"而非"伪装的坚强"。在强调狼性文化、打不死的小强的商业环境中，承认脆弱需要极大勇气。这恰恰印证了积极心理学的核心发现：<span class="hl-red">真正的心理健康不是没有负面情绪，而是能够觉察、接纳并转化它们</span>。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Core Model Card -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">⏰</span>
+                    核心模型：韧性时钟
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">两根针的配速决定了我们的内在秩序...</div>
+            <div class="card-content">
+                <div class="infographic">
+                    <div class="info-title">🕐 韧性时钟 = 心理GPS</div>
+                    <div class="clock-container">
+                        <div class="resilience-clock">
+                            <div class="clock-center"></div>
+                            <div class="clock-hand hour-hand"></div>
+                            <div class="clock-hand minute-hand"></div>
+                            <span class="clock-label top">觉察</span>
+                            <span class="clock-label right">意义</span>
+                            <span class="clock-label bottom">连接</span>
+                            <span class="clock-label left">行动</span>
+                        </div>
+                        <div class="clock-legend">
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(90deg, #f43f5e, #6366f1);"></div>
+                                <div>
+                                    <strong>时针（短）= 思维韧性</strong>
+                                    <div style="font-size: 0.85rem; color: #64748b;">慢而稳定，决定方向</div>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(90deg, #0ea5e9, #10b981);"></div>
+                                <div>
+                                    <strong>分针（长）= 情绪韧性</strong>
+                                    <div style="font-size: 0.85rem; color: #64748b;">快速反应，像水一样流动</div>
+                                </div>
+                            </div>
+                            <div class="legend-item">
+                                <div class="legend-color" style="background: linear-gradient(90deg, #8b5cf6, #ec4899);"></div>
+                                <div>
+                                    <strong>动力系统 = 觉察+意义+连接</strong>
+                                    <div style="font-size: 0.85rem; color: #64748b;">三个飞轮驱动时钟运转</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="quote-block">
+                    <p class="quote-text">情绪像水，毫无形状地散落；思维韧性像沟渠，让水有序流动。当两根针调频，我们就从失序回到有序。</p>
+                    <p class="quote-author">— 张晓萌</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>⚙️ 错配的三种状态</h3>
+                    <table class="comparison-table">
+                        <tr>
+                            <th>状态</th>
+                            <th>表现</th>
+                            <th>结果</th>
+                        </tr>
+                        <tr>
+                            <td><span class="hl-red">情绪跑太快</span></td>
+                            <td>遇事炸毛、应激反应过度</td>
+                            <td>成为"现在的焦虑者"</td>
+                        </tr>
+                        <tr>
+                            <td><span class="hl-blue">思维跑太快</span></td>
+                            <td>想太多、睡不着、演绎未来</td>
+                            <td>成为"未来的焦虑者"</td>
+                        </tr>
+                        <tr>
+                            <td><span class="hl-green">思维压制情绪</span></td>
+                            <td>过度理性、否认情绪存在</td>
+                            <td>组织冷血、决策失温</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Flywheel Card -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #ec4899, #f43f5e);">🔄</span>
+                    韧性飞轮：三大动力系统
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">觉察、意义、连接——让时钟持续运转的核心引擎...</div>
+            <div class="card-content">
+                <div class="flywheel-container">
+                    <div class="flywheel">
+                        <div class="flywheel-ring ring1"></div>
+                        <div class="flywheel-ring ring2"></div>
+                        <div class="flywheel-center">韧性<br>飞轮</div>
+                        <div class="flywheel-node node1">
+                            <span class="emoji">👁️</span>
+                            觉察
+                        </div>
+                        <div class="flywheel-node node2">
+                            <span class="emoji">💎</span>
+                            意义
+                        </div>
+                        <div class="flywheel-node node3">
+                            <span class="emoji">🤝</span>
+                            连接
+                        </div>
+                    </div>
+                </div>
+
+                <div class="points-grid">
+                    <div class="point-card">
+                        <div class="point-number">1</div>
+                        <div class="point-title">👁️ 觉察 - 扒洋葱</div>
+                        <div class="point-desc">时刻觉察情绪与思维的状态。"切洋葱会流泪"，觉察不舒适但必要。发现自己情绪过激或思维混乱时，就是觉察生效的时刻。</div>
+                    </div>
+                    <div class="point-card">
+                        <div class="point-number">2</div>
+                        <div class="point-title">💎 意义 - 生成而非寻找</div>
+                        <div class="point-desc">意义不在远方等你发现，而是在当下被你创造。当小我与大爱连接，热爱与利他统一，能量场自然充盈。</div>
+                    </div>
+                    <div class="point-card">
+                        <div class="point-number">3</div>
+                        <div class="point-title">🤝 连接 - 人场物</div>
+                        <div class="point-desc">不只连接人，还要连接物与场景。个体韧性需要群体承载，在允许犯错的环境中，人才能真正复原。</div>
+                    </div>
+                </div>
+
+                <div class="quote-block">
+                    <p class="quote-text">最好的思想不在书本里，而是在鲜活的生命中。</p>
+                    <p class="quote-author">— 成庆</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Research Findings -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #0ea5e9, #06b6d4);">📊</span>
+                    6年追踪研究：三大趋势发现
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">18万份问卷揭示的时代心理切片...</div>
+            <div class="card-content">
+                <div class="infographic">
+                    <div class="info-title">📈 研究数据概览</div>
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));">📋</div>
+                            <div class="info-value">18万+</div>
+                            <div class="info-label">有效问卷</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(236, 72, 153, 0.2));">📅</div>
+                            <div class="info-value">6年</div>
+                            <div class="info-label">持续追踪</div>
+                        </div>
+                        <div class="info-item">
+                            <div class="info-icon" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(6, 182, 212, 0.2));">👥</div>
+                            <div class="info-value">多群体</div>
+                            <div class="info-label">企业家/白领/学生/Z世代</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-title">趋势一：心理复原的滞后性 ⏳</div>
+                        <p>事件过去了，心理反应才刚开始。就像911亲历者十几年后仍有PTSD，我们<span class="hl-red">严重低估了心理复原所需的时间</span>。</p>
+                        <p style="margin-top: 10px;"><span class="data-highlight">📊 陆林院士预测：过去几年的公共危机影响可能持续20年</span></p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">趋势二：从抗压力到恢复力 🔄</div>
+                        <p>人们开始接受"没有人是打不死的小强"。<span class="hl-blue">最好的成熟不是控制一切，而是接受你控制不了一切</span>。恢复力正在取代抗压力，成为新的心理健康标准。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">趋势三：从向外造到向内观 🧘</div>
+                        <p>成长不再是"更高更快更强"的直线上升，而是<span class="hl-green">螺旋式前进</span>。看似倒退的时刻，可能是在蓄力下一次上升。找到内心秩序，比征服外部世界更重要。</p>
+                    </div>
+                </div>
+
+                <div class="quote-block">
+                    <p class="quote-text">从正面看是起伏波动，换个角度看却是螺旋上升。有时你觉得在原地打转，其实一直在向前。</p>
+                    <p class="quote-author">— 张晓萌 · 正弦曲线的三维视角</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Personal Story -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">💔</span>
+                    教授的自我治愈：从伪装坚强到勇敢脆弱
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">时隔40年，童年创伤被一场高尔夫球意外激活...</div>
+            <div class="card-content">
+                <div class="section-intro">
+                    一位研究韧性的教授，亲身经历韧性崩塌与重建。这段自述比任何理论都更有力量。
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-title">3岁：童年创伤的埋下</div>
+                        <p>被托付给一位有虐童癖好的老太太照看。那根苕帚疙瘩和那句"你只要哭，我就一直打你"成为深埋的炸药包。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">留学期间：第一次爆发与治愈</div>
+                        <p>在巨大学业压力下焦虑抑郁，体重飙至222磅。心理医生的一句话点醒她：<span class="hl-red">"如果你连自己都改变不了，你怎样去影响别人？"</span></p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">此后20年：以为治愈画上句号</div>
+                        <p>持续记录、冥想、运动，建立起强大的心理防线。以为创伤已完全痊愈，在学员面前自信满满。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">2024年夏：高尔夫球意外</div>
+                        <p>一颗打歪的球击中左腿。骨头没事，但噩梦开始了——先是黑影，然后是球杆，最后是那根<span class="hl-red">苕帚疙瘩</span>。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">2024年末：PTSD复发</div>
+                        <p>连续失眠、阳光型抑郁。病耻感让她无法向任何人开口，包括家人。"研究韧性的人怎么能心理出问题？"</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">2025年1月5日：三里屯的提拉米苏</div>
+                        <p>在一家小咖啡店坐了6小时，写下年度寄语：<span class="hl-green">"松弛迷人"</span>。从这天起，选择接受脆弱，开始自我干预。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">5个月后：重新下场</div>
+                        <p>通过暴露疗法重新拿起球杆。第一次挥杆时旁边有人打呲了，吓得扔掉球杆就跑。但一次次记录、一次次面对，恐惧分数从10分降到可控。</p>
+                    </div>
+                </div>
+
+                <div class="quote-block">
+                    <p class="quote-text">治愈不是完成时，是进行时。伤疤会穿马甲、会易容术，但当你认识到它的本质，它的妖魔鬼怪样就小了很多。</p>
+                    <p class="quote-author">— 张晓萌</p>
+                </div>
+
+                <div class="expert-comment" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(239, 68, 68, 0.05));">
+                    <div class="expert-avatar" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">💡</div>
+                    <div class="expert-title" style="color: #f59e0b;">
+                        <span>🔑 关键领悟</span>
+                    </div>
+                    <div class="expert-text">
+                        <p><strong>从"伪装的坚强"到"勇敢的脆弱"</strong></p>
+                        <p>真正的韧性不是刀枪不入，而是被打倒后能站起来。承认脆弱需要比伪装坚强更大的勇气。</p>
+                        <br>
+                        <p><strong>伤疤效应的本质</strong></p>
+                        <p>童年创伤不会因为时间流逝自动消失。它可能休眠几十年，在某个触发点被激活，以你完全想不到的马甲出现。</p>
+                        <br>
+                        <p><strong>共存而非根除</strong></p>
+                        <p>有些伤疤可能终身都在，但没关系。当你接受它存在，它的杀伤力就已经减半。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Youth Mental Health -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #8b5cf6, #a855f7);">👦</span>
+                    青少年心理韧性：被忽视的求救信号
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">为什么孩子宁愿在网上求助陌生人，也不愿告诉父母？</div>
+            <div class="card-content">
+                <div class="quote-block">
+                    <p class="quote-text">青少年情绪问题严重，恰恰是因为他们不被允许有情绪。</p>
+                    <p class="quote-author">— 脱不花</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>🚨 常见求救信号（容易被忽视）</h3>
+                    <ul class="styled-list">
+                        <li><span class="hl-red">容貌焦虑</span>：与青春痘、发型的过度斗争</li>
+                        <li><span class="hl-red">逢考必病</span>：考试前真的发烧，考完就退烧</li>
+                        <li><span class="hl-red">强迫行为</span>：反复检查、仪式化动作</li>
+                        <li><span class="hl-red">经常请假</span>：各种理由逃避学校</li>
+                        <li><span class="hl-red">沟通频率骤降</span>：突然不愿说话</li>
+                    </ul>
+                </div>
+
+                <div class="infographic">
+                    <div class="info-title">⚠️ 为什么信号被忽视？</div>
+                    <div class="points-grid">
+                        <div class="point-card">
+                            <div class="point-number">1</div>
+                            <div class="point-title">家长不认识信号</div>
+                            <div class="point-desc">把躯体化症状当作"装的"、把情绪波动当作"矫情"</div>
+                        </div>
+                        <div class="point-card">
+                            <div class="point-number">2</div>
+                            <div class="point-title">连接没有建立</div>
+                            <div class="point-desc">孩子宁愿在网上向陌生人求助，也不信任父母能理解自己</div>
+                        </div>
+                        <div class="point-card">
+                            <div class="point-number">3</div>
+                            <div class="point-title">情绪不被允许</div>
+                            <div class="point-desc">"你就应该阳光开朗"——被压制的情绪只会滞后爆发</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>✅ 有效沟通示例</h3>
+                    <div style="background: rgba(16, 185, 129, 0.1); padding: 20px; border-radius: 16px; margin-top: 15px;">
+                        <p><strong>场景：</strong>幼儿园女儿被抢积木后哭泣</p>
+                        <p style="margin-top: 10px;"><strong>❌ 无效：</strong>"你告诉老师，这是个好行为"→ 女儿说"我的不高兴还是这么多"</p>
+                        <p style="margin-top: 10px;"><strong>❌ 无效：</strong>"其实是那个小朋友碰的你"→ 女儿说"我的不高兴还是这么多"</p>
+                        <p style="margin-top: 10px;"><strong>✅ 有效：</strong>"今天受了委屈，你哭出来，其实特别棒"→ 女儿说"我原来的不高兴这么多，<span class="hl-green">现在没了</span>"</p>
+                    </div>
+                    <p style="margin-top: 15px; color: #64748b;">💡 核心：先共情、承认情绪，再讲道理。情绪包在外面时，道理是进不去的。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Frozen Patient Story -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #14b8a6, #22d3d2);">❄️</span>
+                    渐冻症韧性营：生命退潮时的回响
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">"生命的最后时刻也是生命"——蔡磊的一句话让营地成为可能...</div>
+            <div class="card-content">
+                <div class="quote-block">
+                    <p class="quote-text">这是一群面临生命退潮的人，用尽全力对世界发出的回应：我还在，我还愿意努力活成自己的样子。</p>
+                    <p class="quote-author">— 张晓萌《韧性²》</p>
+                </div>
+
+                <div class="content-block">
+                    <p>张晓萌带着巨大的问号开始这个项目：对于平均寿命只有2-5年、行动能力正在丧失的渐冻症患者，"发现生活中的美好"会不会太残忍？</p>
+                    <p>蔡磊的回答改变了她：<span class="hl-red">"生命的最后时刻也是生命。"</span></p>
+                    <p>段睿（蔡磊太太）则打开了另一个视角：长期照护者同样需要被承接、被照顾。</p>
+                </div>
+
+                <div class="infographic">
+                    <div class="info-title">📱 20多天后发生了什么</div>
+                    <div class="points-grid">
+                        <div class="point-card">
+                            <div class="point-number">💬</div>
+                            <div class="point-title">患者开始说"谢谢"</div>
+                            <div class="point-desc">"我给妈妈说了一声谢谢，她给我捏了半年的腿，虽然我半年来越来越没有知觉，但我从来没跟她说过谢谢。"</div>
+                        </div>
+                        <div class="point-card">
+                            <div class="point-number">🌱</div>
+                            <div class="point-title">把希望传递给家人</div>
+                            <div class="point-desc">"我的生命在倒计时，但你们没有。我希望你们好好的。"</div>
+                        </div>
+                        <div class="point-card">
+                            <div class="point-number">🔥</div>
+                            <div class="point-title">群体互相点燃</div>
+                            <div class="point-desc">患者称彼此为"同行者"而非"病友"，在打卡群里互相鼓励，形成正向循环。</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 20px; color: #64748b;">很多患者已经无法打字，他们的打卡是家属帮忙操作或用语音识别拼出来的。即使生命在退潮，他们仍在选择如何活着。</p>
+            </div>
+        </div>
+
+        <!-- Mind Map -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #f97316, #fb923c);">🗺️</span>
+                    思维导图：韧性体系全景
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">一图看懂韧性的完整体系...</div>
+            <div class="card-content">
+                <div class="mindmap-container">
+                    <div class="mindmap">
+                        <div style="display: flex; flex-direction: column; gap: 15px; margin-right: -20px;">
+                            <div class="mindmap-branch" style="flex-direction: row-reverse;">
+                                <div class="branch-node" style="background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(239, 68, 68, 0.05));">🔴 情绪韧性</div>
+                                <div class="branch-line"></div>
+                                <div class="branch-subnodes">
+                                    <div class="subnode">像水一样流动</div>
+                                    <div class="subnode">分针 · 快速反应</div>
+                                    <div class="subnode">允许情绪存在</div>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch" style="flex-direction: row-reverse;">
+                                <div class="branch-node" style="background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(6, 182, 212, 0.05));">🔵 思维韧性</div>
+                                <div class="branch-line"></div>
+                                <div class="branch-subnodes">
+                                    <div class="subnode">沟渠引导水流</div>
+                                    <div class="subnode">时针 · 决定方向</div>
+                                    <div class="subnode">理性解释系统</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="mindmap-center">韧性时钟</div>
+                        
+                        <div class="mindmap-branches">
+                            <div class="mindmap-branch">
+                                <div class="branch-line"></div>
+                                <div class="branch-node" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(168, 85, 247, 0.05));">👁️ 觉察</div>
+                                <div class="branch-subnodes">
+                                    <div class="subnode">扒洋葱会流泪</div>
+                                    <div class="subnode">识别错配状态</div>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-line"></div>
+                                <div class="branch-node" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(219, 39, 119, 0.05));">💎 意义</div>
+                                <div class="branch-subnodes">
+                                    <div class="subnode">生成而非寻找</div>
+                                    <div class="subnode">小我连接大爱</div>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-line"></div>
+                                <div class="branch-node" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(5, 150, 105, 0.05));">🤝 连接</div>
+                                <div class="branch-subnodes">
+                                    <div class="subnode">人 · 物 · 场景</div>
+                                    <div class="subnode">群体互相点燃</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Golden Quotes -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">✨</span>
+                    金句集锦
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">值得收藏的智慧结晶...</div>
+            <div class="card-content">
+                <div class="golden-quotes">
+                    <div class="golden-quote">
+                        <p>生命的最后时刻也是生命。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>我还愿意努力活成自己想要的样子。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>想毁掉一个人的最简单的办法，就是让他没时间思考。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>最好的思想不在书本里，而是在鲜活的生命中。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>我们并非活在经历之中，而是活在解释之中。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>如果你连自己都改变不了，你怎样去影响别人？</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>没有在深夜痛哭过的人，不足以谈人生。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>我允许自己，接受生命中一切不确定性的事情发生。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>用心去看的时候，这个世界就会更加清晰。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>真正的治愈不是完成时，而是进行时。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>伤疤会穿马甲、会易容术，但当你认识到它的本质，它的妖魔鬼怪样就小了很多。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>最好的成熟，并不是你要控制一切，而是接受你控制不了一切。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>从伪装的坚强，到勇敢的脆弱。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>情绪如水，思维如渠。水一洒出去毫无形状，但沿着沟渠就有序流动。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>意义不是找到的，而是生成的。</p>
+                    </div>
+                    <div class="golden-quote">
+                        <p>经历本身不会让我们成长，只有对经历的反思才会。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Guide -->
+        <div class="card fade-in">
+            <div class="card-header" onclick="toggleCard(this.parentElement)">
+                <h2>
+                    <span class="icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">🎯</span>
+                    行动指南：你可以现在开始
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">从今天起，启动你的韧性飞轮...</div>
+            <div class="card-content">
+                <div class="points-grid">
+                    <div class="point-card">
+                        <div class="point-number">1</div>
+                        <div class="point-title">📝 每天记录三件好事</div>
+                        <div class="point-desc">不在于强度，在于频率。哪怕只是"今天阳光很好"。张晓萌坚持了20多年，即使在最崩溃的时候也没断过。</div>
+                    </div>
+                    <div class="point-card">
+                        <div class="point-number">2</div>
+                        <div class="point-title">⏸️ 情绪来时按暂停</div>
+                        <div class="point-desc">炸毛的时候，先允许情绪存在，但等分针跑完再让时针发言。给思维韧性追上来的时间。</div>
+                    </div>
+                    <div class="point-card">
+                        <div class="point-number">3</div>
+                        <div class="point-title">🔢 焦虑拆弹：数字化</div>
+                        <div class="point-desc">把模糊的恐惧变成具体的数字。"还有10天，8科，每科不到9小时"——当掌控感回来，情绪自然平复。</div>
+                    </div>
+                    <div class="point-card">
+                        <div class="point-number">4</div>
+                        <div class="point-title">🎭 识别伤疤的马甲</div>
+                        <div class="point-desc">今天让你炸毛的事，可能和十年前的某件事有关。找到那个原型，妖怪的法力就减半。</div>
+                    </div>
+                    <div class="point-card">
+                        <div class="point-number">5</div>
+                        <div class="point-title">💬 先共情再讲理</div>
+                        <div class="point-desc">对孩子、对伴侣、对自己都一样：情绪包在外面时，道理进不去。"你受委屈了，哭出来很棒。"</div>
+                    </div>
+                    <div class="point-card">
+                        <div class="point-number">6</div>
+                        <div class="point-title">🌀 接受螺旋式成长</div>
+                        <div class="point-desc">不是每天都要比昨天更好。倒退可能是蓄力，原地打转可能是换个角度看的螺旋上升。</div>
+                    </div>
+                </div>
+
+                <div class="quote-block" style="margin-top: 30px;">
+                    <p class="quote-text">行为干预靠的是频率，不是强度。每天5分钟写几行字，连续十年，远胜于今天熬夜写100页日记。</p>
+                    <p class="quote-author">— 张晓萌</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>📚 内容来源：《长谈》张晓萌 × 脱不花</p>
+            <p>📖 延伸阅读：张晓萌《韧性》《韧性²》</p>
+            <p style="margin-top: 15px; opacity: 0.7;">愿你找到自己的内在秩序，启动韧性飞轮 ✨</p>
+        </footer>
+    </div>
+
+    <script>
+        // Toggle card expand/collapse
+        function toggleCard(card) {
+            card.classList.toggle('collapsed');
+        }
+
+        // Theme toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Load saved theme
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+
+            // Add fade-in animation with stagger
+            const cards = document.querySelectorAll('.card');
+            cards.forEach((card, index) => {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+
+        // Smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

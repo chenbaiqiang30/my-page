@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国际政经深度分析 | International Reference</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #e8f4fc 0%, #f0e6f6 50%, #e6f0fa 100%);
+            min-height: 100vh;
+            color: #2c3e50;
+            line-height: 1.8;
+        }
+
+        .nav-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 260px;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid rgba(147, 112, 219, 0.2);
+            padding: 25px 15px;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .nav-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 25px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-item {
+            display: block;
+            padding: 10px 12px;
+            margin: 6px 0;
+            border-radius: 10px;
+            text-decoration: none;
+            color: #4a5568;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border-left: 3px solid transparent;
+        }
+
+        .nav-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateX(4px);
+        }
+
+        .nav-item.active {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            color: #667eea;
+            border-left-color: #667eea;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 35px 50px;
+            max-width: 1150px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 35px;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            border: 1px solid rgba(147, 112, 219, 0.2);
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+
+        .header .subtitle {
+            color: #718096;
+            font-size: 1rem;
+        }
+
+        .header .date {
+            margin-top: 12px;
+            color: #a0aec0;
+            font-size: 0.85rem;
+        }
+
+        .article-card {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            border-radius: 18px;
+            margin-bottom: 35px;
+            border: 1px solid rgba(147, 112, 219, 0.15);
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(102, 126, 234, 0.1);
+        }
+
+        .article-header {
+            padding: 20px 25px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(147, 112, 219, 0.1);
+        }
+
+        .article-header:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.12));
+        }
+
+        .article-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #4a3f6b;
+        }
+
+        .article-number {
+            display: inline-block;
+            width: 28px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 8px;
+            font-weight: 600;
+            margin-right: 12px;
+            font-size: 0.9rem;
+        }
+
+        .toggle-icon {
+            font-size: 1.3rem;
+            color: #667eea;
+            transition: transform 0.3s ease;
+        }
+
+        .article-card.collapsed .toggle-icon {
+            transform: rotate(-90deg);
+        }
+
+        .article-body {
+            padding: 25px;
+            display: block;
+        }
+
+        .article-card.collapsed .article-body {
+            display: none;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 12px;
+            padding-left: 12px;
+            border-left: 4px solid;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .section-title.insight {
+            border-color: #e74c3c;
+            color: #c0392b;
+        }
+
+        .section-title.expert {
+            border-color: #3498db;
+            color: #2980b9;
+        }
+
+        .section-title.chart {
+            border-color: #9b59b6;
+            color: #8e44ad;
+        }
+
+        .section-title.quote {
+            border-color: #f39c12;
+            color: #d35400;
+        }
+
+        .content-box {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 12px;
+            padding: 18px;
+            border: 1px solid rgba(147, 112, 219, 0.1);
+        }
+
+        .quote-box {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.08), rgba(230, 126, 34, 0.08));
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin: 8px 0;
+            border-left: 4px solid #f39c12;
+            font-style: italic;
+            color: #5d4e37;
+        }
+
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.08), rgba(41, 128, 185, 0.08));
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(52, 152, 219, 0.2);
+        }
+
+        .expert-avatar {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .expert-avatar .icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+
+        .expert-name {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .expert-title {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .mermaid-container {
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 12px;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .mermaid {
+            display: flex;
+            justify-content: center;
+        }
+
+        .key-points {
+            list-style: none;
+        }
+
+        .key-points li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+            border-bottom: 1px dashed rgba(147, 112, 219, 0.2);
+        }
+
+        .key-points li:last-child {
+            border-bottom: none;
+        }
+
+        .key-points li::before {
+            content: '✦';
+            position: absolute;
+            left: 8px;
+            color: #9b59b6;
+        }
+
+        @media (max-width: 1024px) {
+            .nav-container {
+                display: none;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="nav-container">
+        <div class="nav-title">📚 国际政经分析</div>
+        <a href="#article-1" class="nav-item">🇸🇾 叙利亚现场观察</a>
+        <a href="#article-2" class="nav-item">🗽 纽约市长马姆达尼</a>
+        <a href="#article-3" class="nav-item">🏛️ 美式国家资本主义</a>
+        <a href="#article-4" class="nav-item">🇵🇭 菲律宾政治经济</a>
+        <a href="#article-5" class="nav-item">🇻🇪 美委危机</a>
+        <a href="#article-6" class="nav-item">🚁 无人机战争</a>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <h1>🌍 国际政经深度分析</h1>
+            <p class="subtitle">《国际参考》专栏精选 · 专家解读与洞察</p>
+            <p class="date">📅 2025年12月 · 作者：刘怡</p>
+        </header>
+
+        <article class="article-card" id="article-1">
+            <div class="article-header">
+                <h2 class="article-title"><span class="article-number">1</span>🇸🇾 叙利亚现场观察</h2><span
+                    class="toggle-icon">▼</span>
+            </div>
+            <div class="article-body">
+                <div class="section">
+                    <h3 class="section-title insight">🔍 核心洞察</h3>
+                    <div class="content-box">
+                        <ul class="key-points">
+                            <li><strong style="color:#e74c3c">三维观察法</strong>：通过户外广告、街头服装、交通状况判断社会面貌</li>
+                            <li><strong style="color:#9b59b6">政权脆弱信号</strong>：新总统照片很少出现，公共场合挂着空镜框</li>
+                            <li><strong style="color:#3498db">武装去垄断化</strong>：军人与市民勾肩搭背，国家武力垄断被消解</li>
+                            <li><strong style="color:#27ae60">金融秩序崩溃</strong>：1万美元需用装面粉的麻袋才装得下叙利亚镑</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title chart">📊 困境分析</h3>
+                    <div class="mermaid-container">
+                        <pre class="mermaid">
+flowchart LR
+    A[石油业-库尔德控制] --> D[外汇仅2亿]
+    B[农业-出口中断] --> D
+    C[旅游-游客绝迹] --> D
+    D --> E[裁掉3/4公务员]
+    E --> F[俄罗斯印钞中断]
+                </pre>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title quote">💎 金句</h3>
+                    <div class="quote-box">印着阿萨德头像的旧纸币，因纸币短缺汇率还反弹了几次——这是货币主权丧失的讽刺。</div>
+                    <div class="quote-box">国家力量对武装的垄断权被消解——这是政权更迭最深层的影响。</div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title expert">🎓 专家解读</h3>
+                    <div class="expert-comment">
+                        <div class="expert-avatar">
+                            <div class="icon">👨‍🎓</div>
+                            <div>
+                                <div class="expert-name">政治经济分析师</div>
+                                <div class="expert-title">中东研究专家</div>
+                            </div>
+                        </div>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">结构性困境：</strong>叙利亚案例揭示政权更迭容易，制度重建极难。三大支柱崩溃意味着税基消失，形成<span
+                                style="color:#e74c3c">恶性循环</span>。</p>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">观察方法论：</strong>三维观察法可推广到任何转型社会——广告反映资本，服装体现权力，交通是治理能力。</p>
+                        <p style="color:#34495e"><strong style="color:#2980b9">货币主权启示：</strong>连印钞能力都依赖俄罗斯，这是<span
+                                style="color:#9b59b6">主权能力的极端脆弱性</span>。</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article-card" id="article-2">
+            <div class="article-header">
+                <h2 class="article-title"><span class="article-number">2</span>🗽 马姆达尼：Z世代政治家</h2><span
+                    class="toggle-icon">▼</span>
+            </div>
+            <div class="article-body">
+                <div class="section">
+                    <h3 class="section-title insight">🔍 核心洞察</h3>
+                    <div class="content-box">
+                        <ul class="key-points">
+                            <li><strong style="color:#e74c3c">代际更替</strong>：34岁成为纽约1892年以来最年轻市长</li>
+                            <li><strong style="color:#9b59b6">策略转型</strong>：放弃身份政治，主攻房租、公交等民生议题</li>
+                            <li><strong style="color:#3498db">Z世代动员</strong>：创50年最高投票率，十万志愿者</li>
+                            <li><strong style="color:#27ae60">政府角色</strong>：自称民主社会主义者，主张扩大干预</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title chart">📊 成功密码</h3>
+                    <div class="mermaid-container">
+                        <pre class="mermaid">
+mindmap
+  root((马姆达尼成功密码))
+    代际优势
+      Z世代占选民1/4
+      社媒原生用户
+    民生聚焦
+      冻结房租
+      免费公交
+    政治定位
+      民主社会主义
+      对富人加税
+                </pre>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title quote">💎 金句</h3>
+                    <div class="quote-box">天天谈以色列，能让纽约的房租降下来吗？——放弃身份政治，回归民生本质。</div>
+                    <div class="quote-box">纽约的富人宁可承担更高税额也要留在当地——这就是纽约的财政逻辑。</div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title expert">🎓 专家解读</h3>
+                    <div class="expert-comment">
+                        <div class="expert-avatar">
+                            <div class="icon">👨‍🎓</div>
+                            <div>
+                                <div class="expert-name">政治经济分析师</div>
+                                <div class="expert-title">美国政治专家</div>
+                            </div>
+                        </div>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">民主党转型：</strong>身份政治正在失灵，<span
+                                style="color:#e74c3c">回归经济民生议题</span>是民主党复兴的关键。</p>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">Z世代觉醒：</strong>年轻人从被动参与者变成主动塑造者，<span
+                                style="color:#9b59b6">代际契合是核心优势</span>。</p>
+                        <p style="color:#34495e"><strong
+                                style="color:#2980b9">治理考验：</strong>理想主义能否经受现实考验？须解决税收协调和富人外流难题。</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article-card" id="article-3">
+            <div class="article-header">
+                <h2 class="article-title"><span class="article-number">3</span>🏛️ 美式国家资本主义</h2><span
+                    class="toggle-icon">▼</span>
+            </div>
+            <div class="article-body">
+                <div class="section">
+                    <h3 class="section-title insight">🔍 核心洞察</h3>
+                    <div class="content-box">
+                        <ul class="key-points">
+                            <li><strong style="color:#e74c3c">政府进场</strong>：美国政府以投资换股份参股战略企业</li>
+                            <li><strong style="color:#9b59b6">三大动机</strong>：供应链安全、吸引后续投资、财务回报</li>
+                            <li><strong style="color:#3498db">胁迫模式</strong>：先关税战制造紧张，再迫使谈判签字</li>
+                            <li><strong style="color:#27ae60">边界模糊</strong>：总统个人利益与政府公共利益难以区分</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title chart">📊 投资版图</h3>
+                    <div class="mermaid-container">
+                        <pre class="mermaid">
+flowchart TB
+    subgraph 政府持股
+        A[MP材料15%稀土]
+        B[英特尔10%]
+        C[美国钢铁黄金股]
+    end
+    subgraph 动机
+        D[供应链安全]
+        E[撬动万亿投资]
+    end
+    subgraph 风险
+        F[胁迫副作用]
+        G[马斯克决裂]
+    end
+    政府持股 --> 动机 --> 风险
+                </pre>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title quote">💎 金句</h3>
+                    <div class="quote-box">特朗普式国家资本主义以胁迫作为先导——先把气氛搞紧张，再迫使对方坐到谈判桌上。</div>
+                    <div class="quote-box">谁说得清一笔投资是深谋远虑，还是为了满足执政者的个人利益？</div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title expert">🎓 专家解读</h3>
+                    <div class="expert-comment">
+                        <div class="expert-avatar">
+                            <div class="icon">👨‍🎓</div>
+                            <div>
+                                <div class="expert-name">政治经济分析师</div>
+                                <div class="expert-title">美国经济政策专家</div>
+                            </div>
+                        </div>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">范式转变：</strong>从市场自由主义走向<span
+                                style="color:#e74c3c">战略干预主义</span>，政府直接成为市场参与者。</p>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">杠杆逻辑：</strong>几亿美元进场是杠杆，撬动后续上万亿资金。对盟国有效，对抗拒者失灵。</p>
+                        <p style="color:#34495e"><strong style="color:#2980b9">制度风险：</strong>马斯克案例证明<span
+                                style="color:#9b59b6">依附权力风险极高</span>，善变是悬顶之剑。</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article-card" id="article-4">
+            <div class="article-header">
+                <h2 class="article-title"><span class="article-number">4</span>🇵🇭 菲律宾政治经济</h2><span
+                    class="toggle-icon">▼</span>
+            </div>
+            <div class="article-body">
+                <div class="section">
+                    <h3 class="section-title insight">🔍 核心洞察</h3>
+                    <div class="content-box">
+                        <ul class="key-points">
+                            <li><strong style="color:#e74c3c">腐败丑闻</strong>：5400亿比索防洪经费，1/5成幽灵工程</li>
+                            <li><strong style="color:#9b59b6">世家轮替</strong>：约40个政治世家控制3/4 GDP，六年一换</li>
+                            <li><strong style="color:#3498db">三岛格局</strong>：吕宋、米沙鄢、棉兰老分治，族群差异大</li>
+                            <li><strong style="color:#27ae60">服务业立国</strong>：不靠出口，靠侨汇、客服外包、旅游</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title chart">📊 政治经济结构</h3>
+                    <div class="mermaid-container">
+                        <pre class="mermaid">
+flowchart LR
+    A[40个政治世家] --> B[控制3/4 GDP]
+    B --> C[六年轮替]
+    C --> D[政策震荡]
+    E[侨汇400亿/年] --> F[服务业缓冲]
+    G[城市化率低] --> F
+                </pre>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title quote">💎 金句</h3>
+                    <div class="quote-box">政治世家轮流坐庄，每隔六年经济曲线剧烈震荡——这就是政治变动的可视化代价。</div>
+                    <div class="quote-box">服务业脆弱性意外稀释了政局负面影响——失业者可退回农村，城乡成缓冲区。</div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title expert">🎓 专家解读</h3>
+                    <div class="expert-comment">
+                        <div class="expert-avatar">
+                            <div class="icon">👨‍🎓</div>
+                            <div>
+                                <div class="expert-name">政治经济分析师</div>
+                                <div class="expert-title">东南亚研究专家</div>
+                            </div>
+                        </div>
+                        <p style="color:#34495e;margin-bottom:12px"><strong style="color:#2980b9">世家政治韧性：</strong><span
+                                style="color:#e74c3c">民主形式可与寡头实质共存</span>。通过选举轮替分享权力，既维持竞争表象又确保核心利益。</p>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">服务业模式：</strong>不靠制造业出口，靠<span
+                                style="color:#9b59b6">人力资源全球配置</span>。菲佣、海员、客服构成独特的劳动力出口模式。</p>
+                        <p style="color:#34495e"><strong
+                                style="color:#2980b9">治理启示：</strong>腐败成本由民众承担——豆腐渣堤坝在台风中造成的伤亡是腐败的直接代价。</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article-card" id="article-5">
+            <div class="article-header">
+                <h2 class="article-title"><span class="article-number">5</span>🇻🇪 美委危机</h2><span
+                    class="toggle-icon">▼</span>
+            </div>
+            <div class="article-body">
+                <div class="section">
+                    <h3 class="section-title insight">🔍 核心洞察</h3>
+                    <div class="content-box">
+                        <ul class="key-points">
+                            <li><strong style="color:#e74c3c">名为禁毒实为施压</strong>：航母战斗群打击贩毒小艇，理由过于夸张</li>
+                            <li><strong style="color:#9b59b6">石油才是核心</strong>：委内瑞拉原油储量世界第一，炼油设施价值巨大</li>
+                            <li><strong style="color:#3498db">两派博弈</strong>：格雷内尔主张谈判换石油，鲁比奥主张政权更迭</li>
+                            <li><strong style="color:#27ae60">胁迫战略</strong>：不想打全面战争，只想用军事威胁达政治目标</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title chart">📊 战略博弈</h3>
+                    <div class="mermaid-container">
+                        <pre class="mermaid">
+flowchart TB
+    A[表面:打击贩毒] -.-> B[真实:石油利益]
+    B --> C[炼油设施]
+    B --> D[输油管线]
+    E[格雷内尔派] --> F[谈判换石油]
+    G[鲁比奥派] --> H[军事施压]
+                </pre>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title quote">💎 金句</h3>
+                    <div class="quote-box">如果真为禁毒，应该去空袭哥伦比亚——委内瑞拉从来都不是主要制毒国。</div>
+                    <div class="quote-box">低成本解决方案，哪有那么简单——第一任期的胁迫战略对马杜罗就已失败过。</div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title expert">🎓 专家解读</h3>
+                    <div class="expert-comment">
+                        <div class="expert-avatar">
+                            <div class="icon">👨‍🎓</div>
+                            <div>
+                                <div class="expert-name">政治经济分析师</div>
+                                <div class="expert-title">拉美地缘专家</div>
+                            </div>
+                        </div>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">借口政治学：</strong>禁毒是经典的<span
+                                style="color:#e74c3c">干预借口</span>——71%民众支持打击贩毒，但缉毒局报告不支持这说法。</p>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">石油地缘政治：</strong>重点不是夺取石油，而是<span
+                                style="color:#9b59b6">炼油产业链和销售网络</span>与页岩油对接。</p>
+                        <p style="color:#34495e"><strong
+                                style="color:#2980b9">胁迫的限度：</strong>对马杜罗第一任期就失败过——当对手不退让时，要么升级要么后退。</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <article class="article-card" id="article-6">
+            <div class="article-header">
+                <h2 class="article-title"><span class="article-number">6</span>🚁 无人机战争的真相</h2><span
+                    class="toggle-icon">▼</span>
+            </div>
+            <div class="article-body">
+                <div class="section">
+                    <h3 class="section-title insight">🔍 核心洞察</h3>
+                    <div class="content-box">
+                        <ul class="key-points">
+                            <li><strong style="color:#e74c3c">成功率不足30%</strong>：FPV无人机极不稳定，易受电子干扰</li>
+                            <li><strong style="color:#9b59b6">隐性成本高</strong>：350美元造价，每次出击隐性成本500美元</li>
+                            <li><strong style="color:#3498db">迭代周期6周</strong>：战术打法每6周微调，飞手培训压力大</li>
+                            <li><strong style="color:#27ae60">无法替代步兵</strong>：控制领土仍需人力，无人机只是增量</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title chart">📊 效能分析</h3>
+                    <div class="mermaid-container">
+                        <pre class="mermaid">
+flowchart LR
+    A[成功率低于30%] --> B[需3架完成1次攻击]
+    C[造价350美元] --> D[隐性成本500/次]
+    E[依赖卫星情报] --> F[美军切断即失效]
+    G[依赖财政后勤] --> H[国力是基础]
+                </pre>
+                    </div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title quote">💎 金句</h3>
+                    <div class="quote-box">在任何类型的战争中，宏观政治目标的意义都胜过一种具体的新武器。</div>
+                    <div class="quote-box">无人机只能影响战争的终端行动环节——它无法替代步兵控制领土、维持战线。</div>
+                </div>
+                <div class="section">
+                    <h3 class="section-title expert">🎓 专家解读</h3>
+                    <div class="expert-comment">
+                        <div class="expert-avatar">
+                            <div class="icon">👨‍🎓</div>
+                            <div>
+                                <div class="expert-name">政治经济分析师</div>
+                                <div class="expert-title">军事技术专家</div>
+                            </div>
+                        </div>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">技术神话破灭：</strong>无人机不是万能武器。<span
+                                style="color:#e74c3c">成功率不到30%</span>意味着每次攻击需3架，隐性成本远超表面。</p>
+                        <p style="color:#34495e;margin-bottom:12px"><strong
+                                style="color:#2980b9">国力基础论：</strong>无人机依赖卫星情报、财政支持——这些都需要<span
+                                style="color:#9b59b6">整体国力支撑</span>。技术平权并不存在。</p>
+                        <p style="color:#34495e"><strong
+                                style="color:#2980b9">战争本质：</strong>俄乌双方都在用无人机，最终决定胜负的仍是政治目标、战略意志和综合国力。</p>
+                    </div>
+                </div>
+            </div>
+        </article>
+    </main>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#667eea', primaryTextColor: '#2c3e50', primaryBorderColor: '#764ba2', lineColor: '#a0aec0' } });
+        const navItems = document.querySelectorAll('.nav-item');
+        const observer = new IntersectionObserver((entries) => { entries.forEach(entry => { if (entry.isIntersecting) { navItems.forEach(item => item.classList.remove('active')); document.querySelector(`.nav-item[href="#${entry.target.id}"]`)?.classList.add('active'); } }); }, { threshold: 0.3 });
+        document.querySelectorAll('.article-card').forEach(card => observer.observe(card));
+        document.addEventListener('click', (e) => { const header = e.target.closest('.article-header'); if (header) { header.closest('.article-card').classList.toggle('collapsed'); } });
+    </script>
+</body>
+
+</html>

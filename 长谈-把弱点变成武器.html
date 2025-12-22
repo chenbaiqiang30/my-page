@@ -1,0 +1,1339 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>把弱点变成武器 | 周晓枫 × 方希 × 脱不花《长谈》</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --gold: #ffd700;
+            --text: #1a1a2e;
+            --text-light: #4a4a6a;
+            --bg: #f8fafc;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --glass: rgba(255, 255, 255, 0.25);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --highlight-red: #e74c3c;
+            --highlight-blue: #3498db;
+            --highlight-green: #27ae60;
+            --highlight-purple: #9b59b6;
+        }
+
+        [data-theme="dark"] {
+            --text: #e8e8f0;
+            --text-light: #a8a8c8;
+            --bg: #0f0f1a;
+            --card-bg: rgba(30, 30, 50, 0.85);
+            --glass: rgba(50, 50, 80, 0.4);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            min-height: 100vh;
+            transition: all 0.3s ease;
+        }
+
+        /* 背景动画 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(118, 75, 162, 0.12) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(240, 147, 251, 0.08) 0%, transparent 60%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(30px, -30px) rotate(2deg); }
+            66% { transform: translate(-20px, 20px) rotate(-2deg); }
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部 */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto 30px;
+        }
+
+        /* 嘉宾卡片 */
+        .guests {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-top: 30px;
+        }
+
+        .guest-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 20px 28px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .guest-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .guest-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .guest-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .guest-title {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        /* 控制栏 */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            color: var(--text);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            margin: 40px 0;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            cursor: pointer;
+        }
+
+        .section-title .icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .section-title .toggle {
+            margin-left: auto;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .section-title.collapsed .toggle {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+        }
+
+        .section-content.collapsed {
+            max-height: 0 !important;
+            opacity: 0;
+        }
+
+        /* 思维导图样式 */
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            margin-top: 30px;
+        }
+
+        .mindmap-branch {
+            background: linear-gradient(145deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        [data-theme="dark"] .mindmap-branch {
+            background: linear-gradient(145deg, rgba(50,50,80,0.9), rgba(30,30,50,0.7));
+        }
+
+        .mindmap-branch:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+        }
+
+        .branch-title {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .branch-items {
+            list-style: none;
+        }
+
+        .branch-items li {
+            padding: 6px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95rem;
+            color: var(--text-light);
+        }
+
+        .branch-items li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        /* 金句卡片 */
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .quote-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .quote-card:hover {
+            transform: scale(1.02);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--primary);
+            opacity: 0.2;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .quote-text {
+            font-size: 1.05rem;
+            font-weight: 500;
+            line-height: 1.7;
+            color: var(--text);
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-light);
+            text-align: right;
+        }
+
+        /* 内容板块 */
+        .content-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            margin: 24px 0;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            overflow: hidden;
+        }
+
+        .section-header {
+            padding: 24px 30px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.05));
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.08));
+        }
+
+        .section-header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .section-number {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .section-preview {
+            margin-top: 8px;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
+
+        .section-toggle {
+            float: right;
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+
+        .section-header.collapsed .section-toggle {
+            transform: rotate(-90deg);
+        }
+
+        .section-body {
+            padding: 0 30px 30px;
+            transition: max-height 0.5s ease, padding 0.3s ease, opacity 0.3s ease;
+            overflow: hidden;
+        }
+
+        .section-body.collapsed {
+            max-height: 0 !important;
+            padding-top: 0;
+            padding-bottom: 0;
+            opacity: 0;
+        }
+
+        /* 核心观点 */
+        .key-point {
+            background: linear-gradient(135deg, rgba(231, 76, 60, 0.08), rgba(231, 76, 60, 0.03));
+            border-left: 4px solid var(--highlight-red);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .key-point-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--highlight-red);
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        /* 数据高亮 */
+        .data-highlight {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.15), rgba(52, 152, 219, 0.08));
+            padding: 3px 10px;
+            border-radius: 6px;
+            color: var(--highlight-blue);
+            font-weight: 600;
+        }
+
+        /* 人物引用 */
+        .person-quote {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.08), rgba(39, 174, 96, 0.03));
+            border-left: 4px solid var(--highlight-green);
+            padding: 16px 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 16px 0;
+        }
+
+        .person-name {
+            font-weight: 600;
+            color: var(--highlight-green);
+            margin-bottom: 6px;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(155, 89, 182, 0.1), rgba(155, 89, 182, 0.05));
+            border-radius: 16px;
+            padding: 24px;
+            margin: 24px 0;
+            position: relative;
+        }
+
+        .expert-comment::before {
+            content: '💡';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            font-size: 1.5rem;
+            background: var(--card-bg);
+            padding: 0 8px;
+        }
+
+        .expert-label {
+            font-size: 0.8rem;
+            color: var(--highlight-purple);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+        }
+
+        .expert-text {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text);
+        }
+
+        /* 信息图表 */
+        .infographic {
+            background: linear-gradient(145deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 24px 0;
+        }
+
+        [data-theme="dark"] .infographic {
+            background: linear-gradient(145deg, rgba(40,40,60,0.95), rgba(30,30,50,0.85));
+        }
+
+        .infographic-title {
+            text-align: center;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 24px;
+            color: var(--primary);
+        }
+
+        .journey-line {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .journey-line::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary), var(--accent));
+            border-radius: 3px;
+        }
+
+        .journey-item {
+            position: relative;
+            padding: 16px 0 16px 24px;
+        }
+
+        .journey-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 22px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 3px solid var(--bg);
+            box-shadow: 0 0 0 3px var(--primary);
+        }
+
+        .journey-label {
+            font-size: 0.8rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .journey-text {
+            font-size: 0.95rem;
+            color: var(--text);
+        }
+
+        /* 对比表格 */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        @media (max-width: 600px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        [data-theme="dark"] .comparison-card {
+            background: rgba(50, 50, 80, 0.5);
+        }
+
+        .comparison-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+
+        .comparison-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--primary);
+        }
+
+        .comparison-desc {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* 底部 */
+        footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .footer-quote {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 12px;
+            font-style: italic;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            box-shadow: var(--shadow);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            margin: 4px;
+        }
+
+        .tag-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+        }
+
+        .tag-outline {
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            header {
+                padding: 40px 15px;
+            }
+
+            .mindmap-section,
+            .content-section {
+                border-radius: 16px;
+            }
+
+            .section-body {
+                padding: 0 20px 20px;
+            }
+
+            .section-header {
+                padding: 20px;
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            .theme-toggle,
+            .controls {
+                display: none;
+            }
+
+            .section-body.collapsed {
+                max-height: none !important;
+                opacity: 1;
+            }
+
+            .bg-animation {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        🌙
+    </button>
+
+    <div class="container">
+        <header>
+            <div class="header-badge">
+                ✨ 得到《长谈》精华笔记
+            </div>
+            <h1>把弱点变成武器</h1>
+            <p class="subtitle">以一灯传诸灯，终至万灯皆明。与人长谈、向敬重的朋友请教，把彼此的思想点亮给另一个人，就是最好的学习。</p>
+            
+            <div class="guests">
+                <div class="guest-card">
+                    <div class="guest-avatar">枫</div>
+                    <div class="guest-name">周晓枫</div>
+                    <div class="guest-title">著名作家 · 鲁迅文学奖得主</div>
+                </div>
+                <div class="guest-card">
+                    <div class="guest-avatar">希</div>
+                    <div class="guest-name">方希</div>
+                    <div class="guest-title">出版人 · 中信出版执行总编辑</div>
+                </div>
+                <div class="guest-card">
+                    <div class="guest-avatar">花</div>
+                    <div class="guest-name">脱不花</div>
+                    <div class="guest-title">得到联合创始人 · 主持人</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="controls">
+            <button class="control-btn" onclick="expandAll()">📖 展开全部</button>
+            <button class="control-btn" onclick="collapseAll()">📕 折叠全部</button>
+            <button class="control-btn" onclick="window.print()">🖨️ 打印保存</button>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="mindmap-section">
+            <div class="section-title" onclick="toggleSection(this)">
+                <span class="icon">🧠</span>
+                <span>核心思维导图</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="mindmap">
+                    <div class="mindmap-center">把弱点变成武器</div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-title">📝 写作的力量</div>
+                            <ul class="branch-items">
+                                <li>代谢负面情绪的转化器</li>
+                                <li>高敏感特质的最佳出口</li>
+                                <li>与过去和未来的自己相逢</li>
+                                <li>没有朋友时不放弃你的朋友</li>
+                            </ul>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title">🌱 成长的秘密</div>
+                            <ul class="branch-items">
+                                <li>弱者视角的独特价值</li>
+                                <li>善良源于自保的智慧</li>
+                                <li>从不快乐中获得的快乐更持久</li>
+                                <li>谦虚不是品德，是眼界</li>
+                            </ul>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title">👶 儿童文学观</div>
+                            <ul class="branch-items">
+                                <li>不是大人说小孩话</li>
+                                <li>高度尊重孩子的复杂性</li>
+                                <li>孩子教给我们更多</li>
+                                <li>成人是成长中的人，不是成品</li>
+                            </ul>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title">📚 文学的价值</div>
+                            <ul class="branch-items">
+                                <li>避免麻木，让感觉复苏</li>
+                                <li>安全的惊心动魄冒险</li>
+                                <li>打开目中无人的生活</li>
+                                <li>保护和丰富情感系统</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金句集锦 -->
+        <div class="mindmap-section">
+            <div class="section-title" onclick="toggleSection(this)">
+                <span class="icon">💎</span>
+                <span>本期金句</span>
+                <span class="toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quotes-grid">
+                    <div class="quote-card">
+                        <p class="quote-text">谁也不能剥夺精神世界里的你，就像谁也不能剥夺你的梦一样。</p>
+                        <p class="quote-author">— 周晓枫</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">写作本身就是如何把自己的弱点变成不那么弱，然后变成一个特点的过程。</p>
+                        <p class="quote-author">— 周晓枫</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">文学已经是可以惊心动魄，但同时无比安全的冒险了。</p>
+                        <p class="quote-author">— 周晓枫</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">谦虚不是品德问题，是眼界问题。你看见了，你就老实了。</p>
+                        <p class="quote-author">— 周晓枫</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">孩子长大的过程，可能就是一个丢失神性的过程。</p>
+                        <p class="quote-author">— 方希</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">你不要浪费弱者的视角，你在低处，它依然有风光。</p>
+                        <p class="quote-author">— 方希</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">通过现在的书写，其实你是在塑造未来的自己。</p>
+                        <p class="quote-author">— 周晓枫</p>
+                    </div>
+                    <div class="quote-card">
+                        <p class="quote-text">善良其实是一种社会品质，我希望它不是被欺辱的，而是自己能够保护它。</p>
+                        <p class="quote-author">— 方希</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块一：高敏感的转化 -->
+        <div class="content-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-toggle">▼</span>
+                <div class="section-header-title">
+                    <span class="section-number">01</span>
+                    <span>高敏感特质：从残疾到长项</span>
+                </div>
+                <p class="section-preview">周晓枫自嘲是"怂人作家"——生活里显得慌张、客气，但笔下文字却坚定有力。高敏感在职场是麻烦，在写作中却成为独特优势。</p>
+            </div>
+            <div class="section-body">
+                <div class="key-point">
+                    <div class="key-point-label">核心观点</div>
+                    <p>高敏感用在别的地方会麻烦，但用在写作上，就会有一些别人可能很小的细节，但你会没有磨损。写作本身就是一个把弱点变成特点的过程。</p>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">方希评价周晓枫的文字：</div>
+                    <p>她对词汇不是雕琢，而是要捕捉到一个词，才能证明她今天看到的这些东西的存在。这是作家天生的东西——她和这个世界的接口是"我能把它重新表述"。</p>
+                </div>
+
+                <p style="margin: 16px 0;">方希回忆大学时周晓枫描述秋天景色的词：<span class="data-highlight">"寒树薄阳"</span>——寒冷的树干，轻薄的阳光。不是刻意雕琢，而是必须找到这个词才能证明她看到的存在。</p>
+
+                <div class="infographic">
+                    <div class="infographic-title">🔄 特质转化路径</div>
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <div class="comparison-icon">😰</div>
+                            <div class="comparison-title">职场中的高敏感</div>
+                            <div class="comparison-desc">显得特别"事儿"<br>不好合作、不好沟通<br>容易被生活磨粗糙</div>
+                        </div>
+                        <div class="comparison-card">
+                            <div class="comparison-icon">✨</div>
+                            <div class="comparison-title">写作中的高敏感</div>
+                            <div class="comparison-desc">细节保持敏锐<br>华美又纯粹的表达<br>独特的感受力</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">专家洞察</div>
+                    <div class="expert-text">
+                        周晓枫的案例揭示了一个深刻的人生智慧：<strong>所谓"缺陷"往往只是放错了位置的"优势"</strong>。高敏感特质在标准化的职场环境中确实是负担，但在需要独特感知力的创作领域，却成为不可替代的核心竞争力。这启示我们：与其改造自己去适应环境，不如找到能发挥自身特质的领域。正如鳄鱼的咬肌极强但张嘴无力——不必追求全面平衡，带着"不能"中的"能"抵达极限，才是真正的发现。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块二：烫伤与善良 -->
+        <div class="content-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-toggle">▼</span>
+                <div class="section-header-title">
+                    <span class="section-number">02</span>
+                    <span>15岁的烫伤：弱者视角的馈赠</span>
+                </div>
+                <p class="section-preview">周晓枫15岁时严重烫伤，从眼睛以下都是血痂，一年不能上学。这段经历让她理解了善良与懦弱的复杂关系，也成就了她独特的观察视角。</p>
+            </div>
+            <div class="section-body">
+                <div class="key-point">
+                    <div class="key-point-label">核心洞察</div>
+                    <p>善良有时候跟懦弱很像。当你脆弱的时候，别成为被别人摘出来指指点点的人——这是自保。但正因如此，你能看到不同的人的状态，理解人性的复杂。</p>
+                </div>
+
+                <div class="infographic">
+                    <div class="infographic-title">🌊 从伤痛到力量的转化</div>
+                    <div class="journey-line">
+                        <div class="journey-item">
+                            <div class="journey-label">创伤时刻</div>
+                            <div class="journey-text">15岁烫伤，疤痕体质，一年无法上学，没人敢和她住同一房间</div>
+                        </div>
+                        <div class="journey-item">
+                            <div class="journey-label">黑暗念头</div>
+                            <div class="journey-text">"如果全世界人都烫伤就好了"——被自己的恶念吓到</div>
+                        </div>
+                        <div class="journey-item">
+                            <div class="journey-label">理解转化</div>
+                            <div class="journey-text">意识到这不是恶毒，是太脆弱太想回到集体中</div>
+                        </div>
+                        <div class="journey-item">
+                            <div class="journey-label">善良的实用主义</div>
+                            <div class="journey-text">善良首先是自保：少惹人不快，低眉顺眼混过难关</div>
+                        </div>
+                        <div class="journey-item">
+                            <div class="journey-label">独特视角</div>
+                            <div class="journey-text">弱者位置让她看到人性的多面，理解"坏人"背后的脆弱</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">方希的重要提醒：</div>
+                    <p>你不要浪费弱者的视角。你在低处，它依然有风光，而且你要特别珍惜这个东西，它会成为你巨大的生命能量。一个人哪能只有强不能弱？无法接受自己弱势时所能吸引的那些月光，是很可惜的。</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">专家洞察</div>
+                    <div class="expert-text">
+                        周晓枫的"善良实用主义"揭示了一个反直觉的真相：<strong>美德未必出于崇高动机，但依然可以产生真实价值</strong>。她坦承自己的善良有很大一部分源于懦弱和自保，但这份诚实反而更有说服力。更重要的是，这段低谷经历给了她"弱者视角"——这是很多一路顺遂的人永远无法获得的财富。正如她所说，没有这段经历，她会认为坏人就是坏人，而不会理解人的复杂性。<strong>人生的低谷不是惩罚，而是获取独特视角的机会窗口。</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块三：儿童文学观 -->
+        <div class="content-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-toggle">▼</span>
+                <div class="section-header-title">
+                    <span class="section-number">03</span>
+                    <span>儿童文学：不是大人说小孩话</span>
+                </div>
+                <p class="section-preview">周晓枫从散文转向儿童文学，发现孩子教给她的比她想教孩子的多得多。好的儿童文学不是降维，而是高度尊重孩子的复杂性。</p>
+            </div>
+            <div class="section-body">
+                <div class="key-point">
+                    <div class="key-point-label">核心理念</div>
+                    <p>儿童文学不是大人说小孩话，而是你把自己变成一个小孩——用无机心的、无规训的方式，充满好奇疑问甚至荒诞联想，去写你周围的世界。</p>
+                </div>
+
+                <div class="infographic">
+                    <div class="infographic-title">👶 VS 🧑 孩子与成人的认知对比</div>
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <div class="comparison-icon">👶</div>
+                            <div class="comparison-title">孩子的特质</div>
+                            <div class="comparison-desc">百无禁忌的冲劲<br>不知道什么该说不该说<br>期待复杂性和历险<br>还保有神性</div>
+                        </div>
+                        <div class="comparison-card">
+                            <div class="comparison-icon">🧑</div>
+                            <div class="comparison-title">成人的丢失</div>
+                            <div class="comparison-desc">被规训到套路化<br>自以为是"成品"<br>把不值钱的部分丢掉<br>神性逐渐流失</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p style="margin: 16px 0;">周晓枫做过一个实验：问孩子和成人"什么是黑白动物"。孩子们的回答速度<span class="data-highlight">一点不比成人慢</span>——狐猴、斑马、企鹅、虎鲸、奶牛猫，反应迅速且丰富。</p>
+
+                <div class="person-quote">
+                    <div class="person-name">方希的观察：</div>
+                    <p>孩子长大的过程，可能就是一个丢失神性的过程。我们对疼痛的恐惧和远离，对需要付出心力的东西的远离，是非常糟糕的倾向。</p>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">脱不花的育儿感悟：</div>
+                    <p>孩子特别瞧不起那种把自己折叠下来的大人。她们天然是往上够的，希望平等对待，给她们复杂的，她们特别瞧得起你。大人太狂妄了——你以为你的经验可以覆盖她，甚至教导她，人家感受的点完全不一样。</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">专家洞察</div>
+                    <div class="expert-text">
+                        三位嘉宾对儿童文学的讨论，本质上是在探讨<strong>成长中的"得"与"失"</strong>。我们习惯认为长大是一个不断获得的过程——获得知识、经验、判断力。但周晓枫和方希提醒我们：成长同时也是一个不断丢失的过程——丢失好奇心、丢失冲劲、丢失对世界毛扎扎的感知。<br><br>
+                        这对教育理念是一个深刻的挑战：<strong>好的教育不仅是给予，更要善于保护</strong>——保护孩子原有的那些珍贵特质，不要急于用"成人的成熟"去覆盖它们。周晓枫的《星鱼》之所以被认可，正是因为它没有居高临下的说教，而是真正进入了孩子的世界，同时又不回避复杂性和悲伤。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块四：文学的价值 -->
+        <div class="content-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-toggle">▼</span>
+                <div class="section-header-title">
+                    <span class="section-number">04</span>
+                    <span>文学的价值：避免麻木，让感觉复苏</span>
+                </div>
+                <p class="section-preview">一群清华北大毕业的创业者，看完小说后才发现自己一直"目中无人"。文学让他们第一次感知到：原来人的情感可以是这样的。</p>
+            </div>
+            <div class="section-body">
+                <div class="key-point">
+                    <div class="key-point-label">方希的故事</div>
+                    <p>一群清华北大毕业的创业者，从来没看过小说。他们从开始创业就只有"事"——项目、资金、规划。他们过着目中无人的生活，既没有别人，也没有自己。看完小说后，他们感受到：原来人和人之间可以这样互动，人做荒唐事背后是悲伤的东西。这是他们说的"最大的收获"。</p>
+                </div>
+
+                <div class="infographic">
+                    <div class="infographic-title">📖 文学的不可替代性</div>
+                    <div class="comparison-grid">
+                        <div class="comparison-card">
+                            <div class="comparison-icon">😵</div>
+                            <div class="comparison-title">爽文/短视频</div>
+                            <div class="comparison-desc">即时满足<br>情绪被撩拨<br>无需动脑<br>搓磨感知力</div>
+                        </div>
+                        <div class="comparison-card">
+                            <div class="comparison-icon">📚</div>
+                            <div class="comparison-title">好的文学</div>
+                            <div class="comparison-desc">深度共情<br>情感被浸润<br>触觉无限延伸<br>保护感知力</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">方希谈"疼痛"的价值：</div>
+                    <p>成长本身和成为人本身，它就不是轻松的。我们何德何能会有这个妄念，觉得活着是理所当然的事？在你之前，所有生物都是拼尽全力才能活着。情绪有个啥价值？情绪是随时可以被掀动、被撩拨的，没有价值。但情感不一样，情感是生动的、深刻的，是把你自己浸润过的。</p>
+                </div>
+
+                <p style="margin: 16px 0;">方希背诵了陶渊明《闲情赋》中的名句来说明文学的力量：<span class="data-highlight">"愿在衣而为领，承华首之余芳"</span>——我愿意做你衣服的领子，永远摩擦着你芬芳的后颈。这种回肠荡气的情感表达，让感知和感触极大丰富。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-label">专家洞察</div>
+                    <div class="expert-text">
+                        方希提出的"情绪"与"情感"的区分，是理解文学价值的关键：<strong>情绪是被动反应，情感是主动建构</strong>。短视频和爽文提供的是情绪刺激——笑点、泪点、爽点——来得快去得也快。而文学提供的是情感体验——它需要你投入，需要你思考，需要你和作品、和自己对话。<br><br>
+                        那群创业者的故事说明：即使是最聪明、最成功的人，如果只活在"事"里，也会逐渐变成"目中无人"的工具。<strong>文学是人性的训练场</strong>——它让我们练习共情，练习理解复杂性，练习在安全的环境里经历惊心动魄。正如周晓枫所说：文学是"可以惊心动魄，但同时无比安全的冒险"。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块五：写作的意义 -->
+        <div class="content-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-toggle">▼</span>
+                <div class="section-header-title">
+                    <span class="section-number">05</span>
+                    <span>为什么要写作：与自己相逢的方式</span>
+                </div>
+                <p class="section-preview">周晓枫写《星鱼》时把脸埋进盐水里体验鱼的感受，方希打三小时电话激活作者。写作不只是表达，更是自我发现和情绪代谢的过程。</p>
+            </div>
+            <div class="section-body">
+                <div class="key-point">
+                    <div class="key-point-label">周晓枫的写作观</div>
+                    <p>写作的美好之处在于：你在挖掘过去、书写现在的时候，其实是在塑造未来的自己。当你都没有朋友的时候，只要你会写，那个朋友就没有放弃你——它听你倾诉，代谢你的感情，让你获得力量。</p>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">周晓枫写《星鱼》的方法：</div>
+                    <p>我自己放了盆水，撒了点盐，把脸埋到里面试试。如果我是一种生命的转化，我能不能承受，难受多长时间。不管能不能带到文字中，但你试过了就放心了——这是你拿不起来的极限，但凡给你一个词、一个句子的启发，就是在可以的范围内尽量靠近。</p>
+                </div>
+
+                <div class="infographic">
+                    <div class="infographic-title">✍️ 写作的多重价值</div>
+                    <div class="mindmap-branches" style="margin-top: 0;">
+                        <div class="mindmap-branch">
+                            <div class="branch-title">🔄 情绪代谢</div>
+                            <ul class="branch-items">
+                                <li>怀恨在心、耿耿于怀都可以代谢</li>
+                                <li>把遭受的经历转化为养分</li>
+                                <li>桌上掉的渣也要划拉起来写</li>
+                            </ul>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title">🔍 自我认知</div>
+                            <ul class="branch-items">
+                                <li>像蝙蝠发送声波定位自己</li>
+                                <li>发现疲惫和不能之处</li>
+                                <li>穿越黑暗中看似没有道路的前行</li>
+                            </ul>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title">⏰ 时间连接</div>
+                            <ul class="branch-items">
+                                <li>与昨天的自己相逢</li>
+                                <li>与未来的自己相逢</li>
+                                <li>每时每刻都是此时此刻的百分百</li>
+                            </ul>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title">🎯 能力边界</div>
+                            <ul class="branch-items">
+                                <li>激发从未抵达的领域</li>
+                                <li>知道自己跳高能跳多高</li>
+                                <li>在"不能"中找到"能"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">方希谈业余写作者的建议：</div>
+                    <p>最重要的是找到"对谁诉说"。可以是给18岁时看的信，告诉孩子出生前世界是怎样的；可以是家族史的梳理；可以是跟自己对话。你不知道对谁诉说，就不可能情之所至。而一旦进入那个情景，想写得很差也不太容易，因为真情实感是在的。</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">专家洞察</div>
+                    <div class="expert-text">
+                        周晓枫把脸埋进盐水的细节，揭示了<strong>好作家与普通写作者的根本差异</strong>：不是天赋，不是技巧，而是愿意投入多少自己。她说"真挚是最重要的力量"，这不是心灵鸡汤，而是写作的底层逻辑——读者能感知到作者是否真的在场。<br><br>
+                        方希给业余写作者的建议极具操作性：<strong>找到你的诉说对象</strong>。这解决了很多人"不知道怎么开头"的困境。不是你没什么可写，而是你不知道写给谁看。一旦有了明确的对象——孩子、已故的长辈、未来的自己——写作自然就有了方向和温度。这和她编辑作者时让人"假设讲给某个具体的人听"是同样的道理。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块六：抄袭与真诚 -->
+        <div class="content-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-toggle">▼</span>
+                <div class="section-header-title">
+                    <span class="section-number">06</span>
+                    <span>关于抄袭：你越倚靠它，自己就越废</span>
+                </div>
+                <p class="section-preview">面对文坛抄袭问题，周晓枫的态度很"怂"但很真诚：抄袭者应该有态度上的表达，承担责任才能重新出发。</p>
+            </div>
+            <div class="section-body">
+                <div class="key-point">
+                    <div class="key-point-label">周晓枫的立场</div>
+                    <p>你越倚靠这个（抄袭），自己就越废。它会废掉你自己表达那部分功能的肌肉。我可能吸收了很多人的启发，进行了一些处理，我也希望能启发别人。但如果启发变成搬移，那是非常得不偿失的。</p>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">周晓枫的呼吁：</div>
+                    <p>如果你已经这样做了，你真的重新站起来，不在于设想世界多么委屈你。你真的去承担你的责任，你才能重新出发。如果你不承担责任，你就没有办法重新出发。</p>
+                </div>
+
+                <p style="margin: 16px 0;">脱不花补充了一个重要观点：很多人装死是没意识到——<span class="data-highlight">在这事上装死，好像躲过一段时间大家就忘了。不会，你这个名字永远跟这件事绑在一起，你就没有再出发的机会了。</span></p>
+
+                <div class="expert-comment">
+                    <div class="expert-label">专家洞察</div>
+                    <div class="expert-text">
+                        这段对话中周晓枫的"慌张"和"客气"反而让这个话题更有说服力。她没有站在道德高地上义正辞严，而是诚实地说出自己的纠结：有些是朋友、同学，在人际上做不到"统统斩杀"。<br><br>
+                        但她的核心判断是清晰的：<strong>抄袭不只是道德问题，更是自我毁灭</strong>。依赖别人的表达，你自己的表达肌肉就会萎缩。这就像依赖代步工具，腿就会退化。对于被抄袭的人，她的态度是宽容的；对于抄袭者，她的建议是务实的——承担责任不是为了道歉被原谅，而是为了自己能重新出发。<strong>逃避责任的代价是永远被困在那个节点上。</strong>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块七：书单推荐 -->
+        <div class="content-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <span class="section-toggle">▼</span>
+                <div class="section-header-title">
+                    <span class="section-number">07</span>
+                    <span>分年龄段书单：人生不同阶段读不同的书</span>
+                </div>
+                <p class="section-preview">方希给出了一份系统性的书单推荐：20岁前读小说培养感知，20-35岁读高水平学科书，35岁后读哲学建立认知底座。</p>
+            </div>
+            <div class="section-body">
+                <div class="infographic">
+                    <div class="infographic-title">📚 人生阅读地图</div>
+                    
+                    <div style="margin: 24px 0;">
+                        <div style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(102, 126, 234, 0.05)); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+                            <h4 style="color: var(--primary); margin-bottom: 12px;">📘 20岁之前：培养感知力</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                                <span class="tag tag-primary">弗朗索瓦丝·萨冈《你好，忧愁》</span>
+                                <span class="tag tag-primary">塞林格《麦田里的守望者》</span>
+                                <span class="tag tag-primary">马尔克斯的作品</span>
+                                <span class="tag tag-primary">威尔逊《给年轻科学家的信》</span>
+                                <span class="tag tag-primary">布鲁克斯《社会动物》</span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">目标：丰满和刺激各种感知和感官，建立对"好"的辨别力</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(118, 75, 162, 0.1), rgba(118, 75, 162, 0.05)); border-radius: 16px; padding: 20px; margin-bottom: 16px;">
+                            <h4 style="color: var(--secondary); margin-bottom: 12px;">📗 20-35岁：拓展认知边界</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                                <span class="tag tag-outline">加来道雄《不可思议的物理》</span>
+                                <span class="tag tag-outline">杰弗里·韦斯特的物理学著作</span>
+                                <span class="tag tag-outline">托尔斯泰《战争与和平》</span>
+                                <span class="tag tag-outline">毛姆《刀锋》</span>
+                                <span class="tag tag-outline">科塔萨尔《南方高速》《万火归一》</span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">目标：知道人类智力活动的上限，达不到但看一眼</p>
+                        </div>
+                        
+                        <div style="background: linear-gradient(135deg, rgba(240, 147, 251, 0.1), rgba(240, 147, 251, 0.05)); border-radius: 16px; padding: 20px;">
+                            <h4 style="color: var(--accent); margin-bottom: 12px;">📙 35岁之后：建立认知底座</h4>
+                            <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
+                                <span class="tag tag-primary">王曦《论语绎读》</span>
+                                <span class="tag tag-primary">《庄子》《道德经》</span>
+                                <span class="tag tag-primary">赵汀阳《论可能生活》</span>
+                                <span class="tag tag-primary">李泽厚《美的历程》</span>
+                                <span class="tag tag-primary">海德格尔、萨特、加缪</span>
+                            </div>
+                            <p style="font-size: 0.9rem; color: var(--text-light);">目标：修炼出一个可以承接任何成败的自己</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">方希的核心建议：</div>
+                    <p>《论语》告诉你一件事：你无法预测人生的成败，但你要修炼出一个可以承接任何成败的自己。35岁以后，还来得及做这种自我修炼。</p>
+                </div>
+
+                <div class="person-quote">
+                    <div class="person-name">周晓枫补充的科普书单：</div>
+                    <p>蕾切尔·卡森的作品、《看不见的森林》、《远东冰原上的猫头鹰》、《有毒》、《癌症传》、《细胞传》、《大脑传》——我们总得知道自己是咋构成的，未来可能面临哪些东西。</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">专家洞察</div>
+                    <div class="expert-text">
+                        方希的书单体现了一个深刻的教育理念：<strong>阅读要与人生阶段匹配</strong>。20岁前需要的是打开感官和建立品味，而不是急于读艰深的理论；35岁后需要的是建立认知底座和精神根基，而不是继续追新。<br><br>
+                        特别值得注意的是她对《红楼梦》的评价：不同年龄读感知不一样。小时候只看富贵排场，30多岁才能看到细节。这说明<strong>有些书是要终身阅读的</strong>，每个人生阶段都能读出新东西。<br><br>
+                        脱不花的总结也很精准：书单分两类——一类打开情感系统，一类打开认知系统。<strong>当代人太不尊重情感系统</strong>，总觉得多看抽象的东西就厉害了。其实保护和丰富情感系统，才是阅读更本质的价值。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 尾声 -->
+        <footer>
+            <div class="footer-quote">"真正的梦想和自由，包含着爱和责任"</div>
+            <p style="margin-top: 20px;">— 周晓枫</p>
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(102, 126, 234, 0.2);">
+                <p style="font-size: 0.85rem;">得到《长谈》| 把弱点变成武器</p>
+                <p style="font-size: 0.8rem; margin-top: 8px; opacity: 0.7;">嘉宾：周晓枫 × 方希 × 脱不花</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const btn = document.querySelector('.theme-toggle');
+            if (html.dataset.theme === 'dark') {
+                html.dataset.theme = 'light';
+                btn.textContent = '🌙';
+            } else {
+                html.dataset.theme = 'dark';
+                btn.textContent = '☀️';
+            }
+        }
+
+        // 折叠/展开单个板块
+        function toggleSection(element) {
+            const content = element.nextElementSibling || element.parentElement.querySelector('.section-body');
+            if (!content) return;
+            
+            element.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+            
+            if (!content.classList.contains('collapsed')) {
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+
+        // 展开全部
+        function expandAll() {
+            document.querySelectorAll('.section-content, .section-body').forEach(el => {
+                el.classList.remove('collapsed');
+                el.style.maxHeight = el.scrollHeight + 'px';
+            });
+            document.querySelectorAll('.section-title, .section-header').forEach(el => {
+                el.classList.remove('collapsed');
+            });
+        }
+
+        // 折叠全部
+        function collapseAll() {
+            document.querySelectorAll('.section-content, .section-body').forEach(el => {
+                el.classList.add('collapsed');
+            });
+            document.querySelectorAll('.section-title, .section-header').forEach(el => {
+                el.classList.add('collapsed');
+            });
+        }
+
+        // 初始化：设置所有可折叠区域的最大高度
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.section-content, .section-body').forEach(el => {
+                if (!el.classList.contains('collapsed')) {
+                    el.style.maxHeight = el.scrollHeight + 'px';
+                }
+            });
+
+            // 监听窗口大小变化，重新计算高度
+            window.addEventListener('resize', () => {
+                document.querySelectorAll('.section-content:not(.collapsed), .section-body:not(.collapsed)').forEach(el => {
+                    el.style.maxHeight = el.scrollHeight + 'px';
+                });
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>国际参考 · 读懂世界的思维地图</title>
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-primary: #f0f0f0;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent-red: #ff6b6b;
+            --accent-blue: #4ecdc4;
+            --accent-green: #95e87b;
+            --accent-orange: #ffa502;
+            --accent-purple: #a29bfe;
+            --accent-pink: #fd79a8;
+            --accent-gold: #f9ca24;
+            --shadow-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .light-mode {
+            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 50%, #d1d8e0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #2d3436;
+            --text-secondary: rgba(45, 52, 54, 0.7);
+            --shadow-color: rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before,
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation::before {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(45deg, var(--accent-blue), var(--accent-purple));
+            top: -200px;
+            left: -200px;
+        }
+
+        .bg-animation::after {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, var(--accent-pink), var(--accent-orange));
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, 50px) rotate(90deg); }
+            50% { transform: translate(0, 100px) rotate(180deg); }
+            75% { transform: translate(-50px, 50px) rotate(270deg); }
+        }
+
+        /* 玻璃效果容器 */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: 0 8px 32px var(--shadow-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部 */
+        header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 0 60px rgba(78, 205, 196, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+
+        .author-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .author-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-red));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        /* 控制栏 */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 5px 20px var(--shadow-color);
+        }
+
+        /* 导航目录 */
+        .nav-toc {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: none;
+        }
+
+        @media (min-width: 1400px) {
+            .nav-toc {
+                display: block;
+            }
+        }
+
+        .nav-toc a {
+            display: block;
+            padding: 10px 15px;
+            margin: 5px 0;
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.85rem;
+            border-left: 3px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .nav-toc a:hover,
+        .nav-toc a.active {
+            color: var(--accent-blue);
+            border-left-color: var(--accent-blue);
+            background: var(--glass-bg);
+            border-radius: 0 10px 10px 0;
+        }
+
+        /* 金句区域 */
+        .golden-quotes {
+            margin: 40px 0;
+            padding: 30px;
+        }
+
+        .quotes-title {
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .quote-card {
+            padding: 25px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 10px;
+            font-size: 6rem;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+
+        .quote-card.style-1 { background: linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(255, 107, 107, 0.05)); border-left: 4px solid var(--accent-red); }
+        .quote-card.style-2 { background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.05)); border-left: 4px solid var(--accent-blue); }
+        .quote-card.style-3 { background: linear-gradient(135deg, rgba(162, 155, 254, 0.2), rgba(162, 155, 254, 0.05)); border-left: 4px solid var(--accent-purple); }
+        .quote-card.style-4 { background: linear-gradient(135deg, rgba(255, 165, 2, 0.2), rgba(255, 165, 2, 0.05)); border-left: 4px solid var(--accent-orange); }
+        .quote-card.style-5 { background: linear-gradient(135deg, rgba(149, 232, 123, 0.2), rgba(149, 232, 123, 0.05)); border-left: 4px solid var(--accent-green); }
+        .quote-card.style-6 { background: linear-gradient(135deg, rgba(253, 121, 168, 0.2), rgba(253, 121, 168, 0.05)); border-left: 4px solid var(--accent-pink); }
+
+        .quote-text {
+            font-size: 1.05rem;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            margin: 40px 0;
+            padding: 40px;
+        }
+
+        .mindmap-title {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            text-align: center;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .mindmap-center {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+            box-shadow: 0 10px 40px rgba(78, 205, 196, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            max-width: 900px;
+        }
+
+        .mindmap-branch {
+            padding: 15px 25px;
+            border-radius: 50px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .mindmap-branch:hover {
+            transform: scale(1.05);
+        }
+
+        .branch-1 { background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 107, 107, 0.1)); border: 2px solid var(--accent-red); }
+        .branch-2 { background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(78, 205, 196, 0.1)); border: 2px solid var(--accent-blue); }
+        .branch-3 { background: linear-gradient(135deg, rgba(162, 155, 254, 0.3), rgba(162, 155, 254, 0.1)); border: 2px solid var(--accent-purple); }
+        .branch-4 { background: linear-gradient(135deg, rgba(255, 165, 2, 0.3), rgba(255, 165, 2, 0.1)); border: 2px solid var(--accent-orange); }
+        .branch-5 { background: linear-gradient(135deg, rgba(149, 232, 123, 0.3), rgba(149, 232, 123, 0.1)); border: 2px solid var(--accent-green); }
+        .branch-6 { background: linear-gradient(135deg, rgba(253, 121, 168, 0.3), rgba(253, 121, 168, 0.1)); border: 2px solid var(--accent-pink); }
+
+        /* 可折叠板块 */
+        .section {
+            margin: 25px 0;
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .section-title-wrap {
+            flex: 1;
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .section-preview {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            max-width: 500px;
+        }
+
+        .section-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .section.expanded .section-toggle {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .section.expanded .section-content {
+            max-height: 5000px;
+        }
+
+        .section-inner {
+            padding: 0 30px 30px;
+        }
+
+        /* 内容样式 */
+        .content-block {
+            margin: 20px 0;
+            padding: 25px;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .light-mode .content-block {
+            background: rgba(255, 255, 255, 0.5);
+        }
+
+        .content-title {
+            font-size: 1.15rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .highlight-red { color: var(--accent-red); font-weight: 600; }
+        .highlight-blue { color: var(--accent-blue); font-weight: 600; }
+        .highlight-green { color: var(--accent-green); font-weight: 600; }
+        .highlight-orange { color: var(--accent-orange); font-weight: 600; }
+        .highlight-purple { color: var(--accent-purple); font-weight: 600; }
+        .highlight-pink { color: var(--accent-pink); font-weight: 600; }
+        .highlight-gold { color: var(--accent-gold); font-weight: 600; }
+
+        /* 数据卡片 */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .data-card {
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.15), rgba(162, 155, 254, 0.1));
+            border: 1px solid var(--glass-border);
+        }
+
+        .data-value {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .data-label {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            margin: 25px 0;
+            padding: 25px;
+            border-radius: 20px;
+            position: relative;
+            background: linear-gradient(135deg, rgba(249, 202, 36, 0.15), rgba(255, 165, 2, 0.1));
+            border-left: 4px solid var(--accent-gold);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .expert-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .expert-name {
+            font-weight: 600;
+            color: var(--accent-gold);
+        }
+
+        .expert-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .expert-text {
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        /* 信息图表 */
+        .infographic {
+            margin: 30px 0;
+            padding: 30px;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.25);
+        }
+
+        .light-mode .infographic {
+            background: rgba(255, 255, 255, 0.6);
+        }
+
+        .infographic-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        /* 流程图 */
+        .flow-chart {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 0;
+        }
+
+        .flow-item {
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 500;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+        }
+
+        .flow-1 { background: linear-gradient(135deg, rgba(255, 107, 107, 0.3), rgba(255, 107, 107, 0.1)); border: 2px solid var(--accent-red); }
+        .flow-2 { background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(78, 205, 196, 0.1)); border: 2px solid var(--accent-blue); }
+        .flow-3 { background: linear-gradient(135deg, rgba(162, 155, 254, 0.3), rgba(162, 155, 254, 0.1)); border: 2px solid var(--accent-purple); }
+        .flow-4 { background: linear-gradient(135deg, rgba(149, 232, 123, 0.3), rgba(149, 232, 123, 0.1)); border: 2px solid var(--accent-green); }
+
+        /* 对比表格 */
+        .compare-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .compare-table th {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.3), rgba(162, 155, 254, 0.2));
+            font-weight: 600;
+        }
+
+        .compare-table tr:hover td {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin: 25px 0;
+            padding: 20px;
+            border-radius: 16px;
+            background: var(--glass-bg);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -24px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-blue);
+            box-shadow: 0 0 10px var(--accent-blue);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        /* 标签 */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+        }
+
+        .tag-red { border-color: var(--accent-red); color: var(--accent-red); }
+        .tag-blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .tag-green { border-color: var(--accent-green); color: var(--accent-green); }
+        .tag-orange { border-color: var(--accent-orange); color: var(--accent-orange); }
+        .tag-purple { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+        /* 底部 */
+        footer {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+        }
+
+        footer p {
+            margin: 10px 0;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .section-header {
+                padding: 20px;
+            }
+            
+            .section-preview {
+                display: none;
+            }
+            
+            .mindmap-center {
+                width: 140px;
+                height: 140px;
+                font-size: 0.95rem;
+            }
+            
+            .data-value {
+                font-size: 1.5rem;
+            }
+
+            .flow-chart {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            .controls, .nav-toc, .bg-animation {
+                display: none !important;
+            }
+            
+            .section-content {
+                max-height: none !important;
+            }
+            
+            body {
+                background: white !important;
+                color: black !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button class="control-btn" onclick="toggleTheme()" title="切换主题">🌓</button>
+        <button class="control-btn" onclick="expandAll()" title="展开全部">📖</button>
+        <button class="control-btn" onclick="collapseAll()" title="折叠全部">📕</button>
+    </div>
+
+    <!-- 侧边导航 -->
+    <nav class="nav-toc glass">
+        <a href="#methodology">方法论</a>
+        <a href="#ai-bubble">AI泡沫</a>
+        <a href="#russia-ukraine">俄乌局势</a>
+        <a href="#expert">专家视角</a>
+    </nav>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="animate-in">
+            <h1 class="logo">🌍 国际参考</h1>
+            <p class="subtitle">放眼世界，提前理解重大变化</p>
+            <div class="author-info glass">
+                <div class="author-avatar">📡</div>
+                <div>
+                    <div style="font-weight: 600;">刘怡</div>
+                    <div style="font-size: 0.85rem; color: var(--text-secondary);">国际政治学者 · 资深媒体人</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 核心金句 -->
+        <section class="golden-quotes glass animate-in">
+            <h2 class="quotes-title">💎 核心金句</h2>
+            <div class="quotes-grid">
+                <div class="quote-card style-1">
+                    <p class="quote-text">国际新闻是一种信息"地图"，你真正需要的是缩略图下方的"隐藏图层"</p>
+                    <p class="quote-source">— 关于方法论</p>
+                </div>
+                <div class="quote-card style-2">
+                    <p class="quote-text">用常识发现问题，用专业解释问题</p>
+                    <p class="quote-source">— 分析框架</p>
+                </div>
+                <div class="quote-card style-3">
+                    <p class="quote-text">你不是一座孤岛，你不是脱离国际环境在单独行事</p>
+                    <p class="quote-source">— 全球视野</p>
+                </div>
+                <div class="quote-card style-4">
+                    <p class="quote-text">AI产业花钱的能力远远超过它挣钱的能力</p>
+                    <p class="quote-source">— AI泡沫警示</p>
+                </div>
+                <div class="quote-card style-5">
+                    <p class="quote-text">对目前的泽连斯基来说，多撑一天都是胜利</p>
+                    <p class="quote-source">— 《经济学人》</p>
+                </div>
+                <div class="quote-card style-6">
+                    <p class="quote-text">理论分析是一种"创造性的才能"，是一门艺术，不是机械科学</p>
+                    <p class="quote-source">— 帕雷特</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section glass animate-in">
+            <h2 class="mindmap-title">🧠 国际时事分析思维导图</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">
+                    <span>理解世界<br>三步法</span>
+                </div>
+            </div>
+            <div class="mindmap-branches">
+                <div class="mindmap-branch branch-1">🗺️ 把新闻当"地图"</div>
+                <div class="mindmap-branch branch-2">🔍 用常识发现问题</div>
+                <div class="mindmap-branch branch-3">📚 用专业解释问题</div>
+                <div class="mindmap-branch branch-4">⏰ 时间维度定焦</div>
+                <div class="mindmap-branch branch-5">🌐 空间维度定焦</div>
+                <div class="mindmap-branch branch-6">🎯 融入现实需求</div>
+            </div>
+        </section>
+
+        <!-- 方法论板块 -->
+        <section class="section glass animate-in" id="methodology">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-icon" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));">📐</div>
+                    <div class="section-title-wrap">
+                        <h3 class="section-title">方法论：如何读懂国际新闻</h3>
+                        <p class="section-preview">将新闻当作信息地图，找到隐藏图层</p>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    
+                    <div class="infographic">
+                        <h4 class="infographic-title">📊 分析框架三步法</h4>
+                        <div class="flow-chart">
+                            <div class="flow-item flow-1">
+                                <div style="font-size: 1.5rem; margin-bottom: 8px;">🗺️</div>
+                                <div>把新闻当地图</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">找到隐藏图层</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-item flow-2">
+                                <div style="font-size: 1.5rem; margin-bottom: 8px;">🔍</div>
+                                <div>常识发现问题</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">提出关键疑问</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-item flow-3">
+                                <div style="font-size: 1.5rem; margin-bottom: 8px;">📚</div>
+                                <div>专业解释问题</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">理论工具梳理</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-item flow-4">
+                                <div style="font-size: 1.5rem; margin-bottom: 8px;">🎯</div>
+                                <div>融入现实需求</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">形成个人框架</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">🗺️ 核心概念：新闻即"地图"</h4>
+                        <p>国际新闻的<span class="highlight-red">5W原则</span>（Who、What、When、Where、Why）只是表层信息。真正有价值的是<span class="highlight-blue">"隐藏图层"</span>——那些决定事件走向的深层结构。</p>
+                        <div class="tags">
+                            <span class="tag tag-blue">比例尺：信息粗细程度</span>
+                            <span class="tag tag-purple">图层：不同维度信息</span>
+                            <span class="tag tag-green">坐标系：时空定位</span>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">💡 案例：法国养老金改革的"隐藏图层"</h4>
+                        <p>一则简单的新闻背后，至少包含三个关键图层：</p>
+                        <div class="data-grid">
+                            <div class="data-card">
+                                <div style="font-size: 2rem;">👴</div>
+                                <div class="data-label">老龄化危机</div>
+                            </div>
+                            <div class="data-card">
+                                <div style="font-size: 2rem;">💰</div>
+                                <div class="data-label">财政债务压力</div>
+                            </div>
+                            <div class="data-card">
+                                <div style="font-size: 2rem;">⚔️</div>
+                                <div class="data-label">议会党派博弈</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; color: var(--text-secondary);">调整比例尺后发现：<span class="highlight-orange">老龄化是全球现象</span>，从西欧到日韩再到中国，都面临类似挑战。</p>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">🔍 阿富汗采访的常识启示</h4>
+                        <p><span class="highlight-green">常识性提问</span>往往能戳破精心包装的叙事。当阿富汗副部长推销北部矿产时，一个简单的问题就揭示了真相：</p>
+                        <blockquote style="border-left: 3px solid var(--accent-orange); padding-left: 20px; margin: 20px 0; font-style: italic;">
+                            "如果安全环境足够好，为什么30多年来这些矿产依然没有启动开采？"
+                        </blockquote>
+                        <p><span class="highlight-red">没有回答也是一种回答。</span> 天然气、铜、有色金属都是全球需求稳定增长的商品，迟迟未开发只能说明：<span class="highlight-blue">开采成本划不来</span>。</p>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">🎯 定焦：时空坐标系</h4>
+                        <table class="compare-table">
+                            <thead>
+                                <tr>
+                                    <th>维度</th>
+                                    <th>含义</th>
+                                    <th>当前特征</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="highlight-blue">空间维度</span></td>
+                                    <td>国力和权势分布</td>
+                                    <td>美国无法再支配全球秩序，中国崛起至世界第二</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-purple">时间维度</span></td>
+                                    <td>时代趋势和行事规则</td>
+                                    <td>全球化遭遇挑战，地缘政治风险上升</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- AI泡沫板块 -->
+        <section class="section glass animate-in" id="ai-bubble">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-icon" style="background: linear-gradient(135deg, var(--accent-red), var(--accent-orange));">🤖</div>
+                    <div class="section-title-wrap">
+                        <h3 class="section-title">AI泡沫：硅谷的隐忧</h3>
+                        <p class="section-preview">投资过热、营收不足、金融风险三重隐患</p>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+
+                    <div class="data-grid">
+                        <div class="data-card">
+                            <div class="data-value">5万亿</div>
+                            <div class="data-label">英伟达市值（美元）</div>
+                        </div>
+                        <div class="data-card">
+                            <div class="data-value">400%</div>
+                            <div class="data-label">不到2.5年涨幅</div>
+                        </div>
+                        <div class="data-card">
+                            <div class="data-value">92%</div>
+                            <div class="data-label">美国GDP增长占比</div>
+                        </div>
+                        <div class="data-card">
+                            <div class="data-value">5%</div>
+                            <div class="data-label">OpenAI付费用户比例</div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">⚠️ 第一重风险：投资远超营收</h4>
+                        <p>AI概念股暴涨三年，但实际盈利增长<span class="highlight-red">几乎没有变化</span>。完全靠进一步的投资承诺把市值顶上去。</p>
+                        <div class="infographic" style="margin: 20px 0;">
+                            <div style="display: flex; justify-content: space-around; flex-wrap: wrap; gap: 20px;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2.5rem; color: var(--accent-red);">1.4万亿</div>
+                                    <div>OpenAI未来5年投资承诺</div>
+                                </div>
+                                <div style="font-size: 3rem; color: var(--text-secondary);">VS</div>
+                                <div style="text-align: center;">
+                                    <div style="font-size: 2.5rem; color: var(--accent-green);">130亿</div>
+                                    <div>OpenAI今年营收预期</div>
+                                </div>
+                            </div>
+                        </div>
+                        <p><span class="highlight-orange">麦肯锡报告</span>显示：80%已部署AI工具的企业发现，利润并没有明显增长。</p>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">🏗️ 第二重风险：数据中心的隐患</h4>
+                        <p>AI数据中心本质上是一种<span class="highlight-blue">"特殊房地产"</span>，但与普通地产有关键区别：</p>
+                        <table class="compare-table">
+                            <thead>
+                                <tr>
+                                    <th>特性</th>
+                                    <th>普通房地产</th>
+                                    <th>AI数据中心</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>维护周期</td>
+                                    <td>10-15年少修缮</td>
+                                    <td><span class="highlight-red">每年需更新</span></td>
+                                </tr>
+                                <tr>
+                                    <td>设备折旧</td>
+                                    <td>5年分摊</td>
+                                    <td><span class="highlight-red">2-3年更换</span></td>
+                                </tr>
+                                <tr>
+                                    <td>能耗规划</td>
+                                    <td>相对稳定</td>
+                                    <td><span class="highlight-red">年年变化</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <p style="margin-top: 15px;">缩短的折旧周期将导致AI企业净利润损失<span class="highlight-red">至少8%</span>。</p>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">💣 第三重风险：金融衍生品隐患</h4>
+                        <p>由于数据中心过于昂贵，科技巨头不得不借助<span class="highlight-purple">金融衍生品交易</span>分摊压力：</p>
+                        <ul style="margin: 15px 0; padding-left: 20px;">
+                            <li style="margin: 10px 0;">用未来租约做担保发行债券</li>
+                            <li style="margin: 10px 0;">私募机构打包成新的金融衍生品转卖</li>
+                            <li style="margin: 10px 0;">大型科技企业之间形成<span class="highlight-red">"循环"交易</span></li>
+                        </ul>
+                        <p><span class="highlight-orange">警示</span>：OpenAI、甲骨文、英伟达深度绑定，任何一个环节出问题，上下游都会被波及。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div>
+                                <div class="expert-name">Claude · 国际政经分析</div>
+                                <div class="expert-title">AI对本期内容的深度解读</div>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            <p>AI泡沫的核心悖论在于：<span class="highlight-blue">生产力革命的叙事与商业变现之间存在巨大时差</span>。</p>
+                            <p style="margin-top: 12px;">从投资逻辑看，当前AI产业呈现典型的<span class="highlight-orange">"基础设施先行"</span>特征——大量资本涌入芯片、数据中心等硬件层，而应用层营收尚未跟上。这与19世纪铁路泡沫、2000年互联网泡沫有结构性相似。</p>
+                            <p style="margin-top: 12px;">值得警惕的是<span class="highlight-red">金融化趋势</span>：当实体投资回报周期过长时，资本市场会发明各种衍生工具来"加速"回报，这往往是风险累积的开始。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 俄乌局势板块 -->
+        <section class="section glass animate-in" id="russia-ukraine">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));">⚔️</div>
+                    <div class="section-title-wrap">
+                        <h3 class="section-title">俄乌博弈：28点计划的真相</h3>
+                        <p class="section-preview">美国中心主义的和平方案为何难以落地</p>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+
+                    <div class="content-block">
+                        <h4 class="content-title">🎭 特朗普外交的独特模式</h4>
+                        <p>俄乌和平进程形成了一种<span class="highlight-purple">非常规模式</span>：</p>
+                        <div class="flow-chart">
+                            <div class="flow-item flow-1">
+                                <div>俄乌直接对话</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">只谈战俘、遗体等小事</div>
+                            </div>
+                            <span class="flow-arrow">+</span>
+                            <div class="flow-item flow-3">
+                                <div>美俄单独密谈</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">敲定核心方案</div>
+                            </div>
+                            <span class="flow-arrow">→</span>
+                            <div class="flow-item flow-2">
+                                <div>强压乌克兰接受</div>
+                                <div style="font-size: 0.8rem; color: var(--text-secondary);">美国最大化枢纽作用</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">📋 28点计划核心条款</h4>
+                        <table class="compare-table">
+                            <thead>
+                                <tr>
+                                    <th>领域</th>
+                                    <th>对乌克兰的要求</th>
+                                    <th>对俄罗斯的要求</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="highlight-red">领土</span></td>
+                                    <td>放弃东部三州，失去近1/4领土</td>
+                                    <td><span class="highlight-green">无需割让任何领土</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-blue">军事</span></td>
+                                    <td>裁军至60万，禁止远程武器</td>
+                                    <td><span class="highlight-green">无需削减军备</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-purple">政治</span></td>
+                                    <td>100天内大选，俄语为第二官方语言</td>
+                                    <td><span class="highlight-green">重返八国集团</span></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-orange">经济</span></td>
+                                    <td>欧洲出资1000亿美元重建</td>
+                                    <td><span class="highlight-green">解除制裁，归还冻结资产</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">🔥 泽连斯基的三重困境</h4>
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-date">2025年11月10日</div>
+                                <p><span class="highlight-red">电力贪腐案</span>爆发：国家核电公司向供应商收取10-15%回扣，涉及前副总理、两位部长，金额超1亿美元</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2025年11月19日</div>
+                                <p><span class="highlight-orange">28点计划泄露</span>：文本疑似俄方起草后翻译成英语，舆论哗然</p>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-date">2025年11月23日</div>
+                                <p><span class="highlight-blue">日内瓦会谈</span>：鲁比奥介入，28点缩减为19点，但核心逻辑未变</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">⚖️ 战场实况 vs 谈判方案</h4>
+                        <p>尽管乌克兰无力单独收复失地，但<span class="highlight-green">俄罗斯军事上同样没占便宜</span>：</p>
+                        <div class="data-grid">
+                            <div class="data-card">
+                                <div class="data-value">0.4%</div>
+                                <div class="data-label">2025年夏季攻势<br>占领乌领土比例</div>
+                            </div>
+                            <div class="data-card">
+                                <div class="data-value">4个月</div>
+                                <div class="data-label">攻势持续时间</div>
+                            </div>
+                            <div class="data-card">
+                                <div class="data-value">3年</div>
+                                <div class="data-label">前线僵局持续</div>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px;"><span class="highlight-purple">关键洞察</span>：乌克兰实际控制的领土，多于28点计划愿意留给它的部分。这是泽连斯基的谈判筹码。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div>
+                                <div class="expert-name">Claude · 国际政经分析</div>
+                                <div class="expert-title">AI对本期内容的深度解读</div>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            <p>28点计划暴露了特朗普外交的<span class="highlight-orange">核心逻辑</span>：以最小成本收回沉没投资，同时最大化个人政治收益。</p>
+                            <p style="margin-top: 12px;">从博弈论视角看，俄乌双方都找到了<span class="highlight-blue">"拿捏"特朗普的技巧</span>——乌方利用其对"失败者"标签的恐惧，俄方利用其对首脑外交的渴望。这导致谈判效率极低。</p>
+                            <p style="margin-top: 12px;"><span class="highlight-red">核心判断</span>：2025年内和平无望，战事将持续至2026年。冬季不适合地面进攻，双方都将继续"边打边谈"策略。</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家总评板块 -->
+        <section class="section glass animate-in" id="expert">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-header-left">
+                    <div class="section-icon" style="background: linear-gradient(135deg, var(--accent-gold), var(--accent-orange));">🎯</div>
+                    <div class="section-title-wrap">
+                        <h3 class="section-title">专家视角：连接个人与世界</h3>
+                        <p class="section-preview">将国际大势与现实需求相融合</p>
+                    </div>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+
+                    <div class="content-block">
+                        <h4 class="content-title">🌐 全球化时代的个人定位</h4>
+                        <p>刘怡的核心观点可以总结为一个<span class="highlight-gold">行动指南</span>：</p>
+                        <blockquote style="border-left: 3px solid var(--accent-gold); padding-left: 20px; margin: 20px 0; font-size: 1.1rem;">
+                            "你从事的工作、身处的行业，对你个人来说就是100%。但它们同时也是跨国产业链上的一环，是会被整体图景影响的一个局部。"
+                        </blockquote>
+                    </div>
+
+                    <div class="infographic">
+                        <h4 class="infographic-title">📈 影响传导路径</h4>
+                        <div class="flow-chart">
+                            <div class="flow-item flow-1">
+                                <div style="font-size: 1.3rem;">📜</div>
+                                <div>国外立法</div>
+                            </div>
+                            <div class="flow-item flow-2">
+                                <div style="font-size: 1.3rem;">🏛️</div>
+                                <div>政府更迭</div>
+                            </div>
+                            <div class="flow-item flow-3">
+                                <div style="font-size: 1.3rem;">⚔️</div>
+                                <div>军事冲突</div>
+                            </div>
+                            <div class="flow-item flow-4">
+                                <div style="font-size: 1.3rem;">🌪️</div>
+                                <div>自然灾害</div>
+                            </div>
+                        </div>
+                        <p style="text-align: center; margin-top: 20px; color: var(--text-secondary);">
+                            影响传导到个人：可能是几天，也可能是几年的周期
+                        </p>
+                    </div>
+
+                    <div class="content-block">
+                        <h4 class="content-title">💼 印度投资案例的启示</h4>
+                        <p>2018年，一位广东化工企业家委托刘怡做印度市场调研。关键发现：</p>
+                        <div style="background: rgba(255, 165, 2, 0.1); border-radius: 12px; padding: 20px; margin: 15px 0;">
+                            <p><span class="highlight-orange">莫迪的执政风格</span>：重视引进外资，但更重视保护印度本地企业。习惯使用<span class="highlight-red">突击式改革</span>，市场震荡惊人。</p>
+                        </div>
+                        <p><span class="highlight-green">结果</span>：企业家放弃投资计划。事后证明，莫迪后续动作依然激烈，印度外资净流入显著下滑。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div>
+                                <div class="expert-name">Claude · 综合评价</div>
+                                <div class="expert-title">对刘怡《国际参考》方法论的深度分析</div>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            <p><strong>一、方法论价值</strong></p>
+                            <p>刘怡提出的"新闻地图论"是一个<span class="highlight-blue">优雅的认知框架</span>。它解决了普通人面对国际新闻时的核心困惑：信息不是不够，而是"比例尺"和"图层"与个人需求不匹配。</p>
+                            
+                            <p style="margin-top: 15px;"><strong>二、AI泡沫的深层含义</strong></p>
+                            <p>从宏观角度看，AI泡沫反映的是<span class="highlight-orange">资本对增长叙事的渴求</span>。在全球化逆转、传统增长引擎失速的背景下，AI成为"最后的增长故事"。这解释了为何投资者明知营收不足，仍愿意追捧——他们买的是<span class="highlight-purple">对未来的期权</span>。</p>
+                            
+                            <p style="margin-top: 15px;"><strong>三、俄乌局势的结构性困境</strong></p>
+                            <p>28点计划的失败几乎是必然的。它违背了<span class="highlight-red">基本的谈判原则</span>：在战场僵局中，要求一方做出超越其实际损失的让步。更深层的问题是：特朗普试图用"交易"逻辑解决"价值"冲突，注定事倍功半。</p>
+                            
+                            <p style="margin-top: 15px;"><strong>四、对中国读者的启示</strong></p>
+                            <p>1) <span class="highlight-green">老龄化</span>是中国也将面临的挑战，法国案例值得参照</p>
+                            <p>2) <span class="highlight-blue">AI投资热</span>的风险评估同样适用于中国科技产业</p>
+                            <p>3) <span class="highlight-purple">地缘政治风险</span>正在重塑全球供应链，企业需要重新审视"走出去"战略</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer>
+            <p style="font-size: 1.2rem;">🌍 放眼世界，提前理解重大变化</p>
+            <p>内容来源：《国际参考》刘怡 | 专家评论：Claude AI</p>
+            <p style="font-size: 0.85rem; margin-top: 20px;">Generated with ❤️ by Claude</p>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        // 展开/折叠单个板块
+        function toggleSection(header) {
+            const section = header.parentElement;
+            section.classList.toggle('expanded');
+        }
+
+        // 展开全部
+        function expandAll() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.add('expanded');
+            });
+        }
+
+        // 折叠全部
+        function collapseAll() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('expanded');
+            });
+        }
+
+        // 页面加载时展开所有板块
+        document.addEventListener('DOMContentLoaded', () => {
+            // 默认展开所有板块
+            expandAll();
+            
+            // 添加滚动动画
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(30px)';
+                section.style.transition = 'all 0.6s ease';
+                observer.observe(section);
+            });
+
+            // 导航高亮
+            const navLinks = document.querySelectorAll('.nav-toc a');
+            const sections = document.querySelectorAll('.section[id]');
+
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 200) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

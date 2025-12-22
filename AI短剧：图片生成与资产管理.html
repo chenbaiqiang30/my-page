@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI短剧训练营 · 图片生成与资产管理 | 大鹏讲座精华</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --success: #4facfe;
+            --warning: #fa709a;
+            --dark: #1a1a2e;
+            --light: #f8f9fa;
+            --glass: rgba(255, 255, 255, 0.15);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --highlight-red: #ff6b6b;
+            --highlight-blue: #4dabf7;
+            --highlight-green: #51cf66;
+            --highlight-gold: #ffd43b;
+        }
+
+        [data-theme="dark"] {
+            --text-primary: #f8f9fa;
+            --text-secondary: #adb5bd;
+            --light: #1a1a2e;
+            --glass: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部样式 */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: shimmer 15s infinite linear;
+        }
+
+        @keyframes shimmer {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--warning), var(--accent));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 2px 2px 20px rgba(0,0,0,0.2);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 25px;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            color: rgba(255,255,255,0.8);
+            font-size: 14px;
+        }
+
+        .meta-info span {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 控制栏 */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: rgba(255,255,255,0.25);
+            transform: translateY(-2px);
+        }
+
+        /* 金句卡片区 */
+        .golden-quotes {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .golden-quotes h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .quote-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 80px;
+            color: rgba(255,255,255,0.1);
+            font-family: Georgia, serif;
+        }
+
+        .quote-card p {
+            color: white;
+            font-size: 1rem;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            margin-top: 15px;
+            color: var(--highlight-gold);
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        /* 思维导图区 */
+        .mindmap-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+
+        .mindmap-section h2 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            overflow-x: auto;
+        }
+
+        .mindmap-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .mindmap-root {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            margin-bottom: 30px;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .branch-connector {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--primary), transparent);
+        }
+
+        .branch-node {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+        }
+
+        .branch-leaves {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .leaf {
+            background: rgba(255,255,255,0.08);
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: rgba(255,255,255,0.9);
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+        }
+
+        /* 可折叠板块 */
+        .collapsible-section {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .collapsible-title h3 {
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .preview-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 8px;
+            max-width: 600px;
+        }
+
+        .toggle-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            color: white;
+            font-size: 20px;
+        }
+
+        .collapsible-section.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .collapsible-section.open .collapsible-content {
+            max-height: 5000px;
+        }
+
+        .content-inner {
+            padding: 0 30px 30px 30px;
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .content-card h4 {
+            color: var(--highlight-gold);
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-card p, .content-card li {
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 12px;
+        }
+
+        .content-card ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .content-card li {
+            padding-left: 25px;
+            position: relative;
+        }
+
+        .content-card li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+        }
+
+        /* 高亮标记 */
+        .hl-red {
+            color: var(--highlight-red);
+            font-weight: 600;
+        }
+
+        .hl-blue {
+            color: var(--highlight-blue);
+            font-weight: 600;
+        }
+
+        .hl-green {
+            color: var(--highlight-green);
+            font-weight: 600;
+        }
+
+        .hl-gold {
+            color: var(--highlight-gold);
+            font-weight: 600;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(240, 147, 251, 0.2));
+            border-left: 4px solid var(--accent);
+            border-radius: 0 16px 16px 0;
+            padding: 25px;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .expert-comment::before {
+            content: '💡 专家洞察';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .expert-comment p {
+            color: rgba(255,255,255,0.95);
+            font-style: italic;
+            line-height: 1.9;
+        }
+
+        /* 信息图表 */
+        .infographic {
+            background: rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 20px 0;
+        }
+
+        .infographic h4 {
+            color: white;
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .ranking-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+
+        .ranking-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(10px);
+        }
+
+        .rank-badge {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffb700); }
+        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); }
+        .rank-3 { background: linear-gradient(135deg, #cd7f32, #b87333); }
+        .rank-4 { background: linear-gradient(135deg, var(--primary), var(--secondary)); }
+        .rank-5 { background: linear-gradient(135deg, #636e72, #4a4a4a); }
+
+        .rank-info {
+            flex: 1;
+        }
+
+        .rank-title {
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .rank-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+            margin-top: 5px;
+        }
+
+        .rank-score {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .score-label {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+
+        .score-value {
+            color: var(--highlight-gold);
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        /* 工具对比图 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .tool-card {
+            background: rgba(255,255,255,0.08);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .tool-card:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+
+        .tool-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .tool-name {
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .tool-tag {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .tool-desc {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+
+        /* 流程图 */
+        .workflow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+
+        .workflow-step {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-box {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 15px 25px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .step-box:hover {
+            background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.15));
+        }
+
+        .step-arrow {
+            color: var(--accent);
+            font-size: 24px;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .footer h3 {
+            color: white;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+        }
+
+        .footer p {
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+
+        .footer-link {
+            background: rgba(255,255,255,0.1);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 25px;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-link:hover {
+            background: rgba(255,255,255,0.25);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .meta-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .mindmap-branches {
+                flex-direction: column;
+            }
+
+            .mindmap-branch {
+                width: 100%;
+            }
+
+            .ranking-item {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .rank-score {
+                align-items: center;
+            }
+
+            .workflow {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .step-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent);
+            border-radius: 10px;
+        }
+
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .collapsible-content {
+                max-height: none !important;
+            }
+
+            .controls {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-content">
+                <span class="badge">🎬 WaytoAGI 训练营第三期</span>
+                <h1>AI短剧：图片生成与资产管理</h1>
+                <p class="subtitle">从0到1掌握AI短剧制作全流程 · 解锁商业化密码</p>
+                <div class="meta-info">
+                    <span>👨‍🏫 讲师：大鹏</span>
+                    <span>📅 2025年12月12日</span>
+                    <span>⏱️ 约3小时精华内容</span>
+                    <span>👥 300+学员参与</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 控制栏 -->
+        <div class="controls">
+            <button class="control-btn" onclick="toggleAllSections()">
+                <span>📂</span> 展开/收起全部
+            </button>
+            <button class="control-btn" onclick="toggleTheme()">
+                <span>🌓</span> 切换主题
+            </button>
+            <button class="control-btn" onclick="window.print()">
+                <span>🖨️</span> 打印页面
+            </button>
+        </div>
+
+        <!-- 金句区 -->
+        <section class="golden-quotes">
+            <h2>💎 课程金句</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p>短剧是<strong>只有结构没有剧情</strong>的，我们看到的剧情全是为结构服务的。取代剧情的是<strong>Game点</strong>。</p>
+                    <div class="quote-author">— 关于短剧本质</div>
+                </div>
+                <div class="quote-card">
+                    <p>短剧吊的是<strong>负面情绪</strong>，因为负面情绪比较重。得到一个苹果的快乐，肯定不及失去一个苹果的痛苦。</p>
+                    <div class="quote-author">— 关于用户心理</div>
+                </div>
+                <div class="quote-card">
+                    <p>AI是<strong>博士后+笨蛋</strong>的组合：什么都知道，但你不说明白，他就不给你干。</p>
+                    <div class="quote-author">— 关于AI沟通</div>
+                </div>
+                <div class="quote-card">
+                    <p>剪辑老师在短剧里<strong>那相当之夯</strong>，一个月保守一伸手，一年干六七十个，狠点干100个。</p>
+                    <div class="quote-author">— 关于岗位价值</div>
+                </div>
+                <div class="quote-card">
+                    <p>学习没有捷径，多试多用。但<strong>邪修有捷径</strong>，只是伤身——伤钱包。</p>
+                    <div class="quote-author">— 关于学习方法</div>
+                </div>
+                <div class="quote-card">
+                    <p>好的短剧角色名，一听名字就知道他是什么人——<strong>玛丽苏、王大壮、柳如烟</strong>，这是高明，不是low。</p>
+                    <div class="quote-author">— 关于角色设计</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section">
+            <h2>🧠 核心知识图谱</h2>
+            <div class="mindmap">
+                <div class="mindmap-tree">
+                    <div class="mindmap-root">AI短剧制作体系</div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">📝 剧本层</div>
+                            <div class="branch-leaves">
+                                <div class="leaf">Game点/荒唐规则点</div>
+                                <div class="leaf">脸谱化人物设计</div>
+                                <div class="leaf">每集起承转合</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">🎬 导演层</div>
+                            <div class="branch-leaves">
+                                <div class="leaf">分镜脚本设计</div>
+                                <div class="leaf">主分镜→辅分镜</div>
+                                <div class="leaf">景别与构图</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">🎨 美术层</div>
+                            <div class="branch-leaves">
+                                <div class="leaf">艺术风格定调</div>
+                                <div class="leaf">角色三视图</div>
+                                <div class="leaf">场景/道具资产</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">🛠️ 技术层</div>
+                            <div class="branch-leaves">
+                                <div class="leaf">即梦/海螺生图</div>
+                                <div class="leaf">Nano Banana改图</div>
+                                <div class="leaf">视频生成与剪辑</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 短剧 vs 漫剧 -->
+        <section class="collapsible-section open">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">🎭</div>
+                    <div>
+                        <h3>短剧与漫剧的本质区别</h3>
+                        <p class="preview-text">理解"三短"法则与Game点核心——这是短剧商业化的底层逻辑</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>📊 核心差异对比</h4>
+                        <div class="infographic">
+                            <table style="width: 100%; color: rgba(255,255,255,0.9); border-collapse: collapse;">
+                                <tr style="background: rgba(255,255,255,0.1);">
+                                    <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--accent);">维度</th>
+                                    <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--accent);">短剧</th>
+                                    <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--accent);">漫剧/连续剧</th>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 15px;">时长</td>
+                                    <td style="padding: 15px;"><span class="hl-red">每集1-2分钟</span>，总计50-100分钟</td>
+                                    <td style="padding: 15px;">每集20-45分钟，可达数百集</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 15px;">核心驱动</td>
+                                    <td style="padding: 15px;"><span class="hl-gold">Game点（荒唐规则点）</span></td>
+                                    <td style="padding: 15px;">完整叙事线与人物弧光</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 15px;">人物设计</td>
+                                    <td style="padding: 15px;"><span class="hl-blue">脸谱化</span>，名字即性格</td>
+                                    <td style="padding: 15px;">立体化，有成长变化</td>
+                                </tr>
+                                <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                    <td style="padding: 15px;">情节结构</td>
+                                    <td style="padding: 15px;"><span class="hl-green">每集完整起承转合</span></td>
+                                    <td style="padding: 15px;">跨集铺垫，慢慢展开</td>
+                                </tr>
+                                <tr>
+                                    <td style="padding: 15px;">情绪策略</td>
+                                    <td style="padding: 15px;">调动<span class="hl-red">负面情绪</span>后释放</td>
+                                    <td style="padding: 15px;">情感起伏自然递进</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>🎯 什么是Game点？</h4>
+                        <p><span class="hl-gold">Game点</span>是短剧的灵魂，也叫<span class="hl-blue">荒唐规则点</span>。它是一个打破常规的设定，让观众产生"如果是我该多爽"的代入感。</p>
+                        <ul>
+                            <li><strong>舔狗系统</strong>：每舔一次银行账户多加一个0</li>
+                            <li><strong>言出法随</strong>：用汉语说出什么就实现什么</li>
+                            <li><strong>穿越系统</strong>：带着现代科技/知识回到古代</li>
+                            <li><strong>秒杀设定</strong>：对特定等级的对手一击必杀</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><span class="hl-red">关键洞察</span>：一个好的Game点可以反复用、升级用，剧情都是为它服务的。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>短剧本质上是一种<strong>情绪消费品</strong>，而非叙事艺术。它精准击中打工人的痛点——被骂、被拒、被忽视——然后提供一个"爽感出口"。Game点设计的核心是找到<strong>大众化的负面情绪</strong>，再配上<strong>意料之外的逆袭方式</strong>。这就是为什么"系统流"大行其道：系统本身就是让荒唐规则合理化的最简单载体。从商业角度看，一个好的Game点价值可能超过整个制作团队，因为它决定了用户留存的第一道门槛。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 制作流程 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">⚙️</div>
+                    <div>
+                        <h3>AI短剧制作完整流程</h3>
+                        <p class="preview-text">从小说/Game点到成片的7大环节，每个岗位的职责与价值</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>🔄 标准制作流程</h4>
+                        <div class="workflow">
+                            <div class="workflow-step">
+                                <div class="step-box">📖 小说/Game点</div>
+                                <span class="step-arrow">→</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-box">📝 剧本</div>
+                                <span class="step-arrow">→</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-box">🎬 分镜脚本</div>
+                                <span class="step-arrow">→</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-box">🎨 艺术风格</div>
+                                <span class="step-arrow">→</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-box">🖼️ 资产生成</div>
+                                <span class="step-arrow">→</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-box">📹 视频生成</div>
+                                <span class="step-arrow">→</span>
+                            </div>
+                            <div class="workflow-step">
+                                <div class="step-box">✂️ 剪辑成片</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>👥 岗位职责说明</h4>
+                        <ul>
+                            <li><span class="hl-gold">剧本老师</span>：将小说/Game点扩展为完整剧本，需要"阴暗"的脑洞</li>
+                            <li><span class="hl-blue">导演</span>：设计分镜脚本，决定镜头语言，现场最大的"PUA大师"</li>
+                            <li><span class="hl-green">艺术总监</span>：定调整体美术风格，在短剧中存在感较低</li>
+                            <li><span class="hl-red">图片生成师</span>：生成角色/场景/道具资产，技术更新最快的岗位</li>
+                            <li><span class="hl-gold">视频生成师</span>：将分镜图转为视频片段，需要大量抽卡</li>
+                            <li><span class="hl-blue">剪辑师</span>：<strong>最稀缺岗位</strong>，决定最终节奏与观感</li>
+                        </ul>
+                    </div>
+
+                    <div class="infographic">
+                        <h4>📈 岗位"从夯到拉"排行榜</h4>
+                        <div class="ranking-list">
+                            <div class="ranking-item">
+                                <div class="rank-badge rank-1">1</div>
+                                <div class="rank-info">
+                                    <div class="rank-title">剪辑师 ✂️</div>
+                                    <div class="rank-desc">月入5W起，极度稀缺，AI难以取代</div>
+                                </div>
+                                <div class="rank-score">
+                                    <div class="score-label">夯度</div>
+                                    <div class="score-value">⭐⭐⭐⭐⭐</div>
+                                </div>
+                            </div>
+                            <div class="ranking-item">
+                                <div class="rank-badge rank-2">2</div>
+                                <div class="rank-info">
+                                    <div class="rank-title">剧本老师 📝</div>
+                                    <div class="rank-desc">千金易得一本难求，好Game点可卖钱</div>
+                                </div>
+                                <div class="rank-score">
+                                    <div class="score-label">夯度</div>
+                                    <div class="score-value">⭐⭐⭐⭐⭐</div>
+                                </div>
+                            </div>
+                            <div class="ranking-item">
+                                <div class="rank-badge rank-3">3</div>
+                                <div class="rank-info">
+                                    <div class="rank-title">导演 🎬</div>
+                                    <div class="rank-desc">AI导演稀缺，传统导演转型后"真香"</div>
+                                </div>
+                                <div class="rank-score">
+                                    <div class="score-label">夯度</div>
+                                    <div class="score-value">⭐⭐⭐⭐</div>
+                                </div>
+                            </div>
+                            <div class="ranking-item">
+                                <div class="rank-badge rank-4">4</div>
+                                <div class="rank-info">
+                                    <div class="rank-title">图片生成师 🖼️</div>
+                                    <div class="rank-desc">人上人，但需终身学习，技术迭代太快</div>
+                                </div>
+                                <div class="rank-score">
+                                    <div class="score-label">夯度</div>
+                                    <div class="score-value">⭐⭐⭐</div>
+                                </div>
+                            </div>
+                            <div class="ranking-item">
+                                <div class="rank-badge rank-5">5</div>
+                                <div class="rank-info">
+                                    <div class="rank-title">视频生成师 📹</div>
+                                    <div class="rank-desc">NPC级别，大量抽卡跑批，费眼睛</div>
+                                </div>
+                                <div class="rank-score">
+                                    <div class="score-label">夯度</div>
+                                    <div class="score-value">⭐⭐</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>这个排行揭示了一个关键洞察：<strong>越靠近"创意"和"决策"的岗位越有价值</strong>。剪辑师之所以排第一，是因为他掌握了"蒙太奇的艺术"——同样的素材，不同的剪辑顺序讲述的是完全不同的故事。而视频生成师之所以垫底，是因为这个岗位本质上是"抽卡工"，技术门槛低且容易被工具进步淘汰。给想入行的朋友的建议：先学剪辑思维，再学生成技术。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 工具指南 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">🛠️</div>
+                    <div>
+                        <h3>AI工具选型指南</h3>
+                        <p class="preview-text">6大主流工具的特点、定位与使用策略——省钱又高效</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>🏆 工具矩阵</h4>
+                        <div class="tools-grid">
+                            <div class="tool-card">
+                                <div class="tool-icon">👑</div>
+                                <div class="tool-name">即梦</div>
+                                <div class="tool-tag">打工皇帝</div>
+                                <div class="tool-desc">便宜好用，功能全面，Agent模式强大，主力工具</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🕺</div>
+                                <div class="tool-name">海螺</div>
+                                <div class="tool-tag">动作指导</div>
+                                <div class="tool-desc">免费，动作生成好，适合需要动作戏的场景</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🎭</div>
+                                <div class="tool-name">Nano Banana Pro</div>
+                                <div class="tool-tag">改图王者</div>
+                                <div class="tool-desc">人物一致性神器，Edit能力超强，必备工具</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">🎨</div>
+                                <div class="tool-name">Midjourney</div>
+                                <div class="tool-tag">艺术家</div>
+                                <div class="tool-desc">画面最美，但不听话，可控性差，适合找灵感</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">💼</div>
+                                <div class="tool-name">可灵</div>
+                                <div class="tool-tag">金领高管</div>
+                                <div class="tool-desc">曾经的王者，涨价后性价比骤降，偶尔用</div>
+                            </div>
+                            <div class="tool-card">
+                                <div class="tool-icon">⚡</div>
+                                <div class="tool-name">Vidu</div>
+                                <div class="tool-tag">多参霸主</div>
+                                <div class="tool-desc">视频多参流神器，但费分，属于"邪修"</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>💰 省钱策略</h4>
+                        <ul>
+                            <li><span class="hl-gold">即梦</span>：有活才充，一次充满，免费功能先榨干</li>
+                            <li><span class="hl-blue">海螺</span>：完全免费，能白嫖尽量白嫖</li>
+                            <li><span class="hl-green">Midjourney/可灵</span>：最低档包年，保底即可</li>
+                            <li><span class="hl-red">SUNO音乐</span>：先充值再生成才有版权，顺序不能错！</li>
+                        </ul>
+                        <p style="margin-top: 15px;">大鹏建议：<strong>第一次用AI挣到1万后，拿3千给各种AI充钱</strong>。在此之前，能省则省。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>工具选型的核心原则是<strong>"用场景定工具，而非用工具定场景"</strong>。即梦是日常主力，因为它性价比最高且功能全面；Nano Banana Pro是保持人物一致性的"作弊器"，以前需要训练LoRA才能做到的事，现在一键搞定；而Midjourney虽然不听话，但它的艺术性可以用"跳与借"的方式为我所用。记住：不要沉迷技术，技术十天一更新，但制作流程和思维方式是通用的。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 提示词心法 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">✍️</div>
+                    <div>
+                        <h3>提示词写作心法</h3>
+                        <p class="preview-text">与"博士后笨蛋"沟通的正确方式——从小白到高手的进阶路径</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>🧠 AI沟通心法</h4>
+                        <p>把AI当成一个<span class="hl-gold">学历很高的笨蛋</span>——博士后+笨蛋的组合：</p>
+                        <ul>
+                            <li>它什么都知道，但你不说明白，它就不给你干</li>
+                            <li>让它擦桌子，它只擦桌子，不会顺便扫地</li>
+                            <li>你说"画个人"，不说"画鞋"，它可能就把脚砍了</li>
+                            <li>你说"每张不一样"，它按它的理解给你"不一样"</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>📝 提示词结构</h4>
+                        <div class="workflow" style="margin: 20px 0;">
+                            <div class="step-box">主体</div>
+                            <span class="step-arrow">+</span>
+                            <div class="step-box">细节</div>
+                            <span class="step-arrow">+</span>
+                            <div class="step-box">环境</div>
+                            <span class="step-arrow">+</span>
+                            <div class="step-box">风格</div>
+                            <span class="step-arrow">+</span>
+                            <div class="step-box">构图</div>
+                            <span class="step-arrow">+</span>
+                            <div class="step-box">色彩</div>
+                        </div>
+                        <p>示例：<span class="hl-blue">粉红色和蓝色相间毛发的大熊猫</span>（主体+细节），在<span class="hl-green">城市大楼顶的竹林</span>（环境），<span class="hl-gold">梵高油画风格</span>（风格），<span class="hl-red">打破常规构图</span>（构图），<span class="hl-blue">低饱和</span>（色彩）</p>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>🎯 进阶建议</h4>
+                        <ul>
+                            <li><strong>前期</strong>：想画什么就写什么，不知道就问AI</li>
+                            <li><strong>中期</strong>：从短到长，一条条迭代优化</li>
+                            <li><strong>后期</strong>：脑子里要有画面，写提示词时能"看见"成品</li>
+                            <li><strong>禁忌</strong>：前30条提示词自己写，不要让AI代写，否则越写越笨</li>
+                        </ul>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>提示词写作有一个反直觉的地方：<strong>越具体的细节，AI执行得越好；越抽象的概念，AI理解得越偏</strong>。比如"过眉毛的刘海"比"好看的发型"更有效。另一个关键是不要期待一次成功——大鹏建议"换两三批再定"，这不是挑剔，而是在从0到1的创作中必须通过迭代找到感觉。记住：你是在跟一个"什么都知道但缺乏主动性"的合作者对话，你的job就是把脑子里的画面翻译成它能执行的指令。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 角色设计进阶 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">🎨</div>
+                    <div>
+                        <h3>角色设计进阶方法</h3>
+                        <p class="preview-text">用AI构建理论→提示词→角色卡的完整闭环</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>🔬 理论驱动法</h4>
+                        <p>核心思路：<span class="hl-gold">用AI帮我们找到理论基础 → 把理论变成提示词 → 落地为角色卡</span></p>
+                        <ol style="color: rgba(255,255,255,0.9); padding-left: 20px;">
+                            <li style="margin-bottom: 10px;">问AI："我在设计AI短剧人物角色外形时，应该收集哪些数据？有哪些理论支撑？"</li>
+                            <li style="margin-bottom: 10px;">AI会告诉你：比例设定、三视图、表情设定、姿态设定、画面风格</li>
+                            <li style="margin-bottom: 10px;">将这些理论转化为提示词结构</li>
+                            <li>用Agent模式一次性生成完整角色卡</li>
+                        </ol>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>📋 角色卡模板</h4>
+                        <ul>
+                            <li><span class="hl-gold">身份定位</span>：角色在故事中的位置与功能</li>
+                            <li><span class="hl-blue">性格特点</span>：3-5个关键性格词</li>
+                            <li><span class="hl-green">外形描述</span>：面部特征、身材、发型等</li>
+                            <li><span class="hl-red">服装设定</span>：日常装、战斗装等</li>
+                            <li><span class="hl-gold">标志性道具</span>：随身携带的特色物品</li>
+                            <li><span class="hl-blue">经典金句</span>：体现人物性格的台词</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>🛠️ 推荐工具组合</h4>
+                        <ul>
+                            <li><strong>Lovart</strong>：纯Agent模式，对话式生成，速度最快</li>
+                            <li><strong>海螺</strong>：免费，适合预算有限时使用</li>
+                            <li><strong>Jaaz</strong>：三视图效果好，保持一致性强</li>
+                        </ul>
+                        <p style="margin-top: 15px;">统一使用<span class="hl-gold">Nano Banana Pro</span>模型，保证风格一致性。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>这套方法的精髓在于<strong>"先理论后实践"</strong>。很多人上来就写提示词，结果东一榔头西一棒子。正确的做法是先问AI"专业的做法是什么"，让AI帮你建立框架，然后用这个框架去指导创作。这样做有两个好处：一是避免遗漏关键要素（比如三视图、表情设定），二是让你的提示词看起来很专业——出去跟人聊的时候可以"装一下"。记住大鹏说的：技术只是活，流程和思路才是核心竞争力。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 邪修秘籍 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">🔮</div>
+                    <div>
+                        <h3>邪修秘籍：平台跳与借</h3>
+                        <p class="preview-text">商业级出图的"捷径"——如何借力Midjourney的艺术性</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>⚡ 核心原理</h4>
+                        <p><span class="hl-red">邪修有捷径，但伤身（钱包）</span></p>
+                        <p>利用各平台的长处，取长补短：</p>
+                        <ul>
+                            <li><strong>即梦</strong>：找灵感，看别人的图+提示词</li>
+                            <li><strong>Midjourney</strong>：用Describe功能反推提示词，生成高质感图</li>
+                            <li><strong>Nano Banana Pro</strong>：保持一致性，批量出图</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>🎯 操作流程</h4>
+                        <ol style="color: rgba(255,255,255,0.9); padding-left: 20px;">
+                            <li style="margin-bottom: 12px;">在<span class="hl-gold">即梦首页</span>搜索目标风格（如"短剧男主3D"），找到喜欢的图</li>
+                            <li style="margin-bottom: 12px;">如果有提示词直接复制；如果没有，截图保存</li>
+                            <li style="margin-bottom: 12px;">打开<span class="hl-blue">Midjourney</span>，使用<strong>Describe</strong>功能反推提示词</li>
+                            <li style="margin-bottom: 12px;">用反推的提示词在MJ中生成4张图，选最佳</li>
+                            <li>将MJ出的图喂给<span class="hl-green">Nano Banana Pro</span>，批量生成三视图/多姿势</li>
+                        </ol>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>💎 价值差异</h4>
+                        <p>同一个角色：</p>
+                        <ul>
+                            <li>普通即梦直出：值 <span class="hl-blue">10块</span></li>
+                            <li>MJ加持后的版本：值 <span class="hl-gold">100块</span></li>
+                        </ul>
+                        <p style="margin-top: 15px;">差异在于：<span class="hl-red">光影质感、细节层次、艺术氛围</span>——这就是为什么有些漫剧质感好，有些质感差。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>这套"跳与借"的方法本质上是<strong>让不听话的艺术家为我所用</strong>。Midjourney的问题是可控性差，但它的艺术性是真的强。通过即梦找方向、MJ做美化、Banana保一致这个三段式流程，可以兼得效率与质量。但请注意这是"邪修"——一旦习惯了MJ的质感，你会看不上普通出图，然后就开始烧钱了。大鹏的建议是：商单用这套流程，日常练习还是老老实实用即梦。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 版权与商业化 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">⚖️</div>
+                    <div>
+                        <h3>版权与商业化注意事项</h3>
+                        <p class="preview-text">个人与公司的不同策略——什么时候该认真，什么时候可以"灵活"</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>👤 个人创作者</h4>
+                        <ul>
+                            <li>自媒体涨粉、发抖音等：<span class="hl-green">版权问题不大</span></li>
+                            <li>没挣到大钱之前：能省则省，别太考虑版权</li>
+                            <li>恶搞、二创：一般不会被追究</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>🏢 公司/商业行为</h4>
+                        <ul>
+                            <li>做成产品、短剧、漫剧：<span class="hl-red">必须注意版权！</span></li>
+                            <li>字体版权：曾有公司因商用字体被索赔10万</li>
+                            <li>音乐版权：<span class="hl-gold">SUNO必须先充值再生成才有版权</span></li>
+                            <li>建议：全用AI生成（字体、声音、音乐），规避版权风险</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>📚 IP与剧本分级</h4>
+                        <p>漫剧/短剧剧本按IP价值分级：S本 > A本 > B本 > C本</p>
+                        <ul>
+                            <li><span class="hl-gold">S级</span>：凡人修仙传、十日终焉、三体——大IP，粉丝基础决定价值</li>
+                            <li><span class="hl-blue">A级</span>：中等热度网文改编</li>
+                            <li><span class="hl-green">B/C级</span>：原创或小众题材</li>
+                        </ul>
+                        <p style="margin-top: 15px;">金庸的书拍成剧就是S级，你写的小说可能是Z级——<span class="hl-red">就是要看出身</span>。</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>大鹏在这里给出了一个很实用的原则：<strong>"挣钱前灵活，挣钱后合规"</strong>。这不是鼓励侵权，而是认清现实——个人创作者在早期资源有限，过度纠结版权会阻碍成长。但一旦开始商业化（尤其是公司行为），版权就是红线。SUNO的案例特别值得注意：充值时间决定版权归属，顺序错了就前功尽弃。另外，AI时代的一个好处是可以"全链路AI化"来规避传统版权问题，这也是为什么这个赛道对新人友好。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 课后作业 -->
+        <section class="collapsible-section open">
+            <div class="collapsible-header" onclick="toggleSection(this.parentElement)">
+                <div class="collapsible-title">
+                    <div class="section-icon">📝</div>
+                    <div>
+                        <h3>课后作业与资产表</h3>
+                        <p class="preview-text">本节课作业要求 + 商用资产表模板说明</p>
+                    </div>
+                </div>
+                <div class="toggle-icon">▼</div>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-card">
+                        <h4>✅ 作业3：资产生成</h4>
+                        <ul>
+                            <li><span class="hl-gold">人物三视图</span>：正面、侧面、背面全景图</li>
+                            <li><span class="hl-blue">场景多视图</span>：主要场景的不同角度</li>
+                            <li><span class="hl-green">道具多视图</span>：关键道具的设计图</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><span class="hl-red">重要提示</span>：建议多试几轮，换两三批再定——这是在找感觉，不是挑剔。</p>
+                    </div>
+
+                    <div class="content-card">
+                        <h4>📊 资产表结构</h4>
+                        <ul>
+                            <li><strong>基础信息</strong>：短剧名、改编书目/Game点、时长、画面尺寸</li>
+                            <li><strong>美术设定</strong>：画风、定调示意图、概念设定</li>
+                            <li><strong>角色资产</strong>：名字、提示词、三视图、表情包</li>
+                            <li><strong>场景资产</strong>：场景名、多角度视图</li>
+                            <li><strong>分镜表</strong>：集/场/镜编号、景别、运镜、画面描述、台词</li>
+                        </ul>
+                    </div>
+
+                    <div class="expert-comment">
+                        <p>资产表不是可有可无的"形式主义"，而是<strong>项目管理的核心工具</strong>。大鹏提到公司化运作时资产表是怎么用的：每个素材都要有制作人署名——"好骂人"虽然是玩笑话，但背后是责任到人的管理逻辑。对于个人学习者，养成用资产表管理项目的习惯，是从爱好者向专业人士转变的第一步。另外，大鹏建议用多维表格而非普通表格——这是他"前半生的遗憾"，现在开始学还来得及。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <h3>🎬 WaytoAGI · AI短剧训练营</h3>
+            <p>我们不收费，只收作业 | 学习没有捷径，多试多用</p>
+            <p>优秀学员可获得影视公司/线上团队推荐机会</p>
+            <div class="footer-links">
+                <a href="#" class="footer-link">📚 课程主文档</a>
+                <a href="#" class="footer-link">💬 学员群</a>
+                <a href="#" class="footer-link">📺 视频号</a>
+                <a href="#" class="footer-link">📕 小红书</a>
+            </div>
+            <p style="margin-top: 30px; color: rgba(255,255,255,0.5); font-size: 0.85rem;">
+                本文档由 Claude AI 基于大鹏老师授课内容整理生成<br>
+                整理时间：2025年12月12日
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 切换单个板块
+        function toggleSection(section) {
+            section.classList.toggle('open');
+        }
+
+        // 展开/收起全部
+        function toggleAllSections() {
+            const sections = document.querySelectorAll('.collapsible-section');
+            const allOpen = Array.from(sections).every(s => s.classList.contains('open'));
+            
+            sections.forEach(section => {
+                if (allOpen) {
+                    section.classList.remove('open');
+                } else {
+                    section.classList.add('open');
+                }
+            });
+        }
+
+        // 主题切换
+        function toggleTheme() {
+            document.body.setAttribute('data-theme', 
+                document.body.getAttribute('data-theme') === 'dark' ? '' : 'dark'
+            );
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const sections = document.querySelectorAll('.collapsible-section');
+            sections.forEach((section, index) => {
+                section.style.opacity = '0';
+                section.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    section.style.transition = 'all 0.5s ease';
+                    section.style.opacity = '1';
+                    section.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+
+        // 滚动进入动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.content-card, .quote-card, .tool-card, .ranking-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.5s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI短剧训练营 | 行业洞察与创作指南</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --accent: #f43f5e;
+            --accent-light: #fb7185;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.7);
+            --glass-dark: rgba(30, 27, 75, 0.8);
+            --shadow: 0 8px 32px rgba(99, 102, 241, 0.15);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #e2e8f0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部区域 */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #e0e7ff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 30px rgba(255,255,255,0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.9);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        /* 玻璃卡片 */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.dark-mode .glass-card {
+            background: var(--glass-dark);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* 板块标题 */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+
+        body.dark-mode .section-title {
+            color: #fff;
+        }
+
+        .section-preview {
+            font-size: 0.9rem;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        .collapse-icon {
+            margin-left: auto;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .section-content.expanded {
+            max-height: 5000px;
+        }
+
+        .collapse-icon.expanded {
+            transform: rotate(180deg);
+        }
+
+        /* 高亮文字 */
+        .highlight-red {
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        .highlight-blue {
+            color: var(--info);
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .highlight-gold {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+        }
+
+        /* 金句卡片 */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(244, 63, 94, 0.1));
+            border-left: 4px solid var(--primary);
+            padding: 20px 25px;
+            margin: 20px 0;
+            border-radius: 0 16px 16px 0;
+            position: relative;
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 60px;
+            color: var(--primary);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            color: var(--dark);
+            position: relative;
+            z-index: 1;
+        }
+
+        body.dark-mode .quote-text {
+            color: #e2e8f0;
+        }
+
+        .quote-author {
+            text-align: right;
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--primary);
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(59, 130, 246, 0.1));
+            border-radius: 20px;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--success), var(--info));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        .expert-content {
+            flex: 1;
+        }
+
+        .expert-name {
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 5px;
+        }
+
+        .expert-role {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        /* 数据卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:nth-child(2) {
+            background: linear-gradient(135deg, var(--accent), var(--accent-light));
+        }
+
+        .stat-card:nth-child(3) {
+            background: linear-gradient(135deg, var(--success), #34d399);
+        }
+
+        .stat-card:nth-child(4) {
+            background: linear-gradient(135deg, var(--warning), #fbbf24);
+        }
+
+        .stat-card:hover {
+            transform: scale(1.05);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            padding: 30px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            min-width: 800px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 20px 30px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .mindmap-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-left: 30px;
+            position: relative;
+        }
+
+        .mindmap-branches::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            left: -15px;
+            width: 15px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .branch-node {
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 30px;
+            font-weight: 600;
+            border: 2px solid var(--primary);
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .sub-branches {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .sub-branch {
+            background: rgba(99, 102, 241, 0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .sub-branch:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* 流程图 */
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px 0;
+        }
+
+        .process-step {
+            flex: 1;
+            min-width: 120px;
+            text-align: center;
+            position: relative;
+        }
+
+        .process-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin: 0 auto 10px;
+            color: white;
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.3);
+        }
+
+        .process-label {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .process-arrow {
+            color: var(--primary);
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+
+        /* 列表样式 */
+        .styled-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .styled-list li {
+            padding: 12px 0;
+            padding-left: 35px;
+            position: relative;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.1);
+        }
+
+        .styled-list li:last-child {
+            border-bottom: none;
+        }
+
+        .styled-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        .tag-primary {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--primary);
+        }
+
+        .tag-accent {
+            background: rgba(244, 63, 94, 0.15);
+            color: var(--accent);
+        }
+
+        .tag-success {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--success);
+        }
+
+        /* 重点框 */
+        .highlight-box {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(99, 102, 241, 0.1));
+            border: 2px dashed var(--accent);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .highlight-box-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--accent);
+            margin-bottom: 15px;
+        }
+
+        /* 信息图 */
+        .infographic {
+            background: linear-gradient(135deg, #1e1b4b, #312e81);
+            border-radius: 24px;
+            padding: 40px;
+            color: white;
+            margin: 30px 0;
+        }
+
+        .infographic-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            background: linear-gradient(90deg, #fff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .infographic-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .infographic-item {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .infographic-item:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .infographic-icon {
+            font-size: 40px;
+            margin-bottom: 15px;
+        }
+
+        .infographic-label {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 5px;
+        }
+
+        .infographic-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 2px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 0 3px var(--primary);
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+
+        /* 交互卡片网格 */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .interactive-card {
+            background: var(--glass);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .interactive-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 15px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .card-desc {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        body.dark-mode .card-desc {
+            color: #94a3b8;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            background: linear-gradient(90deg, #fff, #c7d2fe);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .glass-card {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 40px 15px;
+            }
+
+            .mindmap {
+                min-width: auto;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .mindmap-branches {
+                margin-left: 0;
+                margin-top: 20px;
+            }
+
+            .process-flow {
+                flex-direction: column;
+            }
+
+            .process-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* 打印优化 */
+        @media print {
+            body {
+                background: white;
+            }
+
+            .glass-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+
+            .theme-toggle {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌓</button>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header animate-in">
+            <span class="badge">🎬 WaytoAGI 第三期训练营</span>
+            <h1>AI短剧创作完全指南</h1>
+            <p class="subtitle">从行业认知到实战技能，解锁AI漫剧的商业密码与创作心法</p>
+        </header>
+
+        <!-- 核心数据 -->
+        <div class="stats-grid animate-in">
+            <div class="stat-card">
+                <div class="stat-number">2.27亿</div>
+                <div class="stat-label">月播放量（头部剧集）</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4人</div>
+                <div class="stat-label">标准团队配置</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">1月/部</div>
+                <div class="stat-label">行业产出标准</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">60+</div>
+                <div class="stat-label">标准剧集集数</div>
+            </div>
+        </div>
+
+        <!-- AI专家点评 -->
+        <div class="glass-card animate-in">
+            <div class="expert-comment">
+                <div class="expert-avatar">🤖</div>
+                <div class="expert-content">
+                    <div class="expert-name">Claude · AI短剧行业分析</div>
+                    <div class="expert-role">基于本次训练营内容的深度洞察</div>
+                    <p>这是一堂<span class="highlight-red">极具实战价值</span>的AI短剧入门课。三位一线讲师用真实的行业数据和制作经验，揭示了一个重要信号：<span class="highlight-gold">AI漫剧正处于爆发前夜</span>。课程中反复强调的"团队协作"和"内容为王"理念，对于想要进入这个赛道的新人是最真诚的忠告。特别是关于<span class="highlight-blue">"短剧本质是调动负面情绪"</span>的洞察，道破了这个行业最核心的创作密码。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 短剧原理深度剖析 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">🧠</div>
+                <div>
+                    <div class="section-title">短剧的底层原理</div>
+                    <div class="section-preview">为什么短剧让人停不下来？深度拆解情绪钩子的秘密</div>
+                </div>
+                <span class="collapse-icon expanded">▼</span>
+            </div>
+            <div class="section-content expanded">
+                
+                <div class="highlight-box">
+                    <div class="highlight-box-title">💡 核心洞察</div>
+                    <p style="font-size: 1.1rem; font-weight: 600;">所有的短剧，不管是AI短剧还是真人短剧，本质都是在<span class="highlight-red">调动你的原始情绪</span>，而且基本上都是勾你的<span class="highlight-red">负面情绪</span>。</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">负面情绪比较有力量。别人夸你一句，十个人今天夸你一句，你不一定很记住；有一个人今天狠狠的骂了你一句，还是冤枉你一句，你肯定会记好几天。</p>
+                    <p class="quote-author">—— 大鹏老师</p>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--primary);">🎭 情绪钩子的四大类型</h4>
+                
+                <div class="card-grid">
+                    <div class="interactive-card">
+                        <div class="card-icon">😤</div>
+                        <div class="card-title">打击报复</div>
+                        <div class="card-desc">被欺负→积蓄力量→绝地反击。观众等的就是那一刻痛快的"打脸"时刻。</div>
+                    </div>
+                    <div class="interactive-card">
+                        <div class="card-icon">👑</div>
+                        <div class="card-title">赘婿逆袭</div>
+                        <div class="card-desc">身份隐藏→被羞辱→身份揭晓。经典的"龙王"套路，屡试不爽。</div>
+                    </div>
+                    <div class="interactive-card">
+                        <div class="card-icon">🔄</div>
+                        <div class="card-title">超强反转</div>
+                        <div class="card-desc">看似弱势→实则最强。观众享受的是预期被颠覆的惊喜感。</div>
+                    </div>
+                    <div class="interactive-card">
+                        <div class="card-icon">💪</div>
+                        <div class="card-title">傲慢系统</div>
+                        <div class="card-desc">别人拼命求生→主角轻松碾压。带系统就是暗爽的极致体验。</div>
+                    </div>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">你有天去饭馆要了一碗面，服务员叭扔你桌子上就走了。现实中你最多心里说"没礼貌"，但在短剧里？一拍桌子，售楼处一指——你什么东西？把你老板给我叫过来，你给我跪到那！叭叭打耳光！然后那服务员说我其实是全球富商的继承人...</p>
+                    <p class="quote-author">—— 大鹏老师的经典比喻</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-avatar">🎯</div>
+                    <div class="expert-content">
+                        <div class="expert-name">弹簧公式</div>
+                        <div class="expert-role">短剧情绪设计的黄金法则</div>
+                        <p><span class="highlight-red">前期压得越狠，后期弹起来就越有劲</span>。主角必须在前期被各种虐、被瞧不起、被欺负，观众才会更期待他逆袭的那一刻。难受到第39集（共40集），或者难受到第25集介入新的虐点——这才是让观众欲罢不能的节奏。</p>
+                    </div>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--primary);">🎪 钩子的艺术</h4>
+                <p>短剧的钩子就像<span class="highlight-blue">小痒痒挠</span>，一直挠着你的脚心，挠挠挠，还不让你特别爽，就一直吊着你往下看。</p>
+                
+                <ul class="styled-list" style="margin-top: 15px;">
+                    <li>钩子要设置在<span class="highlight-red">每集结尾</span>，让观众必须看下一集</li>
+                    <li>核心包袱不能翻得太快，翻太快就没看头了</li>
+                    <li>就像相声的包袱，整部剧有一个核心包袱，怎么甩、怎么抛、在哪个节点翻很重要</li>
+                    <li>观众都知道主角最后必胜（底牌太大了），但就是要让他难受够了才翻盘</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 拉片技巧深度解析 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">🎬</div>
+                <div>
+                    <div class="section-title">拉片实战技巧</div>
+                    <div class="section-preview">以《神文时代》第一集为例，手把手教你拆解爆款</div>
+                </div>
+                <span class="collapse-icon expanded">▼</span>
+            </div>
+            <div class="section-content expanded">
+                
+                <div class="highlight-box">
+                    <div class="highlight-box-title">📌 什么是拉片？</div>
+                    <p>把经典片子进行拆解分析，研究别人是怎么做的。不同岗位有不同的拉片方法——编剧看故事结构，剪辑看节奏控制，我们则要站在<span class="highlight-red">AI漫剧创作者</span>的角度来拆解。</p>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--primary);">🎯 《神文时代》第一集深度拆解</h4>
+                
+                <div class="quote-card">
+                    <p class="quote-text">神文时代，文字竟是汉字——这个名字就特别好，一句话就把Game点说清楚了！</p>
+                    <p class="quote-author">—— 大鹏老师点评</p>
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-title">0-10秒：世界观交代</div>
+                        <p>"以文为尊，得神文者，一字可惊日月，一语可震乾坤，言出法随"——<span class="highlight-blue">前十秒交代得清清楚楚</span>，直奔主题，不拖沓。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">场景转换：仪式感切换</div>
+                        <p>用一个<span class="highlight-green">钟声"梆"一声</span>来组接镜头，把完全不同的两段内容舒服地剪在一起，让观众自然进入第二场。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">规则演示：配角路人甲</div>
+                        <p>一个路人"雷"了一下，成功引动神力——这是用<span class="highlight-blue">画面真实地演示</span>这个世界的规则，为主角出场铺垫。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">垫脚石出场：拉高预期</div>
+                        <p>"徐公子成功和神文结仙共鸣了，不愧是文脉世家"——旁边的<span class="highlight-gold">路人大帝</span>帮忙夸，比自己说更有力量。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">主角登场：快速压低</div>
+                        <p>"这不是城东那个卖鱼的吗？泥腿子也想接触神文？"——快速把主角<span class="highlight-red">往下压</span>，为后续反弹蓄力。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">信息前置：埋下伏笔</div>
+                        <p>"他是来找老婆的"——第二条故事线提前引入，为后续剧情铺垫，同时继续压低主角形象。</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">身份揭示：主角背景</div>
+                        <p>"我叫江辰，地球大夏国的一个中文系大学生"——穿越设定交代，观众瞬间知道：这个懂汉字的人要无敌了！</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">强悬念结尾：终极钩子</div>
+                        <p>"神文大陆的神文竟然是汉字！"——设置强悬念，观众已经知道主角马上要爆发，迫不及待看下一集。</p>
+                    </div>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--primary);">📊 关键数据分析</h4>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>维度</th>
+                        <th>数据/特点</th>
+                        <th>意义</th>
+                    </tr>
+                    <tr>
+                        <td>时长</td>
+                        <td>约2分半</td>
+                        <td>行业标准时长</td>
+                    </tr>
+                    <tr>
+                        <td>分镜数量</td>
+                        <td>估计100+个</td>
+                        <td>约2秒一个镜头，节奏极快</td>
+                    </tr>
+                    <tr>
+                        <td>信息密度</td>
+                        <td>极高</td>
+                        <td>第一集必须交代清楚游戏规则</td>
+                    </tr>
+                    <tr>
+                        <td>Q版表情</td>
+                        <td>有使用</td>
+                        <td>补充情绪，弥补漫剧情绪表达不足</td>
+                    </tr>
+                </table>
+
+                <div class="expert-comment">
+                    <div class="expert-avatar">🎞️</div>
+                    <div class="expert-content">
+                        <div class="expert-name">景别切换技巧</div>
+                        <div class="expert-role">剪辑的呼吸节奏</div>
+                        <p>分镜切得越碎，节奏越快；景别越紧（近景），节奏越紧张。但<span class="highlight-blue">太紧了不好</span>，要紧一紧吸口气，给个中全景松松口气——就跟说话的逗号一样。</p>
+                    </div>
+                </div>
+
+                <div class="highlight-box">
+                    <div class="highlight-box-title">✅ 拉片作业要点</div>
+                    <ul class="styled-list">
+                        <li>从榜单前10选一部漫剧，拉第一集</li>
+                        <li>记录每个镜头的<span class="highlight-blue">景别</span>（远、全、中、近、特）</li>
+                        <li>标注<span class="highlight-green">情绪节点</span>（在哪里压低、在哪里提升）</li>
+                        <li>分析<span class="highlight-red">钩子设置</span>（怎么让你想看下一集）</li>
+                        <li>理解<span class="highlight-gold">信息交代</span>的方式（旁白、对话、画面）</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行业全景 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">🌐</div>
+                <div>
+                    <div class="section-title">AI漫剧行业全景</div>
+                    <div class="section-preview">巨大风口已至，各大平台争相入局</div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+                
+                <div class="infographic">
+                    <div class="infographic-title">📈 行业现状一览</div>
+                    <div class="infographic-grid">
+                        <div class="infographic-item">
+                            <div class="infographic-icon">🏢</div>
+                            <div class="infographic-label">入局玩家</div>
+                            <div class="infographic-value">全网大厂</div>
+                        </div>
+                        <div class="infographic-item">
+                            <div class="infographic-icon">📚</div>
+                            <div class="infographic-label">内容来源</div>
+                            <div class="infographic-value">网文IP改编</div>
+                        </div>
+                        <div class="infographic-item">
+                            <div class="infographic-icon">💰</div>
+                            <div class="infographic-label">变现模式</div>
+                            <div class="infographic-value">付费+广告</div>
+                        </div>
+                        <div class="infographic-item">
+                            <div class="infographic-icon">⚔️</div>
+                            <div class="infographic-label">竞争态势</div>
+                            <div class="infographic-value">卷技术卷质量</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--primary);">🎯 漫剧类型分级</h4>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>类型</th>
+                        <th>系数</th>
+                        <th>特点</th>
+                    </tr>
+                    <tr>
+                        <td>AI仿真人剧</td>
+                        <td><span class="highlight-red">60</span></td>
+                        <td>超写实效果，角色有丰富动态交互</td>
+                    </tr>
+                    <tr>
+                        <td>2D动画漫剧</td>
+                        <td><span class="highlight-blue">50</span></td>
+                        <td>逐帧绘制，动漫风格</td>
+                    </tr>
+                    <tr>
+                        <td>3D动画漫剧</td>
+                        <td><span class="highlight-blue">50</span></td>
+                        <td>3D建模，场景交互</td>
+                    </tr>
+                    <tr>
+                        <td>表情包动态漫（沙雕）</td>
+                        <td><span class="highlight-green">10</span></td>
+                        <td>正在萎缩，不建议入局</td>
+                    </tr>
+                    <tr>
+                        <td>静态漫（PPT漫）</td>
+                        <td>-</td>
+                        <td>已被平台淘汰</td>
+                    </tr>
+                </table>
+
+                <div class="quote-card">
+                    <p class="quote-text">国内AI工具真的太香了！全球最好用的AI工具，基本上九成是国产的。我们这个语言就不用太搞了，国内的已经达到商业化完全可用的地步了。</p>
+                    <p class="quote-author">—— 大鹏老师</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 制作流程 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">⚙️</div>
+                <div>
+                    <div class="section-title">标准制作流程</div>
+                    <div class="section-preview">从剧本到成片的完整链路</div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+                
+                <div class="process-flow">
+                    <div class="process-step">
+                        <div class="process-icon">📝</div>
+                        <div class="process-label">剧本</div>
+                    </div>
+                    <div class="process-arrow">→</div>
+                    <div class="process-step">
+                        <div class="process-icon">🎨</div>
+                        <div class="process-label">分镜脚本</div>
+                    </div>
+                    <div class="process-arrow">→</div>
+                    <div class="process-step">
+                        <div class="process-icon">🖼️</div>
+                        <div class="process-label">生图</div>
+                    </div>
+                    <div class="process-arrow">→</div>
+                    <div class="process-step">
+                        <div class="process-icon">🎬</div>
+                        <div class="process-label">生视频</div>
+                    </div>
+                    <div class="process-arrow">→</div>
+                    <div class="process-step">
+                        <div class="process-icon">✂️</div>
+                        <div class="process-label">剪辑</div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 25px 0 15px; color: var(--primary);">👥 团队配置（3-5人）</h4>
+                
+                <div class="card-grid">
+                    <div class="interactive-card">
+                        <div class="card-icon">🎭</div>
+                        <div class="card-title">编导类</div>
+                        <div class="card-desc">把文字变成可执行的画面，写分镜脚本。具备镜头语言能力，是团队核心。</div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-accent">最稀缺</span>
+                            <span class="tag tag-primary">高薪资</span>
+                        </div>
+                    </div>
+                    <div class="interactive-card">
+                        <div class="card-icon">🎨</div>
+                        <div class="card-title">AI制作</div>
+                        <div class="card-desc">负责生图、生视频，把分镜脚本落地成画面。2-3人配置。</div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-success">可替代性较高</span>
+                            <span class="tag tag-primary">入门岗位</span>
+                        </div>
+                    </div>
+                    <div class="interactive-card">
+                        <div class="card-icon">✂️</div>
+                        <div class="card-title">后期剪辑</div>
+                        <div class="card-desc">把握整体情绪节奏，不是简单堆素材，要会剪钩子和卡点。</div>
+                        <div style="margin-top: 10px;">
+                            <span class="tag tag-accent">需求量大</span>
+                            <span class="tag tag-success">技术门槛</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-avatar">⚠️</div>
+                    <div class="expert-content">
+                        <div class="expert-name">重要提醒</div>
+                        <div class="expert-role">关于职业发展</div>
+                        <p>纯做AI生图，按现在的发展情况<span class="highlight-red">后续很容易被淘汰</span>，因为工具出来之后效率会极大提升。建议往<span class="highlight-blue">编导侧或剪辑侧</span>发展，这两个能力会并入更核心的岗位。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">🗺️</div>
+                <div>
+                    <div class="section-title">知识体系导图</div>
+                    <div class="section-preview">AI短剧创作的核心知识架构</div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="mindmap-container">
+                    <div class="mindmap">
+                        <div class="mindmap-center">AI短剧创作</div>
+                        <div class="mindmap-branches">
+                            <div class="mindmap-branch">
+                                <div class="branch-node">📖 内容创作</div>
+                                <div class="sub-branches">
+                                    <span class="sub-branch">剧本选择</span>
+                                    <span class="sub-branch">分镜脚本</span>
+                                    <span class="sub-branch">情绪设计</span>
+                                    <span class="sub-branch">钩子布置</span>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-node">🎨 视觉制作</div>
+                                <div class="sub-branches">
+                                    <span class="sub-branch">角色三视图</span>
+                                    <span class="sub-branch">场景设计</span>
+                                    <span class="sub-branch">AI生图</span>
+                                    <span class="sub-branch">一致性控制</span>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-node">🎬 动态生成</div>
+                                <div class="sub-branches">
+                                    <span class="sub-branch">首帧生图</span>
+                                    <span class="sub-branch">首尾帧</span>
+                                    <span class="sub-branch">一图多镜头</span>
+                                    <span class="sub-branch">即梦/可灵</span>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-node">✂️ 后期剪辑</div>
+                                <div class="sub-branches">
+                                    <span class="sub-branch">情绪卡点</span>
+                                    <span class="sub-branch">节奏控制</span>
+                                    <span class="sub-branch">配音配乐</span>
+                                    <span class="sub-branch">Q版表情</span>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-node">💰 商业变现</div>
+                                <div class="sub-branches">
+                                    <span class="sub-branch">付费解锁</span>
+                                    <span class="sub-branch">广告分成</span>
+                                    <span class="sub-branch">平台激励</span>
+                                    <span class="sub-branch">承制服务</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金句集锦 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">💎</div>
+                <div>
+                    <div class="section-title">金句集锦</div>
+                    <div class="section-preview">讲师们的真知灼见，字字珠玑</div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+                
+                <div class="quote-card">
+                    <p class="quote-text">我们在做的，其实就是调动观众内心最黑暗那个小点，把它咣咣扩大，让你感觉——哇好爽！</p>
+                    <p class="quote-author">—— 大鹏老师</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">个人入局绝对会跟不上大公司的制作，从人员配置、整体的信息来源，到个人能力，这是必然的。建议大家：要么组团，要么抱大腿。</p>
+                    <p class="quote-author">—— 夜游榊老师</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">AI只能写一个故事，但不能写一个精彩的故事。AI写的东西还要人改，如果你编剧能力够强，什么写的都能改出好东西；如果你能力差，什么写的都白搭。</p>
+                    <p class="quote-author">—— 夜游榊老师</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">只要你能做得出一点东西来，你就不愁没活干，最起码一定能找到工作。但前提是你有对应的能力，够了就什么都有了。</p>
+                    <p class="quote-author">—— 夜游榊老师</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">我看短剧就是一边骂自己一边看，看得特别爽，但是一边看一边说这种东西我怎么看的？但有时候这个钩子真的勾人。</p>
+                    <p class="quote-author">—— 大鹏老师的真实感受</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">当你发现不了问题的时候，你自己也做不了。你看得到更多细节的时候，做的时候也会注意到对应的细节。</p>
+                    <p class="quote-author">—— 夜游榊老师谈拉片的意义</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">现在这个东西可以说是市面上最紧俏的，所有大厂、所有最有钱的那几个大甲方都在搞这些——为什么？因为大家都能看到市场。</p>
+                    <p class="quote-author">—— 大鹏老师谈行业机会</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 避坑指南 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">🚫</div>
+                <div>
+                    <div class="section-title">新手避坑指南</div>
+                    <div class="section-preview">这些坑，讲师们帮你踩过了</div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content">
+                
+                <div class="card-grid">
+                    <div class="interactive-card" style="border-left: 4px solid var(--accent);">
+                        <div class="card-title">❌ 不要单人入局</div>
+                        <div class="card-desc">4人团队一个月做一部是行业标准。单人做可能2-3个月，题材早就过时了。</div>
+                    </div>
+                    <div class="interactive-card" style="border-left: 4px solid var(--accent);">
+                        <div class="card-title">❌ 不要做沙雕漫</div>
+                        <div class="card-desc">系数只有10，正在萎缩，用AI做成本跟不上AN做的效率。</div>
+                    </div>
+                    <div class="interactive-card" style="border-left: 4px solid var(--accent);">
+                        <div class="card-title">❌ 不要抄袭洗稿</div>
+                        <div class="card-desc">版权监管会越来越严，而且你有制作能力根本不缺人给你版权。</div>
+                    </div>
+                    <div class="interactive-card" style="border-left: 4px solid var(--accent);">
+                        <div class="card-title">❌ 不要只学COMFYUI</div>
+                        <div class="card-desc">学习曲线太陡，打击兴趣。先用即梦、可灵这些上手快的工具。</div>
+                    </div>
+                    <div class="interactive-card" style="border-left: 4px solid var(--accent);">
+                        <div class="card-title">❌ 不要迷信一站式工具</div>
+                        <div class="card-desc">质量好的东西不可能一站式制作，一站式出来的只能是低质量内容。</div>
+                    </div>
+                    <div class="interactive-card" style="border-left: 4px solid var(--accent);">
+                        <div class="card-title">❌ 不要去纯培训公司</div>
+                        <div class="card-desc">要去有真实剧集输出的公司，人家自己不做全盘流程凭什么教你？</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行动指南 -->
+        <div class="glass-card animate-in">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon">🚀</div>
+                <div>
+                    <div class="section-title">立即行动</div>
+                    <div class="section-preview">第一课作业与学习路径</div>
+                </div>
+                <span class="collapse-icon expanded">▼</span>
+            </div>
+            <div class="section-content expanded">
+                
+                <div class="highlight-box">
+                    <div class="highlight-box-title">📋 第一课作业</div>
+                    <ol style="padding-left: 20px;">
+                        <li style="margin-bottom: 10px;">打开<span class="highlight-blue">漫剧有数</span>公众号，找到月榜</li>
+                        <li style="margin-bottom: 10px;">从<span class="highlight-red">前10名</span>中选一部AI漫剧（不要沙雕漫）</li>
+                        <li style="margin-bottom: 10px;">认真观看<span class="highlight-green">第一集</span></li>
+                        <li style="margin-bottom: 10px;">写下你看到的所有信息：
+                            <ul style="margin-top: 8px; padding-left: 20px;">
+                                <li>故事线和核心设定</li>
+                                <li>情绪节点（哪里压低、哪里提升）</li>
+                                <li>钩子设置（结尾怎么勾你看下一集）</li>
+                                <li>信息交代方式（旁白/对话/画面）</li>
+                            </ul>
+                        </li>
+                        <li>（进阶）用剪映导入视频，自动拆分镜头，数一数有多少个分镜</li>
+                    </ol>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-avatar">📅</div>
+                    <div class="expert-content">
+                        <div class="expert-name">课程安排</div>
+                        <div class="expert-role">12月8日-22日</div>
+                        <p>8节正课 + 自习室 + 作品展览日<br>
+                        <span class="highlight-blue">下一节课</span>（后天）：大鹏老师讲分镜三视图、生图技巧<br>
+                        建议：<span class="highlight-red">后天上课前完成作业</span>，因为课程是相关性的！</p>
+                    </div>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">技多不压身，不要钱又有信任度的就可以多学。学了以后绝对不要怕无用武之地，只要你学得好，社区里面就可以搞好多的东西。</p>
+                    <p class="quote-author">—— 大鹏老师的鼓励</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-logo">WaytoAGI · AI短剧训练营</div>
+            <p>致力于消除知识的鸿沟，让优秀的AI教育触手可及</p>
+            <p style="margin-top: 15px; font-size: 0.85rem;">2025年12月8日 第三期开营</p>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 板块折叠
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.collapse-icon');
+            
+            content.classList.toggle('expanded');
+            icon.classList.toggle('expanded');
+        }
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // 统计数字动画
+        function animateNumbers() {
+            const stats = document.querySelectorAll('.stat-number');
+            stats.forEach(stat => {
+                const text = stat.textContent;
+                if (text.includes('亿')) {
+                    animateValue(stat, 0, 2.27, 1500, '亿');
+                } else if (text.includes('人')) {
+                    animateValue(stat, 0, 4, 1000, '人');
+                } else if (text.includes('月')) {
+                    stat.textContent = '1月/部';
+                } else if (text.includes('+')) {
+                    animateValue(stat, 0, 60, 1200, '+');
+                }
+            });
+        }
+
+        function animateValue(element, start, end, duration, suffix) {
+            const startTime = performance.now();
+            
+            function update(currentTime) {
+                const elapsed = currentTime - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                const easeProgress = 1 - Math.pow(1 - progress, 3);
+                const current = start + (end - start) * easeProgress;
+                
+                element.textContent = current.toFixed(end < 10 ? 2 : 0) + suffix;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(update);
+                }
+            }
+            
+            requestAnimationFrame(update);
+        }
+
+        // 页面加载完成后执行动画
+        window.addEventListener('load', () => {
+            setTimeout(animateNumbers, 500);
+        });
+
+        // 交互卡片点击效果
+        document.querySelectorAll('.interactive-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

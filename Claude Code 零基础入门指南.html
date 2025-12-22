@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code 零基础入门 | 从小白到实战的完整指南</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 50%, #0d1421 100%);
+            --glass-bg: rgba(255, 255, 255, 0.06);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --highlight-red: #f43f5e;
+            --highlight-blue: #3b82f6;
+            --highlight-green: #10b981;
+            --highlight-yellow: #f59e0b;
+            --highlight-purple: #a855f7;
+            --highlight-cyan: #06b6d4;
+            --highlight-pink: #ec4899;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #8b5cf6;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #e8e8f0 0%, #f8fafc 50%, #e0f2fe 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(139, 92, 246, 0.2);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.12);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 头部 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f43f5e, #8b5cf6, #3b82f6, #06b6d4, #10b981);
+            background-size: 200% 100%;
+            animation: gradientMove 3s ease infinite;
+        }
+        @keyframes gradientMove {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .badge-row { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px; }
+        .badge {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            color: var(--accent);
+        }
+        .badge.live { background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(249, 115, 22, 0.2)); color: #f43f5e; }
+        .badge.code { background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(59, 130, 246, 0.2)); color: #06b6d4; }
+        h1 {
+            font-size: 2.6em;
+            font-weight: 800;
+            margin-bottom: 18px;
+            background: linear-gradient(135deg, #f43f5e 0%, var(--accent) 50%, #3b82f6 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .subtitle { font-size: 1.2em; color: var(--text-secondary); margin-bottom: 25px; }
+        .meta-info { display: flex; gap: 25px; flex-wrap: wrap; color: var(--text-secondary); font-size: 14px; margin-bottom: 25px; }
+        .meta-item { display: flex; align-items: center; gap: 8px; }
+        .controls { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(139, 92, 246, 0.25); }
+        .btn-primary { background: linear-gradient(135deg, var(--accent), var(--highlight-pink)); color: white; border: none; }
+
+        /* 金句卡片 */
+        .quotes-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .quote-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            position: relative;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .quote-card:nth-child(1) { animation-delay: 0.1s; border-left: 4px solid var(--highlight-red); }
+        .quote-card:nth-child(2) { animation-delay: 0.2s; border-left: 4px solid var(--highlight-blue); }
+        .quote-card:nth-child(3) { animation-delay: 0.3s; border-left: 4px solid var(--highlight-green); }
+        .quote-card:nth-child(4) { animation-delay: 0.4s; border-left: 4px solid var(--highlight-purple); }
+        .quote-card:hover { transform: translateY(-5px); box-shadow: 0 15px 40px rgba(139, 92, 246, 0.2); }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px; left: 15px;
+            font-size: 4em;
+            font-family: Georgia, serif;
+            background: linear-gradient(135deg, var(--accent), var(--highlight-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.25;
+            line-height: 1;
+        }
+        .quote-text { font-size: 1.05em; font-weight: 500; line-height: 1.7; padding-left: 15px; position: relative; z-index: 1; }
+        .quote-author { margin-top: 15px; padding-top: 12px; border-top: 1px solid var(--glass-border); font-size: 13px; color: var(--text-secondary); display: flex; align-items: center; gap: 8px; }
+        .quote-icon { font-size: 16px; }
+
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        .mindmap-title { text-align: center; font-size: 1.6em; font-weight: 700; margin-bottom: 35px; color: var(--highlight-cyan); }
+        .mindmap-pure-css { display: flex; flex-direction: column; align-items: center; gap: 40px; }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--highlight-pink));
+            color: white;
+            padding: 22px 45px;
+            border-radius: 50px;
+            font-size: 1.5em;
+            font-weight: 700;
+            box-shadow: 0 10px 35px rgba(139, 92, 246, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        .mindmap-branches { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; width: 100%; }
+        @media (max-width: 1100px) { .mindmap-branches { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 600px) { .mindmap-branches { grid-template-columns: 1fr; } }
+        .branch { display: flex; flex-direction: column; gap: 10px; animation: fadeInUp 0.6s ease forwards; opacity: 0; }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.3s; }
+        .branch:nth-child(3) { animation-delay: 0.4s; }
+        .branch:nth-child(4) { animation-delay: 0.5s; }
+        .branch-node {
+            background: var(--glass-bg);
+            border: 2px solid;
+            padding: 15px 20px;
+            border-radius: 16px;
+            font-size: 1em;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .branch:nth-child(1) .branch-node { border-color: var(--highlight-red); color: var(--highlight-red); }
+        .branch:nth-child(2) .branch-node { border-color: var(--highlight-blue); color: var(--highlight-blue); }
+        .branch:nth-child(3) .branch-node { border-color: var(--highlight-green); color: var(--highlight-green); }
+        .branch:nth-child(4) .branch-node { border-color: var(--highlight-yellow); color: var(--highlight-yellow); }
+        .branch-node:hover { transform: translateY(-3px) scale(1.02); }
+        .sub-node {
+            background: rgba(139, 92, 246, 0.08);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .sub-node:hover { background: rgba(139, 92, 246, 0.15); transform: translateX(5px); color: var(--text-primary); }
+
+        /* 内容板块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            margin-bottom: 22px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 25px 35px;
+            background: rgba(139, 92, 246, 0.05);
+            transition: all 0.3s ease;
+        }
+        .section-header:hover { background: rgba(139, 92, 246, 0.1); }
+        .section-title-wrap { display: flex; align-items: center; gap: 15px; }
+        .section-icon {
+            width: 45px; height: 45px;
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4em;
+            background: linear-gradient(135deg, var(--accent), var(--highlight-pink));
+        }
+        .section-title { font-size: 1.35em; font-weight: 700; color: var(--text-primary); }
+        .collapse-icon {
+            font-size: 1.3em;
+            transition: transform 0.4s ease;
+            color: var(--accent);
+            background: rgba(139, 92, 246, 0.1);
+            width: 36px; height: 36px;
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            padding: 0 35px;
+            transition: all 0.4s ease;
+            overflow: hidden;
+        }
+        .collapsed .section-preview { opacity: 1; max-height: 80px; padding: 0 35px 15px; }
+        .section-content { max-height: 10000px; padding: 25px 35px 35px; transition: all 0.5s ease; }
+        .collapsed .section-content { max-height: 0; padding: 0 35px; overflow: hidden; }
+
+        /* 内容样式 */
+        .content-block { margin-bottom: 25px; }
+        .content-block h3 { font-size: 1.15em; font-weight: 600; margin-bottom: 12px; color: var(--highlight-cyan); display: flex; align-items: center; gap: 10px; }
+        .content-block p { color: var(--text-secondary); margin-bottom: 10px; }
+
+        /* 高亮 */
+        .hl-red { color: var(--highlight-red); font-weight: 600; padding: 2px 6px; background: rgba(244, 63, 94, 0.15); border-radius: 4px; }
+        .hl-blue { color: var(--highlight-blue); font-weight: 600; padding: 2px 6px; background: rgba(59, 130, 246, 0.15); border-radius: 4px; }
+        .hl-green { color: var(--highlight-green); font-weight: 600; padding: 2px 6px; background: rgba(16, 185, 129, 0.15); border-radius: 4px; }
+        .hl-yellow { color: var(--highlight-yellow); font-weight: 600; padding: 2px 6px; background: rgba(245, 158, 11, 0.15); border-radius: 4px; }
+        .hl-purple { color: var(--highlight-purple); font-weight: 600; padding: 2px 6px; background: rgba(168, 85, 247, 0.15); border-radius: 4px; }
+        .hl-cyan { color: var(--highlight-cyan); font-weight: 600; padding: 2px 6px; background: rgba(6, 182, 212, 0.15); border-radius: 4px; }
+
+        /* 步骤卡片 */
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 18px; margin: 20px 0; }
+        .step-card {
+            background: rgba(139, 92, 246, 0.08);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 22px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 30px rgba(139, 92, 246, 0.2); }
+        .step-num {
+            position: absolute;
+            top: 12px; right: 12px;
+            width: 32px; height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--highlight-pink));
+            color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700;
+            font-size: 0.95em;
+        }
+        .step-card h4 { font-size: 1.05em; font-weight: 600; margin-bottom: 10px; color: var(--text-primary); padding-right: 45px; }
+        .step-card p { font-size: 0.9em; color: var(--text-secondary); line-height: 1.65; }
+
+        /* 代码块 */
+        .code-block {
+            background: rgba(0, 0, 0, 0.35);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 18px 22px;
+            font-family: "SF Mono", "Fira Code", Consolas, monospace;
+            font-size: 13px;
+            overflow-x: auto;
+            margin: 18px 0;
+            position: relative;
+        }
+        .code-block::before {
+            content: 'Terminal';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            padding: 6px 18px;
+            background: rgba(139, 92, 246, 0.2);
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--accent);
+            border-radius: 12px 12px 0 0;
+            font-family: -apple-system, sans-serif;
+        }
+        .code-block code { color: #10b981; display: block; margin-top: 25px; white-space: pre-wrap; }
+
+        /* 提示框 */
+        .tip-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 14px;
+            padding: 20px 24px;
+            margin: 18px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+        }
+        .tip-box.warning { background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(249, 115, 22, 0.1)); border-color: rgba(245, 158, 11, 0.3); }
+        .tip-box.danger { background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(236, 72, 153, 0.1)); border-color: rgba(244, 63, 94, 0.3); }
+        .tip-icon { font-size: 1.4em; flex-shrink: 0; }
+        .tip-content h4 { font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+        .tip-content p { color: var(--text-secondary); font-size: 0.92em; }
+
+        /* 专家评论 */
+        .expert-box {
+            margin-top: 25px;
+            padding: 28px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.05));
+            border-left: 4px solid var(--accent);
+            border-radius: 16px;
+            position: relative;
+        }
+        .expert-box::before {
+            content: '🤖';
+            position: absolute;
+            top: -16px; left: 22px;
+            font-size: 2em;
+            background: var(--glass-bg);
+            padding: 5px 12px;
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        .expert-label { font-size: 11px; font-weight: 600; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+        .expert-box p { color: var(--text-secondary); line-height: 1.75; }
+        .expert-box strong { color: var(--text-primary); }
+
+        /* 表格 */
+        .comp-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border-radius: 14px;
+            overflow: hidden;
+            background: rgba(139, 92, 246, 0.05);
+        }
+        .comp-table th {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.1));
+            padding: 15px 18px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .comp-table td { padding: 14px 18px; border-bottom: 1px solid var(--glass-border); color: var(--text-secondary); }
+        .comp-table tr:last-child td { border-bottom: none; }
+        .comp-table tr:hover td { background: rgba(139, 92, 246, 0.08); }
+
+        /* 信息图 */
+        .infographic {
+            background: rgba(139, 92, 246, 0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 30px;
+            margin: 25px 0;
+        }
+        .info-title { text-align: center; font-size: 1.15em; font-weight: 700; margin-bottom: 25px; color: var(--accent); }
+        .flow-steps { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 15px; }
+        .flow-step { flex: 1; min-width: 130px; text-align: center; position: relative; }
+        .flow-step:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -18px; top: 28px;
+            font-size: 1.3em;
+            color: var(--accent);
+        }
+        @media (max-width: 700px) {
+            .flow-steps { flex-direction: column; }
+            .flow-step:not(:last-child)::after { content: '↓'; right: 50%; top: auto; bottom: -22px; transform: translateX(50%); }
+        }
+        .flow-icon {
+            width: 60px; height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--highlight-pink));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.6em;
+            margin: 0 auto 12px;
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+        .flow-label { font-weight: 600; color: var(--text-primary); margin-bottom: 5px; font-size: 0.95em; }
+        .flow-desc { font-size: 0.8em; color: var(--text-secondary); }
+
+        /* 进度条 */
+        .progress-section { background: rgba(139, 92, 246, 0.06); border-radius: 14px; padding: 22px; margin: 20px 0; }
+        .progress-item { margin-bottom: 18px; }
+        .progress-item:last-child { margin-bottom: 0; }
+        .progress-header { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .progress-label { font-weight: 600; color: var(--text-primary); font-size: 0.95em; }
+        .progress-value { color: var(--accent); font-weight: 600; }
+        .progress-bar { height: 8px; background: rgba(139, 92, 246, 0.2); border-radius: 8px; overflow: hidden; }
+        .progress-fill { height: 100%; border-radius: 8px; }
+        .progress-fill.red { background: linear-gradient(90deg, #f43f5e, #ec4899); }
+        .progress-fill.blue { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .progress-fill.green { background: linear-gradient(90deg, #10b981, #14b8a6); }
+        .progress-fill.purple { background: linear-gradient(90deg, #8b5cf6, #a855f7); }
+
+        /* 分享者卡片 */
+        .speaker-card {
+            display: flex;
+            gap: 18px;
+            background: rgba(139, 92, 246, 0.06);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 22px;
+            margin: 18px 0;
+            align-items: center;
+        }
+        .speaker-avatar {
+            width: 60px; height: 60px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, var(--accent), var(--highlight-pink));
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.8em;
+            flex-shrink: 0;
+        }
+        .speaker-info h4 { font-size: 1.1em; font-weight: 600; margin-bottom: 6px; color: var(--text-primary); }
+        .speaker-info p { color: var(--text-secondary); font-size: 0.9em; }
+        .speaker-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+        .speaker-tag { padding: 4px 10px; border-radius: 15px; font-size: 11px; background: rgba(139, 92, 246, 0.15); color: var(--accent); }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 25px; right: 25px;
+            width: 55px; height: 55px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            font-size: 1.4em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        /* 返回顶部 */
+        .back-top {
+            position: fixed;
+            bottom: 90px; right: 25px;
+            width: 45px; height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--highlight-pink));
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer;
+            color: white;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .back-top.visible { opacity: 1; visibility: visible; }
+        .back-top:hover { transform: translateY(-3px); }
+
+        /* Footer */
+        .footer { text-align: center; padding: 35px; color: var(--text-secondary); font-size: 13px; }
+        .footer-links { display: flex; justify-content: center; gap: 25px; margin-bottom: 15px; flex-wrap: wrap; }
+        .footer-link { color: var(--accent); text-decoration: none; transition: all 0.3s ease; }
+        .footer-link:hover { color: var(--highlight-pink); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="badge-row">
+                <span class="badge live">🔴 直播回顾</span>
+                <span class="badge code">💻 AI编程</span>
+                <span class="badge">⏱️ 2.5小时干货</span>
+            </div>
+            <h1>Claude Code 零基础入门指南</h1>
+            <p class="subtitle">从完全不会编程到独立开发APP，两位实战派分享者带你一路"莽"过去的真实经验</p>
+            <div class="meta-info">
+                <div class="meta-item">📅 2025年直播分享</div>
+                <div class="meta-item">👥 木里 & Ben（鹏程）</div>
+                <div class="meta-item">💡 实战经验分享</div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">📑 展开/折叠全部</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印保存</button>
+            </div>
+        </header>
+
+        <!-- 金句卡片 -->
+        <div class="quotes-grid">
+            <div class="quote-card">
+                <div class="quote-text">碰到问题务必要有耐心去解决，这是唯一的要求，其他都AI都可以帮你搞定</div>
+                <div class="quote-author"><span class="quote-icon">🎯</span> Ben · 核心心法</div>
+            </div>
+            <div class="quote-card">
+                <div class="quote-text">你不用管代码是什么，看它做出来的东西运行效果就行，运行不OK就让它再改</div>
+                <div class="quote-author"><span class="quote-icon">💡</span> Ben · 小白思维</div>
+            </div>
+            <div class="quote-card">
+                <div class="quote-text">我和AI的交互中学到了很多，前后端的内容都是通过AI来学习的</div>
+                <div class="quote-author"><span class="quote-icon">📚</span> 木里 · 学习方法</div>
+            </div>
+            <div class="quote-card">
+                <div class="quote-text">Git多提交是第一经验，不要在对话中直接让AI撤回，除非改动特别小</div>
+                <div class="quote-author"><span class="quote-icon">⚠️</span> 木里 · 血泪教训</div>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="mindmap-container" id="mindmap">
+            <h2 class="mindmap-title">🧠 Claude Code 学习路径全景图</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">🚀 Claude Code 入门</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">🔧 环境搭建</div>
+                        <div class="sub-node">安装 Node.js 依赖</div>
+                        <div class="sub-node">NPM 全局安装</div>
+                        <div class="sub-node">VSCode + 插件</div>
+                        <div class="sub-node">CC Switch 配置</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🎮 模型选择</div>
+                        <div class="sub-node">官方账号（封号风险）</div>
+                        <div class="sub-node">中转账号（推荐）</div>
+                        <div class="sub-node">DeepSeek/智谱 平替</div>
+                        <div class="sub-node">Gemini 做前端</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">⚡ 实战技巧</div>
+                        <div class="sub-node">Git版本管理必备</div>
+                        <div class="sub-node">指令越精准越好</div>
+                        <div class="sub-node">大改动先讨论方案</div>
+                        <div class="sub-node">前后端分开修改</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🎁 进阶功能</div>
+                        <div class="sub-node">Skill 技能包</div>
+                        <div class="sub-node">MCP 扩展协议</div>
+                        <div class="sub-node">Sub Agents</div>
+                        <div class="sub-node">自动化工作流</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 分享者介绍 -->
+        <section class="section" id="speakers">
+            <div class="section-header" onclick="toggleSection('speakers')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">👥</div>
+                    <h2 class="section-title">分享者介绍</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">两位零基础转型的实战派，用亲身经历证明AI编程的可能性...</p>
+            <div class="section-content">
+                <div class="speaker-card">
+                    <div class="speaker-avatar">🌲</div>
+                    <div class="speaker-info">
+                        <h4>木里</h4>
+                        <p>出版专业背景，今年暑假才转互联网。从10月接触AI，通过N8N、Vibe Coding、Hello Agent一路学习，独立完成iOS应用开发。本科学过Python但从未做过项目，代码基础仅限于"能看懂大概"。</p>
+                        <div class="speaker-tags">
+                            <span class="speaker-tag">出版转码</span>
+                            <span class="speaker-tag">iOS独立开发</span>
+                            <span class="speaker-tag">口喷编程</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="speaker-card">
+                    <div class="speaker-avatar">🚀</div>
+                    <div class="speaker-info">
+                        <h4>Ben（鹏程）</h4>
+                        <p>前字节产品经理，规则AGI核心成员。编程基础仅限"Hello World就学不下去"。通过AI编程做了大量网站、插件、自动化工具，公众号小红书内容都用Claude Code写作，阅读量直接翻倍。</p>
+                        <div class="speaker-tags">
+                            <span class="speaker-tag">前字节PM</span>
+                            <span class="speaker-tag">规则AGI</span>
+                            <span class="speaker-tag">AI写作</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>这两位分享者的经历非常有代表性。<strong>木里从学出版到独立开发iOS应用</strong>，证明AI编程真的可以让零基础的人做出完整产品。<strong>Ben展示了AI在内容创作领域的巨大潜力</strong>——用Claude Code写的文章阅读量翻倍，小红书爆款涨粉500。这说明AI编程不仅是技术工具，更是<span class="hl-red">创造力的放大器</span>。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 环境搭建 -->
+        <section class="section" id="setup">
+            <div class="section-header" onclick="toggleSection('setup')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🔧</div>
+                    <h2 class="section-title">环境搭建指南</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">从零开始配置Claude Code开发环境，无需任何编程基础...</p>
+            <div class="section-content">
+                <div class="infographic">
+                    <div class="info-title">🎯 安装流程全览</div>
+                    <div class="flow-steps">
+                        <div class="flow-step">
+                            <div class="flow-icon">📦</div>
+                            <div class="flow-label">安装Node.js</div>
+                            <div class="flow-desc">基础依赖</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-icon">⬇️</div>
+                            <div class="flow-label">安装Claude Code</div>
+                            <div class="flow-desc">NPM全局安装</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-icon">🔑</div>
+                            <div class="flow-label">配置API</div>
+                            <div class="flow-desc">CC Switch管理</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-icon">💻</div>
+                            <div class="flow-label">VSCode插件</div>
+                            <div class="flow-desc">可视化界面</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-icon">🎉</div>
+                            <div class="flow-label">开始使用</div>
+                            <div class="flow-desc">对话编程</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>📦 第一步：安装Node.js</h3>
+                    <p>Node.js是运行Claude Code的基础依赖。访问 <span class="hl-blue">nodejs.org</span> 下载对应系统版本（Windows/Mac），完成默认安装流程。</p>
+                    <div class="code-block">
+                        <code># 验证安装是否成功
+node -v  # 显示版本号即成功
+npm -v   # 同样显示版本号</code>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>⬇️ 第二步：安装Claude Code</h3>
+                    <div class="code-block">
+                        <code># 方案一：直接安装（需要梯子）
+npm install -g @anthropic-ai/claude-code
+
+# 方案二：使用镜像源（无需梯子）
+npm install -g @anthropic-ai/claude-code --registry=https://registry.npmmirror.com
+
+# 验证安装
+claude --version</code>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🔑 第三步：配置API（核心步骤）</h3>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-num">1</div>
+                            <h4>官方账号</h4>
+                            <p>直接注册Anthropic账号。<span class="hl-yellow">风险提示</span>：对中国用户封号严重，不推荐。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">2</div>
+                            <h4>中转账号（推荐）</h4>
+                            <p>通过第三方中转使用官方模型。解决网络和封号问题，<span class="hl-green">效果最好</span>的方案。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">3</div>
+                            <h4>国产大模型平替</h4>
+                            <p>使用DeepSeek、智谱GLM、Kimi等。<span class="hl-blue">性价比高</span>，入门练手首选。</p>
+                        </div>
+                    </div>
+                    <div class="tip-box">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <h4>强烈推荐：CC Switch 工具</h4>
+                            <p>傻瓜式API配置工具，支持可视化管理多个模型账号，一键切换。比手动配置环境变量简单100倍！</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>💻 第四步：安装VSCode和插件</h3>
+                    <p>VSCode是代码编辑器，让你能直观看到代码和结果。<span class="hl-red">把它理解为高级记事本</span>，不用害怕。</p>
+                    <p>步骤：下载安装VSCode → 打开扩展中心 → 搜索"Claude Code"插件 → 安装 → 在CC Switch中勾选"应用到Claude Code插件"</p>
+                </div>
+
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>环境搭建是很多新手的第一道坎。<strong>关键心法是：遇到报错不要慌</strong>，把报错信息复制给DeepSeek或ChatGPT，它们基本都能给出解决方案。Ben在直播中演示——连VSCode切换中文都是让Claude Code帮忙完成的。记住：<span class="hl-red">你不需要懂原理，只需要会提问</span>。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 模型选择 -->
+        <section class="section" id="models">
+            <div class="section-header" onclick="toggleSection('models')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🎮</div>
+                    <h2 class="section-title">模型选择策略</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">如何根据需求和预算选择最合适的AI模型...</p>
+            <div class="section-content">
+                <table class="comp-table">
+                    <thead>
+                        <tr>
+                            <th>方案</th>
+                            <th>优点</th>
+                            <th>缺点</th>
+                            <th>适用场景</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="hl-purple">中转账号</span></td>
+                            <td>效果最佳、稳定</td>
+                            <td>需要付费</td>
+                            <td>正式项目</td>
+                        </tr>
+                        <tr>
+                            <td><span class="hl-blue">DeepSeek</span></td>
+                            <td>便宜、中文友好</td>
+                            <td>复杂任务稍弱</td>
+                            <td>入门练手</td>
+                        </tr>
+                        <tr>
+                            <td><span class="hl-green">智谱GLM</span></td>
+                            <td>免费额度多</td>
+                            <td>复杂后"有点笨"</td>
+                            <td>初期学习</td>
+                        </tr>
+                        <tr>
+                            <td><span class="hl-cyan">Gemini</span></td>
+                            <td>前端设计能力强</td>
+                            <td>需海外账号</td>
+                            <td>UI设计</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="content-block">
+                    <h3>🎯 木里的实战组合</h3>
+                    <p><span class="hl-purple">Gemini</span> → 制作前端页面、UI设计 | <span class="hl-red">Claude</span> → 处理前后端交互逻辑 | <span class="hl-green">GLM</span> → 小任务、辅助工作</p>
+                </div>
+
+                <div class="progress-section">
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Claude（中转）- 综合能力</span>
+                            <span class="progress-value">95%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill purple" style="width: 95%;"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">Gemini - 前端设计</span>
+                            <span class="progress-value">90%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill blue" style="width: 90%;"></div></div>
+                    </div>
+                    <div class="progress-item">
+                        <div class="progress-header">
+                            <span class="progress-label">DeepSeek - 性价比</span>
+                            <span class="progress-value">85%</span>
+                        </div>
+                        <div class="progress-bar"><div class="progress-fill green" style="width: 85%;"></div></div>
+                    </div>
+                </div>
+
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>模型选择的核心原则是<strong>"丰俭由人"</strong>。追求效果用Claude中转，追求性价比用DeepSeek。木里的经验很实用：<span class="hl-purple">Gemini做前端设计确实很强</span>，UI美观度比其他模型高一个档次。建议新手从免费的DeepSeek/GLM开始，熟练后再升级。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实战技巧 -->
+        <section class="section" id="tips">
+            <div class="section-header" onclick="toggleSection('tips')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">⚡</div>
+                    <h2 class="section-title">血泪换来的实战技巧</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">木里踩过的坑、交过的学费，浓缩成这些核心经验...</p>
+            <div class="section-content">
+                
+                <div class="tip-box danger">
+                    <div class="tip-icon">🚨</div>
+                    <div class="tip-content">
+                        <h4>教训一：Git版本管理是救命稻草</h4>
+                        <p>木里曾让AI直接撤回代码，结果<span class="hl-red">直接撤回到上一个Git版本</span>，当天的复杂改动全部丢失。<strong>现在的原则：改动再小，也先提交Git！</strong></p>
+                    </div>
+                </div>
+
+                <div class="tip-box warning">
+                    <div class="tip-icon">⚠️</div>
+                    <div class="tip-content">
+                        <h4>教训二：多IDE使用要分工明确</h4>
+                        <p>同时使用多个IDE时，一个改前端、一个改后端。即使修改的不是同一个文件，也可能出现<span class="hl-yellow">神秘的代码覆盖</span>。</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🎯 指令优化的进化过程</h3>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-num">早</div>
+                            <h4>初期：长段描述</h4>
+                            <p>功能简单时，可以一口气说很多需求，AI能理解并执行。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">中</div>
+                            <h4>中期：出现问题</h4>
+                            <p>功能复杂后，长指令让AI"思考很久"，还会擅自加入自己的想法。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">晚</div>
+                            <h4>后期：精准指令</h4>
+                            <p><span class="hl-green">指令越简单越精准越好</span>，修改哪个就说哪个，一次只做一件事。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>💡 大功能改造的正确姿势</h3>
+                    <p>木里把Web应用打包成iOS应用的经验：</p>
+                    <p>1️⃣ <strong>先和AI讨论方案</strong>：不是直接让它动手，让它调研几种方案</p>
+                    <p>2️⃣ <strong>确定方案后让它写计划</strong>：看计划里有没有"夹带私货"</p>
+                    <p>3️⃣ <strong>反复确认删除不需要的</strong>：AI真的会加一些它觉得好的功能</p>
+                    <p>4️⃣ <strong>确认无误再执行</strong>：宁可多几轮对话，也不要返工</p>
+                    
+                    <div class="tip-box">
+                        <div class="tip-icon">💡</div>
+                        <div class="tip-content">
+                            <h4>Capacitor 打包方案</h4>
+                            <p>AI推荐的方案：用Capacitor可以<span class="hl-blue">一次打包同时生成iOS和Android应用</span>，不需要分别学Swift和Kotlin。AI还贴心地说"Swift学习曲线特别陡峭"。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🎨 "口喷编程"的艺术</h3>
+                    <p>木里后期完全放弃打字，直接语音和AI对话：</p>
+                    <p style="border-left: 4px solid var(--accent); padding-left: 18px; margin: 15px 0; color: var(--text-secondary); font-style: italic;">"我后来已经很不喜欢打字了，要打很多字说明一个简单功能，后来都是直接语音...包括会很不耐烦地跟AI说'你必须改回去'——如果真跟设计师这样说是会挨打的。"</p>
+                </div>
+
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>木里的经验道出了AI编程的<strong>真实状态</strong>：不是优雅地写提示词，而是像和一个"有点笨但很能干"的实习生反复沟通。<span class="hl-red">Git多提交、指令精准、大改动先讨论</span>这三条铁律，每一条都是真金白银的教训换来的。新手务必牢记，能省掉80%的返工时间。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- VSCode使用 -->
+        <section class="section" id="vscode">
+            <div class="section-header" onclick="toggleSection('vscode')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">💻</div>
+                    <h2 class="section-title">VSCode + Claude Code 实操</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">手把手演示如何使用VSCode插件进行AI编程...</p>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🎛️ 四种工作模式</h3>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-num">P</div>
+                            <h4>Plan 计划模式</h4>
+                            <p>只讨论不动手，适合<span class="hl-blue">前期调研和方案确认</span>。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">B</div>
+                            <h4>Bypass 全自动模式</h4>
+                            <p>写代码、运行命令都<span class="hl-yellow">自动执行不确认</span>。效率高风险也高。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">A</div>
+                            <h4>Ask 询问模式</h4>
+                            <p>每个操作都要<span class="hl-green">二次确认</span>才执行。安全但效率较低。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">M</div>
+                            <h4>Mixed 混合模式</h4>
+                            <p>写代码自动，<span class="hl-purple">运行命令需确认</span>。推荐日常使用。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>⚡ 快速上手：做一个待办清单</h3>
+                    <div class="code-block">
+                        <code># 输入需求
+"帮我做一个待办清单网页，功能包括添加任务、删除任务、标记完成"
+
+# 后续迭代
+"背景太花哨了，换成浅灰色"
+"给每个任务加上创建时间"
+"增加一个优先级标签，重要的显示红色"</code>
+                    </div>
+                </div>
+
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>VSCode插件让Claude Code<strong>从命令行黑窗口变成可视化界面</strong>，对新手极其友好。Ben的建议很实用：<span class="hl-red">不要把它当编程工具，就当高级记事本</span>。你不需要看懂代码，只需要看运行效果——效果不对就让它改，对了就提交Git保存。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Git版本管理 -->
+        <section class="section" id="git">
+            <div class="section-header" onclick="toggleSection('git')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">📂</div>
+                    <h2 class="section-title">Git版本管理入门</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">像游戏存档一样管理代码，改坏了随时回滚...</p>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🎮 Git是什么？一个比喻就够了</h3>
+                    <p style="border-left: 4px solid var(--highlight-cyan); padding-left: 18px; margin: 15px 0; color: var(--text-secondary); font-style: italic; font-size: 1.05em;">Git就像游戏的存档系统。玩游戏玩到中间可以创建存档点，想回去就能回去。代码也一样——改坏了，就回到上一个"存档"。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>🔧 基本操作（让Claude Code帮你做）</h3>
+                    <div class="code-block">
+                        <code># 创建存档点
+"帮我提交一个Git版本，描述是'完成待办清单基础功能'"
+
+# 回到上一个版本
+"我不要这个功能了，回到上一个版本"
+
+# 创建实验分支
+"创建一个test分支，我要在里面试验新功能"
+
+# 合并分支
+"把test分支合并到主分支"</code>
+                    </div>
+                </div>
+
+                <div class="infographic">
+                    <div class="info-title">🌳 分支的妙用</div>
+                    <div class="flow-steps" style="justify-content: center;">
+                        <div class="flow-step">
+                            <div class="flow-icon">🏠</div>
+                            <div class="flow-label">主分支(main)</div>
+                            <div class="flow-desc">稳定可用版本</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-icon">🧪</div>
+                            <div class="flow-label">测试分支(test)</div>
+                            <div class="flow-desc">随便折腾</div>
+                        </div>
+                        <div class="flow-step">
+                            <div class="flow-icon">✅</div>
+                            <div class="flow-label">实验成功</div>
+                            <div class="flow-desc">合并到主分支</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>Git是AI编程的<strong>安全网</strong>。Ben说得很直白：如果不用Git，项目复杂后<span class="hl-red">一定会碰到改坏了、bug修不了、整个项目进行不下去的情况</span>。有了Git，任何灾难都只是"回到上一个版本"的事情。新手第一天就应该学会用Git，Claude Code可以帮你完成所有Git操作！</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Skill技能包 -->
+        <section class="section" id="skills">
+            <div class="section-header" onclick="toggleSection('skills')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🎁</div>
+                    <h2 class="section-title">Skill技能包：让AI更专业</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">给Claude Code装上专业技能，让它在特定领域表现更出色...</p>
+            <div class="section-content">
+                <div class="content-block">
+                    <h3>🧩 Skill是什么？</h3>
+                    <p>Skill是Claude Code的<span class="hl-purple">专业技能包</span>，类似于给AI装上特定领域的专业知识和工作流程。</p>
+                    <p style="border-left: 4px solid var(--highlight-pink); padding-left: 18px; margin: 15px 0; color: var(--text-secondary); font-style: italic;">就像教一个实习生：把任务背景、所需工具、输出标准说清楚，它就能专业地完成这类任务。</p>
+                </div>
+
+                <div class="content-block">
+                    <h3>📦 官方内置Skill</h3>
+                    <table class="comp-table">
+                        <thead>
+                            <tr><th>Skill名称</th><th>功能</th><th>使用场景</th></tr>
+                        </thead>
+                        <tbody>
+                            <tr><td><span class="hl-purple">PPTX Skill</span></td><td>制作专业PPT</td><td>演示文稿</td></tr>
+                            <tr><td><span class="hl-blue">PDF Skill</span></td><td>处理PDF文档</td><td>文档转换</td></tr>
+                            <tr><td><span class="hl-green">DOCX Skill</span></td><td>Word文档处理</td><td>报告编写</td></tr>
+                            <tr><td><span class="hl-yellow">Skill Creator</span></td><td>创建新Skill</td><td>自定义技能</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h3>✨ Ben的写作Skill实战</h3>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-num">📈</div>
+                            <h4>阅读量翻倍</h4>
+                            <p>用Claude Code写的文章，公众号阅读量<span class="hl-red">直接翻倍</span>。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">🔥</div>
+                            <h4>小红书爆款</h4>
+                            <p>一篇文章<span class="hl-blue">3万阅读、涨粉500</span>。</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">📝</div>
+                            <h4>400行工作流</h4>
+                            <p>系统化写作Skill，含<span class="hl-green">九步流程+三遍校审</span>。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>Skill是Claude Code的<strong>核心竞争力</strong>之一。比起单纯的提示词，Skill可以包含代码、工具、工作流，能力边界更广。Ben的写作Skill案例说明：<span class="hl-red">AI写作质量不取决于AI本身，而取决于你给它的规范和约束</span>。一个好的Skill，能让AI在特定领域达到专家水准。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心心法 -->
+        <section class="section" id="mindset">
+            <div class="section-header" onclick="toggleSection('mindset')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🧘</div>
+                    <h2 class="section-title">核心心法总结</h2>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <p class="section-preview">两位分享者2.5小时经验浓缩成的精华...</p>
+            <div class="section-content">
+                <div class="quotes-grid" style="margin-bottom: 25px;">
+                    <div class="quote-card">
+                        <div class="quote-text">碰到问题务必要有耐心解决，这是唯一的要求</div>
+                        <div class="quote-author"><span class="quote-icon">💪</span> 心态铁律</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-text">不懂就问AI，在和AI的交互中学习</div>
+                        <div class="quote-author"><span class="quote-icon">📖</span> 学习方法</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-text">有点像玩游戏，过完一关就觉得也还可以</div>
+                        <div class="quote-author"><span class="quote-icon">🎮</span> 闯关心态</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-text">AI写的东西质量由你控制，工具是工具</div>
+                        <div class="quote-author"><span class="quote-icon">🛠️</span> 工具观</div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h3>🎯 新手必记的五条铁律</h3>
+                    <div class="steps-grid">
+                        <div class="step-card">
+                            <div class="step-num">1</div>
+                            <h4>Git多提交</h4>
+                            <p>改动再小也先提交，这是你的救命稻草</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">2</div>
+                            <h4>指令要精准</h4>
+                            <p>功能越复杂，指令越要简单精准</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">3</div>
+                            <h4>大改先讨论</h4>
+                            <p>大功能改造先和AI讨论方案再执行</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">4</div>
+                            <h4>看效果不看代码</h4>
+                            <p>运行效果对了代码就没问题</p>
+                        </div>
+                        <div class="step-card">
+                            <div class="step-num">5</div>
+                            <h4>报错复制给AI</h4>
+                            <p>遇到报错直接复制给AI让它帮你解决</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-box">
+                    <div class="expert-label">Claude Code 专家点评</div>
+                    <p>这场分享最宝贵的不是技术细节，而是<strong>两位零基础过来人的真实心路历程</strong>。木里从出版专业到独立开发iOS应用，Ben从"Hello World学不下去"到AI写作爆款，他们证明了：<span class="hl-red">AI编程的门槛已经低到只需要"会说话"和"有耐心"</span>。唯一的要求是碰到问题不放弃——这也是任何学习的本质要求。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-links">
+                <a href="#" class="footer-link">📚 完整文档</a>
+                <a href="#" class="footer-link">💬 加入社群</a>
+                <a href="#" class="footer-link">🎬 直播回放</a>
+            </div>
+            <p>基于直播内容整理 · 由 Claude 生成 · 2025</p>
+            <p style="margin-top: 8px; opacity: 0.7;">🤖 Claude Code专家点评：愿每一个零基础的你，都能用AI实现自己的创意</p>
+        </footer>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <!-- 返回顶部 -->
+    <div class="back-top" id="backTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '☀️';
+            }
+        }
+
+        // 折叠/展开全部
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const anyExpanded = Array.from(sections).some(s => !s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (anyExpanded) {
+                    s.classList.add('collapsed');
+                } else {
+                    s.classList.remove('collapsed');
+                }
+            });
+        }
+
+        // 切换单个板块
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // 滚动到顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 返回顶部按钮显示/隐藏
+        window.addEventListener('scroll', function() {
+            const backTop = document.getElementById('backTop');
+            if (window.scrollY > 500) {
+                backTop.classList.add('visible');
+            } else {
+                backTop.classList.remove('visible');
+            }
+        });
+
+        // 初始化：部分板块折叠
+        document.addEventListener('DOMContentLoaded', function() {
+            // 默认展开前几个重要板块
+            const sectionsToCollapse = ['models', 'vscode', 'git', 'skills'];
+            sectionsToCollapse.forEach(id => {
+                const section = document.getElementById(id);
+                if (section) section.classList.add('collapsed');
+            });
+        });
+    </script>
+</body>
+</html>

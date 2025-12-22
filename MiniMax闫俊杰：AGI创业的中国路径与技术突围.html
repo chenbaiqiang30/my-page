@@ -1,0 +1,1501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniMax闫俊杰：AGI创业的中国路径与技术突围</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --highlight-key: #f43f5e;
+            --highlight-data: #38bdf8;
+            --highlight-quote: #34d399;
+            --highlight-gold: #fbbf24;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #8b5cf6;
+            --accent2: #ec4899;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #f1f5f9 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 头部样式 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #f43f5e, #8b5cf6, #38bdf8, #34d399, #fbbf24);
+        }
+        .header::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        h1 {
+            font-size: clamp(2em, 5vw, 3em);
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #f1f5f9, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            font-size: 1.2em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            color: white;
+        }
+        
+        /* 核心数据面板 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-card:nth-child(5) { animation-delay: 0.5s; }
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--highlight-data), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 8px;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        /* 金句卡片 */
+        .quote-banner {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .quote-banner::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8em;
+            color: var(--accent);
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+        .quote-text {
+            font-size: 1.4em;
+            font-weight: 600;
+            font-style: italic;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-author {
+            margin-top: 15px;
+            color: var(--text-secondary);
+            text-align: right;
+        }
+        
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+        }
+        .mindmap-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 30px;
+            padding: 20px;
+            min-width: 800px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-size: 1.3em;
+            font-weight: 700;
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+            animation: pulse 3s ease-in-out infinite;
+            text-align: center;
+        }
+        .connector-line {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--accent), transparent);
+        }
+        .branches-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            width: 100%;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.3s; }
+        .branch:nth-child(3) { animation-delay: 0.4s; }
+        .branch:nth-child(4) { animation-delay: 0.5s; }
+        .branch-connector {
+            width: 3px;
+            height: 20px;
+            background: var(--accent);
+        }
+        .branch-node {
+            background: var(--glass-bg);
+            border: 2px solid var(--accent);
+            padding: 12px 20px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .branch-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+        .sub-nodes {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 100%;
+        }
+        .sub-node {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 10px 15px;
+            border-radius: 10px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.85em;
+            transition: all 0.3s ease;
+        }
+        .sub-node:hover {
+            background: rgba(139, 92, 246, 0.2);
+            transform: translateX(5px);
+        }
+        
+        /* 信息图 */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+        }
+        .infographic-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .comparison-chart {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        .comparison-side {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+        }
+        .comparison-side h4 {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .comparison-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .comparison-item:last-child {
+            border-bottom: none;
+        }
+        .comparison-bar {
+            height: 8px;
+            background: var(--glass-border);
+            border-radius: 4px;
+            flex: 1;
+            margin: 0 15px;
+            overflow: hidden;
+        }
+        .comparison-bar-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        .bar-us { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .bar-cn { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+        
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent), var(--accent2), var(--highlight-data));
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 30px;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .timeline-item:nth-child(1) { animation-delay: 0.1s; }
+        .timeline-item:nth-child(2) { animation-delay: 0.2s; }
+        .timeline-item:nth-child(3) { animation-delay: 0.3s; }
+        .timeline-item:nth-child(4) { animation-delay: 0.4s; }
+        .timeline-item:nth-child(5) { animation-delay: 0.5s; }
+        .timeline-dot {
+            position: absolute;
+            left: -26px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            background: var(--accent);
+            border-radius: 50%;
+            border: 3px solid var(--bg-primary);
+        }
+        .timeline-year {
+            font-size: 0.85em;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .timeline-content {
+            background: rgba(139, 92, 246, 0.1);
+            padding: 15px 20px;
+            border-radius: 12px;
+            border-left: 3px solid var(--accent);
+        }
+        
+        /* 内容区块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 0;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            overflow: hidden;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 30px 40px;
+            background: rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+        .section-header:hover {
+            background: rgba(139, 92, 246, 0.1);
+        }
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+        .collapse-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 0 40px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .collapsed .section-preview {
+            max-height: 100px;
+            padding: 15px 40px 20px;
+        }
+        .section-content {
+            padding: 30px 40px 40px;
+            max-height: 5000px;
+            transition: all 0.5s ease;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+            padding: 0 40px;
+            overflow: hidden;
+        }
+        
+        /* 高亮样式 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(244, 63, 94, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(56, 189, 248, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(52, 211, 153, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-gold {
+            color: var(--highlight-gold);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(251, 191, 36, 0.15);
+            border-radius: 6px;
+        }
+        
+        /* 专家评论 */
+        .expert-comment {
+            margin-top: 30px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1));
+            border-left: 4px solid var(--accent);
+            border-radius: 16px;
+            position: relative;
+        }
+        .expert-comment::before {
+            content: attr(data-icon);
+            position: absolute;
+            top: -18px;
+            left: 25px;
+            font-size: 2em;
+            background: var(--glass-bg);
+            padding: 5px 15px;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+        .expert-label {
+            font-size: 0.85em;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .expert-content {
+            font-size: 1.05em;
+            line-height: 1.9;
+        }
+        
+        /* 金句集锦 */
+        .golden-quotes {
+            display: grid;
+            gap: 20px;
+        }
+        .golden-quote {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.05));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 16px;
+            padding: 25px 30px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .golden-quote:hover {
+            transform: translateX(5px);
+            border-color: var(--highlight-gold);
+        }
+        .golden-quote::before {
+            content: '💎';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            font-size: 1.5em;
+            background: var(--glass-bg);
+            padding: 2px 10px;
+            border-radius: 8px;
+        }
+        .golden-quote-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+        .golden-quote-context {
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+        
+        /* 要点列表 */
+        .key-points {
+            display: grid;
+            gap: 15px;
+        }
+        .key-point {
+            display: flex;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .key-point:hover {
+            background: rgba(139, 92, 246, 0.15);
+            transform: translateX(5px);
+        }
+        .key-point-num {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .key-point-content h4 {
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        .key-point-content p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 12px 40px rgba(139, 92, 246, 0.5); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .branches-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .comparison-chart {
+                grid-template-columns: 1fr;
+            }
+        }
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .header { padding: 30px 20px; }
+            .section-header { padding: 20px; }
+            .section-content { padding: 20px; }
+            h1 { font-size: 1.8em; }
+            .branches-container {
+                grid-template-columns: 1fr;
+            }
+            .mindmap { min-width: auto; }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* 打印样式 */
+        @media print {
+            body { background: white; color: black; }
+            .theme-toggle, .back-to-top, .controls { display: none; }
+            .section { break-inside: avoid; }
+            .collapsed .section-content { max-height: none; padding: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-badge">
+                <span>🎙️</span>
+                <span>深度访谈解读</span>
+            </div>
+            <h1>MiniMax闫俊杰：AGI创业的中国路径与技术突围</h1>
+            <p class="subtitle">罗永浩十字路口对谈 · 一位89年AI创业者的认知革命与行业洞察</p>
+            <div class="meta-info">
+                <div class="meta-item">
+                    <span>👤</span>
+                    <span>受访者：闫俊杰（MiniMax创始人）</span>
+                </div>
+                <div class="meta-item">
+                    <span>🎤</span>
+                    <span>主持人：罗永浩</span>
+                </div>
+                <div class="meta-item">
+                    <span>📅</span>
+                    <span>2024年深度对话</span>
+                </div>
+                <div class="meta-item">
+                    <span>⏱️</span>
+                    <span>约90分钟精华提炼</span>
+                </div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">
+                    <span>📑</span>
+                    <span>展开/折叠全部</span>
+                </button>
+                <button class="btn" onclick="window.print()">
+                    <span>🖨️</span>
+                    <span>打印保存</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- 核心数据面板 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">5%</div>
+                <div class="stat-label">中美技术差距</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">1/50</div>
+                <div class="stat-label">研发投入比</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">400+</div>
+                <div class="stat-label">MiniMax团队规模</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">4</div>
+                <div class="stat-label">全球领先模态数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">100万+</div>
+                <div class="stat-label">日均合成语音(小时)</div>
+            </div>
+        </div>
+
+        <!-- 核心金句 -->
+        <div class="quote-banner">
+            <p class="quote-text">"只要一个东西能被量化、能被评估，模型就一定会强于人。这不是能不能的问题，只是时间问题。"</p>
+            <p class="quote-author">—— 闫俊杰</p>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="mindmap-container">
+            <h3 class="mindmap-title">
+                <span>🧠</span>
+                <span>访谈核心架构图</span>
+            </h3>
+            <div class="mindmap">
+                <div class="center-node">AGI中国路径</div>
+                <div class="connector-line"></div>
+                <div class="branches-container">
+                    <div class="branch">
+                        <div class="branch-connector"></div>
+                        <div class="branch-node">🔬 技术战略</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">多模态并行发展</div>
+                            <div class="sub-node">Scaling规模化思维</div>
+                            <div class="sub-node">资源约束下的创新</div>
+                            <div class="sub-node">四模态融合目标</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-connector"></div>
+                        <div class="branch-node">👥 人才观</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">本土培养优于海归</div>
+                            <div class="sub-node">年轻人+第一性原理</div>
+                            <div class="sub-node">聪明+热情+协作</div>
+                            <div class="sub-node">期待旗舰级天才</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-connector"></div>
+                        <div class="branch-node">💼 商业逻辑</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">直接服务用户</div>
+                            <div class="sub-node">全球化第一天</div>
+                            <div class="sub-node">技术驱动为核心</div>
+                            <div class="sub-node">模型即产品</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-connector"></div>
+                        <div class="branch-node">🌏 行业格局</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">美国四巨头垄断</div>
+                            <div class="sub-node">中国开源突围</div>
+                            <div class="sub-node">多元化非垄断</div>
+                            <div class="sub-node">2-3年关键窗口</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 信息图：中美AI对比 -->
+        <div class="infographic">
+            <h3 class="infographic-title">
+                <span>📊</span>
+                <span>中美AI大模型竞争态势</span>
+            </h3>
+            <div class="comparison-chart">
+                <div class="comparison-side">
+                    <h4><span>🇺🇸</span> 美国头部公司</h4>
+                    <div class="comparison-item">
+                        <span>估值</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-us" style="width: 100%;"></div></div>
+                        <span class="highlight-data">100x</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>收入</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-us" style="width: 100%;"></div></div>
+                        <span class="highlight-data">100x</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>研发投入</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-us" style="width: 100%;"></div></div>
+                        <span class="highlight-data">50-100x</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>技术领先</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-us" style="width: 100%;"></div></div>
+                        <span class="highlight-data">+5%</span>
+                    </div>
+                </div>
+                <div class="comparison-side">
+                    <h4><span>🇨🇳</span> 中国创业公司</h4>
+                    <div class="comparison-item">
+                        <span>估值</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-cn" style="width: 1%;"></div></div>
+                        <span class="highlight-key">1x</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>收入</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-cn" style="width: 1%;"></div></div>
+                        <span class="highlight-key">1x</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>研发投入</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-cn" style="width: 2%;"></div></div>
+                        <span class="highlight-key">1x</span>
+                    </div>
+                    <div class="comparison-item">
+                        <span>技术水平</span>
+                        <div class="comparison-bar"><div class="comparison-bar-fill bar-cn" style="width: 95%;"></div></div>
+                        <span class="highlight-quote">95%</span>
+                    </div>
+                </div>
+            </div>
+            <div class="expert-comment" data-icon="🔍">
+                <div class="expert-label">📍 中美AI专家解读</div>
+                <div class="expert-content">
+                    这组数据揭示了一个惊人的效率悖论：<span class="highlight-key">中国公司用1/50的资金，达到了95%的技术水平</span>。这并非简单的"追赶"，而是一种<span class="highlight-quote">资源约束下的创新范式</span>。美国公司可以"暴力美学"式地堆算力，中国团队则必须在每一个技术决策上精打细算，这种压力反而催生了更高效的算法和更聪明的架构设计。DeepSeek的爆发正是这种模式的极致体现。
+                </div>
+            </div>
+        </div>
+
+        <!-- 创始人成长轨迹 -->
+        <div class="section" id="section-growth">
+            <div class="section-header" onclick="toggleSection('section-growth')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">📖</div>
+                    <span class="section-title">从河南小县城到AGI创业者</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"教育资源匮乏反而培养了自学能力，这是比任何学历更重要的竞争力"</div>
+            <div class="section-content">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">1989年 · 河南小县城</div>
+                        <div class="timeline-content">
+                            出生于教育资源匮乏的小县城，父亲是中学数学老师（学历史教数学），母亲是公务员。<span class="highlight-quote">"小学三年级就能给初中生答疑"</span>，在缺乏娱乐的环境中，自学成为唯一的乐趣。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">本科 · 东南大学</div>
+                        <div class="timeline-content">
+                            数学专业，开始意识到<span class="highlight-key">"有些人在数学上确实比我有天分"</span>，决定转向人工智能（当时叫"模式识别"）。在图书馆自学AI相关论文。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">硕博连读 · 中科院</div>
+                        <div class="timeline-content">
+                            五年间发表大量论文，<span class="highlight-data">"数量可能是实验室有史以来最多的"</span>。三年完成博士学业，当时对行业的预期是"找个IBM的工作，年薪28万就是天花板"。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">2014年 · 百度实习</div>
+                        <div class="timeline-content">
+                            在百度接触到当时国内最大的GPU集群，<span class="highlight-quote">"一个实习生用了公司三分之一的算力做实验"</span>。首次感受到AI技术的商业价值。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">商汤七年 · 从实习生到副总裁</div>
+                        <div class="timeline-content">
+                            带领团队攻克人脸识别，从排名垫底到行业第一。<span class="highlight-key">"连续一年半每次测试都是倒数，但最终把不可能变成了可能"</span>。管理团队最高达到700-800人。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-year">2021年 · 创立MiniMax</div>
+                        <div class="timeline-content">
+                            在GPT-3.5爆发前一年创业，<span class="highlight-data">比同期所有竞争对手早了近一年</span>。最初只有十几个人，从"完全没有技术路线"开始。
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-comment" data-icon="🎯">
+                    <div class="expert-label">📍 中美AI专家解读</div>
+                    <div class="expert-content">
+                        闫俊杰的成长路径呈现了一个典型的<span class="highlight-quote">"技术驱动型创业者"</span>的养成模式：早期的资源匮乏培养了自学能力，学术训练建立了第一性原理思维，大厂经历验证了技术到产品的转化能力。但最关键的是他在2019年就看到了GPT-3论文的价值——<span class="highlight-key">这比绝大多数中国技术专家早了整整三年</span>。这种前瞻性判断力，往往比技术能力本身更稀缺。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 技术战略与多模态布局 -->
+        <div class="section" id="section-tech">
+            <div class="section-header" onclick="toggleSection('section-tech')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🔬</div>
+                    <span class="section-title">四模态并行：看似不聚焦的聚焦战略</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"真正的AGI一定是动态输入、动态输出，只是这件事实在太难了"</div>
+            <div class="section-content">
+                <div class="key-points">
+                    <div class="key-point">
+                        <div class="key-point-num">1</div>
+                        <div class="key-point-content">
+                            <h4>语言模型 · 最后突破的堡垒</h4>
+                            <p>语音领先两年，视频领先一年，但语言模型直到2024年10月才"在国际上比较受到认可"。<span class="highlight-key">这是唯一一家中国公司在四个模态都做到国际领先</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">2</div>
+                        <div class="key-point-content">
+                            <h4>不聚焦的底层逻辑</h4>
+                            <p>"不同模态之间的差距其实没那么大，<span class="highlight-quote">底层原理几乎是一样的</span>。"所有模型都要能规模化（Scaling），这是新一代AI的核心突破。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">3</div>
+                        <div class="key-point-content">
+                            <h4>市场融合的预判</h4>
+                            <p>当前市场规模：语言模型<span class="highlight-data">200亿美金</span>、图片视频<span class="highlight-data">20-30亿</span>、声音<span class="highlight-data">3亿</span>、音乐<span class="highlight-data">几千万</span>。闫俊杰判断<span class="highlight-key">"这四个市场会慢慢融合"</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">4</div>
+                        <div class="key-point-content">
+                            <h4>最虚弱也是最关键的时刻</h4>
+                            <p>"代价很大——做了四个模态，一定没有只做一个资源聚焦。好处还没见到，要等合在一起才能真正见到。<span class="highlight-key">我们现在是最虚弱的时候</span>。"</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-comment" data-icon="⚡">
+                    <div class="expert-label">📍 中美AI专家解读</div>
+                    <div class="expert-content">
+                        这是一个<span class="highlight-quote">高风险高回报的战略豪赌</span>。OpenAI的GPT-4o已经证明多模态融合是正确方向，但MiniMax的独特之处在于：它是从四个独立模态"自下而上"地构建，而非像OpenAI那样从语言模型"自上而下"地扩展。这两条路径谁更优，可能要到2025-2026年才能见分晓。闫俊杰坦言"这是全球极少数公司有机会做成的事"——<span class="highlight-key">如果成功，将是中国AI首次在范式层面的原创性突破</span>。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 人才观与组织哲学 -->
+        <div class="section" id="section-talent">
+            <div class="section-header" onclick="toggleSection('section-talent')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">👥</div>
+                    <span class="section-title">人才观：为什么本土年轻人比海归更好用？</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"真正在公司起关键作用的同学，很多是第一份工作就在这里"</div>
+            <div class="section-content">
+                <div class="golden-quotes">
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"烧钱烧出来的经验当然有用，但光这样肯定不够。<span class="highlight-key">不是拿来主义，把他们做的东西拿过来就可以了</span>。"</div>
+                        <div class="golden-quote-context">谈从硅谷挖人的局限性</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"<span class="highlight-quote">AI这件事不是玄学</span>，它有很多第一性的客观规律。算法怎么设计、数据链路怎么搭建、训练效率怎么优化——每个东西都有明确的优化目标。"</div>
+                        <div class="golden-quote-context">解释为何年轻人能快速上手</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"什么时候中国能做得更好？当<span class="highlight-key">本土优秀年轻人中出现几个旗舰型技术天才</span>的时候。这个人一定不是从美国回来的，一定是在中国本土成长起来的。"</div>
+                        <div class="golden-quote-context">预测2-3年内会出现这样的人</div>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 30px 0 20px; font-size: 1.2em;">人才选拔的三个核心标准</h4>
+                <div class="key-points">
+                    <div class="key-point">
+                        <div class="key-point-num">1</div>
+                        <div class="key-point-content">
+                            <h4>足够聪明</h4>
+                            <p>核心是"悟性"——能自我学习、自我反省。<span class="highlight-quote">"这个事没法走捷径，技术变化太快"</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">2</div>
+                        <div class="key-point-content">
+                            <h4>热情不可伪装</h4>
+                            <p>"对这个领域非常有热情，<span class="highlight-key">这个热情是没法被表演的</span>。有热情和没热情的人区别很大。"</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">3</div>
+                        <div class="key-point-content">
+                            <h4>协作能力优先于天才光环</h4>
+                            <p>"足够好的人，对他来说做成一件事一定大于自己的ego。"即使遇到性格"变态"的天才，也会尝试让他融入团队。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment" data-icon="🧩">
+                    <div class="expert-label">📍 中美AI专家解读</div>
+                    <div class="expert-content">
+                        这套人才观与硅谷的"10x工程师"崇拜形成鲜明对比。闫俊杰强调的是<span class="highlight-quote">"可复制、可培养、可协作"</span>的人才体系，而非依赖几个超级明星。这与DeepSeek的用人策略惊人相似——梁文峰也曾表示"一个海归都没有"。深层原因是：<span class="highlight-key">当资源受限时，团队的整体效率比个人能力更重要</span>。硅谷可以用天价薪酬容忍天才的怪癖，中国创业公司必须让每个人都能产出。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 商业化与国际化 -->
+        <div class="section" id="section-business">
+            <div class="section-header" onclick="toggleSection('section-business')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🌏</div>
+                    <span class="section-title">商业逻辑：为什么第一天就要国际化？</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"用户愿意给产品真正付钱，这是非常核心的标准"</div>
+            <div class="section-content">
+                <h4 style="margin-bottom: 20px; font-size: 1.2em;">创业第一天定下的三条铁律</h4>
+                <div class="key-points">
+                    <div class="key-point">
+                        <div class="key-point-num">1</div>
+                        <div class="key-point-content">
+                            <h4>直接服务用户，拒绝做项目</h4>
+                            <p>"<span class="highlight-key">一旦接项目，公司就没出息了</span>。"——这句话在中国ToB市场堪称离经叛道。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">2</div>
+                        <div class="key-point-content">
+                            <h4>必须做国际化</h4>
+                            <p>原因一：中国人软件付费难。原因二：<span class="highlight-quote">"一旦巨头入场，国内必然是纯免费模式，创业公司没法生存"</span>。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">3</div>
+                        <div class="key-point-content">
+                            <h4>坚持技术驱动（最难的抉择）</h4>
+                            <p>内部曾有半年极度迷茫：是技术驱动还是互联网式增长？最终选择前者，代价是"有些人不认同就离开了"。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 30px 0 20px; font-size: 1.2em;">C端产品的成功秘诀</h4>
+                <div class="golden-quotes">
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"在大模型时代，<span class="highlight-key">真正的产品其实是模型本身</span>。传统意义上的产品更像是渠道——我们自己开的店，和合作伙伴开的店。"</div>
+                        <div class="golden-quote-context">重新定义"产品"的概念</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"为什么Talkie能超过Character.AI？因为<span class="highlight-quote">他们的核心团队去了Google，没有人做研发了</span>，而我们的模型还在不停进步。"</div>
+                        <div class="golden-quote-context">技术驱动型产品的护城河</div>
+                    </div>
+                </div>
+
+                <div class="expert-comment" data-icon="💡">
+                    <div class="expert-label">📍 中美AI专家解读</div>
+                    <div class="expert-content">
+                        MiniMax的商业策略揭示了一个残酷现实：<span class="highlight-key">中国AI创业公司在国内几乎无法建立健康的商业模式</span>。字节、阿里等巨头可以用免费策略"寸草不生"，创业公司只能去海外找付费用户。这与十年前移动互联网的"出海"不同——那时是锦上添花，现在是生存必需。闫俊杰提到海外团队只有二三十人却"明显人力不够"，说明<span class="highlight-quote">海外增长已经成为公司核心引擎</span>。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产品经理的未来 -->
+        <div class="section" id="section-pm">
+            <div class="section-header" onclick="toggleSection('section-pm')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🎯</div>
+                    <span class="section-title">产品经理会被淘汰吗？一个AI时代的灵魂拷问</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"不是产品经理会消失，而是所有职能的边界都会变得模糊"</div>
+            <div class="section-content">
+                <p style="margin-bottom: 20px; color: var(--text-secondary);">罗永浩作为产品经理出身的创业者，抛出了一个尖锐问题：如果大模型本身就是最强产品，产品经理这个行业是不是要没了？</p>
+                
+                <h4 style="margin: 20px 0 15px; font-size: 1.2em;">闫俊杰的判断：天堂与地狱之间</h4>
+                <div class="key-points">
+                    <div class="key-point">
+                        <div class="key-point-num">✅</div>
+                        <div class="key-point-content">
+                            <h4>变化一：产品经理可以自己做原型</h4>
+                            <p>"以前是写PRD让开发排期，现在是<span class="highlight-quote">产品经理拿着三个Demo出来</span>让大家评估哪个更靠谱。"</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">✅</div>
+                        <div class="key-point-content">
+                            <h4>变化二：开发也能做产品设计</h4>
+                            <p>"工程师不需要依赖设计师配合，也可以做很有创意的想法。<span class="highlight-key">边界在模糊</span>。"</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">🎯</div>
+                        <div class="key-point-content">
+                            <h4>核心竞争力的转移</h4>
+                            <p>"<span class="highlight-gold">最核心的竞争力是想象力</span>——谁有最好的想象力，谁能最坚持它。AI把'我只会写代码/做产品'这些约束去掉了。"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment" data-icon="🔮">
+                    <div class="expert-label">📍 中美AI专家解读</div>
+                    <div class="expert-content">
+                        这段对话触及了AI时代最敏感的职业焦虑。闫俊杰的回答既不是安慰（"每个职能都还有价值"），也不是恐吓（"产品经理要失业"），而是指出了一个更深层的变化：<span class="highlight-key">AI正在消解工业时代的专业分工</span>。当任何人都能写代码、做设计、生成内容时，"专业技能"不再是护城河，<span class="highlight-quote">"想象力+执行力"的组合才是</span>。美国已经出现"几十人公司估值几百亿"的案例，中国什么时候会出现产品经理主导的AI独角兽？可能就在明年。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行业格局与未来预判 -->
+        <div class="section" id="section-future">
+            <div class="section-header" onclick="toggleSection('section-future')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🔮</div>
+                    <span class="section-title">行业未来：为什么不会赢家通吃？</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"只要大家用的芯片和能源是类似的，就一定会有不同的取舍"</div>
+            <div class="section-content">
+                <h4 style="margin-bottom: 20px; font-size: 1.2em;">为什么AI不会像互联网一样垄断？</h4>
+                <div class="golden-quotes">
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"所有模型都要考虑实际的<span class="highlight-data">推理成本</span>。一旦加了成本约束，大家就要做取舍——比如对话流畅的模型可能代码能力会下降。"</div>
+                        <div class="golden-quote-context">经济约束导致差异化</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"OpenRouter上排名前几的是美国三家，后面几名是中国公司。<span class="highlight-quote">大家的使用量都在增长，不是存量博弈</span>。"</div>
+                        <div class="golden-quote-context">市场还在急剧扩张</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"中国模型效果差5%，但<span class="highlight-key">成本可能只有美国的十分之一</span>。这就像汽车市场——为什么会存在这么多品牌？"</div>
+                        <div class="golden-quote-context">性价比创造生存空间</div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 30px 0 20px; font-size: 1.2em;">关于1.4万亿美金的判断</h4>
+                <p style="margin-bottom: 15px;">Sam Altman说OpenAI未来8年要花1.4万亿美金做基础设施。闫俊杰的解读：</p>
+                <div class="key-points">
+                    <div class="key-point">
+                        <div class="key-point-num">📊</div>
+                        <div class="key-point-content">
+                            <h4>逻辑上可以理解</h4>
+                            <p>OpenAI今年收入可能达<span class="highlight-data">200亿美金</span>，如果没有中国竞争，一年可能到1000亿。1.4万亿分摊到8年，每年大约1800亿，收入能覆盖。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">⚠️</div>
+                        <div class="key-point-content">
+                            <h4>前提是能持续垄断</h4>
+                            <p>"<span class="highlight-key">OpenAI知道这个前提——他们必须持续保持领先才能垄断</span>。但这个假设我认为不一定成立。"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment" data-icon="🌐">
+                    <div class="expert-label">📍 中美AI专家解读</div>
+                    <div class="expert-content">
+                        闫俊杰对行业格局的判断与主流观点形成有趣对比。华尔街分析师普遍相信"AI会比互联网更垄断"，因为模型越大效果越好，形成正反馈。但闫俊杰指出了一个容易被忽视的约束：<span class="highlight-key">商业可用的模型有隐性的"参数量上限"</span>——受芯片和成本约束。这意味着<span class="highlight-quote">规模不是无限的武器，聪明地使用有限资源才是</span>。中国公司被迫走的"效率创新"路线，反而可能在成本竞争中获得优势。如果未来推理成本成为决定性因素，格局可能逆转。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- AI的社会影响 -->
+        <div class="section" id="section-impact">
+            <div class="section-header" onclick="toggleSection('section-impact')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">🌍</div>
+                    <span class="section-title">AI会毁灭人类吗？一个创业者的诚实回答</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"两年前我不慌，现在的模型开始比我聪明了，有点害怕"</div>
+            <div class="section-content">
+                <div class="golden-quotes">
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"每当做出一个比较成功的模型，在做出来之前都会有个感觉——<span class="highlight-key">它比我自己强</span>。这感觉挺吓人的。"</div>
+                        <div class="golden-quote-context">创造者的恐惧</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"为什么中国科技界很少有人公开担心AI毁灭人类？<span class="highlight-quote">两年前模型根本不聪明，但现在它在变得越来越聪明</span>。"</div>
+                        <div class="golden-quote-context">态度正在转变</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"<span class="highlight-gold">只要一个东西能被量化、能被评估，模型就一定会强于人</span>，或者至少达到最好的人的水平。这只是时间问题。"</div>
+                        <div class="golden-quote-context">对AGI的核心判断</div>
+                    </div>
+                </div>
+
+                <h4 style="margin: 30px 0 20px; font-size: 1.2em;">乐观与悲观的两个视角</h4>
+                <div class="key-points">
+                    <div class="key-point">
+                        <div class="key-point-num">😊</div>
+                        <div class="key-point-content">
+                            <h4>乐观：普惠与平权</h4>
+                            <p>"<span class="highlight-quote">大部分人不会写代码，但如果都具备代码能力，能做的事会多非常多。大部分人不会创作，现在可以了。</span>"——编程能力和创作能力的普及是革命性的。</p>
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-num">😟</div>
+                        <div class="key-point-content">
+                            <h4>悲观：分配问题</h4>
+                            <p>"真正应该考虑的是<span class="highlight-key">怎么让AI产生的价值被比较好地分配出来</span>，不要被掌握在非常少的人手里。"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment" data-icon="⚖️">
+                    <div class="expert-label">📍 中美AI专家解读</div>
+                    <div class="expert-content">
+                        这是全篇最值得深思的部分。闫俊杰作为AI创造者，坦承"有点害怕"——这比外部观察者的担忧更有分量。他没有给出"AI不会毁灭人类"的保证，而是强调<span class="highlight-quote">"5-10年内还是人类控制的"</span>，暗示之后不确定。更有价值的是他对"分配"的思考：<span class="highlight-key">中国公司被迫开源、低成本，反而可能让AI红利更普惠</span>。这是一个意外的"制度优势"——美国的高定价策略（GPT Pro 200美元/月）正在制造新的数字鸿沟。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金句集锦 -->
+        <div class="section" id="section-quotes">
+            <div class="section-header" onclick="toggleSection('section-quotes')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">💎</div>
+                    <span class="section-title">金句集锦：一个AGI创业者的认知精华</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">关于技术、商业、人生的二十句箴言</div>
+            <div class="section-content">
+                <div class="golden-quotes">
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"真正重要的是把基础能力做好。当真的做到了行业需要你的时候，<span class="highlight-key">商业化进展自然就会变好</span>。"</div>
+                        <div class="golden-quote-context">关于商业化</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"我之前做了十年AI研究，但客观来说，<span class="highlight-quote">很多东西其实是没用的</span>。真正重要的是找到能Scaling的方式。"</div>
+                        <div class="golden-quote-context">关于经验的价值</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"不应该认为AI行业是互联网行业的延续。<span class="highlight-key">我们试过用OKR，发现根本行不通</span>。"</div>
+                        <div class="golden-quote-context">关于管理</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"我们不应该太在意创业公司之间怎么排名。<span class="highlight-quote">真正的对手是美国头部公司和中国互联网巨头</span>。"</div>
+                        <div class="golden-quote-context">关于竞争</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"小时候的理想就是当科学家。<span class="highlight-gold">那个时候觉得很神圣，一切的根基都是数学</span>。"</div>
+                        <div class="golden-quote-context">关于初心</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"每当遇到非常大打击的时候，我们会<span class="highlight-key">用第一性原理拆解成可以改变的东西</span>，变成可积累的原则。"</div>
+                        <div class="golden-quote-context">关于逆境</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"遇到挫折时还有第二个方法——<span class="highlight-quote">给大家发更多的钱</span>。"</div>
+                        <div class="golden-quote-context">关于激励（坦诚得可爱）</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"什么时候我觉得公司在变好？当发现<span class="highlight-gold">越来越多的人有自己的认知，而且比我的更好</span>。"</div>
+                        <div class="golden-quote-context">关于成长</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"<span class="highlight-key">AGI成功的标志应该是真的提升了GDP</span>。这可能2-3年就会发生。"</div>
+                        <div class="golden-quote-context">关于AGI的定义</div>
+                    </div>
+                    <div class="golden-quote">
+                        <div class="golden-quote-text">"为什么我看起来很乐观？因为经历过<span class="highlight-quote">连续一年半每次测试都是倒数</span>，最终逆转成第一。"</div>
+                        <div class="golden-quote-context">关于心态</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 专家总结 -->
+        <div class="section" id="section-conclusion">
+            <div class="section-header" onclick="toggleSection('section-conclusion')">
+                <div class="section-title-wrap">
+                    <div class="section-icon">📝</div>
+                    <span class="section-title">中美AI专家总结：这场访谈的深层价值</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">一个36岁创业者给出的中国AI路径答案</div>
+            <div class="section-content">
+                <div class="expert-comment" data-icon="🎓" style="margin-top: 0;">
+                    <div class="expert-label">📍 核心洞察</div>
+                    <div class="expert-content">
+                        <p style="margin-bottom: 15px;">这场90分钟的对话，表面上是一个创业故事，深层是<span class="highlight-key">中国AI产业寻找自己道路的集体探索</span>。闫俊杰代表的不只是MiniMax，而是一种新型的中国科技创业范式：</p>
+                        
+                        <p style="margin-bottom: 15px;"><strong>1. 资源约束下的创新</strong><br>
+                        不是简单的"追赶"，而是<span class="highlight-quote">被迫走出一条更高效的路</span>。1/50的投入达到95%的效果，这个效率差距本身就是竞争力。</p>
+                        
+                        <p style="margin-bottom: 15px;"><strong>2. 本土人才的觉醒</strong><br>
+                        从"必须从硅谷挖人"到"<span class="highlight-gold">第一份工作的年轻人就能做核心研发</span>"，这是中国AI产业最深刻的变化。下一个伊利亚可能出现在中国。</p>
+                        
+                        <p style="margin-bottom: 15px;"><strong>3. 商业模式的困境与出路</strong><br>
+                        国内巨头免费策略+用户付费意愿低=<span class="highlight-key">创业公司必须出海</span>。这不是选择，是生存。</p>
+                        
+                        <p style="margin-bottom: 15px;"><strong>4. AGI的时间表</strong><br>
+                        闫俊杰给出了明确预测：<span class="highlight-data">2-3年内AI将开始贡献GDP</span>。考虑到他的判断往往偏保守，实际可能更快。</p>
+                        
+                        <p><strong>5. 一个意外的优势</strong><br>
+                        被迫开源、被迫降价，反而让中国AI更"普惠"。当美国公司把GPT Pro定价200美元/月时，<span class="highlight-quote">中国公司的低成本策略可能赢得全球发展中市场</span>。</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 30px; background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1)); border-radius: 20px; text-align: center;">
+                    <p style="font-size: 1.3em; font-weight: 600; margin-bottom: 10px;">最后一个问题的答案</p>
+                    <p style="font-size: 1.1em; color: var(--text-secondary);">当被问到"终极愿景是什么"时，闫俊杰的回答出乎意料地朴实：</p>
+                    <p style="font-size: 1.5em; font-weight: 700; margin-top: 15px; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">"更多时候想的是如何活下来。"</p>
+                    <p style="margin-top: 15px; color: var(--text-secondary); font-size: 0.95em;">这或许是中国AI创业者最真实的状态——<br>没有硅谷式的"改变世界"宣言，只有一步一步把事情做好的务实。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <footer style="text-align: center; padding: 40px 20px; color: var(--text-secondary); font-size: 0.9em;">
+            <p>基于《罗永浩的十字路口》MiniMax创始人闫俊杰访谈整理</p>
+            <p style="margin-top: 10px; opacity: 0.7;">由Claude AI根据用户技能设计生成 · 仅供学习交流</p>
+        </footer>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <span id="theme-icon">☀️</span>
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()" title="返回顶部">
+        <span>↑</span>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+
+        // 展开/折叠全部
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+
+        // 单个section切换
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 显示/隐藏返回顶部按钮
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // 数据条动画
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.querySelectorAll('.comparison-bar-fill').forEach(bar => {
+                    bar.style.width = bar.style.width;
+                });
+            }, 500);
+        });
+
+        // 统计卡片计数动画
+        function animateValue(element, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                const value = Math.floor(progress * (end - start) + start);
+                element.textContent = value + (element.dataset.suffix || '');
+                if (progress < 1) {
+                    window.requestAnimationFrame(step);
+                }
+            };
+            window.requestAnimationFrame(step);
+        }
+    </script>
+</body>
+</html>
