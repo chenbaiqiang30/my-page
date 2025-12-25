@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI短剧剪辑高级技巧 | 认知篇</title>
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --success-gradient: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+            --warning-gradient: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+            --dark-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --page-bg: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            
+            --highlight-red: #ff6b6b;
+            --highlight-blue: #4ecdc4;
+            --highlight-green: #45b7aa;
+            --highlight-purple: #9b59b6;
+            --highlight-orange: #f39c12;
+            --highlight-pink: #e84393;
+        }
+
+        .dark-mode {
+            --glass-bg: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f0f0f0;
+            --text-secondary: #b0b0c0;
+            --card-bg: rgba(30, 30, 50, 0.85);
+            --page-bg: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--page-bg);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        /* 头部区域 */
+        .hero {
+            background: var(--primary-gradient);
+            padding: 60px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(180deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: 2.8rem;
+            color: white;
+            margin-bottom: 15px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            font-weight: 700;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 25px;
+        }
+
+        .hero-tags {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .hero-tag {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 25px;
+            color: white;
+            font-size: 0.9rem;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        /* 控制栏 */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            font-size: 1.3rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 核心金句区 */
+        .golden-quotes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 50px;
+        }
+
+        .quote-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .quote-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 5rem;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .quote-card.red { border-left: 4px solid var(--highlight-red); }
+        .quote-card.blue { border-left: 4px solid var(--highlight-blue); }
+        .quote-card.purple { border-left: 4px solid var(--highlight-purple); }
+        .quote-card.orange { border-left: 4px solid var(--highlight-orange); }
+        .quote-card.green { border-left: 4px solid var(--highlight-green); }
+        .quote-card.pink { border-left: 4px solid var(--highlight-pink); }
+
+        .quote-text {
+            font-size: 1.15rem;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 15px;
+        }
+
+        .quote-card.red .quote-text { color: var(--highlight-red); }
+        .quote-card.blue .quote-text { color: var(--highlight-blue); }
+        .quote-card.purple .quote-text { color: var(--highlight-purple); }
+        .quote-card.orange .quote-text { color: var(--highlight-orange); }
+        .quote-card.green .quote-text { color: var(--highlight-green); }
+        .quote-card.pink .quote-text { color: var(--highlight-pink); }
+
+        .quote-source {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 50px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title span {
+            font-size: 1.8rem;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .mindmap-center {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 25px 45px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 40px;
+            width: 100%;
+        }
+
+        .mindmap-branch {
+            position: relative;
+        }
+
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--highlight-purple), transparent);
+        }
+
+        .branch-node {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .branch-title {
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        .branch-title.red { color: var(--highlight-red); }
+        .branch-title.blue { color: var(--highlight-blue); }
+        .branch-title.green { color: var(--highlight-green); }
+        .branch-title.purple { color: var(--highlight-purple); }
+        .branch-title.orange { color: var(--highlight-orange); }
+        .branch-title.pink { color: var(--highlight-pink); }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .branch-item {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 8px;
+        }
+
+        .dark-mode .branch-item {
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* 可折叠内容块 */
+        .collapsible-section {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            margin-bottom: 25px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-section:hover {
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
+        }
+
+        .collapsible-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .header-icon.red { background: var(--secondary-gradient); }
+        .header-icon.blue { background: var(--accent-gradient); }
+        .header-icon.green { background: var(--success-gradient); }
+        .header-icon.purple { background: var(--primary-gradient); }
+        .header-icon.orange { background: var(--warning-gradient); }
+
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header-preview {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .collapsible-section.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .collapsible-section.open .collapsible-content {
+            max-height: 3000px;
+        }
+
+        .content-inner {
+            padding: 0 30px 30px;
+        }
+
+        /* 内容样式 */
+        .content-block {
+            margin-bottom: 25px;
+        }
+
+        .content-block h4 {
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+            color: var(--highlight-purple);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-block p {
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        .highlight {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .highlight-red {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--highlight-red);
+        }
+
+        .highlight-blue {
+            background: rgba(78, 205, 196, 0.15);
+            color: var(--highlight-blue);
+        }
+
+        .highlight-green {
+            background: rgba(69, 183, 170, 0.15);
+            color: var(--highlight-green);
+        }
+
+        .highlight-purple {
+            background: rgba(155, 89, 182, 0.15);
+            color: var(--highlight-purple);
+        }
+
+        .highlight-orange {
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--highlight-orange);
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .comparison-table th {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 18px 20px;
+            font-weight: 600;
+            text-align: left;
+        }
+
+        .comparison-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--card-bg);
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(102, 126, 234, 0.05);
+        }
+
+        /* 信息图 */
+        .infographic {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .info-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .info-value {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .info-value.red { color: var(--highlight-red); }
+        .info-value.blue { color: var(--highlight-blue); }
+        .info-value.green { color: var(--highlight-green); }
+
+        .info-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* 流程图 */
+        .flow-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .flow-step {
+            background: var(--card-bg);
+            padding: 15px 25px;
+            border-radius: 12px;
+            border: 2px solid var(--glass-border);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover {
+            border-color: var(--highlight-purple);
+            transform: scale(1.05);
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            color: var(--highlight-purple);
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            border-left: 4px solid var(--highlight-purple);
+            border-radius: 0 16px 16px 0;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .expert-info h5 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--highlight-purple);
+        }
+
+        .expert-info span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .expert-content {
+            color: var(--text-primary);
+            line-height: 1.9;
+        }
+
+        /* 节奏公式 */
+        .rhythm-formula {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .formula-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .formula-card:hover {
+            transform: scale(1.03);
+        }
+
+        .formula-card.slow {
+            border-color: var(--highlight-blue);
+        }
+
+        .formula-card.medium {
+            border-color: var(--highlight-orange);
+        }
+
+        .formula-card.fast {
+            border-color: var(--highlight-red);
+        }
+
+        .formula-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .formula-card.slow .formula-title { color: var(--highlight-blue); }
+        .formula-card.medium .formula-title { color: var(--highlight-orange); }
+        .formula-card.fast .formula-title { color: var(--highlight-red); }
+
+        .formula-items {
+            text-align: left;
+        }
+
+        .formula-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        .formula-item::before {
+            content: '•';
+            font-weight: bold;
+        }
+
+        .formula-card.slow .formula-item::before { color: var(--highlight-blue); }
+        .formula-card.medium .formula-item::before { color: var(--highlight-orange); }
+        .formula-card.fast .formula-item::before { color: var(--highlight-red); }
+
+        /* 警示框 */
+        .warning-box {
+            background: linear-gradient(135deg, rgba(250, 112, 154, 0.1) 0%, rgba(254, 225, 64, 0.1) 100%);
+            border-radius: 16px;
+            padding: 20px 25px;
+            margin: 20px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+
+        .warning-icon {
+            font-size: 1.8rem;
+        }
+
+        .warning-content h5 {
+            font-weight: 700;
+            color: var(--highlight-orange);
+            margin-bottom: 8px;
+        }
+
+        .warning-content p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 50px 20px;
+            color: var(--text-secondary);
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .footer p {
+            font-size: 0.9rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .hero h1 { font-size: 2rem; }
+            .mindmap-branches { grid-template-columns: 1fr; }
+            .infographic { grid-template-columns: 1fr; }
+            .rhythm-formula { grid-template-columns: 1fr; }
+            .comparison-table { font-size: 0.9rem; }
+        }
+
+        @media (max-width: 600px) {
+            .hero { padding: 40px 15px; }
+            .hero h1 { font-size: 1.6rem; }
+            .container { padding: 20px 15px; }
+            .collapsible-header { padding: 18px 20px; }
+            .content-inner { padding: 0 20px 20px; }
+            .golden-quotes { grid-template-columns: 1fr; }
+            .flow-chart { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button class="control-btn" onclick="toggleDarkMode()" title="切换深色/浅色模式">🌓</button>
+        <button class="control-btn" onclick="expandAll()" title="展开全部">📖</button>
+        <button class="control-btn" onclick="collapseAll()" title="折叠全部">📕</button>
+    </div>
+
+    <!-- 头部 -->
+    <header class="hero">
+        <div class="hero-content">
+            <h1>🎬 AI短剧剪辑高级技巧</h1>
+            <p class="hero-subtitle">认知决定上限，技术只是底线 —— 一堂价值百万的剪辑思维课</p>
+            <div class="hero-tags">
+                <span class="hero-tag">🧠 剪辑思维</span>
+                <span class="hero-tag">🎯 爽点设计</span>
+                <span class="hero-tag">⏱️ 节奏把控</span>
+                <span class="hero-tag">🎥 镜头语言</span>
+                <span class="hero-tag">💰 商业变现</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 核心金句 -->
+        <section class="golden-quotes">
+            <div class="quote-card red animate-in delay-1">
+                <p class="quote-text">"做一个好吃但不好看的东西，远胜于好看但不好吃的东西"</p>
+                <p class="quote-source">🎯 商业价值优先于视觉美观</p>
+            </div>
+            <div class="quote-card blue animate-in delay-2">
+                <p class="quote-text">"没有声音，再好的戏也出不来"</p>
+                <p class="quote-source">🎵 音频设计是灵魂</p>
+            </div>
+            <div class="quote-card purple animate-in delay-3">
+                <p class="quote-text">"分镜分得好的人，剪辑绝对不会差"</p>
+                <p class="quote-source">📐 前期决定后期</p>
+            </div>
+            <div class="quote-card orange animate-in delay-4">
+                <p class="quote-text">"任何事件都必须有人物反馈，这是爽点的核心"</p>
+                <p class="quote-source">😊 情绪共鸣法则</p>
+            </div>
+            <div class="quote-card green animate-in delay-5">
+                <p class="quote-text">"信息密度不是越高越好，要给观众喘气的气口"</p>
+                <p class="quote-source">⏸️ 呼吸感节奏</p>
+            </div>
+            <div class="quote-card pink animate-in delay-5">
+                <p class="quote-text">"一卡剪辑师的价值，决定整部剧的付费转化"</p>
+                <p class="quote-source">💎 价值定位</p>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section animate-in">
+            <h2 class="section-title"><span>🧠</span> AI短剧剪辑核心框架</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">剪辑 = 内容商品化</div>
+                <div class="mindmap-branches">
+                    <div class="mindmap-branch">
+                        <div class="branch-node">
+                            <div class="branch-title red">认知层</div>
+                            <div class="branch-items">
+                                <span class="branch-item">受众画像定位</span>
+                                <span class="branch-item">核心价值观提炼</span>
+                                <span class="branch-item">商业目标对齐</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="branch-node">
+                            <div class="branch-title blue">设计层</div>
+                            <div class="branch-items">
+                                <span class="branch-item">爽点规划</span>
+                                <span class="branch-item">节奏编排</span>
+                                <span class="branch-item">信息密度控制</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="branch-node">
+                            <div class="branch-title green">执行层</div>
+                            <div class="branch-items">
+                                <span class="branch-item">景别递进</span>
+                                <span class="branch-item">视角变化</span>
+                                <span class="branch-item">镜头衔接</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第一部分：剪辑本质 -->
+        <section class="collapsible-section open">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <div class="header-left">
+                    <div class="header-icon red">💡</div>
+                    <div>
+                        <h3 class="header-title">剪辑的本质：你在生产商品，不是艺术品</h3>
+                        <p class="header-preview">理解这一点，决定你能否成为一卡剪辑师</p>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🤖</div>
+                            <div class="expert-info">
+                                <h5>AI短剧专家点评</h5>
+                                <span>基于行业数据与实战经验</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            这是整堂课最核心的认知升级。很多剪辑师困在"技术陷阱"里，追求转场炫技、特效堆砌，却忽略了<span class="highlight highlight-red">剪辑的终极目的是商业变现</span>。AI漫剧的核心指标是<span class="highlight highlight-blue">付费转化率</span>，而不是B站播放量。一卡剪辑师（负责免费集）的水平直接决定观众是否愿意付费看后续内容，这才是行业真正稀缺的能力。
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4>🎯 核心公式</h4>
+                        <div class="flow-chart">
+                            <span class="flow-step">剪辑产出</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">内容商品</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">投放测试</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">付费回收</span>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4>🍽️ "好吃vs好看"理论</h4>
+                        <p>
+                            这是一个关键比喻：<span class="highlight highlight-red">好看但不好吃</span>的食物 vs <span class="highlight highlight-green">不好看但好吃</span>的食物。作为初学者，你的首要目标是产出"好吃"的内容——故事流畅、爽点到位、观众愿意看完。技术上的掉帧、小瑕疵都可以容忍，但<span class="highlight highlight-purple">故事讲不好、爽点打不出来</span>是致命的。
+                        </p>
+                    </div>
+
+                    <div class="infographic">
+                        <div class="info-card">
+                            <div class="info-icon">🎯</div>
+                            <div class="info-value red">10-15集</div>
+                            <div class="info-label">一卡剪辑负责的免费集数</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">💰</div>
+                            <div class="info-value blue">60万+</div>
+                            <div class="info-label">AI真人剧制作成本/部</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">⚡</div>
+                            <div class="info-value green">1-2K</div>
+                            <div class="info-label">剪辑比生图师薪资高出</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第二部分：内容判断 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <div class="header-left">
+                    <div class="header-icon blue">📊</div>
+                    <div>
+                        <h3 class="header-title">内容判断能力：剪辑前必须搞清的四件事</h3>
+                        <p class="header-preview">受众画像、核心价值观、爽点设计、节奏把控</p>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-block">
+                        <h4>👥 受众画像分析</h4>
+                        <table class="comparison-table">
+                            <tr>
+                                <th>维度</th>
+                                <th>男频剧</th>
+                                <th>女频剧</th>
+                            </tr>
+                            <tr>
+                                <td><strong>核心爽点</strong></td>
+                                <td>逆袭、扮猪吃老虎、一击秒杀、开金手指</td>
+                                <td>情绪共鸣、内心自洽、情感波动</td>
+                            </tr>
+                            <tr>
+                                <td><strong>典型案例</strong></td>
+                                <td>《庆余年》</td>
+                                <td>《琅琊榜》</td>
+                            </tr>
+                            <tr>
+                                <td><strong>年龄倾向</strong></td>
+                                <td>18-25岁年轻人为主</td>
+                                <td>28-40岁职场人为主</td>
+                            </tr>
+                            <tr>
+                                <td><strong>创作建议</strong></td>
+                                <td>男生做男频更有优势</td>
+                                <td>女生做女频更懂共鸣</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🤖</div>
+                            <div class="expert-info">
+                                <h5>AI短剧专家点评</h5>
+                                <span>实战洞察</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            课程中的"社畜修仙"案例非常典型——设定看起来有创意（现代职场知识+修仙世界），但实际爽点打不出来。<span class="highlight highlight-orange">"你们修炼进度达标了吗？"这种台词，在修仙剧受众中几乎无法引起共鸣</span>。这说明一个重要道理：<span class="highlight highlight-red">创意≠商业价值</span>，你的爽点必须能被目标受众直接感知。
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">⚠️</span>
+                        <div class="warning-content">
+                            <h5>关键警示</h5>
+                            <p>不要被"精彩设定"迷惑！一个本子好不好，必须看第一集的<span class="highlight highlight-red">具体剧情</span>能否打出爽点，而不是只看设定介绍。很多创意十足的设定，落到剧情层面会完全拉垮。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三部分：节奏公式 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <div class="header-left">
+                    <div class="header-icon green">⏱️</div>
+                    <div>
+                        <h3 class="header-title">节奏密码：三种场景的黄金剪辑公式</h3>
+                        <p class="header-preview">氛围戏、叙事戏、动作戏的节奏完全不同</p>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="rhythm-formula">
+                        <div class="formula-card slow">
+                            <div class="formula-title">🌙 氛围渲染戏</div>
+                            <div class="formula-items">
+                                <div class="formula-item">慢节奏</div>
+                                <div class="formula-item">低信息密度</div>
+                                <div class="formula-item">多用长镜头</div>
+                                <div class="formula-item">舒缓BGM</div>
+                                <div class="formula-item">情绪沉浸优先</div>
+                            </div>
+                        </div>
+                        <div class="formula-card medium">
+                            <div class="formula-title">📝 叙事对话戏</div>
+                            <div class="formula-items">
+                                <div class="formula-item">中速节奏</div>
+                                <div class="formula-item">正常信息密度</div>
+                                <div class="formula-item">3-5秒/镜头</div>
+                                <div class="formula-item">近景+中景为主</div>
+                                <div class="formula-item">清晰传递信息</div>
+                            </div>
+                        </div>
+                        <div class="formula-card fast">
+                            <div class="formula-title">⚔️ 动作冲突戏</div>
+                            <div class="formula-items">
+                                <div class="formula-item">快节奏</div>
+                                <div class="formula-item">高信息密度</div>
+                                <div class="formula-item">大量特写镜头</div>
+                                <div class="formula-item">激烈BGM</div>
+                                <div class="formula-item">视觉冲击优先</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4>💡 信息密度的本质</h4>
+                        <p>
+                            信息密度 = <span class="highlight highlight-blue">增量信息的密度</span>，而不是镜头数量。每个镜头需要包含新信息：
+                        </p>
+                        <div class="flow-chart">
+                            <span class="flow-step">剧情推进</span>
+                            <span class="flow-arrow">|</span>
+                            <span class="flow-step">设定增量</span>
+                            <span class="flow-arrow">|</span>
+                            <span class="flow-step">情绪变化</span>
+                            <span class="flow-arrow">|</span>
+                            <span class="flow-step">立场转变</span>
+                        </div>
+                        <p style="margin-top: 15px;">
+                            <span class="highlight highlight-red">关键：</span>如果几个镜头都在讲同一个信息，那就是低密度；如果每个镜头都有新信息，那就是高密度。
+                        </p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🤖</div>
+                            <div class="expert-info">
+                                <h5>AI短剧专家点评</h5>
+                                <span>节奏把控的精髓</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            "气口"这个概念非常重要。很多从短视频转型的剪辑师习惯高密度堆镜头，但短剧不是60秒爆款视频，<span class="highlight highlight-purple">观众需要呼吸空间</span>。两个人对话时，起码要给对方留一口气，不能像相声一样你接一句我接一句。节奏的本质是<span class="highlight highlight-green">张弛有度</span>，不是一味求快。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第四部分：镜头语言 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <div class="header-left">
+                    <div class="header-icon purple">🎥</div>
+                    <div>
+                        <h3 class="header-title">镜头语言：景别与视角的黄金法则</h3>
+                        <p class="header-preview">为什么AI拆的分镜总是不对味？答案在这里</p>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-block">
+                        <h4>📐 景别递进法则</h4>
+                        <div class="flow-chart">
+                            <span class="flow-step">全景</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">中景</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">近景</span>
+                            <span class="flow-arrow">→</span>
+                            <span class="flow-step">特写</span>
+                        </div>
+                        <p style="margin-top: 15px;">
+                            <span class="highlight highlight-purple">递进</span> = 强化情绪（咄咄逼人、紧张升级）<br>
+                            <span class="highlight highlight-blue">递减</span> = 缓和情绪（给观众喘气的气口）
+                        </p>
+                    </div>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">🚫</span>
+                        <div class="warning-content">
+                            <h5>三大禁忌（必须避免）</h5>
+                            <p>
+                                ① 同景别镜头连续衔接超过2次<br>
+                                ② 快节奏镜头使用中全景（观众看不清）<br>
+                                ③ 同视角景别连续切换超过3次
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4>👁️ 视角心理学</h4>
+                        <table class="comparison-table">
+                            <tr>
+                                <th>视角类型</th>
+                                <th>心理暗示</th>
+                                <th>适用场景</th>
+                            </tr>
+                            <tr>
+                                <td><strong>仰视</strong></td>
+                                <td>强势、威胁、高位者</td>
+                                <td>反派出场、BOSS登场</td>
+                            </tr>
+                            <tr>
+                                <td><strong>俯视</strong></td>
+                                <td>弱势、渺小、被审视</td>
+                                <td>主角受虐、失败时刻</td>
+                            </tr>
+                            <tr>
+                                <td><strong>平视</strong></td>
+                                <td>平等、客观、叙事</td>
+                                <td>日常对话、信息传递</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🤖</div>
+                            <div class="expert-info">
+                                <h5>AI短剧专家点评</h5>
+                                <span>AI分镜的致命缺陷</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            课程揭示了一个关键问题：<span class="highlight highlight-red">AI生成的分镜90%是平视角</span>，缺乏仰视和俯视的变化。这直接导致画面单调、情绪难以传递。作为剪辑师，你必须能识别AI分镜的问题，手动调整提示词或要求重新生成。<span class="highlight highlight-purple">漫剧最大的镜头景别比例应该是近景和特写</span>，如果你发现素材里这两个景别特别少，一定要返工补拍。
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4>🎬 2D vs 3D 运镜差异</h4>
+                        <p>
+                            <span class="highlight highlight-blue">2D漫剧</span>：不需要复杂运镜，重点是<span class="highlight highlight-purple">镜头内的人物动势设计</span>（起身、走动、表情变化）<br><br>
+                            <span class="highlight highlight-orange">3D拟人</span>：需要环绕、跟拍等复杂运镜设计<br><br>
+                            <span class="highlight highlight-red">关键</span>：如果给2D漫剧强行做大环绕镜头，AI很容易把画风跑成3D
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第五部分：实战点评 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <div class="header-left">
+                    <div class="header-icon orange">📝</div>
+                    <div>
+                        <h3 class="header-title">学员作品点评：这些坑你一定要避开</h3>
+                        <p class="header-preview">来自真实作业的血泪教训</p>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-block">
+                        <h4>🔴 高频问题清单</h4>
+                    </div>
+
+                    <div class="infographic">
+                        <div class="info-card">
+                            <div class="info-icon">🔇</div>
+                            <div class="info-value red">NO.1</div>
+                            <div class="info-label">音频制作缺失<br>只有旁白没有BGM和音效</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">🎨</div>
+                            <div class="info-value blue">NO.2</div>
+                            <div class="info-label">画风不一致<br>同场景内风格跳跃</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-icon">✂️</div>
+                            <div class="info-value green">NO.3</div>
+                            <div class="info-label">镜头硬切<br>缺乏过渡和转场设计</div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h4>🎯 具体问题诊断</h4>
+                        <table class="comparison-table">
+                            <tr>
+                                <th>问题现象</th>
+                                <th>根本原因</th>
+                                <th>解决方案</th>
+                            </tr>
+                            <tr>
+                                <td>同视角硬切景别</td>
+                                <td>不懂景别递进规则</td>
+                                <td>切换景别时必须切换角度</td>
+                            </tr>
+                            <tr>
+                                <td>镜头长度过于平均</td>
+                                <td>节奏设计缺失</td>
+                                <td>根据场景类型调整：慢-中-快</td>
+                            </tr>
+                            <tr>
+                                <td>人物凭空出现</td>
+                                <td>缺乏出场动势</td>
+                                <td>补拍人物入场的过渡镜头</td>
+                            </tr>
+                            <tr>
+                                <td>精彩前置无效</td>
+                                <td>选错了前置内容</td>
+                                <td>应选后续高光片段，不选第一集</td>
+                            </tr>
+                            <tr>
+                                <td>近景特写太少</td>
+                                <td>AI分镜偏全景</td>
+                                <td>手动要求补拍，漫剧核心是近景+特写</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🤖</div>
+                            <div class="expert-info">
+                                <h5>AI短剧专家点评</h5>
+                                <span>审片视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            老师分享了完整的<span class="highlight highlight-purple">审片框架</span>，这是成为一卡剪辑师的核心能力：<br><br>
+                            ① 爽点是否打出来？<br>
+                            ② 节奏是否符合剧本？<br>
+                            ③ 信息密度是否合适？<br>
+                            ④ 景别衔接是否OK？<br>
+                            ⑤ 视角运镜是否丰富？<br><br>
+                            <span class="highlight highlight-red">用这个清单自审每一条片子</span>，你的进步速度会比盲目产出快10倍。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第六部分：行业趋势 -->
+        <section class="collapsible-section">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <div class="header-left">
+                    <div class="header-icon purple">🚀</div>
+                    <div>
+                        <h3 class="header-title">行业趋势与工具生态</h3>
+                        <p class="header-preview">Sora、微度、真人剧的成本与选择</p>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="content-block">
+                        <h4>💰 成本对比</h4>
+                        <table class="comparison-table">
+                            <tr>
+                                <th>类型</th>
+                                <th>单条视频成本</th>
+                                <th>整部剧成本</th>
+                                <th>适用场景</th>
+                            </tr>
+                            <tr>
+                                <td><strong>Sora API</strong></td>
+                                <td>0.1元/15秒</td>
+                                <td>较低</td>
+                                <td>2D漫剧、3D拟人</td>
+                            </tr>
+                            <tr>
+                                <td><strong>微度</strong></td>
+                                <td>数元/条</td>
+                                <td>中等</td>
+                                <td>漫剧主流选择</td>
+                            </tr>
+                            <tr>
+                                <td><strong>海螺（真人）</strong></td>
+                                <td>数元/条</td>
+                                <td>40-60万/部</td>
+                                <td>AI真人剧</td>
+                            </tr>
+                            <tr>
+                                <td><strong>真人实拍</strong></td>
+                                <td>-</td>
+                                <td>40-60万/部</td>
+                                <td>传统短剧</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-block">
+                        <h4>🔮 2025年趋势预判</h4>
+                        <p>
+                            <span class="highlight highlight-purple">漫剧 → 3D → AI真人剧</span>：头部公司已经在烧钱做AI真人剧了，技术成熟后会大规模转型。<br><br>
+                            <span class="highlight highlight-blue">Sora的优势</span>：15-20秒长镜头内置多分镜，自带气口和衔接逻辑，降低对影视基础的要求。<br><br>
+                            <span class="highlight highlight-red">核心岗位</span>：导演（审内容+拆分镜）和剪辑是AI短剧行业最稀缺的两个岗位，短期内无法被AI替代。
+                        </p>
+                    </div>
+
+                    <div class="warning-box">
+                        <span class="warning-icon">💡</span>
+                        <div class="warning-content">
+                            <h5>个人创作者建议</h5>
+                            <p>做漫剧，不做真人剧！真人剧算力成本太高（1分钟6000-8000元），不适合个人创作者。漫剧用Sora API，一条视频只要1毛钱，性价比极高。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 总结 -->
+        <section class="collapsible-section open">
+            <div class="collapsible-header" onclick="toggleSection(this)">
+                <div class="header-left">
+                    <div class="header-icon red">🎓</div>
+                    <div>
+                        <h3 class="header-title">课程核心总结：带走这5条就够了</h3>
+                        <p class="header-preview">认知 > 技术，思维 > 软件</p>
+                    </div>
+                </div>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="collapsible-content">
+                <div class="content-inner">
+                    <div class="golden-quotes" style="margin-top: 0;">
+                        <div class="quote-card purple">
+                            <p class="quote-text">① 剪辑是生产商品，核心KPI是付费转化率</p>
+                        </div>
+                        <div class="quote-card blue">
+                            <p class="quote-text">② 先做"好吃"的内容，再追求"好看"的技术</p>
+                        </div>
+                        <div class="quote-card green">
+                            <p class="quote-text">③ 节奏三公式：氛围慢、叙事中、动作快</p>
+                        </div>
+                        <div class="quote-card orange">
+                            <p class="quote-text">④ 景别递进强化情绪，景别递减给气口</p>
+                        </div>
+                        <div class="quote-card red">
+                            <p class="quote-text">⑤ 任何事件必须有人物反馈，这是爽点核心</p>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🤖</div>
+                            <div class="expert-info">
+                                <h5>AI短剧专家总评</h5>
+                                <span>课程价值评估</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            这堂课的核心价值不在于教你怎么用剪映，而在于构建<span class="highlight highlight-purple">完整的剪辑认知框架</span>。很多剪辑师卡在"会用工具但不会剪好片子"的困境，根本原因就是缺乏这套思维体系。<br><br>
+                            <span class="highlight highlight-red">最重要的一句话</span>：当你拿到素材准备剪辑时，先问自己——这一集的爽点是什么？我该用什么节奏去塑造它？如果你答不上来，就说明你还没准备好开剪。<br><br>
+                            建议学习路径：<span class="highlight highlight-blue">本课认知 → 拉片练习 → Sora工作流实操 → 大量产出 → 复盘迭代</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <div class="footer-logo">🎬</div>
+        <p>AI短剧剪辑高级技巧 · 认知篇</p>
+        <p style="margin-top: 8px; opacity: 0.7;">课程整理 by Claude · 知识的力量在于传播</p>
+    </footer>
+
+    <script>
+        // 深色模式切换
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+
+        // 初始化深色模式
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 折叠/展开单个区块
+        function toggleSection(header) {
+            const section = header.parentElement;
+            section.classList.toggle('open');
+        }
+
+        // 展开全部
+        function expandAll() {
+            document.querySelectorAll('.collapsible-section').forEach(section => {
+                section.classList.add('open');
+            });
+        }
+
+        // 折叠全部
+        function collapseAll() {
+            document.querySelectorAll('.collapsible-section').forEach(section => {
+                section.classList.remove('open');
+            });
+        }
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.collapsible-section').forEach(section => {
+            section.style.opacity = '0';
+            section.style.transform = 'translateY(30px)';
+            section.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>

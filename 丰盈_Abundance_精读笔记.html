@@ -1,0 +1,1362 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>丰盈 Abundance | 通往丰盈社会的政治经济学</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a5568;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+
+        .dark-mode {
+            --glass-bg: rgba(30, 30, 50, 0.8);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0aec0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        /* 动画背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 168, 0.3) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(96, 165, 250, 0.2) 0%, transparent 40%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .book-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 50%, #ddd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            margin-bottom: 10px;
+            letter-spacing: 8px;
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            font-weight: 300;
+            margin-bottom: 20px;
+        }
+
+        .author-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .author-tag {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            border: 1px solid var(--glass-border);
+        }
+
+        /* 控制栏 */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            font-size: 1.3rem;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.25);
+        }
+
+        /* 玻璃卡片 */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(31, 38, 135, 0.2);
+        }
+
+        /* 核心洞察 */
+        .insight-hero {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9), rgba(118, 75, 162, 0.9));
+            color: white;
+            padding: 50px;
+            border-radius: 24px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .insight-hero::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-size: 150px;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+
+        .insight-hero h2 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .insight-hero p {
+            font-size: 1.2rem;
+            line-height: 2;
+            position: relative;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            padding: 40px 20px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-width: 900px;
+            position: relative;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px 40px;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        .mindmap-branches {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .branch {
+            position: absolute;
+            display: flex;
+            align-items: center;
+        }
+
+        .branch-line {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+
+        .branch-node {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+            border: 2px solid;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.05);
+        }
+
+        .branch-node.red { border-color: var(--accent-red); color: var(--accent-red); }
+        .branch-node.blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .branch-node.green { border-color: var(--accent-green); color: var(--accent-green); }
+        .branch-node.orange { border-color: var(--accent-orange); color: var(--accent-orange); }
+        .branch-node.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
+        .branch-node.pink { border-color: var(--accent-pink); color: var(--accent-pink); }
+
+        /* 信息图 */
+        .infographic {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+
+        .info-card.red::before { background: linear-gradient(90deg, var(--accent-red), var(--accent-pink)); }
+        .info-card.blue::before { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+        .info-card.green::before { background: linear-gradient(90deg, var(--accent-green), #34d399); }
+        .info-card.orange::before { background: linear-gradient(90deg, var(--accent-orange), #fbbf24); }
+        .info-card.purple::before { background: linear-gradient(90deg, var(--accent-purple), var(--accent-pink)); }
+
+        .info-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.15);
+        }
+
+        .info-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .info-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .info-card.red .info-number { color: var(--accent-red); }
+        .info-card.blue .info-number { color: var(--accent-blue); }
+        .info-card.green .info-number { color: var(--accent-green); }
+        .info-card.orange .info-number { color: var(--accent-orange); }
+        .info-card.purple .info-number { color: var(--accent-purple); }
+
+        .info-label {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* 可折叠板块 */
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(255,255,255,0.85);
+        }
+
+        .dark-mode .section-header:hover {
+            background: rgba(50,50,70,0.9);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .section-icon.red { background: linear-gradient(135deg, var(--accent-red), var(--accent-pink)); }
+        .section-icon.blue { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); }
+        .section-icon.green { background: linear-gradient(135deg, var(--accent-green), #34d399); }
+        .section-icon.orange { background: linear-gradient(135deg, var(--accent-orange), #fbbf24); }
+        .section-icon.purple { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); }
+        .section-icon.cyan { background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue)); }
+
+        .section-text h3 {
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+            color: var(--text-primary);
+        }
+
+        .section-preview {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .section-arrow {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .section.active .section-arrow {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .section.active .section-content {
+            max-height: 5000px;
+        }
+
+        .section-inner {
+            padding: 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 0 0 16px 16px;
+            margin-top: -10px;
+            border: 1px solid var(--glass-border);
+            border-top: none;
+        }
+
+        /* 金句卡片 */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.1));
+            border-left: 4px solid var(--accent-orange);
+            padding: 25px 30px;
+            border-radius: 0 16px 16px 0;
+            margin: 25px 0;
+            position: relative;
+        }
+
+        .quote-card::before {
+            content: '💎';
+            position: absolute;
+            top: -15px;
+            left: -15px;
+            font-size: 1.5rem;
+            background: white;
+            padding: 5px;
+            border-radius: 50%;
+        }
+
+        .quote-text {
+            font-size: 1.15rem;
+            font-weight: 500;
+            line-height: 1.9;
+            color: var(--text-primary);
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.08));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .expert-info h4 {
+            font-size: 1.1rem;
+            color: var(--accent-purple);
+            margin-bottom: 3px;
+        }
+
+        .expert-info span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .expert-content {
+            font-size: 1.05rem;
+            line-height: 2;
+            color: var(--text-primary);
+        }
+
+        /* 高亮样式 */
+        .highlight-red {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: var(--accent-green);
+            font-weight: 600;
+        }
+
+        .highlight-orange {
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        .highlight-purple {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .data-tag {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            color: white;
+            padding: 3px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: inline-block;
+            margin: 0 3px;
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .comparison-table td {
+            padding: 18px 20px;
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
+        }
+
+        .comparison-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -32px;
+            top: 25px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--accent-blue);
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+        }
+
+        .timeline-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 20px 25px;
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .timeline-year {
+            font-size: 0.85rem;
+            color: var(--accent-blue);
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        /* 底部总结 */
+        .summary-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 24px;
+            padding: 40px;
+            margin: 40px 0;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .summary-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .summary-title h2 {
+            font-size: 1.5rem;
+            color: var(--accent-green);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .summary-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .summary-item:hover {
+            transform: translateX(10px);
+        }
+
+        .summary-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-green), var(--accent-cyan));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* 脚注 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+        }
+
+        /* 滚动进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            width: 0%;
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header { padding: 40px 15px; }
+            .glass-card { padding: 20px; }
+            .insight-hero { padding: 30px; }
+            .mindmap-container { padding: 20px 10px; }
+            .section-header { padding: 20px; }
+            .controls { top: 10px; right: 10px; }
+            .control-btn { width: 40px; height: 40px; font-size: 1.1rem; }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body { background: white !important; }
+            .glass-card { box-shadow: none; border: 1px solid #ddd; }
+            .controls, .progress-bar { display: none; }
+            .section-content { max-height: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    <div class="bg-animation"></div>
+
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button class="control-btn" onclick="toggleDarkMode()" title="切换主题">🌓</button>
+        <button class="control-btn" onclick="expandAll()" title="展开全部">📖</button>
+        <button class="control-btn" onclick="window.print()" title="打印">🖨️</button>
+    </div>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1 class="book-title">丰 盈</h1>
+            <p class="subtitle">Abundance · 建设丰盈社会的政治经济学</p>
+            <div class="author-info">
+                <span class="author-tag">📚 埃兹拉·克莱因 Ezra Klein</span>
+                <span class="author-tag">📰 德里克·汤普森 Derek Thompson</span>
+                <span class="author-tag">📅 2025年3月出版</span>
+            </div>
+        </header>
+
+        <!-- 核心洞察 -->
+        <div class="insight-hero">
+            <h2>🎯 核心洞察</h2>
+            <p>美国面临的匮乏——房价过高、清洁能源不足、基建老化、医疗教育昂贵——<strong>不是因为缺技术、缺资源，而是人为制造的</strong>。共和党让政府"不让作为"，民主党让政府"不能作为"，两党殊途同归，都在失能化政府。通往丰盈社会，需要一种<strong>「会建设的自由主义」</strong>。</p>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="glass-card">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--primary);">🧠 核心框架思维导图</h2>
+            <div class="mindmap-container">
+                <svg width="100%" height="500" viewBox="0 0 1000 500" style="max-width: 1000px; margin: 0 auto; display: block;">
+                    <!-- 中心节点 -->
+                    <defs>
+                        <linearGradient id="centerGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#667eea"/>
+                            <stop offset="100%" style="stop-color:#764ba2"/>
+                        </linearGradient>
+                        <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#667eea" flood-opacity="0.3"/>
+                        </filter>
+                    </defs>
+                    
+                    <!-- 连接线 -->
+                    <path d="M 500 250 Q 350 150 200 100" stroke="#ef4444" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+                    <path d="M 500 250 Q 650 150 800 100" stroke="#3b82f6" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+                    <path d="M 500 250 Q 300 250 100 250" stroke="#10b981" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+                    <path d="M 500 250 Q 700 250 900 250" stroke="#f59e0b" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+                    <path d="M 500 250 Q 350 350 200 400" stroke="#8b5cf6" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+                    <path d="M 500 250 Q 650 350 800 400" stroke="#ec4899" stroke-width="3" fill="none" stroke-dasharray="8,4"/>
+                    
+                    <!-- 中心 -->
+                    <rect x="400" y="200" width="200" height="100" rx="20" fill="url(#centerGrad)" filter="url(#shadow)"/>
+                    <text x="500" y="245" text-anchor="middle" fill="white" font-size="22" font-weight="bold">丰盈社会</text>
+                    <text x="500" y="275" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14">Abundance</text>
+                    
+                    <!-- 分支节点 -->
+                    <rect x="100" y="60" width="140" height="70" rx="15" fill="white" stroke="#ef4444" stroke-width="3"/>
+                    <text x="170" y="90" text-anchor="middle" fill="#ef4444" font-size="14" font-weight="bold">🏛️ 政府失能</text>
+                    <text x="170" y="110" text-anchor="middle" fill="#666" font-size="11">两党困境</text>
+                    
+                    <rect x="730" y="60" width="140" height="70" rx="15" fill="white" stroke="#3b82f6" stroke-width="3"/>
+                    <text x="800" y="90" text-anchor="middle" fill="#3b82f6" font-size="14" font-weight="bold">🏙️ 城市问题</text>
+                    <text x="800" y="110" text-anchor="middle" fill="#666" font-size="11">住房危机</text>
+                    
+                    <rect x="30" y="215" width="140" height="70" rx="15" fill="white" stroke="#10b981" stroke-width="3"/>
+                    <text x="100" y="245" text-anchor="middle" fill="#10b981" font-size="14" font-weight="bold">🔧 基建衰退</text>
+                    <text x="100" y="265" text-anchor="middle" fill="#666" font-size="11">律师国家</text>
+                    
+                    <rect x="830" y="215" width="140" height="70" rx="15" fill="white" stroke="#f59e0b" stroke-width="3"/>
+                    <text x="900" y="245" text-anchor="middle" fill="#f59e0b" font-size="14" font-weight="bold">🔬 科研困境</text>
+                    <text x="900" y="265" text-anchor="middle" fill="#666" font-size="11">创新枯竭</text>
+                    
+                    <rect x="100" y="365" width="140" height="70" rx="15" fill="white" stroke="#8b5cf6" stroke-width="3"/>
+                    <text x="170" y="395" text-anchor="middle" fill="#8b5cf6" font-size="14" font-weight="bold">⚡ 能源转型</text>
+                    <text x="170" y="415" text-anchor="middle" fill="#666" font-size="11">清洁未来</text>
+                    
+                    <rect x="730" y="365" width="140" height="70" rx="15" fill="white" stroke="#ec4899" stroke-width="3"/>
+                    <text x="800" y="395" text-anchor="middle" fill="#ec4899" font-size="14" font-weight="bold">🌍 历史机遇</text>
+                    <text x="800" y="415" text-anchor="middle" fill="#666" font-size="11">开放vs封闭</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- 关键数据信息图 -->
+        <h2 style="text-align: center; margin: 40px 0 30px; color: var(--text-primary);">📊 关键数据一览</h2>
+        <div class="infographic">
+            <div class="info-card red">
+                <div class="info-icon">🏠</div>
+                <div class="info-number">6倍</div>
+                <div class="info-label">美国2020年房价/年收入比<br><small>（1950年代仅2.2倍）</small></div>
+            </div>
+            <div class="info-card blue">
+                <div class="info-icon">💰</div>
+                <div class="info-number">30%</div>
+                <div class="info-label">收入用于住房即"房屋贫困"<br><small>（美国30%人口符合）</small></div>
+            </div>
+            <div class="info-card green">
+                <div class="info-icon">☀️</div>
+                <div class="info-number">90%</div>
+                <div class="info-label">太阳能成本降幅(2010-2020)<br><small>（风能降70%）</small></div>
+            </div>
+            <div class="info-card orange">
+                <div class="info-icon">🧪</div>
+                <div class="info-number">40%</div>
+                <div class="info-label">科学家用于写申请书的时间<br><small>（而非做研究）</small></div>
+            </div>
+            <div class="info-card purple">
+                <div class="info-icon">🎓</div>
+                <div class="info-number">2%</div>
+                <div class="info-label">35岁以下获NIH资助比例<br><small>（1980年为22%）</small></div>
+            </div>
+        </div>
+
+        <!-- 板块一：政府的两难困境 -->
+        <div class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-title">
+                    <div class="section-icon red">🏛️</div>
+                    <div class="section-text">
+                        <h3>政府的两难困境：不让作为 vs 不能作为</h3>
+                        <p class="section-preview">共和党主张政府少收税，民主党主张政府多发钱，结果都是政府失能...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="quote-card">
+                        <p class="quote-text">「政府不是解决问题的方法，政府本身就是问题。」<br>—— 里根总统的名言，揭示共和党反政府立场的核心</p>
+                    </div>
+                    
+                    <h4 style="color: var(--accent-red); margin: 25px 0 15px;">🐘 共和党路线：供给侧困境</h4>
+                    <p>主张<span class="highlight-red">少收税、放松监管</span>，让企业"放开手脚搞创新"。理论很美好，现实却是：公司拿到减税红利后，<span class="highlight-blue">最爱干的是回购股票</span>，而非投资扩产。只要推高股价，市场皆大欢喜。</p>
+                    
+                    <h4 style="color: var(--accent-blue); margin: 25px 0 15px;">🐴 民主党路线：需求侧陷阱</h4>
+                    <p>主张给老百姓发钱、提供补贴。结果呢？<span class="highlight-red">人为增加需求而不增加供给，价格必定越来越贵</span>。最典型的：</p>
+                    <ul style="margin: 15px 0 15px 30px; line-height: 2.2;">
+                        <li><span class="highlight-orange">医疗</span>：政府补贴让人负担得起天价医疗 → 医疗价格无限上涨</li>
+                        <li><span class="highlight-orange">住房</span>：政府给穷人住房补贴 → 房租有条件继续涨</li>
+                        <li><span class="highlight-orange">大学</span>：政府提供学生贷款 → 学费高到离谱</li>
+                    </ul>
+
+                    <table class="comparison-table">
+                        <tr>
+                            <th>对比维度</th>
+                            <th style="color: #ff6b6b;">🐘 共和党</th>
+                            <th style="color: #4dabf7;">🐴 民主党</th>
+                        </tr>
+                        <tr>
+                            <td>核心主张</td>
+                            <td>少收税</td>
+                            <td>多发钱</td>
+                        </tr>
+                        <tr>
+                            <td>理论依据</td>
+                            <td>供给侧经济学</td>
+                            <td>需求侧刺激</td>
+                        </tr>
+                        <tr>
+                            <td>实际效果</td>
+                            <td>企业回购股票</td>
+                            <td>推高物价</td>
+                        </tr>
+                        <tr>
+                            <td>对政府的影响</td>
+                            <td>不让作为</td>
+                            <td>不能作为</td>
+                        </tr>
+                        <tr>
+                            <td>最终结果</td>
+                            <td colspan="2" style="color: var(--accent-red); font-weight: bold;">政府失能，无力建设</td>
+                        </tr>
+                    </table>
+
+                    <div class="quote-card">
+                        <p class="quote-text">「一个国家办事的能力和风格，并不是你想怎样就怎样的，它取决于这个国家所处的历史阶段。」</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块二：城市与住房 -->
+        <div class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-title">
+                    <div class="section-icon blue">🏙️</div>
+                    <div class="section-text">
+                        <h3>城市困局：大城市的机会与排斥</h3>
+                        <p class="section-preview">城市越大越挤，就越有创造力，越能提供机会。但先到者正在关上大门...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div class="quote-card">
+                        <p class="quote-text">「想有所成就就应该留在大城市。城市不仅是创新引擎，更是社会流动性的引擎。」<br>—— 在硅谷出生的孩子，成为富人的机会是经济停滞地区孩子的<span class="data-tag">3倍</span></p>
+                    </div>
+
+                    <h4 style="color: var(--accent-blue); margin: 25px 0 15px;">📈 超线性关系定律</h4>
+                    <p>城市规模越大，个人创新能力越强，而且是<span class="highlight-purple">超线性关系</span>：把一个城市人口扩大十倍，它的创新能力会扩大<span class="highlight-red">超过十倍</span>。</p>
+
+                    <h4 style="color: var(--accent-red); margin: 25px 0 15px;">🚫 人为制造的稀缺</h4>
+                    <p>先到的居民不希望自己的社区变成公寓区——说得更直白一点，<span class="highlight-red">就是他们不愿意和穷人住在一起</span>。</p>
+                    
+                    <p style="margin-top: 15px;">他们打着各种旗号：</p>
+                    <ul style="margin: 15px 0 15px 30px; line-height: 2.2;">
+                        <li>🎭 "保持社区文化特色"</li>
+                        <li>🏗️ "建筑标准必须达到很高水平"</li>
+                        <li>🌿 "高密度住宅会破坏生态"</li>
+                    </ul>
+                    <p><span class="highlight-orange">理由有很多，但最终目的只有一个：限制开发，维持房价。</span></p>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>东京启示录</h4>
+                                <span>城市发展的另一种可能</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            东京是全世界最大城市之一，但从来没有出台排斥穷人的政策，也没有多么拥挤。房价没有贵到离谱，给各阶层都提供了发展机会。<span class="highlight-green">如果美国城市也能自由发展，不同阶层的人在一起生活，社会流动性将大大提高。</span>
+                        </div>
+                    </div>
+
+                    <div class="quote-card">
+                        <p class="quote-text">「正是这些看起来无可指摘的理性选择，扼杀了后来者的机会，也阻碍了所有人的增长。」<br>—— 封闭和守成真是人的本能。要在高位继续增长，必须突破本能。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块三：基建能力 -->
+        <div class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-title">
+                    <div class="section-icon green">🔧</div>
+                    <div class="section-text">
+                        <h3>基建困境：律师国家的诞生</h3>
+                        <p class="section-preview">五十年前美国是全球基建能力最强国家，现在却无力修高铁...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <h4 style="color: var(--accent-red); margin: 0 0 20px;">🚄 加州高铁：一个缩影</h4>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">1982年</div>
+                                <p>加州通过法案，研究建设连接旧金山和洛杉矶的高铁</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">1996年</div>
+                                <p>成立高铁管理局，正式启动规划工作</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">2008年</div>
+                                <p>批准先期投入<span class="data-tag">330亿美元</span>，计划2020年完成第一阶段</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">2025年</div>
+                                <p style="color: var(--accent-red);">第一阶段未完工，连一小段都没建成。预算飙升至<span class="data-tag">350亿美元</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--accent-purple); margin: 30px 0 15px;">⚖️ 律师国家的形成</h4>
+                    <p>从1970年代开始，美国出台超过<span class="data-tag">70项</span>环保法规。初衷是好的，但形成了一个生态位：</p>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1)); padding: 25px; border-radius: 16px; margin: 20px 0;">
+                        <p style="text-align: center; font-size: 1.1rem;">
+                            <span class="highlight-purple">律师只占人口不到1%</span><br><br>
+                            但众议院中<span class="data-tag">1/3</span>是律师<br>
+                            参议院中<span class="data-tag">超过一半</span>是律师<br>
+                            近几十年<span class="data-tag">一半总统</span>是律师出身
+                        </p>
+                    </div>
+
+                    <div class="quote-card">
+                        <p class="quote-text">「这些人都是法律思维训练出来的，办事优先考虑"程序是不是合法"，而不是"结果是不是有效"。」</p>
+                    </div>
+
+                    <h4 style="color: var(--accent-green); margin: 25px 0 15px;">✅ 费城大桥：特事特办的奇迹</h4>
+                    <p>2023年6月，费城I-95州际公路桥被烧毁，每天<span class="data-tag">16万辆</span>车通行的大动脉瘫痪。</p>
+                    <p style="margin-top: 10px;">州长乔什·夏皮罗决定<span class="highlight-green">特事特办</span>：跳过招标程序，直接交给信得过的公司；下雨天也不按规定停工；24小时直播施工进度...</p>
+                    <p style="margin-top: 10px; font-size: 1.2rem; font-weight: bold; color: var(--accent-green);">结果：只用了12天，路就通车了！🎉</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块四：「经」与「权」 -->
+        <div class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-title">
+                    <div class="section-icon orange">⚖️</div>
+                    <div class="section-text">
+                        <h3>「经」与「权」：政治哲学的永恒议题</h3>
+                        <p class="section-preview">规则与自由裁量权的平衡，决定一个国家的治理效能...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 30px;">
+                        <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1)); padding: 25px; border-radius: 16px; border-left: 4px solid var(--accent-blue);">
+                            <h4 style="color: var(--accent-blue); margin-bottom: 15px;">📜 「经」</h4>
+                            <p>规则、传统、礼法，不能轻易改变的基本制度和行为规范。</p>
+                            <p style="margin-top: 10px; font-style: italic; color: var(--text-secondary);">没有「经」就没有基本秩序，就不稳定。</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.1)); padding: 25px; border-radius: 16px; border-left: 4px solid var(--accent-orange);">
+                            <h4 style="color: var(--accent-orange); margin-bottom: 15px;">⚡ 「权」</h4>
+                            <p>应变、临机决断，根据现场情境判断轻重缓急。</p>
+                            <p style="margin-top: 10px; font-style: italic; color: var(--text-secondary);">没有「权」就会停滞和僵化。</p>
+                        </div>
+                    </div>
+
+                    <div class="quote-card">
+                        <p class="quote-text">「嫂子掉水里了不救那是豺狼也——男女授受不亲是『经』，救嫂是『权』。」<br>—— 《孟子》</p>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🤖</div>
+                            <div class="expert-info">
+                                <h4>OpenAI o3 模型的洞察</h4>
+                                <span>AI对政治哲学的理解</span>
+                            </div>
+                        </div>
+                        <div class="expert-content">
+                            <p style="font-size: 1.3rem; font-weight: bold; color: var(--accent-purple); text-align: center;">「经以立信，权以立功。」</p>
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 20px;"><span class="highlight-red">「权」的本意就是「权力」</span>——你能选择、有自由裁量空间，才叫有权。那些一切只愿照章办事的人，把判断力交给了规则，把责任丢给了制度，他们已经退出道德舞台。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块五：科研困境 -->
+        <div class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <div class="section-title">
+                    <div class="section-icon purple">🔬</div>
+                    <div class="section-text">
+                        <h3>科研困境：从科研到科举</h3>
+                        <p class="section-preview">mRNA疫苗发明人曾被NIH拒绝资助，科研正在变成应试...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <h4 style="color: var(--accent-red); margin: 0 0 20px;">💔 卡里科的悲剧</h4>
+                    <p>mRNA疫苗发明人卡塔琳·卡里科和德鲁·维斯曼，最终获得<span class="highlight-purple">诺贝尔奖</span>。但当初做研究时，<span class="highlight-red">NIH就是不给钱</span>。理由：你做的属于非主流。</p>
+                    <p style="margin-top: 15px;">两人靠挪用别的项目零星经费坚持研究。2013年，卡里科因为拿不出像样成果，被宾夕法尼亚大学<span class="highlight-red">强制退休</span>。</p>
+
+                    <div class="quote-card">
+                        <p class="quote-text">「现在的科学家平均有<span class="data-tag">40%</span>的时间花在写申请书和进展报告上。科研越来越像古代中国的科举——比的不是创造力，而是谁最会写材料、会应付考官。」</p>
+                    </div>
+
+                    <h4 style="color: var(--accent-green); margin: 25px 0 15px;">✨ DARPA：特事特办的典范</h4>
+                    <p>年度预算只有<span class="data-tag">40亿美元</span>（NIH的十分之一），却资助成功了：</p>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 20px 0;">
+                        <span style="background: linear-gradient(135deg, var(--accent-green), #34d399); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 500;">🌐 互联网</span>
+                        <span style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 500;">📍 GPS</span>
+                        <span style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 500;">💻 个人电脑</span>
+                        <span style="background: linear-gradient(135deg, var(--accent-orange), #fbbf24); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 500;">🚗 自动驾驶</span>
+                        <span style="background: linear-gradient(135deg, var(--accent-red), var(--accent-pink)); color: white; padding: 8px 20px; border-radius: 20px; font-weight: 500;">💉 mRNA疫苗</span>
+                    </div>
+                    
+                    <p><span class="highlight-purple">秘诀：项目群经理制度</span>——有实权的专家，认准了就去做，不必等主流评议。就像国王派出探险队：我不管你们谁是主流，我现在认准了这个！</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 板块六：技术部署 -->
+        <div class="section" id="section6">
+            <div class="section-header" onclick="toggleSection('section6')">
+                <div class="section-title">
+                    <div class="section-icon cyan">⚡</div>
+                    <div class="section-text">
+                        <h3>从零到一，从一到N</h3>
+                        <p class="section-preview">光伏发电的故事告诉我们：技术改变世界需要跨过三个台阶...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-inner">
+                    <h4 style="color: var(--accent-blue); margin: 0 0 20px;">☀️ 光伏发电：接力赛的故事</h4>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="border-color: var(--accent-blue);"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">1954年 🇺🇸 美国</div>
+                                <p>贝尔实验室发明第一块太阳能电池板。初期成本：每天<span class="data-tag">100万美元</span>供电</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="border-color: var(--accent-orange);"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">1980年代 🇺🇸 美国</div>
+                                <p>里根上台，保守派理念，撤资太阳能，大量设施被拆除 😢</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="border-color: var(--accent-green);"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">1990年代 🇩🇪 德国</div>
+                                <p>德国接力，补贴消费者和生产商，实现市场化</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-dot" style="border-color: var(--accent-red);"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-year">2010年代 🇨🇳 中国</div>
+                                <p>中国发力！15年内成本压低<span class="data-tag">90%</span>，占据全球<span class="data-tag">70%</span>产能</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quote-card">
+                        <p class="quote-text">「一项技术真正改变世界，至少要跨过三个台阶：<br>
+                        <span class="highlight-blue">1. 调整改进（tinkering）</span><br>
+                        <span class="highlight-green">2. 工程具体化（embodiment）</span><br>
+                        <span class="highlight-purple">3. 大规模量产（scaling）</span>」</p>
+                    </div>
+
+                    <h4 style="color: var(--accent-orange); margin: 25px 0 15px;">📊 赖特定律</h4>
+                    <p>每当产量增加<span class="data-tag">4倍</span>，单位成本就会下降约<span class="data-tag">1/3</span>。为什么？因为人们在建造过程中学到东西了——不断优化流程和提高效率。</p>
+
+                    <div class="quote-card">
+                        <p class="quote-text">「凯恩斯说：政府该做的重要事情，不是去做个人已经在做的，把它做得再好一点或者差一点；而是去做那些<span class="highlight-red">目前根本没有人做的事情</span>。」</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 专家深度评论 -->
+        <div class="glass-card" style="border: 2px solid var(--accent-purple);">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--accent-purple);">🎯 精英视角 | 我对本书的深度评价</h2>
+            
+            <div class="expert-comment" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)); border-color: var(--primary);">
+                <div class="expert-header">
+                    <div class="expert-avatar" style="background: linear-gradient(135deg, var(--primary), var(--secondary));">🧠</div>
+                    <div class="expert-info">
+                        <h4 style="color: var(--primary);">全球视角洞察</h4>
+                        <span>Claude | 跨学科分析</span>
+                    </div>
+                </div>
+                <div class="expert-content">
+                    <p style="margin-bottom: 20px;">这本书的价值，不在于给出"正确答案"，而在于<span class="highlight-purple">重新定义了问题</span>。</p>
+                    
+                    <h4 style="color: var(--accent-red); margin: 20px 0 10px;">🔴 第一层洞察：匮乏的本质是制度性的</h4>
+                    <p>多数人把美国的问题归咎于"市场失灵"或"政府腐败"，这本书说：都不是。问题在于<span class="highlight-red">系统性的制度僵化</span>——每个人都在理性地维护自身利益，但这些"理性选择"的叠加，却制造了集体的非理性。这是一种<strong>「合成谬误」</strong>的政治经济学版本。</p>
+                    
+                    <h4 style="color: var(--accent-blue); margin: 20px 0 10px;">🔵 第二层洞察：程序正义的悖论</h4>
+                    <p>程序正义本是好东西——防止滥权、腐败、乱作为。但当程序复杂到<span class="highlight-blue">"想办事就无法合规"</span>的程度，它就从保护变成了枷锁。这不是要否定程序正义，而是要找到「经」与「权」的平衡点。</p>
+                    
+                    <h4 style="color: var(--accent-green); margin: 20px 0 10px;">🟢 第三层洞察：增长是反本能的</h4>
+                    <p>最深刻的是这句：<span class="highlight-green">"可持续增长不是自然现象，而是需要突破人性本能的社会奇迹。"</span>人的本能是追求稳定、回避风险、排斥陌生人。但增长永远意味着接纳陌生人、让出空间、增加风险。</p>
+                    
+                    <h4 style="color: var(--accent-orange); margin: 20px 0 10px;">🟠 对中国的启示</h4>
+                    <p>中国目前享受的很多红利（执行效率、基建能力），恰恰是美国正在失去的。但这不意味着中国可以高枕无忧——<span class="highlight-orange">随着社会成熟、利益集团形成，中国也将面临同样的制度僵化风险</span>。提前理解美国的教训，就是为中国的未来做准备。</p>
+                    
+                    <div style="background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 25px; border-radius: 16px; margin-top: 25px; text-align: center;">
+                        <p style="font-size: 1.2rem; font-weight: 600; margin: 0;">「特朗普领着美国走向封闭，反而给了中国一个走向开放的机会。<br>谁丰裕谁匮乏，就在眼前。」</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金句集锦 -->
+        <div class="glass-card">
+            <h2 style="text-align: center; margin-bottom: 30px; color: var(--accent-orange);">💎 金句集锦</h2>
+            
+            <div style="display: grid; gap: 20px;">
+                <div class="quote-card" style="border-left-color: var(--accent-red);">
+                    <p class="quote-text"><span class="highlight-red">「你不能欺骗经济学：人为增加需求而不增加供给，价格必定越来越贵。」</span></p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-blue);">
+                    <p class="quote-text"><span class="highlight-blue">「增长永远意味着接纳陌生人，意味着让出一点自己的空间，意味着增加一点风险。」</span></p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-green);">
+                    <p class="quote-text"><span class="highlight-green">「什么都按规定办，要你这个官有啥用呢？」</span></p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-purple);">
+                    <p class="quote-text"><span class="highlight-purple">「民粹和体制化是科研的两大敌人。民粹窒息好奇心，体制化扼杀冒险精神。」</span></p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-pink);">
+                    <p class="quote-text"><span class="highlight-pink">「母弱出商贾，父强做侍郎，族望留原籍，家贫走他乡。」</span></p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-cyan);">
+                    <p class="quote-text"><span class="highlight-blue">「经以立信，权以立功。」</span>—— OpenAI o3</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <div class="summary-section">
+            <div class="summary-title">
+                <span style="font-size: 2rem;">📋</span>
+                <h2>核心要点总结</h2>
+            </div>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-num">1</div>
+                    <div>
+                        <strong style="color: var(--accent-red);">匮乏是人为的</strong>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">美国的问题不是缺资源缺技术，而是两党政策都在失能化政府</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">2</div>
+                    <div>
+                        <strong style="color: var(--accent-blue);">城市是流动性引擎</strong>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">大城市不仅创新，更是穷人翻身的机会，但先到者正在关门</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">3</div>
+                    <div>
+                        <strong style="color: var(--accent-green);">程序正义的悖论</strong>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">过度追求程序正义导致"想办事就无法合规"的困境</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">4</div>
+                    <div>
+                        <strong style="color: var(--accent-orange);">「经」与「权」的平衡</strong>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">规则与自由裁量权的平衡，决定国家治理效能</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">5</div>
+                    <div>
+                        <strong style="color: var(--accent-purple);">科研正在科举化</strong>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">追逐主流、规避风险的资助机制正在扼杀创新</p>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">6</div>
+                    <div>
+                        <strong style="color: var(--accent-pink);">增长是反本能的</strong>
+                        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-top: 5px;">可持续增长需要突破人性本能，离开舒适区</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 脚注 -->
+        <footer class="footer">
+            <p>📚 基于万维钢《丰盈》书评系列 | 🎨 Premium HTML by Claude</p>
+            <p style="margin-top: 10px;">「丰裕政治」vs「匮乏政治」—— 未来的选择就在眼前</p>
+        </footer>
+    </div>
+
+    <script>
+        // 深色模式切换
+        function toggleDarkMode() {
+            document.documentElement.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.documentElement.classList.contains('dark-mode'));
+        }
+
+        // 加载保存的主题
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.documentElement.classList.add('dark-mode');
+        }
+
+        // 折叠/展开板块
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.classList.toggle('active');
+        }
+
+        // 展开全部
+        function expandAll() {
+            const sections = document.querySelectorAll('.section');
+            const allActive = Array.from(sections).every(s => s.classList.contains('active'));
+            sections.forEach(s => {
+                if (allActive) {
+                    s.classList.remove('active');
+                } else {
+                    s.classList.add('active');
+                }
+            });
+        }
+
+        // 滚动进度条
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // 默认展开第一个板块
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('section1').classList.add('active');
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

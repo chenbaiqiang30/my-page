@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>权衡一念 | 脑神经科学揭示的选择密码</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --gold: #d4af37;
+            --cyan: #06b6d4;
+            --rose: #f43f5e;
+            --lime: #84cc16;
+            --bg-light: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --bg-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass-light: rgba(255, 255, 255, 0.25);
+            --glass-dark: rgba(0, 0, 0, 0.3);
+            --text-light: #1f2937;
+            --text-dark: #f3f4f6;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            min-height: 100vh;
+            transition: all 0.5s ease;
+        }
+
+        body.light-mode {
+            background: var(--bg-light);
+            color: var(--text-light);
+        }
+
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 毛玻璃效果 */
+        .glass-card {
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            transition: all 0.4s ease;
+        }
+
+        body.light-mode .glass-card {
+            background: var(--glass-light);
+        }
+
+        body.dark-mode .glass-card {
+            background: var(--glass-dark);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(31, 38, 135, 0.25);
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #ffd700 50%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .header .author-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 10px 25px;
+            border-radius: 50px;
+            margin-top: 20px;
+            font-size: 0.95rem;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(180deg);
+        }
+
+        /* 导航标签 */
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 40px;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border-radius: 50px;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.15);
+            color: inherit;
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* 金句卡片 */
+        .quote-card {
+            background: linear-gradient(135deg, var(--gold) 0%, var(--warning) 100%);
+            color: #1a1a2e;
+            padding: 25px 35px;
+            border-radius: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            opacity: 0.15;
+            font-family: Georgia, serif;
+        }
+
+        .quote-card .quote-author {
+            font-size: 0.9rem;
+            font-weight: 400;
+            margin-top: 12px;
+            opacity: 0.8;
+        }
+
+        /* 核心概念卡片 */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .concept-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 20px;
+            padding: 25px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:nth-child(1) { border-left-color: var(--primary); }
+        .concept-card:nth-child(2) { border-left-color: var(--accent); }
+        .concept-card:nth-child(3) { border-left-color: var(--success); }
+        .concept-card:nth-child(4) { border-left-color: var(--warning); }
+
+        .concept-card:hover {
+            transform: translateX(10px);
+        }
+
+        .concept-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .concept-card p {
+            opacity: 0.9;
+            font-size: 0.95rem;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            overflow-x: auto;
+            padding: 30px 10px;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 900px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 40px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            position: relative;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .mindmap-branch.left {
+            flex-direction: row-reverse;
+        }
+
+        .branch-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, currentColor);
+            opacity: 0.5;
+        }
+
+        .branch-node {
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.1);
+        }
+
+        .branch-node.blue { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
+        .branch-node.purple { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
+        .branch-node.pink { background: linear-gradient(135deg, #ec4899, #be185d); color: white; }
+        .branch-node.green { background: linear-gradient(135deg, #10b981, #047857); color: white; }
+        .branch-node.orange { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; }
+        .branch-node.cyan { background: linear-gradient(135deg, #06b6d4, #0891b2); color: white; }
+
+        /* 信息图表 */
+        .infographic {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .infographic h3 {
+            text-align: center;
+            font-size: 1.5rem;
+            margin-bottom: 25px;
+            color: var(--primary);
+        }
+
+        .formula-box {
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .formula {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        .formula .var-v { color: var(--gold); }
+        .formula .var-w { color: var(--cyan); }
+        .formula .var-c { color: var(--accent); }
+        .formula .operator { color: rgba(255,255,255,0.7); margin: 0 8px; }
+
+        .formula-legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+        }
+
+        .legend-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15));
+            border-radius: 20px;
+            padding: 25px;
+            margin: 25px 0;
+            border-left: 4px solid var(--success);
+            position: relative;
+        }
+
+        .expert-comment::before {
+            content: '💡';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            font-size: 1.8rem;
+            background: var(--success);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .expert-comment .expert-title {
+            font-weight: 700;
+            color: var(--success);
+            margin-bottom: 10px;
+            margin-left: 35px;
+        }
+
+        .expert-comment p {
+            font-size: 1rem;
+            line-height: 1.8;
+        }
+
+        /* 可折叠板块 */
+        .collapsible {
+            margin: 20px 0;
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
+            padding: 20px 25px;
+            border-radius: 15px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
+        }
+
+        .collapsible-header h3 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 3000px;
+        }
+
+        .collapsible-body {
+            padding: 25px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 0 0 15px 15px;
+        }
+
+        /* 关键洞察 */
+        .insight-list {
+            list-style: none;
+        }
+
+        .insight-list li {
+            padding: 15px 20px;
+            margin: 12px 0;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .insight-list li:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(10px);
+        }
+
+        .insight-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        /* 语义高亮 */
+        .highlight-red { color: #ff6b6b; font-weight: 600; }
+        .highlight-blue { color: #4ecdc4; font-weight: 600; }
+        .highlight-gold { color: #ffd93d; font-weight: 600; }
+        .highlight-green { color: #6bcb77; font-weight: 600; }
+        .highlight-purple { color: #c084fc; font-weight: 600; }
+        .highlight-cyan { color: #22d3ee; font-weight: 600; }
+        .highlight-rose { color: #fb7185; font-weight: 600; }
+
+        /* 数据卡片 */
+        .data-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .data-card {
+            text-align: center;
+            padding: 25px 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .data-card:hover {
+            transform: scale(1.05);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .data-card .number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .data-card .label {
+            font-size: 0.85rem;
+            opacity: 0.8;
+            margin-top: 8px;
+        }
+
+        /* 流程图 */
+        .flow-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding: 20px;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .flow-box {
+            padding: 15px 25px;
+            border-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+        }
+
+        .flow-arrow {
+            font-size: 1.5rem;
+            opacity: 0.6;
+        }
+
+        .flow-box.start { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
+        .flow-box.process { background: linear-gradient(135deg, #8b5cf6, #6d28d9); color: white; }
+        .flow-box.end { background: linear-gradient(135deg, #10b981, #047857); color: white; }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px;
+            text-align: center;
+        }
+
+        .comparison-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .comparison-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .comparison-table tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        .comparison-table tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        /* 进度条 */
+        .progress-section {
+            margin: 25px 0;
+        }
+
+        .progress-item {
+            margin: 15px 0;
+        }
+
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
+        }
+
+        .progress-bar {
+            height: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .progress-fill.high { background: linear-gradient(90deg, var(--success), #34d399); }
+        .progress-fill.medium { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+        .progress-fill.primary { background: linear-gradient(90deg, var(--primary), var(--secondary)); }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .glass-card {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .nav-tabs {
+                gap: 8px;
+            }
+
+            .nav-tab {
+                padding: 10px 18px;
+                font-size: 0.85rem;
+            }
+
+            .mindmap-container {
+                display: none;
+            }
+
+            .mobile-mindmap {
+                display: block !important;
+            }
+
+            .flow-chart {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        .mobile-mindmap {
+            display: none;
+        }
+
+        /* 浮动装饰 */
+        .floating-decor {
+            position: fixed;
+            border-radius: 50%;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .decor-1 {
+            width: 300px;
+            height: 300px;
+            background: var(--primary);
+            top: 10%;
+            left: -100px;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .decor-2 {
+            width: 200px;
+            height: 200px;
+            background: var(--accent);
+            bottom: 20%;
+            right: -50px;
+            animation: float 6s ease-in-out infinite reverse;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-30px) rotate(10deg); }
+        }
+
+        /* 标签 */
+        .tag {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin: 3px;
+        }
+
+        .tag-primary { background: rgba(99, 102, 241, 0.3); color: #a5b4fc; }
+        .tag-success { background: rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+        .tag-warning { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
+        .tag-danger { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+
+        /* 分隔线 */
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            margin: 40px 0;
+        }
+
+        /* 时间轴 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding-left: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -23px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 3px solid rgba(255,255,255,0.3);
+        }
+
+        .timeline-item h4 {
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body class="dark-mode">
+    <div class="floating-decor decor-1"></div>
+    <div class="floating-decor decor-2"></div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header glass-card animate-in">
+            <h1>🧠 权衡一念</h1>
+            <p class="subtitle">The Neuroscience of Choice and Change</p>
+            <p class="subtitle" style="margin-top: 10px; font-size: 1rem; opacity: 0.8;">
+                脑神经科学揭示的选择密码 · 改变人生的决策科学
+            </p>
+            <div class="author-badge">
+                <span>📚</span>
+                <span>艾米丽·福尔克 Emily Falk | 宾大安能伯格传播学院副院长</span>
+            </div>
+        </header>
+
+        <!-- 导航 -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="scrollToSection('core')">🎯 核心原理</button>
+            <button class="nav-tab" onclick="scrollToSection('system')">⚙️ 价值系统</button>
+            <button class="nav-tab" onclick="scrollToSection('change')">🔄 改变之道</button>
+            <button class="nav-tab" onclick="scrollToSection('self')">💎 修剪自我</button>
+            <button class="nav-tab" onclick="scrollToSection('social')">🌐 社会影响</button>
+            <button class="nav-tab" onclick="scrollToSection('expert')">🏆 精英洞察</button>
+        </nav>
+
+        <!-- 核心金句 -->
+        <div class="quote-card pulse">
+            每个决策本质上都是一种选择，而每个选择都是一种权衡。
+            <br><span class="quote-author">—— 《权衡一念》核心命题</span>
+        </div>
+
+        <!-- 核心概念 -->
+        <section id="core" class="glass-card animate-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem;">🎯</span> 
+                <span style="background: linear-gradient(135deg, var(--gold), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">核心发现：大脑如何做选择</span>
+            </h2>
+
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h3>🧮 统一的价值系统</h3>
+                    <p>大脑无论面对多少维度的比较，使用的都是<span class="highlight-gold">同一套系统</span>——价值系统（Value System），由<span class="highlight-blue">腹内侧前额叶皮层</span>和<span class="highlight-cyan">腹侧纹状体</span>构成。</p>
+                </div>
+                <div class="concept-card">
+                    <h3>⚡ 实时估值机器</h3>
+                    <p>价值系统<span class="highlight-red">随时都在运行</span>，即使你不做选择，眼睛扫过商品、听到新闻、遇见行人——大脑都在自动评估其价值。</p>
+                </div>
+                <div class="concept-card">
+                    <h3>📊 加权求和计算</h3>
+                    <p>每个选项的价值 = <span class="highlight-purple">各线索得分 × 权重</span> 的总和。这是一种快速、近乎无意识的主观计算。</p>
+                </div>
+                <div class="concept-card">
+                    <h3>🎛️ 可塑的参数</h3>
+                    <p>要改变选择，要么<span class="highlight-green">改变权重</span>，要么<span class="highlight-rose">改变线索分</span>。劝人改过不如改变其估值函数。</p>
+                </div>
+            </div>
+
+            <!-- 核心公式 -->
+            <div class="infographic">
+                <h3>📐 价值计算的核心公式</h3>
+                <div class="formula-box">
+                    <div class="formula">
+                        <span class="var-v">V</span>
+                        <span class="operator">=</span>
+                        <span class="operator">Σ</span>
+                        <span class="var-w">Wᵢ</span>
+                        <span class="operator">×</span>
+                        <span class="var-c">Cᵢ</span>
+                    </div>
+                    <div class="formula-legend">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--gold);"></div>
+                            <span>V = 选项价值</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--cyan);"></div>
+                            <span>W = 权重 (当下情境决定)</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--accent);"></div>
+                            <span>C = 线索分 (相对稳定)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 实例演示 -->
+            <div class="collapsible" onclick="toggleCollapsible(this)">
+                <div class="collapsible-header">
+                    <h3>🍎 实例：苹果 vs 橘子 vs 电影</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p style="margin-bottom: 20px;">假设你此刻独自一人、有点饿了，四个线索的权重为：</p>
+                        
+                        <div class="progress-section">
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>👅 味道</span>
+                                    <span class="highlight-gold">40%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill high" style="width: 40%;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>💪 健康</span>
+                                    <span class="highlight-green">30%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill medium" style="width: 30%;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>😊 情绪</span>
+                                    <span class="highlight-blue">20%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill primary" style="width: 20%;"></div>
+                                </div>
+                            </div>
+                            <div class="progress-item">
+                                <div class="progress-label">
+                                    <span>✨ 社交炫耀</span>
+                                    <span class="highlight-purple">10%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill primary" style="width: 10%;"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="comparison-table">
+                            <tr>
+                                <th>选项</th>
+                                <th>味道(7-9)</th>
+                                <th>健康(2-8)</th>
+                                <th>情绪(5-9)</th>
+                                <th>社交(1-6)</th>
+                                <th>总分</th>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight-red">🍎 苹果</span></td>
+                                <td>7</td>
+                                <td>8</td>
+                                <td>5</td>
+                                <td>1</td>
+                                <td class="highlight-gold">6.3</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight-gold">🍊 橘子</span></td>
+                                <td>8</td>
+                                <td>7</td>
+                                <td>6</td>
+                                <td>1</td>
+                                <td class="highlight-gold">6.6</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight-blue">🎬 电影</span></td>
+                                <td>0</td>
+                                <td>2</td>
+                                <td>9</td>
+                                <td>6</td>
+                                <td class="highlight-cyan">3.0</td>
+                            </tr>
+                        </table>
+
+                        <p style="text-align: center; margin-top: 15px;">
+                            <span class="tag tag-success">结论：橘子胜出！</span>
+                            <span class="tag tag-warning">但如果你正和情侣在一起，权重会完全不同</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句 -->
+        <div class="quote-card">
+            我们自以为的「选择」，其实是大脑里的<span style="color: #1a1a2e;">自动价值计算</span>。
+            你选择的一定是当下加权得分最高的那个选项。
+        </div>
+
+        <!-- 价值系统详解 -->
+        <section id="system" class="glass-card animate-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem;">⚙️</span> 
+                <span style="background: linear-gradient(135deg, var(--cyan), var(--success)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">两大核心系统</span>
+            </h2>
+
+            <p style="font-size: 1.1rem; margin-bottom: 25px;">
+                影响价值判断最重要的两个线索系统，它们与价值系统<span class="highlight-red">高度重叠</span>，
+                自动被激活时权重特别大：
+            </p>
+
+            <!-- 思维导图 -->
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-branches" style="margin-right: 30px;">
+                        <div class="mindmap-branch left">
+                            <div class="branch-node blue">内侧前额叶皮层</div>
+                            <div class="branch-line" style="color: #3b82f6;"></div>
+                        </div>
+                        <div class="mindmap-branch left">
+                            <div class="branch-node purple">后扣带皮层</div>
+                            <div class="branch-line" style="color: #8b5cf6;"></div>
+                        </div>
+                        <div class="mindmap-branch left">
+                            <div class="branch-node pink">楔前叶</div>
+                            <div class="branch-line" style="color: #ec4899;"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mindmap-center">
+                        🧠 价值系统<br>
+                        <small style="opacity: 0.8;">Value System</small>
+                    </div>
+                    
+                    <div class="mindmap-branches" style="margin-left: 30px;">
+                        <div class="mindmap-branch">
+                            <div class="branch-line" style="color: #10b981;"></div>
+                            <div class="branch-node green">自我相关系统</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line" style="color: #f59e0b;"></div>
+                            <div class="branch-node orange">社会相关系统</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line" style="color: #06b6d4;"></div>
+                            <div class="branch-node cyan">腹侧纹状体</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 移动端思维导图 -->
+            <div class="mobile-mindmap">
+                <div style="text-align: center; padding: 20px;">
+                    <div style="display: inline-block; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 15px 30px; border-radius: 30px; font-weight: 700; margin-bottom: 20px;">🧠 价值系统</div>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                        <span class="tag tag-success">自我相关系统</span>
+                        <span class="tag tag-warning">社会相关系统</span>
+                        <span class="tag tag-primary">腹侧纹状体</span>
+                        <span class="tag tag-danger">内侧前额叶皮层</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-grid" style="margin-top: 30px;">
+                <div class="concept-card" style="border-left-color: var(--success);">
+                    <h3><span class="highlight-green">💚 自我相关系统</span></h3>
+                    <p style="margin-bottom: 15px;">定义「我是谁」的脑区，让我们更看重与自己相关的事物。</p>
+                    <ul class="insight-list" style="font-size: 0.9rem;">
+                        <li><span class="insight-icon">🪞</span> 你就是你喜欢的东西</li>
+                        <li><span class="insight-icon">👑</span> 「我的」自然是「好的」</li>
+                        <li><span class="insight-icon">📊</span> 人人都高估自己的能力</li>
+                    </ul>
+                </div>
+                <div class="concept-card" style="border-left-color: var(--warning);">
+                    <h3><span class="highlight-gold">💛 社会相关系统</span></h3>
+                    <p style="margin-bottom: 15px;">让我们格外关注他人的想法和感受，在意群体中的位置。</p>
+                    <ul class="insight-list" style="font-size: 0.9rem;">
+                        <li><span class="insight-icon">👥</span> 极度重视群体归属</li>
+                        <li><span class="insight-icon">👍</span> 点赞对我们很重要</li>
+                        <li><span class="insight-icon">🔄</span> 从众是本能反应</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="expert-comment">
+                <div class="expert-title">🎓 关键洞察</div>
+                <p>
+                    一方面想<span class="highlight-red">做自己</span>、突出自己，另一方面又想<span class="highlight-blue">融入群体</span>、跟别人一样——
+                    这看似矛盾实则是针对不同情境的适应。最佳策略是<span class="highlight-gold">「略微错位」</span>：
+                    粗看你跟别人都一样，但细看你跟别人很不一样。找到这个劲头，你会是个很快乐的人。
+                </p>
+            </div>
+        </section>
+
+        <!-- 金句 -->
+        <div class="quote-card">
+            生而为碳基生物，我们必须吃饭、喝水、睡觉……
+            但正因为这些"负担"，我们才配<span style="color: #1a1a2e;">拥抱价值</span>。
+        </div>
+
+        <!-- 改变之道 -->
+        <section id="change" class="glass-card animate-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem;">🔄</span> 
+                <span style="background: linear-gradient(135deg, var(--accent), var(--rose)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">如何改变一个人</span>
+            </h2>
+
+            <div class="quote-card" style="background: linear-gradient(135deg, var(--danger), var(--accent));">
+                人不是不可改变，关键在于你愿不愿意下功夫研究他。
+                <br><span class="quote-author">—— 杀猪盘的底层逻辑</span>
+            </div>
+
+            <!-- 核心方法：聚焦 -->
+            <div class="infographic" style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(236, 72, 153, 0.1));">
+                <h3 style="color: var(--accent);">🎯 改变的核心方法：聚焦</h3>
+                <p style="text-align: center; margin-bottom: 25px; font-size: 1.1rem;">
+                    聚焦 = <span class="highlight-red">主动决定</span>价值判断公式中有哪些项目 = <span class="highlight-gold">设置议题</span>
+                </p>
+
+                <div class="flow-chart">
+                    <div class="flow-step">
+                        <div class="flow-box start">📋 分析对方<br>价值线索</div>
+                        <span class="flow-arrow">→</span>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box process">🎯 选择关键<br>聚焦点</div>
+                        <span class="flow-arrow">→</span>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-box end">💡 触发价值<br>系统重算</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- NBA教练案例 -->
+            <div class="collapsible active" onclick="toggleCollapsible(this)">
+                <div class="collapsible-header">
+                    <h3>🏀 经典案例：NBA球星的诞生</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p style="margin-bottom: 20px;">
+                            60年代，一位高中篮球教练发现了一个极有天赋的犹太裔移民孩子。
+                            家庭很困难，父母只期望孩子好好读书考大学，对体育毫无兴趣。
+                        </p>
+                        
+                        <p style="margin-bottom: 20px;">
+                            这位教练只说了<span class="highlight-gold">两句话</span>：
+                        </p>
+
+                        <div style="background: rgba(212, 175, 55, 0.2); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                            <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px;">
+                                <span class="highlight-gold">❶</span> 你家孩子是我见过<span class="highlight-red">最有决心</span>的球员
+                            </p>
+                            <p style="font-size: 0.9rem; opacity: 0.8; margin-left: 25px;">
+                                → 击中家庭核心文化：工作和奉献精神
+                            </p>
+                        </div>
+
+                        <div style="background: rgba(212, 175, 55, 0.2); border-radius: 15px; padding: 20px; margin: 20px 0;">
+                            <p style="font-size: 1.2rem; font-weight: 600; margin-bottom: 15px;">
+                                <span class="highlight-gold">❷</span> 他可以凭借篮球技艺<span class="highlight-blue">上大学</span>
+                            </p>
+                            <p style="font-size: 0.9rem; opacity: 0.8; margin-left: 25px;">
+                                → 击中父母对子女的期待：考大学
+                            </p>
+                        </div>
+
+                        <p style="text-align: center; margin-top: 20px;">
+                            <span class="tag tag-success">结果：父母当天破天荒早早关店去看比赛</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 眼前vs未来 -->
+            <div class="collapsible" onclick="toggleCollapsible(this)">
+                <div class="collapsible-header">
+                    <h3>⏰ 眼前 vs 未来：时间的聚焦陷阱</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p style="margin-bottom: 20px;">
+                            人们往往把<span class="highlight-red">「未来的自己」</span>想象成另一个人。
+                            核磁共振显示：想到几年后的自己，自我相关系统往往<span class="highlight-gold">不会点亮</span>！
+                        </p>
+
+                        <div class="data-cards">
+                            <div class="data-card">
+                                <div class="number">2×</div>
+                                <div class="label">看到老年版自己后<br>退休金存款翻倍</div>
+                            </div>
+                            <div class="data-card">
+                                <div class="number">↑35%</div>
+                                <div class="label">强调"好吃"vs"健康"<br>学生选蔬菜率提升</div>
+                            </div>
+                            <div class="data-card">
+                                <div class="number">6×</div>
+                                <div class="label">AI个性化说服<br>成功率是人类的</div>
+                            </div>
+                        </div>
+
+                        <div class="expert-comment" style="margin-top: 20px;">
+                            <div class="expert-title">💡 实战心法</div>
+                            <p>
+                                想说服人做一件事，<span class="highlight-red">不要</span>强调对"未来"有多大好处——
+                                应该强调<span class="highlight-green">现在就有好处</span>。
+                                想让孩子多读书？别说什么学业成功，先让他读<span class="highlight-gold">感兴趣的书</span>。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句 -->
+        <div class="quote-card">
+            当<span style="color: #1a1a2e;">腹内侧前额叶皮层点亮</span>的时候，意志才有落脚之地。
+            <br><span class="quote-author">—— 脑神经科学的改变密码</span>
+        </div>
+
+        <!-- 修剪自我 -->
+        <section id="self" class="glass-card animate-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem;">💎</span> 
+                <span style="background: linear-gradient(135deg, var(--purple), var(--primary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">修剪自我的艺术</span>
+            </h2>
+
+            <p style="font-size: 1.1rem; margin-bottom: 25px;">
+                人的「自我」是需要修剪的。就像身材一样，也许哪里脂肪太多，哪里肌肉不够强壮。
+                最大的难点在于：<span class="highlight-red">自我系统和价值系统高度重叠</span>，我们会自动高估一切属于自己的东西。
+            </p>
+
+            <!-- 两大方法 -->
+            <div class="concept-grid">
+                <div class="concept-card" style="border-left-color: var(--success);">
+                    <h3><span style="font-size: 1.5rem;">🌳</span> 方法一：肯定核心</h3>
+                    <p style="margin-bottom: 15px;"><span class="highlight-gold">扎根</span>——提供心理锚点，确保安全感</p>
+                    <ul class="insight-list" style="font-size: 0.9rem;">
+                        <li><span class="insight-icon">💎</span> 区分<span class="highlight-green">核心特质</span>和<span class="highlight-blue">外围特质</span></li>
+                        <li><span class="insight-icon">🛡️</span> 核心不可动摇，外围可以改变</li>
+                        <li><span class="insight-icon">⚡</span> 先肯定核心，再提意见</li>
+                    </ul>
+                </div>
+                <div class="concept-card" style="border-left-color: var(--primary);">
+                    <h3><span style="font-size: 1.5rem;">🚀</span> 方法二：跳出自我</h3>
+                    <p style="margin-bottom: 15px;"><span class="highlight-cyan">腾空</span>——从情境中抽离，获得距离感</p>
+                    <ul class="insight-list" style="font-size: 0.9rem;">
+                        <li><span class="insight-icon">🌟</span> 找一个<span class="highlight-gold">榜样</span>：他会怎么做？</li>
+                        <li><span class="insight-icon">👤</span> 用<span class="highlight-purple">第三人称</span>看自己</li>
+                        <li><span class="insight-icon">🧘</span> 以好奇视角看待自己的情绪</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 核心价值确认 -->
+            <div class="infographic" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(99, 102, 241, 0.15));">
+                <h3 style="color: var(--success);">✨ 核心价值确认（Values Affirmation）</h3>
+                <p style="text-align: center; margin-bottom: 20px;">
+                    在指出缺点、要求改进之前，<span class="highlight-gold">必须先肯定核心价值</span>
+                </p>
+
+                <div class="timeline" style="max-width: 600px; margin: 0 auto;">
+                    <div class="timeline-item">
+                        <h4>第一步：让对方列出价值清单</h4>
+                        <p>花几分钟找出自己的核心价值观</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>第二步：确认并表示尊重</h4>
+                        <p>这是他的锚点，不容动摇</p>
+                    </div>
+                    <div class="timeline-item">
+                        <h4>第三步：再提出建议</h4>
+                        <p>此时防御心理已大大降低</p>
+                    </div>
+                </div>
+
+                <p style="text-align: center; margin-top: 25px; font-size: 1.1rem;">
+                    <span class="highlight-green">研究表明：</span>先做价值确认的人，运动量在一个月内<span class="highlight-gold">显著增加</span>
+                </p>
+            </div>
+
+            <!-- 詹姆斯案例 -->
+            <div class="quote-card" style="background: linear-gradient(135deg, #3b82f6, #8b5cf6);">
+                「我不想做出情绪化的决定。我想做对<span style="color: #ffd93d;">勒布朗·詹姆斯</span>最好的事情，
+                做让<span style="color: #ffd93d;">勒布朗·詹姆斯</span>快乐的事情。」
+                <br><span class="quote-author">—— LeBron James 用第三人称做重大决策</span>
+            </div>
+        </section>
+
+        <!-- 社会影响 -->
+        <section id="social" class="glass-card animate-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem;">🌐</span> 
+                <span style="background: linear-gradient(135deg, var(--warning), var(--success)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">社会影响与同频共振</span>
+            </h2>
+
+            <!-- 信息经纪人 -->
+            <div class="collapsible active" onclick="toggleCollapsible(this)">
+                <div class="collapsible-header">
+                    <h3>🔗 信息经纪人：穿越信息孤岛</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p style="margin-bottom: 20px;">
+                            每个组织都需要这么一类人：跟不同专业、不同部门、不同背景的人都有联系，
+                            知道每个人在干什么、擅长什么、如何思考。
+                        </p>
+
+                        <div class="data-cards">
+                            <div class="data-card">
+                                <div class="number">↑</div>
+                                <div class="label">更容易被上级看到</div>
+                            </div>
+                            <div class="data-card">
+                                <div class="number">↑</div>
+                                <div class="label">更高的升职加薪机会</div>
+                            </div>
+                            <div class="data-card">
+                                <div class="number">↑</div>
+                                <div class="label">创造性解决问题能力</div>
+                            </div>
+                        </div>
+
+                        <div class="expert-comment" style="margin-top: 20px;">
+                            <div class="expert-title">🎯 成为信息经纪人的关键</div>
+                            <p style="margin-bottom: 15px;">
+                                <span class="highlight-gold">好奇心</span>——真诚地想知道别人都在做什么、想什么；
+                                关心别人的观点，愿意采纳不同的视角。
+                            </p>
+                            <p>
+                                <span class="highlight-red">警告：</span>权力越大，好奇心越小。必须非常主动才能克服这个趋势。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 同频共振 -->
+            <div class="collapsible" onclick="toggleCollapsible(this)">
+                <div class="collapsible-header">
+                    <h3>🎵 同频共振：快速建立信任的密码</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p style="margin-bottom: 20px;">
+                            当同频发生时，大脑中的「社会相关系统」和「奖励系统」发生<span class="highlight-gold">强耦合</span>，
+                            价值系统就会高度评价眼前这些人——我跟这帮人合得来！
+                        </p>
+
+                        <ul class="insight-list">
+                            <li>
+                                <span class="insight-icon">🎤</span>
+                                <div>
+                                    <span class="highlight-green">演唱会同频：</span>
+                                    全场观众在统一节奏中连唱带跳，产生"宗教般"的体验
+                                </div>
+                            </li>
+                            <li>
+                                <span class="insight-icon">🦇</span>
+                                <div>
+                                    <span class="highlight-cyan">蝙蝠实验：</span>
+                                    共同生活后行为越来越同步，脑神经活动也趋于同步，关系更亲密
+                                </div>
+                            </li>
+                            <li>
+                                <span class="insight-icon">🎓</span>
+                                <div>
+                                    <span class="highlight-purple">学习效果：</span>
+                                    学生越能跟老师大脑活动同频，理解越准确，记忆越牢靠
+                                </div>
+                            </li>
+                        </ul>
+
+                        <div class="quote-card" style="margin-top: 20px; background: linear-gradient(135deg, var(--success), var(--cyan));">
+                            同频是为了建立信任，而信任是为了<span style="color: #1a1a2e;">敢于说跟对方不一样的话</span>。
+                            <br><span class="quote-author">—— 求同存异的智慧</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 内容分享 -->
+            <div class="collapsible" onclick="toggleCollapsible(this)">
+                <div class="collapsible-header">
+                    <h3>📤 内容分享的脑科学</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-body">
+                        <p style="margin-bottom: 20px;">
+                            什么样的内容更容易被人分享？答案藏在大脑里：
+                        </p>
+
+                        <div style="background: rgba(99, 102, 241, 0.15); border-radius: 15px; padding: 25px; margin: 20px 0;">
+                            <h4 style="color: var(--primary); margin-bottom: 15px; text-align: center;">
+                                分享的双重激活条件
+                            </h4>
+                            <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                                <div style="text-align: center; flex: 1; min-width: 200px;">
+                                    <div style="font-size: 3rem; margin-bottom: 10px;">💚</div>
+                                    <p><span class="highlight-green">激活自我相关系统</span><br>和「我」有关</p>
+                                </div>
+                                <div style="text-align: center; flex: 1; min-width: 200px;">
+                                    <div style="font-size: 3rem; margin-bottom: 10px;">💛</div>
+                                    <p><span class="highlight-gold">激活社会相关系统</span><br>和「我们」有关</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="expert-comment">
+                            <div class="expert-title">🎯 出圈的秘密</div>
+                            <p>
+                                <span class="highlight-red">不看纽约时报的人</span>的大脑反应，更能预测文章转发量！
+                                原因：铁杆粉丝什么都爱看；圈外人如果产生强烈反应，那篇文章就一定有点东西。
+                                <br><br>
+                                <span class="highlight-gold">启发：</span>真正「出圈」的作品，一定是打动了圈外人。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 君子之道 -->
+        <div class="quote-card">
+            君子之德风，小人之德草。<br>
+            君子是秩序的<span style="color: #1a1a2e;">输出者</span>，而不只是秩序的服从者。
+            <br><span class="quote-author">—— 孔子 ·《论语》</span>
+        </div>
+
+        <!-- 精英洞察 -->
+        <section id="expert" class="glass-card animate-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 2rem;">🏆</span> 
+                <span style="background: linear-gradient(135deg, var(--gold), var(--warning)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">全球精英视角：价值系统的启示</span>
+            </h2>
+
+            <p style="font-size: 1.1rem; margin-bottom: 30px; text-align: center;">
+                作为审视这本书的全球顶级精英，我从中提炼出以下<span class="highlight-gold">改变人生的核心洞察</span>：
+            </p>
+
+            <!-- 核心洞察卡片 -->
+            <div class="concept-grid">
+                <div class="concept-card" style="border-left-color: var(--gold);">
+                    <h3><span class="highlight-gold">💡 洞察一：决策即计算</span></h3>
+                    <p>
+                        放弃「意志力」神话。你的选择不是「想不想」的问题，
+                        而是大脑<span class="highlight-cyan">价值函数参数</span>的问题。
+                        改变参数，自然改变行为。
+                    </p>
+                </div>
+                <div class="concept-card" style="border-left-color: var(--accent);">
+                    <h3><span class="highlight-rose">💡 洞察二：情境即杠杆</span></h3>
+                    <p>
+                        世界顶级说服者不跟人讲道理，
+                        而是<span class="highlight-gold">设计情境</span>——改变聚焦点、
+                        激活自我/社会系统，让大脑自己算出"正确答案"。
+                    </p>
+                </div>
+                <div class="concept-card" style="border-left-color: var(--success);">
+                    <h3><span class="highlight-green">💡 洞察三：自我需修剪</span></h3>
+                    <p>
+                        「我」是资产也是负债。过度的自我认同会让你
+                        <span class="highlight-red">拒绝成长</span>。
+                        定期审视：哪些特质是核心？哪些是该放下的外围？
+                    </p>
+                </div>
+                <div class="concept-card" style="border-left-color: var(--primary);">
+                    <h3><span class="highlight-blue">💡 洞察四：君子德风行</span></h3>
+                    <p>
+                        顶级人才不只是适应环境，而是<span class="highlight-gold">输出秩序</span>。
+                        从身边人开始，用科学方法影响价值判断，
+                        你就在塑造文化。
+                    </p>
+                </div>
+            </div>
+
+            <!-- 行动清单 -->
+            <div class="infographic" style="background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(245, 158, 11, 0.15));">
+                <h3 style="color: var(--gold);">📋 精英行动清单</h3>
+                
+                <ul class="insight-list">
+                    <li>
+                        <span class="insight-icon">1️⃣</span>
+                        <div>
+                            <strong class="highlight-gold">每日价值审计</strong><br>
+                            睡前问自己：今天哪个决策是聚焦眼前？哪个考虑了长远？
+                        </div>
+                    </li>
+                    <li>
+                        <span class="insight-icon">2️⃣</span>
+                        <div>
+                            <strong class="highlight-green">核心价值锚定</strong><br>
+                            写下你的3个核心价值观，每逢重大决策先确认一遍。
+                        </div>
+                    </li>
+                    <li>
+                        <span class="insight-icon">3️⃣</span>
+                        <div>
+                            <strong class="highlight-cyan">第三人称决策</strong><br>
+                            重要关头问：如果是「我的名字」，他会怎么做？
+                        </div>
+                    </li>
+                    <li>
+                        <span class="insight-icon">4️⃣</span>
+                        <div>
+                            <strong class="highlight-purple">信息经纪习惯</strong><br>
+                            每周主动了解一个陌生部门/领域的人在做什么。
+                        </div>
+                    </li>
+                    <li>
+                        <span class="insight-icon">5️⃣</span>
+                        <div>
+                            <strong class="highlight-rose">同频建立信任</strong><br>
+                            新团队先求同（共同语言），再存异（创新碰撞）。
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- 最终金句 -->
+            <div class="quote-card" style="background: linear-gradient(135deg, #1a1a2e, #16213e); border: 2px solid var(--gold);">
+                <span style="color: var(--gold); font-size: 1.4rem;">
+                    知道自己为何而活的人，几乎能忍受任何活的方式。
+                </span>
+                <br><span class="quote-author" style="color: rgba(255,255,255,0.7);">—— 尼采</span>
+            </div>
+
+            <div class="expert-comment" style="border-left-color: var(--gold);">
+                <div class="expert-title" style="color: var(--gold);">🎓 终极启示</div>
+                <p style="font-size: 1.1rem; line-height: 2;">
+                    这本书告诉我们：<span class="highlight-red">大脑是一个硬件系统</span>，
+                    但硬件是可以<span class="highlight-green">重新编程</span>的。
+                    <br><br>
+                    理解价值系统的运作机制，你就拥有了改变自己、影响他人、
+                    甚至<span class="highlight-gold">重塑社会文化</span>的超能力。
+                    <br><br>
+                    大多数人读书是被动的。但真正的精英，会读出<span class="highlight-cyan">主动性</span>——
+                    想要像君子一样去影响别人，甚至改变社会。
+                    <br><br>
+                    <span style="font-size: 1.3rem; color: var(--gold);">
+                        你，准备好了吗？
+                    </span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 关键数据汇总 -->
+        <section class="glass-card animate-in">
+            <h2 style="font-size: 1.5rem; margin-bottom: 25px; text-align: center;">📊 关键研究数据一览</h2>
+            
+            <div class="data-cards">
+                <div class="data-card">
+                    <div class="number">2×</div>
+                    <div class="label">看到老年自己后<br>退休金存款增加</div>
+                </div>
+                <div class="data-card">
+                    <div class="number">6×</div>
+                    <div class="label">AI个性化说服<br>vs人类成功率</div>
+                </div>
+                <div class="data-card">
+                    <div class="number">-33%</div>
+                    <div class="label">种子学生实验<br>学校纪律事件</div>
+                </div>
+                <div class="data-card">
+                    <div class="number">7×</div>
+                    <div class="label">65岁以上用户<br>分享假新闻概率</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer class="footer glass-card">
+            <p style="margin-bottom: 10px;">
+                <span class="highlight-gold">《权衡一念》</span> What We Value: The Neuroscience of Choice and Change
+            </p>
+            <p style="margin-bottom: 10px;">
+                作者：艾米丽·福尔克 Emily Falk | 宾夕法尼亚大学
+            </p>
+            <p style="opacity: 0.7;">
+                内容整理 & 精英洞察 | 基于脑神经科学的选择与改变指南
+            </p>
+            <div style="margin-top: 20px;">
+                <span class="tag tag-primary">脑神经科学</span>
+                <span class="tag tag-success">决策科学</span>
+                <span class="tag tag-warning">行为改变</span>
+                <span class="tag tag-danger">价值系统</span>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // 折叠面板
+        function toggleCollapsible(element) {
+            element.classList.toggle('active');
+        }
+
+        // 滚动到指定区域
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // 更新导航标签状态
+            document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.glass-card');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(30px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+
+            // 进度条动画
+            setTimeout(() => {
+                document.querySelectorAll('.progress-fill').forEach(fill => {
+                    fill.style.width = fill.style.width;
+                });
+            }, 500);
+        });
+
+        // 滚动时的视差效果
+        window.addEventListener('scroll', function() {
+            const scrolled = window.pageYOffset;
+            document.querySelectorAll('.floating-decor').forEach((decor, index) => {
+                const speed = index === 0 ? 0.3 : 0.2;
+                decor.style.transform = `translateY(${scrolled * speed}px)`;
+            });
+        });
+    </script>
+</body>
+</html>

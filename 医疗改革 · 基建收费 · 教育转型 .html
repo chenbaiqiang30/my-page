@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政经参考 | 中国改革三大趋势深度分析</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a237e 0%, #0d47a1 50%, #01579b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-primary: #1a1a1a;
+            --text-secondary: #4a5568;
+            --highlight-key: #d32f2f;
+            --highlight-data: #1976d2;
+            --highlight-quote: #388e3c;
+            --highlight-warning: #f57c00;
+            --highlight-trend: #7b1fa2;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.2);
+            --accent: #1976d2;
+            --accent-purple: #7b1fa2;
+            --accent-orange: #f57c00;
+        }
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #0a0a1a 0%, #1a1a2e 50%, #16213e 100%);
+            --glass-bg: rgba(30, 30, 50, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #e8eaf6;
+            --text-secondary: #b0bec5;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 30px 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 头部样式 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: fadeInUp 0.6s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #d32f2f, #1976d2, #388e3c, #f57c00, #7b1fa2);
+            border-radius: 28px 28px 0 0;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #1976d2, #7b1fa2, #d32f2f);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            font-weight: 500;
+            margin-bottom: 25px;
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent);
+        }
+        
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .mindmap-title {
+            font-size: 2em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 40px 20px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, #1976d2, #7b1fa2);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 800;
+            box-shadow: 0 12px 40px rgba(25, 118, 210, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 35px;
+            width: 100%;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: fadeInUp 0.7s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.4s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch-node {
+            background: linear-gradient(135deg, rgba(25, 118, 210, 0.1), rgba(123, 31, 162, 0.1));
+            border: 3px solid;
+            padding: 20px 30px;
+            border-radius: 22px;
+            font-size: 1.3em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .branch:nth-child(1) .branch-node { border-color: #d32f2f; color: #d32f2f; }
+        .branch:nth-child(2) .branch-node { border-color: #1976d2; color: #1976d2; }
+        .branch:nth-child(3) .branch-node { border-color: #388e3c; color: #388e3c; }
+        .branch-node:hover {
+            transform: translateY(-6px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+        }
+        .sub-node {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            padding: 12px 22px;
+            border-radius: 14px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        .branch:nth-child(1) .sub-node { border-color: #d32f2f; }
+        .branch:nth-child(2) .sub-node { border-color: #1976d2; }
+        .branch:nth-child(3) .sub-node { border-color: #388e3c; }
+        .sub-node:hover {
+            transform: translateX(8px);
+            background: rgba(255, 255, 255, 0.8);
+        }
+        
+        /* 信息图表 */
+        .infographic {
+            background: linear-gradient(135deg, rgba(25, 118, 210, 0.05), rgba(123, 31, 162, 0.05));
+            border-radius: 20px;
+            padding: 35px;
+            margin: 30px 0;
+            border: 2px solid var(--glass-border);
+        }
+        .info-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--accent-purple);
+            text-align: center;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            border-radius: 18px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        .info-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .info-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-size: 1.1em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+        
+        /* 板块样式 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            position: relative;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--glass-border);
+        }
+        .section-title {
+            font-size: 2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .collapse-icon {
+            font-size: 1.8em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            transition: all 0.4s ease;
+            font-size: 1.05em;
+            line-height: 1.6;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 120px;
+            margin-top: 20px;
+        }
+        .section-content {
+            max-height: 8000px;
+            overflow: hidden;
+            transition: max-height 0.6s ease;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+        }
+        
+        /* 文本高亮 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(211, 47, 47, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(25, 118, 210, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(56, 142, 60, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-warning {
+            color: var(--highlight-warning);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(245, 124, 0, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-trend {
+            color: var(--highlight-trend);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(123, 31, 162, 0.12);
+            border-radius: 6px;
+        }
+        
+        /* 金句样式 */
+        .golden-quote {
+            margin: 30px 0;
+            padding: 25px 35px;
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.15), rgba(255, 152, 0, 0.15));
+            border-left: 5px solid #f57c00;
+            border-radius: 16px;
+            font-size: 1.25em;
+            font-weight: 600;
+            line-height: 1.8;
+            position: relative;
+            font-style: italic;
+        }
+        .golden-quote::before {
+            content: '💎';
+            position: absolute;
+            top: -18px;
+            left: 30px;
+            font-size: 2.2em;
+            background: var(--glass-bg);
+            padding: 8px 18px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* 专家评论 */
+        .expert-comment {
+            margin-top: 35px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(25, 118, 210, 0.08), rgba(123, 31, 162, 0.08));
+            border-left: 5px solid var(--accent-purple);
+            border-radius: 18px;
+            position: relative;
+        }
+        .expert-comment::before {
+            content: '🎯';
+            position: absolute;
+            top: -18px;
+            left: 25px;
+            font-size: 2.2em;
+            background: var(--glass-bg);
+            padding: 8px 18px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+        .expert-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 15px;
+        }
+        .expert-text {
+            line-height: 1.9;
+            font-size: 1.05em;
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 35px;
+            right: 35px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.8em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.06); }
+        }
+        
+        /* 段落样式 */
+        p {
+            margin-bottom: 20px;
+            font-size: 1.08em;
+            line-height: 1.9;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .header { padding: 30px; }
+            .section { padding: 25px; }
+            .mindmap-container { padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <div class="header">
+            <h1>政经参考 | 中国改革三大趋势深度分析</h1>
+            <div class="subtitle">医疗改革 · 基建收费 · 教育转型 | 马江博主讲</div>
+            <div class="controls">
+                <button class="btn" onclick="toggleAll()">📋 展开/折叠全部</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印保存</button>
+                <button class="btn" onclick="scrollToTop()">⬆️ 返回顶部</button>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="mindmap-container">
+            <div class="mindmap-title">🧠 核心框架思维导图</div>
+            <div class="mindmap-pure-css">
+                <div class="center-node">中国改革三大领域<br/>深度解析</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">医疗改革</div>
+                        <div class="sub-node">三明模式：利益重分配</div>
+                        <div class="sub-node">两票制+带量采购</div>
+                        <div class="sub-node">医保基金超级支付方</div>
+                        <div class="sub-node">县域医共体下沉</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">高速收费</div>
+                        <div class="sub-node">债务7.92万亿困局</div>
+                        <div class="sub-node">40%高速2035前到期</div>
+                        <div class="sub-node">三种模式：免费/延期/回购</div>
+                        <div class="sub-node">财政vs物流成本权衡</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">教育改革</div>
+                        <div class="sub-node">生源2023年达峰</div>
+                        <div class="sub-node">小学2035年降55%</div>
+                        <div class="sub-node">教师过剩转缺口</div>
+                        <div class="sub-node">高中扩张+小班化</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一部分：医疗改革 -->
+        <div class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-title">🏥 医疗改革：三明模式的全国推广</div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                三明医改通过"利益重分配"破解医疗困局：从亏损2亿到结余15亿，药价平均降50%，医生年薪涨至20万。两票制、带量采购、零加成、DRG付费等创新制度，正在重塑中国医疗体系...
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">
+                    "三明医改的核心是利益重分配：挤出药企虚高利润、医院逐利收益、医生灰色收入，重新分配给老百姓、医保、医务人员，激活更大的正向医疗循环。"
+                </div>
+
+                <div class="infographic">
+                    <div class="info-title">📊 三明医改关键数据</div>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-number" style="color: #d32f2f;">-2.08亿→+15亿</div>
+                            <div class="info-label">医保基金转亏为盈</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #1976d2;">50%</div>
+                            <div class="info-label">药品价格平均降幅</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #388e3c;">20.11万</div>
+                            <div class="info-label">医生年薪(2022)</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #f57c00;">70.53%</div>
+                            <div class="info-label">居民实际报销比例</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🎯 改革第一阶段：打破旧模式</h3>
+                
+                <p><span class="highlight-key">核心目标</span>：让公立医院回归公益属性，实现保本、微利、让利于民。</p>
+
+                <p><span class="highlight-data">三大创新制度</span>：</p>
+                
+                <p><span class="highlight-trend">1. 两票制</span> - 药企只能向物流企业开一次票，物流企业向医院开一次票。通过税制结构巧妙排除中间商，压缩了<span class="highlight-data">7-10个</span>层层加价环节。</p>
+
+                <p><span class="highlight-trend">2. 带量集中采购+一品两规</span> - 市级平台统一谈判，<span class="highlight-quote">"以量换价"</span>，每个医院同一剂型药品最多保留2种规格，集中需求提升议价权。</p>
+
+                <p><span class="highlight-trend">3. 药品耗材零加成</span> - 医院一律按成本价销售，终结<span class="highlight-warning">"以药养医"</span>乱象。这些改革后来成为全国医改的核心，在全国推开。</p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🔧 改革第二阶段：制度层面重构</h3>
+
+                <p><span class="highlight-key">薪酬制度改革</span>：</p>
+                
+                <p>• 院长实行<span class="highlight-data">年薪制</span>，由财政支付，与医院收入彻底脱钩</p>
+                <p>• 医生实施<span class="highlight-data">目标年薪制</span>，收入挂钩工作量和服务质量，不再挂钩药品销售</p>
+                <p>• 医疗服务适度涨价，<span class="highlight-data">11次调整10379项</span>收费标准，鼓励精进医疗技术</p>
+
+                <p><span class="highlight-key">医保基金改革</span>：</p>
+
+                <p><span class="highlight-trend">三保合一</span> - 城镇职工医保、城镇居民医保、新农合统一为医保基金管理中心，形成统一大买家，可制定支付标准、临床路径和考核指标。<span class="highlight-quote">2018年中央成立国家医保局，全国推行。</span></p>
+
+                <p><span class="highlight-trend">C-DRG改革</span> - 按疾病分组付费，医保只给<span class="highlight-warning">"套餐价"</span>。比如肺炎套餐价8000元，医院多开药就亏损，消除过度医疗冲动。<span class="highlight-quote">2021年全国敲定DRG/DIP模式并铺开。</span></p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🌟 新阶段：资源下沉与分级诊疗</h3>
+
+                <p><span class="highlight-key">县域医共体</span> - 县综合医院设为总医院，统筹管理乡镇卫生院、村卫生室，实现人财物统一调配，避免上下级医疗机构各自为战。</p>
+
+                <p><span class="highlight-key">分级诊疗</span> - 通过利益共同体引导<span class="highlight-quote">"小病基层、大病转诊、康复回基层"</span>。如果患者都挤到县总医院，医保支付超支由医院自负；如果在基层解决，省下的钱归总医院收益。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-title">专家评论 | 政经观察</div>
+                    <div class="expert-text">
+                        <p><strong>制度创新的本质</strong>：三明医改的价值不在于单个政策，而在于构建了一套<span class="highlight-key">自洽的激励体系</span>。两票制、带量采购、零加成、DRG付费环环相扣，形成闭环。</p>
+                        
+                        <p><strong>利益博弈的艺术</strong>：改革触及的是<span class="highlight-warning">药企、医院、中间商的既得利益</span>，能够推进的前提是：<span class="highlight-data">①强力统筹机制（医改小组）②明确的公益性定位③财政兜底决心</span>。这三点缺一不可。</p>
+                        
+                        <p><strong>未来医改趋势</strong>：<span class="highlight-trend">医保基金将从"被动出纳"转型为"超级支付方"</span>，通过支付规则直接定义医疗服务价值。优质资源下沉、医联体深化、价格项目全国统一，都是必然方向。医药企业面临生死线：要么极致成本控制成为规模之王，要么拥有真正创新产品。</p>
+                        
+                        <p><strong>最大挑战</strong>：中西部地区财力有限，能否承受改革成本？基层医疗机构能否真正承接下沉任务？这是全国推广的两大考验。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二部分：高速收费改革 -->
+        <div class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-title">🛣️ 高速收费：到期免费的历史性转折</div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                成都成绵高速永久免费，开启高速"到期即免费"先河。未来十年40%高速将到期，但面临7.92万亿债务、3000亿养护缺口。地方选择：免费、延期还是回购？这是财政压力与物流成本的终极博弈...
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">
+                    "高速公路收费与否，背后是财政现实与经济转型的双重考量：地方需要确定性收入偿债，但全国需要降低物流成本提升制造业竞争力。"
+                </div>
+
+                <div class="infographic">
+                    <div class="info-title">📊 高速公路关键数据</div>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-number" style="color: #d32f2f;">7.92万亿</div>
+                            <div class="info-label">全国收费公路债务</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #1976d2;">40%</div>
+                            <div class="info-label">2035前到期高速占比</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #388e3c;">19万公里</div>
+                            <div class="info-label">全国高速通车里程</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #f57c00;">3000亿</div>
+                            <div class="info-label">年度养护资金缺口</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🏗️ 历史背景："贷款修路、收费还贷"</h3>
+
+                <p>改革开放后，<span class="highlight-key">经济实力与基建需求极度不匹配</span>，政府拿不出钱修路。于是开创<span class="highlight-quote">"花未来的钱，办当下的事"</span>模式：</p>
+
+                <p>• 地方政府成立高速公路公司，向银行借贷、吸引社会资本修路</p>
+                <p>• 通过收费还款，银行看中长期稳定的<span class="highlight-data">"现金奶牛"</span></p>
+                <p>• 企业和老百姓享受通行效率，物流成本大幅降低</p>
+
+                <p><span class="highlight-trend">建设成就</span>：从<span class="highlight-data">1988年第一条高速</span>到现在，中国高速里程超<span class="highlight-data">19万公里</span>，覆盖98%的20万人口以上城市，成为全球最大高速路网。</p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">💰 三本账的困境</h3>
+
+                <p><span class="highlight-key">第一本账：历史债务</span></p>
+                <p>• 截至2021年，收费公路债务余额<span class="highlight-data">7.92万亿</span>（高速7.49万亿），比铁路还高</p>
+                <p>• 2021年通行费收入<span class="highlight-data">6630.5亿</span>，支出<span class="highlight-data">1.29万亿</span>，收支缺口巨大</p>
+                <p>• 2017-2022年债务年复合增长率<span class="highlight-warning">17.7%</span>，陷入<span class="highlight-warning">"借钱还钱"</span>恶性循环</p>
+
+                <p><span class="highlight-key">第二本账：未来养护</span></p>
+                <p>• 高速公路需要长期定时保养，<span class="highlight-data">每年养护缺口3000亿</span></p>
+                <p>• 2024年全国普通公路养护资金<span class="highlight-data">6000亿</span>，资金缺口<span class="highlight-warning">50%以上</span>且逐年攀升</p>
+                <p>• 梅州高速坍塌事故警示：缺乏养护的严重后果</p>
+
+                <p><span class="highlight-key">第三本账：地方财政</span></p>
+                <p>• 土地出让金持续下滑，优质高速是<span class="highlight-quote">确定性收入来源</span></p>
+                <p>• 中西部和偏远地区高速因车流少、成本高，至今未还清本息</p>
+                <p>• 到期直接免费意味着<span class="highlight-warning">庞大债务由地方财政负担</span></p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🔀 三种应对模式</h3>
+
+                <p><span class="highlight-trend">模式一：到期免费型</span></p>
+                <p>代表：成都成绵高速、广州北环高速。收费期满立即免费通行。<span class="highlight-key">需要底气：地方财力雄厚</span>。</p>
+
+                <p><span class="highlight-trend">模式二：改扩建延期型</span></p>
+                <p>代表：京石高速河北段（原21年收费到期，改扩建后延长22年）、广深高速（2027年到期，正在6改8-12车道）。</p>
+                <p><span class="highlight-warning">本质</span>：通过新投资获得新收费权，在政策模糊地带寻找突破，用更大投资延长收费。</p>
+
+                <p><span class="highlight-trend">模式三：政府回购型</span></p>
+                <p>代表：2014年深圳斥资<span class="highlight-data">27亿</span>回购梅观高速（距到期还有13年），转为免费。<span class="highlight-key">十年来几乎无其他城市复制</span>，凸显"土豪"做法难以推广。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-title">专家评论 | 政策权衡</div>
+                    <div class="expert-text">
+                        <p><strong>美国经验不适用</strong>：美国高速免费但通过<span class="highlight-data">燃油税</span>变相收费。中国这种模式难行：①把负担从"高速使用者"转向"全民"②新能源车普及后燃油税失效。</p>
+                        
+                        <p><strong>改革的复杂性</strong>：《收费公路管理条例》修订从<span class="highlight-warning">2013年起多次征求意见</span>，至今未落地。争议焦点：<span class="highlight-key">①能否超30年收费②改扩建能否重新计期</span>。2025年列入国务院重点立法，意味着决策层在寻找平衡点。</p>
+                        
+                        <p><strong>东西部分化</strong>：东部发达地区有条件"到期即免费"，<span class="highlight-trend">中西部可能大量采用"改扩建延期"模式</span>。每条高速到期都是一道选择题，考验地方财力和发展理念。</p>
+                        
+                        <p><strong>更大的命题</strong>：高速收费问题本质是<span class="highlight-quote">"债务驱动型发展"</span>的缩影。过去几十年通过负债杠杆建成全球最大路网，现在到了<span class="highlight-warning">债务兑付和发展模式转型的交汇点</span>。是系统性降低物流成本助力高质量发展，还是继续收费偿还历史债务？这是财政压力与经济转型的终极博弈。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三部分：教育改革 -->
+        <div class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-title">🎓 教育改革：生源变化与教师转型</div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                小学生源2024年骤降261万，2035年将减少55%。教师需求呈现"过剩-短缺"波动：小学教师未来10年先过剩后短缺，初高中则先短缺后过剩。城乡分化、学科失衡、师范生供需错配，教育系统正经历深刻结构性调整...
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">
+                    "教育领域的供需错配不是简单的'老师多了'，而是不同时间、不同区域、不同学科、不同学历层次的结构性矛盾。应对之道在于动态调整和前瞻布局。"
+                </div>
+
+                <div class="infographic">
+                    <div class="info-title">📊 教育变革关键数据</div>
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-number" style="color: #d32f2f;">-261万</div>
+                            <div class="info-label">2024年小学招生减少</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #1976d2;">-55%</div>
+                            <div class="info-label">2035年小学生降幅</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #388e3c;">1885万</div>
+                            <div class="info-label">全国专任教师总数</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-number" style="color: #f57c00;">70%+</div>
+                            <div class="info-label">普高招生占比(非五五分流)</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">📉 生源变化：见顶时间表</h3>
+
+                <p><span class="highlight-key">各学段生源达峰时点</span>（北京师范大学胡咏梅教授研究）：</p>
+                
+                <p>• 小学：<span class="highlight-data">2023年达峰</span>，2024年开始下滑</p>
+                <p>• 初中：<span class="highlight-data">2026年达峰</span>，2027年开始下滑</p>
+                <p>• 高中：<span class="highlight-data">2029年达峰</span>，2030年开始下滑</p>
+                <p>• 大学：<span class="highlight-data">2032年达峰</span>，2033年开始下滑</p>
+
+                <p><span class="highlight-warning">小学情况最严峻</span>：2023年招生1877.88万，2024年骤降至<span class="highlight-data">1616.63万</span>，减少<span class="highlight-data">261万人</span>。到2035年在校生将降至<span class="highlight-warning">5050万</span>，较2023年缩减约<span class="highlight-warning">55%</span>。</p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">👨‍🏫 教师需求：10年动态变化</h3>
+
+                <p><span class="highlight-trend">小学教师</span>（西南大学周琴教授研究）：</p>
+                <p>• 2026-2030年：需求减少<span class="highlight-data">147万</span>，但退休<span class="highlight-data">82万</span>，实际过剩<span class="highlight-warning">65万</span></p>
+                <p>• 2031-2035年：需求减少<span class="highlight-data">39万</span>，但退休<span class="highlight-data">102万</span>，反而缺口<span class="highlight-key">63万</span></p>
+
+                <p><span class="highlight-trend">初中教师</span>：</p>
+                <p>• 2026-2030年：需求减少<span class="highlight-data">25万</span>，退休<span class="highlight-data">58万</span>，缺口<span class="highlight-key">33万</span></p>
+                <p>• 2031-2035年：需求减少<span class="highlight-data">150万</span>，退休<span class="highlight-data">68万</span>，过剩<span class="highlight-warning">82万</span></p>
+
+                <p><span class="highlight-quote">规律总结</span>：小学教师<span class="highlight-key">从过剩到短缺</span>，初中教师<span class="highlight-key">从短缺到过剩</span>。</p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🎯 五大细分趋势</h3>
+
+                <p><span class="highlight-key">趋势一：城乡区域分化</span></p>
+                <p>• 学龄人口向<span class="highlight-data">东部、省会、县城</span>集聚，呈现<span class="highlight-quote">"东密西疏、向城性"</span>态势</p>
+                <p>• 城区<span class="highlight-warning">"无编可用"</span>（深圳、成都代课教师超在编）vs 乡村<span class="highlight-warning">"超编冗余"</span>（东北某县生师比不到5:1）</p>
+                <p>• 东北部分县<span class="highlight-data">10年未招新教师</span>，40岁以上占比过半</p>
+
+                <p><span class="highlight-key">趋势二：学科结构失衡</span></p>
+                <p>小学阶段：</p>
+                <p>• 富余学科：语文、数学、外语、艺术、信息科技</p>
+                <p>• 短缺学科：<span class="highlight-warning">科学、体育、道德与法治、劳动、综合实践</span></p>
+                
+                <p>初中阶段：</p>
+                <p>• 主科普遍过剩，但<span class="highlight-warning">劳动和综合实践</span>长期短缺</p>
+
+                <p><span class="highlight-key">趋势三：师范生学历错配</span></p>
+                <p>• 本专科师范生培养规模过剩：<span class="highlight-data">每年60万毕业</span>，但基础教育需求仅<span class="highlight-data">25万</span>，供需比<span class="highlight-warning">3.2:1</span></p>
+                <p>• 研究生学历教师<span class="highlight-key">长期短缺</span>，到2050年都供不应求</p>
+                <p>• <span class="highlight-trend">最优选择</span>：面向高中的硕士层次复合型"双学科"师范专业（如历史学+思政、物理学+教育技术）</p>
+
+                <p><span class="highlight-key">趋势四：高中持续扩张</span></p>
+                <p>• 教育部要求新建改扩建<span class="highlight-data">1000所以上</span>优质普通高中</p>
+                <p>• 普职分流不再强制五五开，普高招生占比已超<span class="highlight-data">70%</span>（如宁波北仑从5.4:4.6变为7.4:3.6）</p>
+                <p>• 高中生源和师资需求<span class="highlight-trend">仍在上升通道</span></p>
+
+                <p><span class="highlight-key">趋势五：小班化分层实现</span></p>
+                <p>• 理想解法是<span class="highlight-quote">"小班化"</span>（既安置富余教师又提升教育质量）</p>
+                <p>• 但全国小学班级数<span class="highlight-warning">少了10万个</span>，56人以上大班反而<span class="highlight-warning">增加3500个</span></p>
+                <p>• <span class="highlight-data">东部富裕城市</span>率先试点（泉州、南京、上海崇明），中西部受财力限制难以跟进</p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🔧 应对策略</h3>
+
+                <p><span class="highlight-trend">策略一：跨岗位调整</span></p>
+                <p>湖南衡山县<span class="highlight-data">90位教师</span>转岗到政府其他部门（网信办、发改局、民政局等）。宁远县提出超编教师承担保安、保洁、食堂工友、宿管等工作。</p>
+
+                <p><span class="highlight-trend">策略二：跨学段调整</span></p>
+                <p>小学教师遴选考试后去中学任教。福建龙岩长汀县<span class="highlight-data">遴选30名</span>小学教师到初中，要求具备初中及以上教师资格证、本科学历。</p>
+
+                <p><span class="highlight-trend">策略三：银龄教师计划</span></p>
+                <p>招聘<span class="highlight-data">60岁以上退休教师</span>解决短期缺口，避免新增编制后再缩编的困境。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-title">专家评论 | 长期展望</div>
+                    <div class="expert-text">
+                        <p><strong>人口周期的必然传导</strong>：<span class="highlight-key">出生人口2016年见顶</span>，6年后传导至小学，13年后传导至初中，16年后传导至高中，19年后传导至大学。这是<span class="highlight-warning">不可逆的结构性调整</span>，教育系统必须适应。</p>
+                        
+                        <p><strong>财政是核心约束</strong>：小班化、资源下沉、待遇提升，都需要<span class="highlight-data">财政支持</span>。东部能做到的，中西部未必能做到。"以县为主"的教育管理体制下，<span class="highlight-warning">县域财力决定教育质量天花板</span>。</p>
+                        
+                        <p><strong>师范教育转型</strong>：未来师范生培养需要<span class="highlight-trend">①提高学历层次（本科→研究生）②复合型双学科③定向培养和公费师范</span>。纯本科、单学科、自由就业的师范生将面临最大竞争压力。</p>
+                        
+                        <p><strong>长期曲线</strong>：东北师范大学谭卓的研究显示，小学和初中教师需求到<span class="highlight-data">2043年左右触底</span>（降至2024年的一半），随后缓慢回升，到<span class="highlight-data">2050年恢复至2031年水平</span>。<span class="highlight-quote">这是一个20-30年的完整周期</span>，需要长期规划而非短期应对。</p>
+                        
+                        <p><strong>教育质量契机</strong>：生师比下降是提升教育质量的<span class="highlight-key">历史性机遇</span>。如果能把"被动过剩"转化为"主动小班化、个性化教学"，中国基础教育有望实现质的飞跃。但前提是<span class="highlight-warning">财政投入能否跟上</span>。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 总结性评论 -->
+        <div class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-title">🎯 总结：三大改革的共同逻辑</div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                医疗、基建、教育三大改革背后，贯穿着相同的政策逻辑：财政约束、利益重构、区域分化。理解这些底层逻辑，才能把握中国改革的真实脉络...
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">
+                    "所有的政策问题，背后都是财政问题；所有的改革难题,核心都是利益博弈；所有的推进节奏，取决于区域财力差异。"
+                </div>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">📌 四个共同特征</h3>
+
+                <p><span class="highlight-key">特征一：财政是核心变量</span></p>
+                <p>• 医改：医保基金从<span class="highlight-warning">亏损2亿到结余15亿</span>，关键是利益重分配减轻财政负担</p>
+                <p>• 高速：到期免费vs延期收费，本质是<span class="highlight-data">地方债务7.92万亿</span>能否承受</p>
+                <p>• 教育：小班化vs大班化，取决于<span class="highlight-data">县域财力</span>能否支撑更多教师编制</p>
+
+                <p><span class="highlight-key">特征二：利益重构是关键</span></p>
+                <p>• 医改：挤出<span class="highlight-warning">药企虚高利润、医院逐利收益、医生灰色收入</span>，重新分配</p>
+                <p>• 高速：重构<span class="highlight-warning">银行-政府-使用者</span>三方利益，寻找新平衡点</p>
+                <p>• 教育：调整<span class="highlight-warning">城乡、学段、学科</span>资源配置，应对结构性错配</p>
+
+                <p><span class="highlight-key">特征三：东西部分化显著</span></p>
+                <p>• 医改：东部财力雄厚可<span class="highlight-data">小班化试点</span>，中西部财政约束难跟进</p>
+                <p>• 高速：东部有条件<span class="highlight-data">到期免费</span>，中西部可能<span class="highlight-warning">大量延期收费</span></p>
+                <p>• 教育：东部<span class="highlight-data">"无编可用"</span>，中西部<span class="highlight-warning">"超编冗余"</span></p>
+
+                <p><span class="highlight-key">特征四：改革需要强统筹</span></p>
+                <p>• 医改：三明成立<span class="highlight-data">医改小组</span>，统筹卫生、药监、财政、发改</p>
+                <p>• 高速：国务院2025年将<span class="highlight-data">《收费公路管理条例》修订</span>列为重点立法</p>
+                <p>• 教育：教育部推动<span class="highlight-data">跨学段动态调整和余缺调配</span>机制</p>
+
+                <h3 style="color: var(--accent); font-size: 1.5em; margin: 30px 0 20px;">🔮 未来研判</h3>
+
+                <p><span class="highlight-trend">医疗领域</span>：医保基金将成为<span class="highlight-quote">"超级支付方"</span>，通过支付规则重塑整个医疗体系。<span class="highlight-data">优质资源下沉、价格全国统一、创新药集采常态化</span>是必然趋势。</p>
+
+                <p><span class="highlight-trend">高速收费</span>：未来10年是<span class="highlight-quote">"到期潮"</span>，但全国统一免费不现实。更可能是<span class="highlight-data">东部逐步免费、中西部延期收费、个别城市回购</span>的分化格局。</p>
+
+                <p><span class="highlight-trend">教育系统</span>：2020-2050年是<span class="highlight-quote">"完整周期"</span>，先降后升。<span class="highlight-data">动态调整机制、师范教育转型、小班化试点</span>是应对之策，但东西部差距可能进一步拉大。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-title">最终洞察 | 改革的底层逻辑</div>
+                    <div class="expert-text">
+                        <p><strong>政策制定的三重约束</strong>：</p>
+                        <p>1. <span class="highlight-key">历史约束</span>：过去负债驱动留下的债务、过去粗放管理留下的体制惯性</p>
+                        <p>2. <span class="highlight-key">现实约束</span>：当前财政收支缺口、当前利益格局固化</p>
+                        <p>3. <span class="highlight-key">未来约束</span>：人口结构变化、经济转型需求</p>
+                        
+                        <p><strong>改革的可能性边界</strong>：</p>
+                        <p>• 理想方案往往需要<span class="highlight-warning">财政大规模投入</span>，现实中难以承受</p>
+                        <p>• 最优方案往往触及<span class="highlight-warning">既得利益</span>，推进阻力巨大</p>
+                        <p>• 实际路径通常是<span class="highlight-quote">"渐进式、试点式、分化式"</span>前进</p>
+                        
+                        <p><strong>对个人的启示</strong>：</p>
+                        <p>1. 关注<span class="highlight-data">财政能力</span>而非口号：东部vs中西部、省会vs县城，差异决定你所处地区的改革进度</p>
+                        <p>2. 把握<span class="highlight-data">结构性机会</span>：医疗创新药、高速工程咨询、高学历复合型师范，都是改革中的机会赛道</p>
+                        <p>3. 理解<span class="highlight-data">周期性波动</span>：教师需求、医疗资源配置都有10-30年的长周期，不要被短期现象迷惑</p>
+                        
+                        <p><strong>马江博的核心观点</strong>：<span class="highlight-key">"大部分的政策问题，背后都是财政问题，这是我们看待政策的核心出发点之一。"</span> 理解了这一点，你就理解了中国改革的真实逻辑。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+            }
+        }
+
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const firstSection = sections[0];
+            const shouldCollapse = !firstSection.classList.contains('collapsed');
+            
+            sections.forEach(s => {
+                if (shouldCollapse) {
+                    s.classList.add('collapsed');
+                } else {
+                    s.classList.remove('collapsed');
+                }
+            });
+        }
+
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 初始化：所有板块默认展开
+        document.addEventListener('DOMContentLoaded', function() {
+            // 可以在这里设置默认状态
+        });
+    </script>
+</body>
+</html>

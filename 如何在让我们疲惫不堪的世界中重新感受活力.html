@@ -1,0 +1,1871 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从萎靡到蓬勃 | Languishing to Flourishing</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(30, 27, 75, 0.8);
+            --glass-border: rgba(99, 102, 241, 0.3);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --light: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--light);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+            transition: all 0.3s ease;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(245, 158, 11, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 60% 60%, rgba(16, 185, 129, 0.1) 0%, transparent 40%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2%, 2%) rotate(1deg); }
+            50% { transform: translate(-1%, 3%) rotate(-1deg); }
+            75% { transform: translate(3%, -2%) rotate(0.5deg); }
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        /* 导航进度条 */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: var(--gradient-1);
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--primary);
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.4s both;
+        }
+
+        .hero-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.8s ease 0.6s both;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 40px;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-20px); }
+            60% { transform: translateY(-10px); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Section */
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 6px 16px;
+            background: var(--gradient-1);
+            color: white;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-size: clamp(1.8rem, 4vw, 2.8rem);
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(99, 102, 241, 0.15);
+        }
+
+        /* 核心概念对比图 */
+        .concept-comparison {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 30px;
+            align-items: center;
+            margin: 60px 0;
+        }
+
+        @media (max-width: 768px) {
+            .concept-comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .concept-card {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .concept-card.negative {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .concept-card.positive {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border-color: rgba(16, 185, 129, 0.2);
+        }
+
+        .concept-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+
+        .concept-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .concept-card.negative .concept-title {
+            color: var(--danger);
+        }
+
+        .concept-card.positive .concept-title {
+            color: var(--success);
+        }
+
+        .concept-symptoms {
+            list-style: none;
+            text-align: left;
+            margin-top: 20px;
+        }
+
+        .concept-symptoms li {
+            padding: 8px 0;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .vs-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        /* 蓬勃公式 */
+        .formula-section {
+            background: var(--gradient-1);
+            border-radius: 32px;
+            padding: 60px 40px;
+            margin: 60px 0;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .formula-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .formula-title {
+            font-size: 1.4rem;
+            opacity: 0.9;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .formula-equation {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            font-size: clamp(1.2rem, 3vw, 2rem);
+            font-weight: 700;
+            position: relative;
+        }
+
+        .formula-item {
+            padding: 16px 28px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            transition: transform 0.3s ease;
+        }
+
+        .formula-item:hover {
+            transform: scale(1.05);
+        }
+
+        .formula-operator {
+            font-size: 2rem;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            padding: 40px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            min-width: 800px;
+        }
+
+        .mindmap-center {
+            background: var(--gradient-1);
+            color: white;
+            padding: 30px 50px;
+            border-radius: 50%;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(99, 102, 241, 0.4);
+            position: relative;
+            z-index: 2;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+            padding-left: 40px;
+            position: relative;
+        }
+
+        .mindmap-branches::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .mindmap-branch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            left: -40px;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .branch-node {
+            padding: 16px 28px;
+            border-radius: 30px;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.05);
+        }
+
+        .branch-1 { background: linear-gradient(135deg, #667eea, #764ba2); color: white; }
+        .branch-2 { background: linear-gradient(135deg, #f093fb, #f5576c); color: white; }
+        .branch-3 { background: linear-gradient(135deg, #4facfe, #00f2fe); color: white; }
+        .branch-4 { background: linear-gradient(135deg, #43e97b, #38f9d7); color: white; }
+        .branch-5 { background: linear-gradient(135deg, #fa709a, #fee140); color: white; }
+
+        /* 五大途径卡片 */
+        .pathways-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .pathway-card {
+            position: relative;
+            padding: 0;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .pathway-header {
+            padding: 30px;
+            color: white;
+            position: relative;
+        }
+
+        .pathway-1 .pathway-header { background: var(--gradient-1); }
+        .pathway-2 .pathway-header { background: var(--gradient-2); }
+        .pathway-3 .pathway-header { background: var(--gradient-3); }
+        .pathway-4 .pathway-header { background: var(--gradient-4); }
+        .pathway-5 .pathway-header { background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); }
+
+        .pathway-number {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 4rem;
+            font-weight: 900;
+            opacity: 0.2;
+        }
+
+        .pathway-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .pathway-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .pathway-subtitle {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+
+        .pathway-content {
+            padding: 24px;
+            background: var(--glass-bg);
+        }
+
+        .pathway-key-point {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .pathway-key-point:last-child {
+            border-bottom: none;
+        }
+
+        .key-point-icon {
+            flex-shrink: 0;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        /* 金句展示 */
+        .quotes-section {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            padding: 80px 20px;
+            margin: 60px 0;
+            border-radius: 32px;
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .quote-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 32px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .quote-mark {
+            font-size: 80px;
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            opacity: 0.15;
+            font-family: Georgia, serif;
+            color: white;
+        }
+
+        .quote-text {
+            color: white;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            margin-top: 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quote-author::before {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        /* 专家评论 */
+        .expert-section {
+            margin: 80px 0;
+        }
+
+        .expert-card {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 30px;
+            padding: 40px;
+            position: relative;
+        }
+
+        @media (max-width: 768px) {
+            .expert-card {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .expert-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 24px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            color: white;
+        }
+
+        .expert-info h3 {
+            font-size: 1.4rem;
+            margin-bottom: 8px;
+        }
+
+        .expert-title {
+            color: var(--primary);
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        .expert-commentary {
+            line-height: 2;
+            color: var(--text-secondary);
+        }
+
+        .expert-commentary p {
+            margin-bottom: 16px;
+        }
+
+        .expert-highlight {
+            background: linear-gradient(120deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%);
+            padding: 20px 24px;
+            border-left: 4px solid var(--primary);
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+            font-weight: 500;
+            color: var(--text-primary);
+        }
+
+        /* 信息图：升维思维 */
+        .dimension-infographic {
+            padding: 60px 20px;
+            text-align: center;
+        }
+
+        .dimension-chart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        .dimension-axis {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            border: 2px solid var(--glass-border);
+            border-radius: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+        }
+
+        .axis-label {
+            position: absolute;
+            font-weight: 600;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .axis-label.top {
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .axis-label.bottom {
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .axis-label.left {
+            left: -80px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .axis-label.right {
+            right: -60px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .axis-line {
+            position: absolute;
+            background: var(--primary);
+        }
+
+        .axis-line.horizontal {
+            width: 100%;
+            height: 2px;
+            top: 50%;
+            left: 0;
+        }
+
+        .axis-line.vertical {
+            width: 2px;
+            height: 100%;
+            left: 50%;
+            top: 0;
+        }
+
+        .quadrant {
+            position: absolute;
+            width: 50%;
+            height: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .quadrant:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .quadrant.q1 { top: 0; right: 0; }
+        .quadrant.q2 { top: 0; left: 0; }
+        .quadrant.q3 { bottom: 0; left: 0; }
+        .quadrant.q4 { bottom: 0; right: 0; }
+
+        .quadrant-emoji {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .quadrant-text {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .q1 { background: rgba(16, 185, 129, 0.1); }
+        .q2 { background: rgba(59, 130, 246, 0.1); }
+        .q3 { background: rgba(239, 68, 68, 0.1); }
+        .q4 { background: rgba(245, 158, 11, 0.1); }
+
+        /* 六大领域环形图 */
+        .domains-wheel {
+            display: flex;
+            justify-content: center;
+            margin: 40px 0;
+        }
+
+        .wheel-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+        }
+
+        .wheel-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 120px;
+            height: 120px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1.1rem;
+            text-align: center;
+            z-index: 10;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+        }
+
+        .domain-item {
+            position: absolute;
+            width: 100px;
+            height: 100px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            border: 2px solid var(--glass-border);
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .domain-item:hover {
+            transform: scale(1.15);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        .domain-item span:first-child {
+            font-size: 28px;
+            margin-bottom: 4px;
+        }
+
+        .domain-item span:last-child {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .domain-1 { top: 0; left: 50%; transform: translateX(-50%); }
+        .domain-2 { top: 15%; right: 5%; }
+        .domain-3 { bottom: 15%; right: 5%; }
+        .domain-4 { bottom: 0; left: 50%; transform: translateX(-50%); }
+        .domain-5 { bottom: 15%; left: 5%; }
+        .domain-6 { top: 15%; left: 5%; }
+
+        /* 行动指南时间线 */
+        .timeline-section {
+            margin: 60px 0;
+        }
+
+        .timeline {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 4px;
+            height: 100%;
+            background: var(--gradient-1);
+            border-radius: 2px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline::before {
+                left: 20px;
+            }
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 40px;
+            width: 50%;
+            padding-right: 50px;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 50%;
+            padding-right: 0;
+            padding-left: 50px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                width: 100%;
+                margin-left: 0;
+                padding-left: 60px;
+                padding-right: 0;
+            }
+        }
+
+        .timeline-dot {
+            position: absolute;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            background: var(--primary);
+            border-radius: 50%;
+            border: 4px solid var(--light);
+            box-shadow: 0 0 0 4px var(--primary);
+        }
+
+        .timeline-item:nth-child(odd) .timeline-dot {
+            right: -10px;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -10px;
+        }
+
+        @media (max-width: 768px) {
+            .timeline-item .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 10px;
+                right: auto;
+            }
+        }
+
+        .timeline-content {
+            padding: 24px;
+        }
+
+        .timeline-step {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 15px;
+        }
+
+        /* 可折叠面板 */
+        .accordion {
+            margin: 40px 0;
+        }
+
+        .accordion-item {
+            margin-bottom: 16px;
+        }
+
+        .accordion-header {
+            width: 100%;
+            padding: 24px 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .accordion-header.active {
+            border-radius: 16px 16px 0 0;
+            border-bottom: none;
+        }
+
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .accordion-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .accordion-arrow {
+            font-size: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-header.active .accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            display: none;
+            padding: 24px 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .accordion-content.active {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* CTA Section */
+        .cta-section {
+            text-align: center;
+            padding: 100px 20px;
+            background: var(--gradient-1);
+            border-radius: 32px;
+            margin: 60px 20px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        }
+
+        .cta-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .cta-desc {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 40px;
+            position: relative;
+        }
+
+        .cta-quote {
+            font-size: 1.4rem;
+            font-style: italic;
+            padding: 30px 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        /* Animations */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 语义高亮 */
+        .highlight-red {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: var(--info);
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .highlight-gold {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* 响应式调整 */
+        @media (max-width: 480px) {
+            .glass-card {
+                padding: 20px;
+            }
+
+            .formula-equation {
+                flex-direction: column;
+            }
+
+            .wheel-container {
+                width: 300px;
+                height: 300px;
+            }
+
+            .domain-item {
+                width: 70px;
+                height: 70px;
+            }
+
+            .domain-item span:first-child {
+                font-size: 20px;
+            }
+
+            .domain-item span:last-child {
+                font-size: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span>📚</span>
+            <span>心理学 · 自我成长 · 生活哲学</span>
+        </div>
+        <h1>从萎靡到蓬勃</h1>
+        <p class="hero-subtitle">Languishing to Flourishing：如何在让我们疲惫不堪的世界中重新感受活力</p>
+        <div class="hero-meta">
+            <div class="meta-item">
+                <span>📖</span>
+                <span>科里·凯斯（Corey Keyes）</span>
+            </div>
+            <div class="meta-item">
+                <span>🏛️</span>
+                <span>埃默里大学社会学教授</span>
+            </div>
+            <div class="meta-item">
+                <span>📅</span>
+                <span>2024年2月出版</span>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span style="font-size: 32px;">👇</span>
+        </div>
+    </section>
+
+    <div class="container">
+        <!-- 核心概念对比 -->
+        <section class="section fade-in">
+            <div class="section-header">
+                <span class="section-tag">核心概念</span>
+                <h2 class="section-title">萎靡 VS 蓬勃</h2>
+                <p class="section-desc">理解这对反义词，是踏上蓬勃之旅的第一步</p>
+            </div>
+
+            <div class="concept-comparison">
+                <div class="glass-card concept-card negative">
+                    <div class="concept-icon">😔</div>
+                    <h3 class="concept-title">萎靡 Languishing</h3>
+                    <p>无精打采、慵懒、消极，做什么都没有动力的状态</p>
+                    <ul class="concept-symptoms">
+                        <li><span>❌</span> 对周围事情不再关心，缺少意义</li>
+                        <li><span>❌</span> 工作没有激情</li>
+                        <li><span>❌</span> 感到环境不受控制，有不安感</li>
+                        <li><span>❌</span> 遭遇挫折就很焦躁</li>
+                        <li><span>❌</span> 不愿主动跟人交往</li>
+                        <li><span>❌</span> 自我价值感急剧降低</li>
+                        <li><span>❌</span> 情绪持续低落</li>
+                    </ul>
+                </div>
+
+                <div class="vs-circle">VS</div>
+
+                <div class="glass-card concept-card positive">
+                    <div class="concept-icon">✨</div>
+                    <h3 class="concept-title">蓬勃 Flourishing</h3>
+                    <p>元气满满、积极向上，充满活力的生命状态</p>
+                    <ul class="concept-symptoms">
+                        <li><span>✅</span> 对生活充满热情和意义感</li>
+                        <li><span>✅</span> 工作有干劲，愿意创造</li>
+                        <li><span>✅</span> 感到对生活有掌控力</li>
+                        <li><span>✅</span> 面对挫折能迅速恢复</li>
+                        <li><span>✅</span> 积极主动与人建立连接</li>
+                        <li><span>✅</span> 强烈的自我价值感</li>
+                        <li><span>✅</span> 情绪健康、心态平和</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 蓬勃公式 -->
+        <section class="formula-section fade-in">
+            <h3 class="formula-title">🧮 凯斯蓬勃公式</h3>
+            <div class="formula-equation">
+                <div class="formula-item">🌟 蓬勃</div>
+                <span class="formula-operator">=</span>
+                <div class="formula-item">😊 情绪幸福</div>
+                <span class="formula-operator">+</span>
+                <div class="formula-item">🧠 心理幸福</div>
+                <span class="formula-operator">+</span>
+                <div class="formula-item">🤝 社会幸福</div>
+            </div>
+        </section>
+
+        <!-- 升维思维信息图 -->
+        <section class="section fade-in">
+            <div class="section-header">
+                <span class="section-tag">突破性洞见</span>
+                <h2 class="section-title">升维思维</h2>
+                <p class="section-desc">疾病和健康是两个不同的维度——这是凯斯最得意的发现</p>
+            </div>
+
+            <div class="dimension-infographic">
+                <div class="dimension-chart">
+                    <div class="dimension-axis">
+                        <span class="axis-label top">🌟 蓬勃</span>
+                        <span class="axis-label bottom">😔 萎靡</span>
+                        <span class="axis-label left">有精神疾病</span>
+                        <span class="axis-label right">无疾病</span>
+                        <div class="axis-line horizontal"></div>
+                        <div class="axis-line vertical"></div>
+                        
+                        <div class="quadrant q1">
+                            <span class="quadrant-emoji">💪</span>
+                            <span class="quadrant-text">无病且蓬勃<br/>最理想状态</span>
+                        </div>
+                        <div class="quadrant q2">
+                            <span class="quadrant-emoji">🦋</span>
+                            <span class="quadrant-text">有病但蓬勃<br/>可以做到！</span>
+                        </div>
+                        <div class="quadrant q3">
+                            <span class="quadrant-emoji">🆘</span>
+                            <span class="quadrant-text">有病且萎靡<br/>需要帮助</span>
+                        </div>
+                        <div class="quadrant q4">
+                            <span class="quadrant-emoji">⚠️</span>
+                            <span class="quadrant-text">无病但萎靡<br/>隐性危机</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="max-width: 700px; margin: 40px auto; text-align: center;">
+                <p style="font-size: 1.3rem; font-weight: 600; margin-bottom: 16px;">
+                    「<span class="highlight-gold">健康不是没有疾病，而是拥有幸福。</span>」
+                </p>
+                <p style="color: var(--text-secondary);">
+                    只要精神蓬勃，或许你仍然会遭遇不好的情绪、甚至抑郁之类的疾病，但是你能自己恢复，你容易走出来。那就算那个病还在，对你也没有太大影响。
+                </p>
+            </div>
+        </section>
+
+        <!-- 六大领域 -->
+        <section class="section fade-in">
+            <div class="section-header">
+                <span class="section-tag">蓬勃基石</span>
+                <h2 class="section-title">实现蓬勃的六大领域</h2>
+                <p class="section-desc">在这六个领域取得卓越表现，是实现蓬勃的基础</p>
+            </div>
+
+            <div class="domains-wheel">
+                <div class="wheel-container">
+                    <div class="wheel-center">蓬勃<br/>Flourishing</div>
+                    <div class="domain-item domain-1">
+                        <span>🤗</span>
+                        <span>接纳</span>
+                    </div>
+                    <div class="domain-item domain-2">
+                        <span>🎯</span>
+                        <span>自主性</span>
+                    </div>
+                    <div class="domain-item domain-3">
+                        <span>🔗</span>
+                        <span>连接</span>
+                    </div>
+                    <div class="domain-item domain-4">
+                        <span>💡</span>
+                        <span>能力</span>
+                    </div>
+                    <div class="domain-item domain-5">
+                        <span>🏆</span>
+                        <span>精通</span>
+                    </div>
+                    <div class="domain-item domain-6">
+                        <span>✨</span>
+                        <span>意义</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="section fade-in">
+            <div class="section-header">
+                <span class="section-tag">全景视图</span>
+                <h2 class="section-title">五大蓬勃途径</h2>
+                <p class="section-desc">凯斯提出的从萎靡通往蓬勃的行动路线</p>
+            </div>
+
+            <div class="glass-card mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-center">
+                        摆脱萎靡<br/>通往蓬勃
+                    </div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-node branch-1">📚 学习新事物</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-node branch-2">🤝 建立温暖信任的关系</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-node branch-3">🎮 玩耍</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-node branch-4">🎯 让人生有目的</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-node branch-5">🧘 精神生活</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 五大途径详解 -->
+        <section class="section fade-in">
+            <div class="pathways-grid">
+                <!-- 途径1：学习 -->
+                <div class="glass-card pathway-card pathway-1">
+                    <div class="pathway-header">
+                        <span class="pathway-number">01</span>
+                        <div class="pathway-icon">📚</div>
+                        <h3 class="pathway-title">学习新事物</h3>
+                        <p class="pathway-subtitle">在逆境中重塑自我叙事</p>
+                    </div>
+                    <div class="pathway-content">
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">💡</span>
+                            <div>
+                                <strong>叙事自我</strong>：你的历史和经历形成连贯叙事，建立自我意识，给人生意义
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">⚡</span>
+                            <div>
+                                <strong>逆境的价值</strong>：蓬勃的人生需要压力源，用好奇心战胜恐惧
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">🔄</span>
+                            <div>
+                                <strong>真正的成长</strong>：通过逆境获得感悟，重新发现和改变自己
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 途径2：关系 -->
+                <div class="glass-card pathway-card pathway-2">
+                    <div class="pathway-header">
+                        <span class="pathway-number">02</span>
+                        <div class="pathway-icon">🤝</div>
+                        <h3 class="pathway-title">建立温暖信任的关系</h3>
+                        <p class="pathway-subtitle">归属感是幸福之源</p>
+                    </div>
+                    <div class="pathway-content">
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">🏠</span>
+                            <div>
+                                <strong>归属公式</strong>：归属感 = 平等 + 影响力
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">❤️</span>
+                            <div>
+                                <strong>友谊三要素</strong>：互惠 + 理解 + 不计分
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">🚀</span>
+                            <div>
+                                <strong>行动法则</strong>：主动帮助别人，主动跟人交往
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 途径3：玩耍 -->
+                <div class="glass-card pathway-card pathway-3">
+                    <div class="pathway-header">
+                        <span class="pathway-number">03</span>
+                        <div class="pathway-icon">🎮</div>
+                        <h3 class="pathway-title">玩耍</h3>
+                        <p class="pathway-subtitle">激发创造力与冒险精神</p>
+                    </div>
+                    <div class="pathway-content">
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">⚠️</span>
+                            <div>
+                                <strong>避免两个误区</strong>：打卡式表演活动 & 被动式娱乐
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">🎨</span>
+                            <div>
+                                <strong>真正的玩耍</strong>：激发创造性，培养冒险精神
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">🌟</span>
+                            <div>
+                                <strong>关键洞见</strong>：人生目的不为自己，才能真正享受玩耍
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 途径4：目的 -->
+                <div class="glass-card pathway-card pathway-4">
+                    <div class="pathway-header">
+                        <span class="pathway-number">04</span>
+                        <div class="pathway-icon">🎯</div>
+                        <h3 class="pathway-title">让人生有目的</h3>
+                        <p class="pathway-subtitle">寻找你的使命召唤</p>
+                    </div>
+                    <div class="pathway-content">
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">🔥</span>
+                            <div>
+                                <strong>目标 vs 目的</strong>：目标是外部驱动，目的是内部驱动
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">✅</span>
+                            <div>
+                                <strong>人生目的三条件</strong>：为他人/世界 + 有天赋技能 + 说明你是谁
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">💫</span>
+                            <div>
+                                <strong>使命召唤者</strong>：压力小、情绪积极、复原力强
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 途径5：精神生活 -->
+                <div class="glass-card pathway-card pathway-5">
+                    <div class="pathway-header">
+                        <span class="pathway-number">05</span>
+                        <div class="pathway-icon">🧘</div>
+                        <h3 class="pathway-title">精神生活</h3>
+                        <p class="pathway-subtitle">三层修行，通往超越</p>
+                    </div>
+                    <div class="pathway-content">
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">1️⃣</span>
+                            <div>
+                                <strong>第一层：接纳达成宁静</strong><br/>接纳自己，接纳发生的事情
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">2️⃣</span>
+                            <div>
+                                <strong>第二层：冥想达成中庸</strong><br/>做自己精神的守门人
+                            </div>
+                        </div>
+                        <div class="pathway-key-point">
+                            <span class="key-point-icon">3️⃣</span>
+                            <div>
+                                <strong>第三层：连接达成超越</strong><br/>与更大的力量融为一体
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句展示 -->
+        <section class="quotes-section fade-in">
+            <div class="section-header" style="color: white;">
+                <span class="section-tag" style="background: rgba(255,255,255,0.2);">💎 金句集锦</span>
+                <h2 class="section-title" style="color: white;">值得铭记的智慧</h2>
+            </div>
+            
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">快乐就像一只蝴蝶。你越是直接追逐它，它越会离你而去。但是，如果你把注意力转移到其他事情上，它就会轻轻地飞到你的肩上。</p>
+                    <div class="quote-author">亨利·梭罗</div>
+                </div>
+
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">健康不是没有疾病，而是拥有幸福。</p>
+                    <div class="quote-author">科里·凯斯</div>
+                </div>
+
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">如果你能让另一个维度变得更重要，你就能让这一个维度变得不重要。</p>
+                    <div class="quote-author">升维思维</div>
+                </div>
+
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">弱者报复，强者原谅，智者忽略——你能忽略，是因为你有别的维度。</p>
+                    <div class="quote-author">人生智慧</div>
+                </div>
+
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">不是用超强能力战胜逆境，而是通过逆境获得感悟，重新发现和改变自己。</p>
+                    <div class="quote-author">成长真谛</div>
+                </div>
+
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">要想让自己有丰富蓬勃的一生，这一生就不能是为了自己而活。</p>
+                    <div class="quote-author">使命召唤</div>
+                </div>
+
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">萎靡是一种越来越常见的精神状态，但蓬勃永远都可以是你的选择。</p>
+                    <div class="quote-author">凯斯结语</div>
+                </div>
+
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">我在你身上看到了我自己。——让别人有归属感，是最重要的一种贡献。</p>
+                    <div class="quote-author">凯斯的导师</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <section class="section expert-section fade-in">
+            <div class="section-header">
+                <span class="section-tag">深度洞察</span>
+                <h2 class="section-title">全球顶级精英视角</h2>
+                <p class="section-desc">对《萎靡》一书的多维度解读</p>
+            </div>
+
+            <div class="glass-card expert-card">
+                <div class="expert-avatar">🧠</div>
+                <div class="expert-info">
+                    <h3>跨学科战略分析</h3>
+                    <p class="expert-title">融合心理学、社会学、神经科学与东方哲学的综合视角</p>
+                    <div class="expert-commentary">
+                        <p>
+                            凯斯这本书最具颠覆性的贡献，是将<span class="highlight-blue">「疾病-健康」从一维光谱拆解为二维坐标系</span>。这一框架不仅适用于心理健康领域，更可以推广到商业战略、个人成长、甚至国家治理。
+                        </p>
+                        
+                        <div class="expert-highlight">
+                            核心洞见：当你在某个维度遇到无解难题时，最好的策略不是死磕，而是「升维」——在另一个维度建立优势，让原来的问题变得不那么重要。
+                        </div>
+
+                        <p>
+                            书中将东方的「接纳」智慧与西方的「运转良好」理念相融合，形成了一套可操作的<span class="highlight-green">蓬勃方法论</span>。这不是简单的「正能量」鸡汤，而是建立在严谨社会学研究基础上的<span class="highlight-gold">行为科学方案</span>。
+                        </p>
+
+                        <p>
+                            特别值得关注的是凯斯对「过日子思维」与「使命召唤思维」的对比分析。这解释了为什么某些群体虽然在物质层面非常成功，却在「蓬勃度」上表现平平——<span class="highlight-red">缺乏超越自我的目的感</span>，是现代社会萎靡蔓延的深层原因。
+                        </p>
+
+                        <div class="expert-highlight">
+                            行动建议：与其追求快乐这个「副产品」，不如专注于让自己「运转良好」——接纳、自主、连接、能力、精通、意义，这六个维度的协同提升，才是通往蓬勃的正道。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 可折叠深度内容 -->
+        <section class="section fade-in">
+            <div class="section-header">
+                <span class="section-tag">深度探索</span>
+                <h2 class="section-title">关键洞见详解</h2>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">🎭</span>
+                            <div>
+                                <strong>为什么情绪只是手段，不是目的？</strong>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">理解情绪的本质，才能正确应对萎靡</p>
+                            </div>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>演化给我们的设定，就是情绪应该是<strong>短暂的</strong>。六种基本情绪（愤怒、恐惧、厌恶、惊讶、快乐、悲伤）都是为了达成某个目的的手段：</p>
+                        <ul style="margin: 16px 0; padding-left: 20px;">
+                            <li style="margin: 8px 0;"><strong>悲伤</strong>：让我们反思什么重要什么不重要</li>
+                            <li style="margin: 8px 0;"><strong>恐惧</strong>：调动全部资源应对威胁</li>
+                            <li style="margin: 8px 0;"><strong>快乐</strong>：强化学习，记住获得奖励的方式</li>
+                        </ul>
+                        <p>情绪的持续时间过长会变成麻烦：<span class="highlight-red">持续的恐惧→焦虑</span>，<span class="highlight-red">持续的悲伤→抑郁</span>，<span class="highlight-red">持续的快乐→躁狂</span>。强行追求或避免某个情绪，属于舍本求末。</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">🔄</span>
+                            <div>
+                                <strong>「叙事自我」如何阻止我们成长？</strong>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">打破自我设限的认知框架</p>
+                            </div>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>叙事自我有两个「bug」在阻止我们学习新东西：</p>
+                        <ol style="margin: 16px 0; padding-left: 20px;">
+                            <li style="margin: 12px 0;">
+                                <strong>追求自我一致性</strong>：比如你自认是「搞技术的人」，学习消费者心理学可能感觉是「侮辱」——即使这对职业发展有帮助。
+                            </li>
+                            <li style="margin: 12px 0;">
+                                <strong>维护正面形象</strong>：每个人心目中的自己都比别人强，出了问题倾向于归咎别人，无法从错误中学习。
+                            </li>
+                        </ol>
+                        <p>这就是<span class="highlight-gold">「我执」</span>——平庸的最大引力来自叙事自我。打破方法：把逆境视为<strong>提示</strong>，也许之前的想法行不通了，应该换个故事。</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">🤝</span>
+                            <div>
+                                <strong>什么才是真正的友谊？</strong>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">超越「微信好友」的深度连接</p>
+                            </div>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>C.S.刘易斯说，友谊是<strong>最稀有、最深刻、最高级</strong>的人类关系纽带。凯斯定义的真正友谊：</p>
+                        <ul style="margin: 16px 0; padding-left: 20px;">
+                            <li style="margin: 8px 0;"><strong>互惠</strong>：双方自由地付出和接受</li>
+                            <li style="margin: 8px 0;"><strong>理解</strong>：有意愿同情、合作和妥协</li>
+                            <li style="margin: 8px 0;"><strong>不计分</strong>：无条件帮助，但模糊地互惠</li>
+                        </ul>
+                        <p>友谊是一种很自在的关系——你愿意在朋友面前<span class="highlight-green">暴露弱点和秘密</span>，不需要担心表现得好不好。关键不是志同道合，而是<span class="highlight-blue">双方有平等感</span>。</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">🧘</span>
+                            <div>
+                                <strong>精神修行的三层境界</strong>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">从宁静到超越的进阶之路</p>
+                            </div>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p><strong>第一层：以接纳达成宁静</strong></p>
+                        <p style="margin: 8px 0 16px 20px;">接纳自己的缺点，接纳发生的事情。斯多葛主义：控制能控制的，接受控制不了的——你真正能控制的，只有你自己。</p>
+                        
+                        <p><strong>第二层：以冥想达成中庸</strong></p>
+                        <p style="margin: 8px 0 16px 20px;">做自己精神的守门人，选择什么东西进入内心。不只是被动应对，更要<span class="highlight-gold">主动输出秩序</span>——成为「和平之子」。</p>
+                        
+                        <p><strong>第三层：以连接达成超越</strong></p>
+                        <p style="margin: 8px 0 16px 20px;">与something bigger than yourself融为一体。凯斯说：开始是邀请更高的力量进入内心，后来是让<span class="highlight-green">内心的神出来为世人工作</span>。这是最高级的归属感。</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header" onclick="toggleAccordion(this)">
+                        <div class="accordion-title">
+                            <span class="accordion-icon">🌏</span>
+                            <div>
+                                <strong>「亚裔悖论」的启示</strong>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin-top: 4px;">为什么物质成功不等于精神蓬勃</p>
+                            </div>
+                        </div>
+                        <span class="accordion-arrow">▼</span>
+                    </button>
+                    <div class="accordion-content">
+                        <p>亚裔在美国是「模范少数族裔」：收入最高、学历最高、犯罪率低、精神疾病比例低。但凯斯发现：<span class="highlight-red">亚裔的蓬勃度普遍很低，萎靡比例较高</span>。</p>
+                        
+                        <p style="margin-top: 16px;">原因在于<strong>「过日子思维」</strong>：</p>
+                        <ul style="margin: 16px 0; padding-left: 20px;">
+                            <li style="margin: 8px 0;">把世界想象成科举考试系统</li>
+                            <li style="margin: 8px 0;">只考虑项目的难度和回报大小</li>
+                            <li style="margin: 8px 0;">隐含设定：你只是秩序的受益者，不是输出者</li>
+                        </ul>
+                        
+                        <p>与之对应的<strong>「使命召唤思维」</strong>：不问自己能得到什么，而问自己能为世界贡献什么。这才是通往真正蓬勃的道路。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section fade-in">
+            <h2 class="cta-title">萎靡是一种选择<br/>蓬勃也是</h2>
+            <p class="cta-desc">在这个让我们疲惫不堪的世界中，你随时可以选择开启蓬勃之旅</p>
+            <div class="cta-quote">
+                「萎靡是一种越来越常见的精神状态，但蓬勃永远都可以是你的选择。」<br/>
+                <span style="font-size: 0.9rem; opacity: 0.8;">—— 科里·凯斯《萎靡》</span>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <p>基于《萎靡：如何在这个让我们疲惫不堪的世界中重新感受活力》整理制作</p>
+        <p style="margin-top: 8px; opacity: 0.7;">作者：科里·凯斯（Corey Keyes）| 埃默里大学社会学教授</p>
+    </footer>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // 折叠面板
+        function toggleAccordion(header) {
+            const content = header.nextElementSibling;
+            const isActive = header.classList.contains('active');
+            
+            // 关闭所有其他面板
+            document.querySelectorAll('.accordion-header').forEach(h => {
+                h.classList.remove('active');
+                h.nextElementSibling.classList.remove('active');
+            });
+            
+            // 切换当前面板
+            if (!isActive) {
+                header.classList.add('active');
+                content.classList.add('active');
+            }
+        }
+
+        // 六大领域提示
+        document.querySelectorAll('.domain-item').forEach(item => {
+            item.addEventListener('click', () => {
+                const descriptions = {
+                    '接纳': '接纳自己和别人原本的样子，包括优点和缺点',
+                    '自主性': '独立思考，而不仅仅是被别人影响',
+                    '连接': '成为社区一员，与他人建立温暖互信的关系',
+                    '能力': '心理上能处理自己的事务，社会上能理解复杂性',
+                    '精通': '保持学习和成长的动力',
+                    '意义': '相信自己正在为社会做贡献，对这个世界很重要'
+                };
+                const name = item.querySelector('span:last-child').textContent;
+                alert(`${name}：${descriptions[name]}`);
+            });
+        });
+
+        // 象限点击提示
+        document.querySelectorAll('.quadrant').forEach(q => {
+            q.addEventListener('click', () => {
+                const insights = {
+                    'q1': '💪 无病且蓬勃：这是最理想的状态，但不是唯一的好状态',
+                    'q2': '🦋 有病但蓬勃：霍金、郑智化就是典型——如果你足够蓬勃，疾病不能定义你',
+                    'q3': '🆘 有病且萎靡：需要专业帮助，同时培养蓬勃的心态',
+                    'q4': '⚠️ 无病但萎靡：这是被忽视的危机——没有病不等于健康'
+                };
+                const className = q.classList[1];
+                alert(insights[className]);
+            });
+        });
+    </script>
+</body>
+</html>

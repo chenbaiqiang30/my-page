@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>发现，而非设计 - 复杂性时代的建造之道</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --gold: #ffd700;
+            --emerald: #50c878;
+            --coral: #ff6b6b;
+            --ocean: #4facfe;
+            --sunset: #f5af19;
+            --glass-bg: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        body.dark-mode {
+            --text-primary: #e8e8f0;
+            --text-secondary: #a8a8c8;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        body.dark-mode .glass-card {
+            background: rgba(30, 30, 50, 0.7);
+            border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            background: linear-gradient(135deg, #fff 0%, #ffd700 50%, #fff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 0 40px rgba(255, 215, 0, 0.3);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { filter: brightness(1); }
+            50% { filter: brightness(1.2); }
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 10px;
+        }
+
+        .hero .author {
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 1rem;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: white;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 30px;
+            margin: 25px 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        /* Section Headers */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .collapse-arrow {
+            margin-left: auto;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            transition: transform 0.3s ease;
+        }
+
+        .collapsed .collapse-arrow {
+            transform: rotate(-90deg);
+        }
+
+        .section-content {
+            overflow: hidden;
+            transition: max-height 0.5s ease-out, opacity 0.3s ease;
+        }
+
+        .collapsed .section-content {
+            max-height: 100px !important;
+            opacity: 0.5;
+        }
+
+        /* Quote Blocks */
+        .quote-gold {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.1));
+            border-left: 4px solid var(--gold);
+            padding: 20px 25px;
+            border-radius: 0 16px 16px 0;
+            margin: 20px 0;
+            font-size: 1.15rem;
+            font-style: italic;
+            color: white;
+            position: relative;
+        }
+
+        .quote-gold::before {
+            content: '"';
+            font-size: 4rem;
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            color: var(--gold);
+            opacity: 0.5;
+        }
+
+        /* Highlight Colors */
+        .hl-red { color: #ff6b6b; font-weight: 600; }
+        .hl-blue { color: #4facfe; font-weight: 600; }
+        .hl-green { color: #50c878; font-weight: 600; }
+        .hl-gold { color: #ffd700; font-weight: 600; }
+        .hl-purple { color: #b794f6; font-weight: 600; }
+        .hl-orange { color: #f5af19; font-weight: 600; }
+        .hl-pink { color: #f093fb; font-weight: 600; }
+
+        .text-white { color: rgba(255, 255, 255, 0.95); }
+
+        /* Key Points */
+        .key-point {
+            display: flex;
+            gap: 15px;
+            padding: 18px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 16px;
+            margin: 15px 0;
+            align-items: flex-start;
+        }
+
+        .key-point-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        /* Mind Map */
+        .mindmap-container {
+            padding: 40px 20px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 800px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--gold), var(--sunset));
+            padding: 25px 40px;
+            border-radius: 20px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1a1a2e;
+            box-shadow: 0 15px 40px rgba(255, 215, 0, 0.4);
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .mindmap-center::after {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--gold), transparent);
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+        }
+
+        .mindmap-branch {
+            background: rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 20px;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .branch-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .branch-items {
+            list-style: none;
+        }
+
+        .branch-items li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        .branch-items li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            opacity: 0.6;
+        }
+
+        /* Expert Comments */
+        .expert-bubble {
+            background: linear-gradient(135deg, rgba(103, 126, 234, 0.3), rgba(118, 75, 162, 0.2));
+            border-radius: 20px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+        }
+
+        .expert-bubble::before {
+            content: '🎯';
+            position: absolute;
+            top: -15px;
+            left: 25px;
+            font-size: 1.8rem;
+        }
+
+        .expert-label {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .expert-text {
+            color: rgba(255, 255, 255, 0.95);
+            font-size: 1.05rem;
+        }
+
+        /* Comparison Table */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .comparison-card {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+        }
+
+        .comparison-card h4 {
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid;
+        }
+
+        .comparison-card.design h4 {
+            color: var(--coral);
+            border-color: var(--coral);
+        }
+
+        .comparison-card.discover h4 {
+            color: var(--emerald);
+            border-color: var(--emerald);
+        }
+
+        .comparison-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .comparison-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Info Graphic */
+        .infographic {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .info-card:hover {
+            transform: scale(1.05);
+        }
+
+        .info-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .info-number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--gold), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .info-label {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--gold), var(--accent), var(--ocean));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px 0;
+            padding-left: 25px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -34px;
+            top: 25px;
+            width: 12px;
+            height: 12px;
+            background: var(--gold);
+            border-radius: 50%;
+            box-shadow: 0 0 20px var(--gold);
+        }
+
+        .timeline-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .timeline-text {
+            color: rgba(255, 255, 255, 0.85);
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .floating {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Tab Navigation */
+        .tab-nav {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .tab-btn {
+            padding: 12px 24px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .tab-btn:hover, .tab-btn.active {
+            background: var(--gold);
+            color: #1a1a2e;
+            box-shadow: 0 5px 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Stats Bar */
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 25px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-top: 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .mindmap-branches {
+                grid-template-columns: 1fr;
+            }
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Scroll Progress */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--gold), var(--accent));
+            z-index: 9999;
+            transition: width 0.1s ease;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+        }
+
+        .footer-quote {
+            font-size: 1.2rem;
+            color: var(--gold);
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="progress-bar" id="progressBar"></div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>🔮 发现，而非设计</h1>
+            <p class="subtitle">Discovered, Not Designed: Building Things in the Age of Complexity</p>
+            <p class="author">肖恩·麦克卢尔 | 万维钢 解读</p>
+        </section>
+
+        <!-- 核心统计 -->
+        <div class="stats-bar floating">
+            <div class="stat-item">
+                <div class="stat-value">2</div>
+                <div class="stat-label">两种问题</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">3</div>
+                <div class="stat-label">涌现规律</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">4</div>
+                <div class="stat-label">元方法心法</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">∞</div>
+                <div class="stat-label">复杂系统可能</div>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #ffd700, #f5af19);">🧠</div>
+                <h2 class="section-title">核心思维导图</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="mindmap-container">
+                    <div class="mindmap">
+                        <div class="mindmap-center">
+                            复杂性时代的建造之道<br>
+                            <span style="font-size: 0.9rem; opacity: 0.8;">发现 > 设计</span>
+                        </div>
+                        <div class="mindmap-branches">
+                            <div class="mindmap-branch" style="border-left: 4px solid var(--coral);">
+                                <div class="branch-title" style="color: var(--coral);">🔧 困难问题</div>
+                                <ul class="branch-items">
+                                    <li>理解 + 抽象 = 设计</li>
+                                    <li>模块化、分层封装</li>
+                                    <li>确定输入→确定输出</li>
+                                    <li>例：汽车、桥梁、软件</li>
+                                </ul>
+                            </div>
+                            <div class="mindmap-branch" style="border-left: 4px solid var(--emerald);">
+                                <div class="branch-title" style="color: var(--emerald);">🌀 硬核问题</div>
+                                <ul class="branch-items">
+                                    <li>模式识别 + 启发式</li>
+                                    <li>试错、迭代、演化</li>
+                                    <li>不可完全解释</li>
+                                    <li>例：AI、猎豹、市场</li>
+                                </ul>
+                            </div>
+                            <div class="mindmap-branch" style="border-left: 4px solid var(--ocean);">
+                                <div class="branch-title" style="color: var(--ocean);">✨ 涌现机制</div>
+                                <ul class="branch-items">
+                                    <li>分层的物理抽象</li>
+                                    <li>熵最大化结构</li>
+                                    <li>元机制群体选择</li>
+                                    <li>N层≠N-1层解释</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心洞见 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #50c878, #4facfe);">💎</div>
+                <h2 class="section-title">核心洞见</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-gold">
+                    汽车是被「设计」出来的 —— 而大语言模型，则是被「发现」的。
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="comparison-card design">
+                        <h4>🔧 设计（Design）</h4>
+                        <ul class="comparison-list">
+                            <li>📐 工程师理解每个零部件</li>
+                            <li>🎯 确定输入→确定输出</li>
+                            <li>📊 逻辑清晰、可解释</li>
+                            <li>🏗️ 模块化分层构建</li>
+                            <li>⚙️ 用「多」应对「多」</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card discover">
+                        <h4>🔮 发现（Discover）</h4>
+                        <ul class="comparison-list">
+                            <li>🎲 无人知晓参数作用</li>
+                            <li>🌊 涌现的智能行为</li>
+                            <li>🔮 黑箱但高效</li>
+                            <li>🧬 演化而非设计</li>
+                            <li>✨ 复杂应对复杂</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="expert-bubble">
+                    <div class="expert-label">🎯 精英洞察</div>
+                    <div class="expert-text">
+                        <span class="hl-gold">范式转换的本质</span>：从工业时代的「分析-设计-构建」到AI时代的「试错-迭代-发现」。这不仅是方法论的变革，更是<span class="hl-pink">人类认知边界的重新定义</span>。我们正在学会用「不理解」的方式解决问题——而这恰恰是大自然亿万年演化的智慧。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 硬核问题解法 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #ff6b6b, #f5af19);">🎯</div>
+                <h2 class="section-title">硬核问题的直觉解法</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-gold">
+                    复杂不但不是负担，而且是优势。只要是足够硬核的系统，它就可能蕴含着高妙的、甚至是魔法般的解法。
+                </div>
+
+                <div class="infographic">
+                    <div class="info-card">
+                        <div class="info-icon">🧩</div>
+                        <div class="info-number">模式</div>
+                        <div class="info-label">识别不变的本质特征</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">💡</div>
+                        <div class="info-number">启发</div>
+                        <div class="info-label">窍门、套路和标签</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🔄</div>
+                        <div class="info-number">试错</div>
+                        <div class="info-label">软搜索而非穷举</div>
+                    </div>
+                    <div class="info-card">
+                        <div class="info-icon">🎯</div>
+                        <div class="info-number">感觉</div>
+                        <div class="info-label">神经网络的直觉</div>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: linear-gradient(135deg, #50c878, #4facfe);">⚡</div>
+                    <div class="text-white">
+                        <strong class="hl-green">解法三特征</strong>：<span class="hl-gold">实施极快</span>（一旦发现，瞬间完成）、<span class="hl-blue">极高灵活性</span>（适应各种环境）、<span class="hl-purple">不可解释</span>（黑箱但有效）
+                    </div>
+                </div>
+
+                <div class="expert-bubble">
+                    <div class="expert-label">🎯 精英洞察</div>
+                    <div class="expert-text">
+                        <span class="hl-gold">射箭的隐喻</span>：学会射箭，你就解决了一个硬核问题。真正的高手不计算角度和力量，而是<span class="hl-pink">「感觉」出来的</span>。这种感觉远比任何流程高级——它是你神经网络经过无数次训练后的涌现结果。<span class="hl-blue">感觉，可比流程高级太多了。</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 涌现的奥秘 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #b794f6, #667eea);">🌌</div>
+                <h2 class="section-title">涌现的三大规律</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-gold">
+                    涌现不是自然界的一种特殊现象 —— 涌现就是大自然本身。
+                </div>
+
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-title">规律一：分层不可还原</div>
+                        <div class="timeline-text text-white">
+                            大自然中任何系统都是分层的，每一层都在解决属于这一层的问题。<span class="hl-red">第N层的功能不能完全用第N-1层的事物来解释。</span>你不能用雪花解释雪堆，不能用细胞解释意识。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">规律二：熵最大化结构</div>
+                        <div class="timeline-text text-white">
+                            每一层的结构都不是随意形成的，都是在最大化那一层要解决的问题的「熵」。<span class="hl-blue">物理抽象都是自己那一层的最优解</span>——叶脉中间粗边缘细，正是传输效率最高的结构。
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-title">规律三：元机制选择</div>
+                        <div class="timeline-text text-white">
+                            万事万物之所以这么"好"，不是设计出来的，而是通过<span class="hl-green">元机制演化</span>出来的。演化的自然选择是分层的——个体选择、群体选择、物种选择同时进行。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-bubble">
+                    <div class="expert-label">🎯 精英洞察</div>
+                    <div class="expert-text">
+                        <span class="hl-gold">城市的涌现</span>：任何城市都不是被设计出来的。道路系统、地铁网络、商业区的形成，都是无数人选择的涌现结果。<span class="hl-pink">从横平竖直变成四通八达，这就是系统在元机制选择下的自组织演化。</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 整体论vs还原论 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">🔬</div>
+                <h2 class="section-title">整体论 vs 还原论</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="tab-nav">
+                    <button class="tab-btn active" onclick="switchTab(event, 'tab1')">思维对比</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab2')">人才观</button>
+                    <button class="tab-btn" onclick="switchTab(event, 'tab3')">知识观</button>
+                </div>
+
+                <div id="tab1" class="tab-content active">
+                    <div class="comparison-grid">
+                        <div class="comparison-card design">
+                            <h4>📊 还原论思维</h4>
+                            <ul class="comparison-list">
+                                <li>从下往上看，从底层原理出发</li>
+                                <li>追求因果关系和精确解释</li>
+                                <li>适合内部设计、建设和维护</li>
+                                <li>强调理解和控制</li>
+                                <li>容易陷入「攻略思维」</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-card discover">
+                            <h4>🌐 整体论思维</h4>
+                            <ul class="comparison-list">
+                                <li>从外往内看，关注输入输出</li>
+                                <li>关注属性而非细节机制</li>
+                                <li>适合发现、引导和外部博弈</li>
+                                <li>接受不理解但能用</li>
+                                <li>拥抱试错和迭代</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab2" class="tab-content">
+                    <div class="quote-gold">
+                        外行领导内行不但是可行的，而且是必须的。
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-icon" style="background: linear-gradient(135deg, #ffd700, #f5af19);">👤</div>
+                        <div class="text-white">
+                            <span class="hl-gold">整体论人才典型</span>：邓小平（把握方向而非细节）、赫拉利（抓住人类协作的核心属性）、乔布斯（从用户体验倒推技术）、奥特曼（关心人、钱、愿景和消费者心智）
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-icon" style="background: linear-gradient(135deg, #ff6b6b, #f093fb);">⚠️</div>
+                        <div class="text-white">
+                            <span class="hl-red">庞氏骗局警告</span>：很多人才系统是封闭循环——学钢琴的人最终只能当钢琴老师继续教下一代学钢琴。<span class="hl-orange">必须跳出系统看系统才能选拔真人才。</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="tab3" class="tab-content">
+                    <div class="quote-gold">
+                        不变性即真理：真理必定是那些长存的、对过去未来各种复杂系统都成立的规律。
+                    </div>
+                    <div class="key-point">
+                        <div class="key-point-icon" style="background: linear-gradient(135deg, #50c878, #4facfe);">📚</div>
+                        <div class="text-white">
+                            <span class="hl-green">知识的收敛性</span>：万变不离其宗。一个概念的抽象层次越高，它就越持久。「狗」这个概念比任何一只具体的狗都更长久存在。古人的智慧之所以不过时，是因为他们抓住了高层的不变属性。
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-bubble">
+                    <div class="expert-label">🎯 精英洞察</div>
+                    <div class="expert-text">
+                        <span class="hl-gold">属性优于原因</span>：管理一片森林，你不需要知道火是怎么起的，只需要监控温度和湿度这两个宏观属性。<span class="hl-pink">当城市经济恶化、年轻人无所事事，你就能预测犯罪率会上升——具体谁犯罪不重要。</span>这就是整体论的威力。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 元方法 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">🧙</div>
+                <h2 class="section-title">元方法：整体论四心法</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-gold">
+                    把各种神秘的药剂、粉末混在一起，在一个瓶子里搅拌搅拌……也许什么都不会发生，也许你会得到一点黄金！
+                </div>
+
+                <div class="infographic">
+                    <div class="info-card" style="border: 2px solid var(--gold);">
+                        <div class="info-icon">🔭</div>
+                        <div class="info-number" style="font-size: 1.5rem;">从外向内</div>
+                        <div class="info-label">看输入输出，设定边界，不钻细节</div>
+                    </div>
+                    <div class="info-card" style="border: 2px solid var(--emerald);">
+                        <div class="info-icon">🎲</div>
+                        <div class="info-number" style="font-size: 1.5rem;">拥抱试错</div>
+                        <div class="info-label">发现而不是设计，多做实验搞试点</div>
+                    </div>
+                    <div class="info-card" style="border: 2px solid var(--ocean);">
+                        <div class="info-icon">📡</div>
+                        <div class="info-number" style="font-size: 1.5rem;">重视反馈</div>
+                        <div class="info-label">关注全局氛围，从信号中找趋势</div>
+                    </div>
+                    <div class="info-card" style="border: 2px solid var(--coral);">
+                        <div class="info-icon">🏆</div>
+                        <div class="info-number" style="font-size: 1.5rem;">存活底线</div>
+                        <div class="info-label">没有理论上对，只有活下来的</div>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: linear-gradient(135deg, #ffd700, #f093fb);">✍️</div>
+                    <div class="text-white">
+                        <span class="hl-gold">创作的真相</span>：「别急着找对词，先把对的感觉写出来。」文章的结构是自己长出来的，不是设计出来的。<span class="hl-pink">强行套用别人的结构，你会不断卡住、跳戏、痛苦。</span>
+                    </div>
+                </div>
+
+                <div class="expert-bubble">
+                    <div class="expert-label">🎯 精英洞察</div>
+                    <div class="expert-text">
+                        <span class="hl-gold">氛围编程的启示</span>：就在此时此刻，因为AI编程能力越来越强，程序员已经在流行「氛围编程（vibe coding）」——你只要说说你想要什么，AI给你生成一切。<span class="hl-blue">也许我们原本主要该做的就是把握氛围。</span>咱不内耗，不较劲，动作轻盈感觉灵敏，一切顺势而为。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句集锦 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #ffd700, #ff6b6b);">💫</div>
+                <h2 class="section-title">金句集锦</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-gold" style="margin-bottom: 15px;">
+                    伟大不是计划出来的，繁荣不是设计出来的，增长不是领导出来的。
+                </div>
+                <div class="quote-gold" style="margin-bottom: 15px; border-left-color: var(--emerald);">
+                    社会不是机器，而是个有机体，它善于自组织。最适合复杂社会的其实是道家思想——「我无为而民自化」。
+                </div>
+                <div class="quote-gold" style="margin-bottom: 15px; border-left-color: var(--ocean);">
+                    爱因斯坦说，「上帝是不可捉摸的，但并无恶意」。原来越复杂的系统，里面越可能有高效、优雅、美丽的解。
+                </div>
+                <div class="quote-gold" style="margin-bottom: 15px; border-left-color: var(--coral);">
+                    复杂不是诅咒，而是祝福。
+                </div>
+                <div class="quote-gold" style="margin-bottom: 15px; border-left-color: var(--purple);">
+                    机缘大于路线。机缘是复杂系统在某一刻达到条件成熟后的一次涌现。
+                </div>
+                <div class="quote-gold" style="border-left-color: var(--accent);">
+                    或许，人类最伟大的发现将是：当进步达到最佳状态时，它其实让我们愈发贴近最初的起点。
+                </div>
+            </div>
+        </section>
+
+        <!-- AI时代启示 -->
+        <section class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #00f2fe, #4facfe);">🤖</div>
+                <h2 class="section-title">AI时代的范式革命</h2>
+                <span class="collapse-arrow">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="quote-gold">
+                    AI，是人类创造的第一个真正意义上的复杂系统。这是从「分析」到「生成」的思维革命。
+                </div>
+
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: linear-gradient(135deg, #4facfe, #00f2fe);">🧬</div>
+                    <div class="text-white">
+                        <span class="hl-blue">AI的本质</span>：大语言模型的功能不是人设计的——翻译、写诗、编程、推理……这些能力都是涌现的结果，是它在海量数据中通过自我调整、演化、压缩和泛化自己「长」出来的。
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: linear-gradient(135deg, #50c878, #00f2fe);">🔬</div>
+                    <div class="text-white">
+                        <span class="hl-green">整体论的胜利</span>：AlphaEvolve用演化学习找到科学难题的更高解；科学家用演化算法创造出直径不到1毫米的「异种机器人」——不是生命体，也不是机器人，而是细胞组成的全新存在。
+                    </div>
+                </div>
+
+                <div class="expert-bubble">
+                    <div class="expert-label">🎯 精英洞察</div>
+                    <div class="expert-text">
+                        <span class="hl-gold">山姆·奥特曼的智慧</span>：什么是科学？一个东西按理说不该好使，但它居然好使——科学家必须研究为什么。什么是工程？一个东西按理说应该好使，但它却不好使——工程师必须登场。<span class="hl-pink">我们正在学会用「不理解」的方式解决问题。</span>
+                    </div>
+                </div>
+
+                <div class="key-point">
+                    <div class="key-point-icon" style="background: linear-gradient(135deg, #ffd700, #f5af19);">🚀</div>
+                    <div class="text-white">
+                        <span class="hl-gold">最大的好消息</span>：还原论的缩放定律也许已经到头，但<span class="hl-pink">整体论的缩放定律刚刚展开</span>。在某种意义上，复杂系统其实比简单系统简单——你不需要精确计算内部过程，只需要从外部试错，创造全新的事物。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-quote">
+                "仰观宇宙之大，俯察品类之盛"<br>
+                —— 能作为一个人生活在世界上，你难道不感到庆幸吗？
+            </div>
+            <p>基于肖恩·麦克卢尔《Discovered, Not Designed》| 万维钢解读</p>
+            <p style="margin-top: 10px; color: var(--gold);">整体论能帮你应对不确定、模糊、矛盾和变化的目标。不内耗，不较劲，动作轻盈，一切顺势而为。</p>
+        </footer>
+    </div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+        }
+
+        // Section Collapse
+        function toggleSection(header) {
+            const card = header.closest('.glass-card');
+            card.classList.toggle('collapsed');
+        }
+
+        // Tab Switch
+        function switchTab(event, tabId) {
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            tabContents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Scroll Progress
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // Initialize sections as expanded
+        document.querySelectorAll('.section-content').forEach(content => {
+            content.style.maxHeight = content.scrollHeight + 'px';
+        });
+
+        // Intersection Observer for animations
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.glass-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease-out';
+            observer.observe(card);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1502 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智人之上 | 赫拉利的信息网络史诗</title>
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-primary: #f0f0f0;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent-red: #ff6b6b;
+            --accent-blue: #4ecdc4;
+            --accent-gold: #ffd93d;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .light-mode {
+            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 50%, #d1d8e0 100%);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1a1a2e;
+            --text-secondary: rgba(0, 0, 0, 0.6);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.5s ease;
+        }
+
+        /* 粒子背景 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 顶部导航 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.4em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 13px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle::after {
+            content: '🌙';
+            position: absolute;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .light-mode .theme-toggle::after {
+            content: '☀️';
+            left: calc(100% - 22px);
+        }
+
+        .nav-item {
+            padding: 8px 16px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+        }
+
+        .nav-item:hover {
+            background: var(--accent-blue);
+            color: white;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 40px 60px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            text-align: center;
+            padding: 80px 0;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 30px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(168, 85, 247, 0); }
+        }
+
+        .hero h1 {
+            font-size: 4em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text-primary), var(--accent-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5em;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+        }
+
+        .hero-author {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .author-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-red));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .author-info {
+            text-align: left;
+        }
+
+        .author-name {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .author-title {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* 核心金句 */
+        .golden-quotes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 60px 0;
+        }
+
+        .quote-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 15px;
+            font-size: 8em;
+            color: var(--accent-blue);
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--card-shadow);
+            border-color: var(--accent-blue);
+        }
+
+        .quote-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            margin-top: 15px;
+            font-size: 0.85em;
+            color: var(--accent-blue);
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            margin: 80px 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        .section-header h2 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .section-header p {
+            color: var(--text-secondary);
+            font-size: 1.1em;
+        }
+
+        .mindmap {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mindmap-center {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .center-node {
+            display: inline-block;
+            padding: 25px 50px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 50px;
+            font-size: 1.5em;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3);
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+        }
+
+        .branch {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .branch:hover {
+            transform: scale(1.02);
+            border-color: var(--accent-blue);
+        }
+
+        .branch-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .branch-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+
+        .branch-title {
+            font-weight: 600;
+            font-size: 1.1em;
+        }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .branch-item {
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            font-size: 0.9em;
+            transition: all 0.3s ease;
+        }
+
+        .branch-item:hover {
+            background: rgba(78, 205, 196, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* 信息图表 */
+        .infographic {
+            margin: 80px 0;
+        }
+
+        .info-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 35px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card-number {
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-size: 6em;
+            font-weight: 900;
+            opacity: 0.05;
+        }
+
+        .info-card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .info-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6em;
+        }
+
+        .info-title {
+            font-size: 1.3em;
+            font-weight: 700;
+        }
+
+        .info-content {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .info-highlight {
+            display: inline-block;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        /* 对比图表 */
+        .comparison-section {
+            margin: 80px 0;
+        }
+
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .comparison-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 35px;
+        }
+
+        .comparison-card.democracy {
+            border-color: var(--accent-blue);
+        }
+
+        .comparison-card.autocracy {
+            border-color: var(--accent-red);
+        }
+
+        .comparison-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .comparison-icon {
+            font-size: 3em;
+            margin-bottom: 10px;
+        }
+
+        .comparison-title {
+            font-size: 1.5em;
+            font-weight: 700;
+        }
+
+        .comparison-list {
+            list-style: none;
+        }
+
+        .comparison-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .comparison-list li:last-child {
+            border-bottom: none;
+        }
+
+        .vs-badge {
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-red));
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.2em;
+            align-self: center;
+        }
+
+        /* 专家评论 */
+        .expert-comments {
+            margin: 80px 0;
+        }
+
+        .comment-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 30px;
+        }
+
+        .comment-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+        }
+
+        .comment-card::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 40px;
+            width: 20px;
+            height: 20px;
+            background: var(--glass-bg);
+            border-right: 1px solid var(--glass-border);
+            border-bottom: 1px solid var(--glass-border);
+            transform: rotate(45deg);
+        }
+
+        .comment-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .comment-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+
+        .comment-meta {
+            flex: 1;
+        }
+
+        .comment-name {
+            font-weight: 600;
+        }
+
+        .comment-role {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+
+        .comment-badge {
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        .comment-text {
+            line-height: 1.9;
+            color: var(--text-secondary);
+        }
+
+        .comment-text strong {
+            color: var(--text-primary);
+        }
+
+        /* 可折叠内容区 */
+        .collapsible-section {
+            margin: 80px 0;
+        }
+
+        .collapse-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .collapse-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .collapse-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .collapse-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .collapse-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+
+        .collapse-title h3 {
+            font-size: 1.2em;
+            font-weight: 600;
+        }
+
+        .collapse-preview {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .collapse-arrow {
+            font-size: 1.2em;
+            transition: transform 0.3s ease;
+        }
+
+        .collapse-item.active .collapse-arrow {
+            transform: rotate(180deg);
+        }
+
+        .collapse-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .collapse-item.active .collapse-content {
+            max-height: 2000px;
+        }
+
+        .collapse-inner {
+            padding: 0 30px 30px;
+        }
+
+        .content-block {
+            margin-bottom: 25px;
+        }
+
+        .content-block h4 {
+            font-size: 1.1em;
+            margin-bottom: 12px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .content-block p {
+            color: var(--text-secondary);
+            line-height: 1.9;
+        }
+
+        .highlight-red {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .highlight-gold {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        /* 时间线 */
+        .timeline-section {
+            margin: 80px 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--accent-blue), var(--accent-purple));
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .timeline-item:nth-child(odd) .timeline-content {
+            margin-right: calc(50% + 40px);
+            text-align: right;
+        }
+
+        .timeline-item:nth-child(even) .timeline-content {
+            margin-left: calc(50% + 40px);
+            text-align: left;
+        }
+
+        .timeline-content {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 30px;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 20px;
+            background: var(--accent-blue);
+            border-radius: 50%;
+            border: 4px solid var(--bg-primary);
+            z-index: 1;
+        }
+
+        .timeline-date {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            border-radius: 15px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        /* 结论区 */
+        .conclusion {
+            margin: 80px 0;
+            text-align: center;
+        }
+
+        .conclusion-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(78, 205, 196, 0.2));
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 60px;
+        }
+
+        .conclusion h2 {
+            font-size: 2.5em;
+            margin-bottom: 30px;
+        }
+
+        .conclusion-text {
+            font-size: 1.3em;
+            line-height: 2;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto 40px;
+        }
+
+        .conclusion-quote {
+            font-size: 1.5em;
+            font-weight: 600;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* 响应式 */
+        @media (max-width: 1024px) {
+            .mindmap-branches {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .vs-badge {
+                order: -1;
+                margin: 0 auto 20px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 80px 20px 40px;
+            }
+            
+            .hero h1 {
+                font-size: 2.5em;
+            }
+            
+            .mindmap-branches {
+                grid-template-columns: 1fr;
+            }
+            
+            .timeline::before {
+                left: 20px;
+            }
+            
+            .timeline-item:nth-child(odd) .timeline-content,
+            .timeline-item:nth-child(even) .timeline-content {
+                margin-left: 60px;
+                margin-right: 0;
+                text-align: left;
+            }
+            
+            .timeline-dot {
+                left: 20px;
+            }
+            
+            .comment-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .golden-quotes {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-blue);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-logo">📚 NEXUS 解读</div>
+        <div class="nav-controls">
+            <div class="nav-item" onclick="scrollToSection('mindmap')">🧠 思维导图</div>
+            <div class="nav-item" onclick="scrollToSection('comparison')">⚖️ 对比分析</div>
+            <div class="nav-item" onclick="scrollToSection('expert')">💡 专家洞察</div>
+            <div class="theme-toggle" onclick="toggleTheme()"></div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero fade-in">
+            <div class="hero-badge">🔥 2024年度重磅思想力作</div>
+            <h1>智人之上</h1>
+            <p class="hero-subtitle">从石器时代到AI时代的信息网络简史</p>
+            <div class="hero-author">
+                <div class="author-avatar">📖</div>
+                <div class="author-info">
+                    <div class="author-name">尤瓦尔·赫拉利</div>
+                    <div class="author-title">《人类简史》《未来简史》作者 · 世界级综合者</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心金句 -->
+        <section class="golden-quotes fade-in">
+            <div class="quote-card">
+                <p class="quote-text">虚假的信息比真实的信息更具动员能力——这正是人类能够大规模合作的秘密。</p>
+                <div class="quote-source">📌 信息的悖论</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">历史真正研究的并不是"过去"，而是"变化"。历史能告诉我们什么是不变的、什么是变革的。</p>
+                <div class="quote-source">📌 历史的本质</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">所谓独裁，是由单一中央信息枢纽决定一切；而民主，是有不同信息节点持续对话。</p>
+                <div class="quote-source">📌 权力的信息结构</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">我们正在谈论的是人类历史可能迈向终局——不是历史被画上句号，而是由人类主导的部分即将终结。</p>
+                <div class="quote-source">📌 AI时代的警告</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">人人都说自己崇尚真实，但他们只能接受美颜之后的真实。</p>
+                <div class="quote-source">📌 人性的洞察</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">"爱国"不代表"仇恨外国人"，而只是"爱自己的同胞"。全球合作与爱国主义并不矛盾。</p>
+                <div class="quote-source">📌 全球化的智慧</div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section fade-in" id="mindmap">
+            <div class="section-header">
+                <h2>🧠 核心知识架构</h2>
+                <p>赫拉利用"信息输出秩序"这个视角从历史讲到未来</p>
+            </div>
+            <div class="mindmap">
+                <div class="mindmap-center">
+                    <div class="center-node">📡 信息网络史</div>
+                </div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-header">
+                            <div class="branch-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">📚</div>
+                            <div class="branch-title">三种信息观</div>
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">🔹 天真的信息观：信息=真理=力量</div>
+                            <div class="branch-item">🔹 民粹的信息观：信息=权力武器</div>
+                            <div class="branch-item">🔹 复杂的信息观：真相+秩序</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">
+                            <div class="branch-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a3a0);">🏛️</div>
+                            <div class="branch-title">秩序的来源</div>
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">🔹 主体间现实：共同相信的东西</div>
+                            <div class="branch-item">🔹 神话故事：虚构输出凝聚力</div>
+                            <div class="branch-item">🔹 官僚系统：书面文件输出控制</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">
+                            <div class="branch-icon" style="background: linear-gradient(135deg, #ffd93d, #f0c929);">⚖️</div>
+                            <div class="branch-title">民主与独裁</div>
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">🔹 独裁：中心化信息网络</div>
+                            <div class="branch-item">🔹 民主：去中心化多节点对话</div>
+                            <div class="branch-item">🔹 科技：既能扩大民主也能加深独裁</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">
+                            <div class="branch-icon" style="background: linear-gradient(135deg, #a855f7, #9333ea);">🔬</div>
+                            <div class="branch-title">科学vs宗教</div>
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">🔹 宗教：不可篡改但难以适应</div>
+                            <div class="branch-item">🔹 科学：自我纠错的共同体</div>
+                            <div class="branch-item">🔹 区块链逻辑：分布式副本存放</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">
+                            <div class="branch-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">🤖</div>
+                            <div class="branch-title">AI的挑战</div>
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">🔹 AI有决策能力但无意识</div>
+                            <div class="branch-item">🔹 对齐问题：手段与目的的错位</div>
+                            <div class="branch-item">🔹 计算机间的现实：新秩序</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-header">
+                            <div class="branch-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">🛡️</div>
+                            <div class="branch-title">应对策略</div>
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">🔹 为善：搜集信息须服务用户</div>
+                            <div class="branch-item">🔹 去中心化：数据库独立存在</div>
+                            <div class="branch-item">🔹 相互性：民众也能监督政府</div>
+                            <div class="branch-item">🔹 反压迫：允许暂停比赛</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 信息图表 -->
+        <section class="infographic fade-in">
+            <div class="section-header">
+                <h2>📊 核心概念图解</h2>
+                <p>一图读懂赫拉利的信息理论框架</p>
+            </div>
+            <div class="info-cards">
+                <div class="info-card">
+                    <div class="info-card-number">01</div>
+                    <div class="info-card-header">
+                        <div class="info-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">🎭</div>
+                        <div class="info-title">主体间现实</div>
+                    </div>
+                    <div class="info-content">
+                        存在于人与人心智连接之中的共识。国家、货币、法律、宗教神祇——这些都是人们共同的想象。巴勒斯坦存不存在？取决于谁承认它。
+                    </div>
+                    <div class="info-highlight">虚构创造秩序</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-number">02</div>
+                    <div class="info-card-header">
+                        <div class="info-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a3a0);">📜</div>
+                        <div class="info-title">官僚系统的本质</div>
+                    </div>
+                    <div class="info-content">
+                        书面文件是另一种主体间现实。你的身份证、学历证书、房产证，不仅是纸片，更是全社会对你的承认。官僚统治就是"写字台治国"。
+                    </div>
+                    <div class="info-highlight">文件即现实</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-number">03</div>
+                    <div class="info-card-header">
+                        <div class="info-icon" style="background: linear-gradient(135deg, #ffd93d, #f0c929);">⚔️</div>
+                        <div class="info-title">拿破仑的对齐问题</div>
+                    </div>
+                    <div class="info-content">
+                        拿破仑军事上总是取胜，但结果却是让法国周边国家变强。意大利和德国原本不是民族国家，是拿破仑把它们"打醒了，打实了，打强了"。
+                    </div>
+                    <div class="info-highlight">战争是政治的延续</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-card-number">04</div>
+                    <div class="info-card-header">
+                        <div class="info-icon" style="background: linear-gradient(135deg, #a855f7, #9333ea);">🔄</div>
+                        <div class="info-title">区块链式经典保存</div>
+                    </div>
+                    <div class="info-content">
+                        公元前一千年，犹太教拉比就用"分布式副本存放"保存经典——标准化抄写几百份，分放不同地方。谁想篡改几乎不可能，这就是古代区块链。
+                    </div>
+                    <div class="info-highlight">去中心化存储</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 民主vs独裁对比 -->
+        <section class="comparison-section fade-in" id="comparison">
+            <div class="section-header">
+                <h2>⚖️ 民主与独裁的信息结构</h2>
+                <p>从信息网络视角理解两种政体的本质差异</p>
+            </div>
+            <div class="comparison-grid">
+                <div class="comparison-card democracy">
+                    <div class="comparison-header">
+                        <div class="comparison-icon">🏛️</div>
+                        <div class="comparison-title" style="color: var(--accent-blue);">民主体制</div>
+                    </div>
+                    <ul class="comparison-list">
+                        <li>🔹 <strong>去中心化网络</strong>——多个节点平等对话</li>
+                        <li>🔹 <strong>多权分立</strong>——政府、议会、司法、媒体、大学互不隶属</li>
+                        <li>🔹 <strong>保护人权</strong>——多数人不能投票欺负少数人</li>
+                        <li>🔹 <strong>公民权保障</strong>——新闻自由、学术自由、集会自由</li>
+                        <li>🔹 <strong>自我纠错</strong>——事前对话，事后修正</li>
+                        <li>🔹 <strong>真相多</strong>——但可能秩序少，有分崩离析风险</li>
+                    </ul>
+                </div>
+                <div class="vs-badge">VS</div>
+                <div class="comparison-card autocracy">
+                    <div class="comparison-header">
+                        <div class="comparison-icon">👑</div>
+                        <div class="comparison-title" style="color: var(--accent-red);">独裁体制</div>
+                    </div>
+                    <ul class="comparison-list">
+                        <li>🔸 <strong>中心化网络</strong>——所有信息汇聚到中央枢纽</li>
+                        <li>🔸 <strong>条条大路通罗马</strong>——地方对地方无横向联系</li>
+                        <li>🔸 <strong>权威不容置疑</strong>——立法院、司法成橡皮图章</li>
+                        <li>🔸 <strong>极权可能</strong>——每个人、每件事与中央保持一致</li>
+                        <li>🔸 <strong>三权监督</strong>——政府、党、秘密警察共同对中央负责</li>
+                        <li>🔸 <strong>秩序多</strong>——但真相少，有僵化风险</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <section class="expert-comments fade-in" id="expert">
+            <div class="section-header">
+                <h2>💡 精英洞察</h2>
+                <p>从多个角度审视赫拉利的核心论点</p>
+            </div>
+            <div class="comment-grid">
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">🎯</div>
+                        <div class="comment-meta">
+                            <div class="comment-name">战略思维视角</div>
+                            <div class="comment-role">地缘政治分析</div>
+                        </div>
+                        <div class="comment-badge" style="background: var(--accent-red);">核心洞见</div>
+                    </div>
+                    <p class="comment-text">
+                        赫拉利揭示了一个残酷真相：<strong>能把人组织起来做大事的力量，往往不是真实信息，而是虚假信息</strong>。这解释了为什么民粹主义如此顽强——它不需要正确，只需要有动员力。普京入侵乌克兰是典型案例：军事行动没有对齐政治目标，这正是克劳塞维茨200年前就警告过的。
+                    </p>
+                </div>
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #4ecdc4, #44a3a0);">🔬</div>
+                        <div class="comment-meta">
+                            <div class="comment-name">科技演进视角</div>
+                            <div class="comment-role">AI与社会变革</div>
+                        </div>
+                        <div class="comment-badge" style="background: var(--accent-blue);">批判性反思</div>
+                    </div>
+                    <p class="comment-text">
+                        赫拉利对AI的担忧有些过时。他把回形针问题当成真正威胁，但<strong>现代大语言模型已经拥有相当的常识</strong>。ChatGPT不会为了"最大化生产回形针"而毁灭人类。更重要的是，AI宣传洗脑的能力被高估了——纳粹的宣传机器都做不到，为什么AI能做到？
+                    </p>
+                </div>
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #ffd93d, #f0c929);">📊</div>
+                        <div class="comment-meta">
+                            <div class="comment-name">经济学视角</div>
+                            <div class="comment-role">制度经济分析</div>
+                        </div>
+                        <div class="comment-badge" style="background: var(--accent-gold); color: #1a1a2e;">深度思考</div>
+                    </div>
+                    <p class="comment-text">
+                        <strong>秩序本身就是力量</strong>——这是赫拉利最有价值的洞见。科学家只提供知识，但造原子弹需要十几万人协作，这需要更大的组织力量。所以奥本海默必须服从总统，而不是反过来。"秀才造反，三年不成"——你对真相的坚持，反而限制了你输出秩序的能力。
+                    </p>
+                </div>
+                <div class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-avatar" style="background: linear-gradient(135deg, #a855f7, #9333ea);">🌐</div>
+                        <div class="comment-meta">
+                            <div class="comment-name">全球化视角</div>
+                            <div class="comment-role">国际关系观察</div>
+                        </div>
+                        <div class="comment-badge" style="background: var(--accent-purple);">前瞻预判</div>
+                    </div>
+                    <p class="comment-text">
+                        赫拉利警告世界可能被"硅幕"分割成两个数字帝国——但这个判断可能过于悲观。<strong>中国短视频在X上火爆，美国博主和日本博主都在转发</strong>，说明科技的联通作用远大于隔阂。人同此心，心同此理，国界挡不住真正有价值的内容。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 可折叠深度内容 -->
+        <section class="collapsible-section fade-in">
+            <div class="section-header">
+                <h2>📖 深度解析</h2>
+                <p>点击展开各主题的详细分析</p>
+            </div>
+
+            <div class="collapse-item">
+                <div class="collapse-header" onclick="toggleCollapse(this)">
+                    <div class="collapse-title">
+                        <div class="collapse-icon" style="background: linear-gradient(135deg, #ff6b6b, #ee5a5a);">📚</div>
+                        <div>
+                            <h3>三种信息观的深层逻辑</h3>
+                            <p class="collapse-preview">从单机游戏到权力斗争——不同人如何看待信息</p>
+                        </div>
+                    </div>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div class="collapse-content">
+                    <div class="collapse-inner">
+                        <div class="content-block">
+                            <h4>🎮 天真的信息观：自我效能感的世界</h4>
+                            <p>想象你在玩《黑神话：悟空》。刚上手时玩得不好，但你知道只要勤加练习就能提升。你上网找攻略，发现<span class="highlight-blue">只有正确的信息才有用</span>。你相信真理越辩越明，只要信息自由流通，正确的信息就会脱颖而出——就像游戏论坛里高点赞的帖子确实质量更高。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>👑 民粹的信息观：强权者的世界</h4>
+                            <p>如果一个人从来就没好好打过游戏，从小就是被人安排生活，他根本没有"攻略"的概念。他眼中只有强权：<span class="highlight-red">我家是什么阶层，我爸有什么爵位，决定了我的一切</span>。如果境遇不好？一定是权力更大的人把好位置占满了。要翻身？就得加入一个更大的强权。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>🔄 复杂的信息观：综合者的智慧</h4>
+                            <p>赫拉利的洞见在于：<span class="highlight-gold">民粹的信息观也可以真的很厉害，因为它能把很多人组织在一起，形成秩序，产生巨大合力</span>。而一个人的自我效能再强，那个力量也是很小的。信息有两个作用：传递真相和提供秩序。真相能带来智慧和力量，但秩序本身就是力量。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse-item">
+                <div class="collapse-header" onclick="toggleCollapse(this)">
+                    <div class="collapse-title">
+                        <div class="collapse-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a3a0);">🏛️</div>
+                        <div>
+                            <h3>虚构的代价与真相的代价</h3>
+                            <p class="collapse-preview">为什么有些虚构是绝对必要的，而过度诚实反而有问题</p>
+                        </div>
+                    </div>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div class="collapse-content">
+                    <div class="collapse-inner">
+                        <div class="content-block">
+                            <h4>🎭 纯净叙事的力量</h4>
+                            <p>一个以色列政客发表竞选演说，会客观讲以色列给巴勒斯坦人民带来的痛苦吗？当然不会。<span class="highlight-blue">老百姓不喜欢思考复杂问题</span>。政客最好的办法是回避不愉快的事，只谈斗争精神——编造辉煌过去，许诺精彩未来，然后要你现在投票。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>⚠️ 虚构的代价：不好修改</h4>
+                            <p>某些信仰者强烈相信《古兰经》每句话都是神的指引，绝对不可违背。这在古代或许还行——<span class="highlight-red">但到了现代，这个宗教就难以与时俱进</span>。宗教给方案从来都不完备，根本不可能适应一切新情况。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>💡 诚实的代价：很难说服别人</h4>
+                            <p>美国宪法大方承认是一群人创造的，不是神的意志，还留下了修改机制。但诚实也有代价——<span class="highlight-gold">在漫长人类历史中，老百姓都不怎么相信人，更愿意相信神</span>。两百多年前的美国宪法是个绝对例外。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse-item">
+                <div class="collapse-header" onclick="toggleCollapse(this)">
+                    <div class="collapse-title">
+                        <div class="collapse-icon" style="background: linear-gradient(135deg, #22c55e, #16a34a);">🤖</div>
+                        <div>
+                            <h3>AI时代的真正危险与乐观信号</h3>
+                            <p class="collapse-preview">赫拉利可能高估了AI的威胁，但低估了人的自主性</p>
+                        </div>
+                    </div>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div class="collapse-content">
+                    <div class="collapse-inner">
+                        <div class="content-block">
+                            <h4>🔍 被高估的威胁：AI洗脑能力</h4>
+                            <p>纳粹的宣传确实掀起了仇恨犹太人的情绪——但那是因为<span class="highlight-blue">很多德国人本来就反感犹太人</span>。原本不反感的人只会对宣传有逆反心理。宣传只是强化，而不是植入情感；只是鼓励，而没有发明暴行。"谎言重复一千遍就成了真理"其实并不成立。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>📊 被高估的能力：精准预测人的倾向</h4>
+                            <p>确有公司试图用Facebook数据分析定向投放信息来左右用户态度，但<span class="highlight-red">影响到的人数很少，实际作用几乎为0</span>。老百姓"喜欢"什么，是世界上最不可捉摸的事。好莱坞一直探索"必然受欢迎"的电影算法，但根本找不到。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>✅ 被低估的希望：人类自主性</h4>
+                            <p>现实是AI对齐已经做得相当好了。拿ChatGPT测试——问它会不会不顾一切最大化任务，它说会尽最大努力，但<span class="highlight-gold">必须符合道德、伦理和技术限制</span>。高水平AI不会是愣头青，它知道怎么把握分寸。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapse-item">
+                <div class="collapse-header" onclick="toggleCollapse(this)">
+                    <div class="collapse-title">
+                        <div class="collapse-icon" style="background: linear-gradient(135deg, #f97316, #ea580c);">🔮</div>
+                        <div>
+                            <h3>未来20年的社会变革预测</h3>
+                            <p class="collapse-preview">从虚拟到实体的差序发生——AI如何改变世界</p>
+                        </div>
+                    </div>
+                    <span class="collapse-arrow">▼</span>
+                </div>
+                <div class="collapse-content">
+                    <div class="collapse-inner">
+                        <div class="content-block">
+                            <h4>💻 虚拟层面：已经爆发</h4>
+                            <p>借助AI辅助编程，软件生产力已经爆发。出现了大量个人独立开发者，不需要公司，自己写APP直接卖。<span class="highlight-blue">AI编程软件Cursor一个月才20美元，你用它一两天就能写个说得过去的APP</span>。程序员不会失业，但软件会更加无处不在，而且高度定制化。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>🔬 科研层面：即将巨变</h4>
+                            <p>当编程变得容易，科研就会大大加速。更不用说o1的数理化推导能力和AlphaFold之类生物计算AI。<span class="highlight-gold">21世纪20年代会像20世纪20年代一样，给我们带来重大科学突破</span>。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>🤖 实体层面：机器人的GPT时刻</h4>
+                            <p>根据各大公司投入情况，完全可以预期：<span class="highlight-red">也许一两年内，机器人就会迎来GPT-3时刻</span>——人们恍然大悟，原来这么容易就解决了。然后马上是ChatGPT时刻——原来机器人可以这么好用又便宜。智能将进入一切生产和服务环节。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>⚡ 关键洞察：传统业务自行用上AI</h4>
+                            <p>现在不是会用AI的人自上而下垂直打击传统业务，而是传统业务纷纷自行用上AI。只是很会用AI但对传统行业一无所知的人，竞争力也不会很大——<span class="highlight-blue">"会用AI"门槛不高，你得找个懂行的人合伙才好</span>。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 历史演进时间线 -->
+        <section class="timeline-section fade-in">
+            <div class="section-header">
+                <h2>📅 信息网络的历史演进</h2>
+                <p>从神话到AI，人类组织方式的变革</p>
+            </div>
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">公元前1000年</div>
+                        <div class="timeline-title">区块链式经典保存</div>
+                        <div class="timeline-desc">犹太教拉比将希伯来圣经标准化抄写数百份，分放不同地方，确保不可篡改——古代版分布式存储</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">13世纪</div>
+                        <div class="timeline-title">经院哲学诞生</div>
+                        <div class="timeline-desc">托马斯·阿奎那把古希腊亚里士多德思想与圣经结合，让基督教有了逻辑推理元素</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">15世纪</div>
+                        <div class="timeline-title">印刷术的双刃剑</div>
+                        <div class="timeline-desc">印刷术传播最多的不是科学，而是《女巫之锤》这样的阴谋论——信息自由不等于真相自由</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">16世纪</div>
+                        <div class="timeline-title">宗教改革</div>
+                        <div class="timeline-desc">马丁·路德号召人人可以自己阅读圣经，不必依赖神职人员——宗教的去中心化</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">18世纪</div>
+                        <div class="timeline-title">科学革命与民主</div>
+                        <div class="timeline-desc">人类发现自己的无知，推动科学革命；美国宪法成为例外——大方承认是人创造的，留下修改机制</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">20世纪</div>
+                        <div class="timeline-title">极权的技术条件</div>
+                        <div class="timeline-desc">电话电报让莫斯科能立即知道地方情况；苏联用政府+党+秘密警察三权监督实现极权</div>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">21世纪</div>
+                        <div class="timeline-title">AI时代的抉择</div>
+                        <div class="timeline-desc">AI既能扩大民主也能加深独裁。关键问题：谁来监管？如何对齐？人类主导的历史会终结吗？</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结论 -->
+        <section class="conclusion fade-in">
+            <div class="conclusion-card">
+                <h2>🎯 核心结论</h2>
+                <p class="conclusion-text">
+                    赫拉利写了半本好书。历史部分精彩——揭示了虚假信息如何动员人群、秩序如何比真相更重要、科学如何通过自我纠错获得可信性。但AI部分薄弱——他可能没认真跟ChatGPT聊过，对AI能力的判断停留在2018年以前。
+                </p>
+                <p class="conclusion-text">
+                    <strong>当今世界的主要矛盾</strong>，既不是AI和智人的矛盾，也不是独裁和民主的矛盾，而是<strong>现代化和身份政治之间的矛盾</strong>。理是普世的，但总有人认为外来的理就是威胁。是这些人，而不是AI，要把世界用硅幕分开。
+                </p>
+                <p class="conclusion-quote">
+                    "相信那些寻找真理的人，但要怀疑那些宣称自己已经找到真理的人。"<br>—— 安德烈·纪德
+                </p>
+            </div>
+        </section>
+    </div>
+
+    <!-- 底部 -->
+    <footer class="footer">
+        <p>📚 基于万维钢《精英日课》解读 · 赫拉利《智人之上》(Nexus)</p>
+        <p style="margin-top: 10px; opacity: 0.6;">信息输出秩序 · 但愿我们通过做出明智的选择，防止最糟糕的结果</p>
+    </footer>
+
+    <script>
+        // 粒子效果
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        // 折叠面板
+        function toggleCollapse(header) {
+            const item = header.parentElement;
+            item.classList.toggle('active');
+        }
+
+        // 滚动到指定区域
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // 金句卡片点击效果
+        document.querySelectorAll('.quote-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

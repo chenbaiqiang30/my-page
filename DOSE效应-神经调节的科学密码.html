@@ -1,0 +1,1354 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOSE效应 | 大脑神经调节的科学密码</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-gradient-light: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            --bg-gradient-dark: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass-bg-light: rgba(255, 255, 255, 0.25);
+            --glass-bg-dark: rgba(30, 30, 50, 0.7);
+            --text-light: #1a1a2e;
+            --text-dark: #e8e8e8;
+            --accent-dopamine: #FF6B6B;
+            --accent-oxytocin: #4ECDC4;
+            --accent-serotonin: #FFE66D;
+            --accent-endorphin: #95E1D3;
+            --highlight-red: #ff4757;
+            --highlight-blue: #3742fa;
+            --highlight-green: #2ed573;
+            --highlight-purple: #a55eea;
+            --highlight-orange: #ff7f50;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            line-height: 1.8;
+            min-height: 100vh;
+            background: var(--bg-gradient-light);
+            background-size: 400% 400%;
+            animation: gradientShift 20s ease infinite;
+            color: var(--text-light);
+            transition: all 0.5s ease;
+        }
+
+        body.dark-mode {
+            background: var(--bg-gradient-dark);
+            color: var(--text-dark);
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 毛玻璃效果 */
+        .glass-card {
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .glass-card {
+            background: var(--glass-bg-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 头部设计 */
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFE66D, #95E1D3);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* DOSE 四元素展示 */
+        .dose-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+
+        .dose-item {
+            background: linear-gradient(135deg, var(--color-start), var(--color-end));
+            border-radius: 20px;
+            padding: 30px;
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .dose-item:hover {
+            transform: scale(1.05) rotate(2deg);
+        }
+
+        .dose-item::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            transition: all 0.5s;
+        }
+
+        .dose-item:hover::after {
+            transform: translate(-25%, 25%);
+        }
+
+        .dose-item.dopamine { --color-start: #FF6B6B; --color-end: #ee5a5a; }
+        .dose-item.oxytocin { --color-start: #4ECDC4; --color-end: #44a08d; }
+        .dose-item.serotonin { --color-start: #FFE66D; --color-end: #f0c929; color: #333; }
+        .dose-item.endorphin { --color-start: #95E1D3; --color-end: #6dd5c8; color: #333; }
+
+        .dose-icon {
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .dose-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .dose-desc {
+            font-size: 0.95rem;
+            opacity: 0.95;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            padding: 40px 20px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 800px;
+            position: relative;
+        }
+
+        .mindmap-center {
+            width: 160px;
+            height: 160px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+            position: relative;
+            z-index: 10;
+            animation: centerPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes centerPulse {
+            0%, 100% { box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4); }
+            50% { box-shadow: 0 15px 60px rgba(102, 126, 234, 0.6); }
+        }
+
+        .mindmap-branches {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .branch {
+            position: absolute;
+            display: flex;
+            align-items: center;
+        }
+
+        .branch-line {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--branch-color));
+            width: 100px;
+        }
+
+        .branch-node {
+            min-width: 140px;
+            padding: 15px 20px;
+            border-radius: 16px;
+            background: var(--branch-color);
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            transition: all 0.3s;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.1);
+        }
+
+        .branch:nth-child(1) { --branch-color: #FF6B6B; top: 50%; left: 50%; transform: translate(80px, -50%); }
+        .branch:nth-child(2) { --branch-color: #4ECDC4; top: 50%; right: 50%; transform: translate(-80px, -50%); flex-direction: row-reverse; }
+        .branch:nth-child(3) { --branch-color: #FFE66D; top: 20%; left: 50%; transform: translate(60px, -50%); }
+        .branch:nth-child(4) { --branch-color: #95E1D3; bottom: 20%; left: 50%; transform: translate(60px, 50%); }
+
+        .branch:nth-child(3) .branch-node,
+        .branch:nth-child(4) .branch-node { color: #333; }
+
+        /* 金句卡片 */
+        .quotes-section {
+            margin: 50px 0;
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .quote-card {
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            border-left: 5px solid var(--quote-color, #667eea);
+            transition: all 0.3s;
+        }
+
+        body.dark-mode .quote-card {
+            background: linear-gradient(135deg, rgba(40,40,60,0.9), rgba(30,30,50,0.8));
+        }
+
+        .quote-card:hover {
+            transform: translateX(10px);
+            box-shadow: -10px 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            font-size: 8rem;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            color: var(--quote-color, #667eea);
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            text-align: right;
+        }
+
+        /* 可折叠内容板块 */
+        .collapsible {
+            margin-bottom: 15px;
+        }
+
+        .collapsible-header {
+            background: linear-gradient(135deg, var(--header-color, #667eea), var(--header-color-end, #764ba2));
+            color: white;
+            padding: 20px 25px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+            user-select: none;
+        }
+
+        .collapsible-header:hover {
+            transform: scale(1.02);
+        }
+
+        .collapsible-header h3 {
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .collapsible.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            background: var(--glass-bg-light);
+            border-radius: 0 0 16px 16px;
+            margin-top: -10px;
+            padding-top: 10px;
+        }
+
+        body.dark-mode .collapsible-content {
+            background: var(--glass-bg-dark);
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 2000px;
+        }
+
+        .collapsible-inner {
+            padding: 25px;
+        }
+
+        /* 信息图表 */
+        .infographic {
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,255,255,0.85));
+            border-radius: 24px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+
+        body.dark-mode .infographic {
+            background: linear-gradient(135deg, rgba(30,30,50,0.95), rgba(20,20,40,0.9));
+        }
+
+        .infographic-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .pyramid {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .pyramid-level {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .pyramid-level:hover {
+            transform: scale(1.05);
+            z-index: 10;
+        }
+
+        .pyramid-level:nth-child(1) {
+            width: 40%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .pyramid-level:nth-child(2) {
+            width: 60%;
+            background: linear-gradient(135deg, #4ECDC4, #44a08d);
+        }
+
+        .pyramid-level:nth-child(3) {
+            width: 80%;
+            background: linear-gradient(135deg, #FF6B6B, #ee5a5a);
+        }
+
+        .pyramid-label {
+            position: absolute;
+            right: -180px;
+            font-size: 0.85rem;
+            opacity: 0.8;
+            white-space: nowrap;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, #1a1a2e, #2d2d44);
+            border-radius: 24px;
+            padding: 35px;
+            margin: 30px 0;
+            position: relative;
+            color: white;
+        }
+
+        .expert-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            position: absolute;
+            top: -35px;
+            left: 30px;
+            border: 4px solid white;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+        }
+
+        .expert-content {
+            margin-top: 30px;
+        }
+
+        .expert-title {
+            font-size: 1.1rem;
+            color: #4ECDC4;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .expert-text {
+            font-size: 1rem;
+            line-height: 1.9;
+            opacity: 0.95;
+        }
+
+        /* 语义高亮 */
+        .highlight-red { color: var(--highlight-red); font-weight: 600; }
+        .highlight-blue { color: var(--highlight-blue); font-weight: 600; }
+        .highlight-green { color: var(--highlight-green); font-weight: 600; }
+        .highlight-purple { color: var(--highlight-purple); font-weight: 600; }
+        .highlight-orange { color: var(--highlight-orange); font-weight: 600; }
+
+        .data-tag {
+            background: linear-gradient(135deg, #3742fa, #2ed573);
+            color: white;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 30px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 18px;
+            font-weight: 600;
+        }
+
+        .comparison-table td {
+            padding: 15px;
+            background: rgba(255,255,255,0.9);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        body.dark-mode .comparison-table td {
+            background: rgba(40,40,60,0.9);
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg-light);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--glass-bg-dark);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        /* 进度指示器 */
+        .progress-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, #FF6B6B, #4ECDC4, #FFE66D, #95E1D3);
+            z-index: 9999;
+            transition: width 0.1s;
+        }
+
+        /* 方法卡片 */
+        .method-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .method-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s;
+            border-top: 4px solid var(--card-color, #667eea);
+        }
+
+        body.dark-mode .method-card {
+            background: rgba(40,40,60,0.9);
+        }
+
+        .method-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+
+        .method-icon {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .method-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--card-color, #667eea);
+        }
+
+        .method-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, #FF6B6B, #4ECDC4, #FFE66D, #95E1D3);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 5px;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--item-color, #667eea);
+            border: 3px solid white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .timeline-title {
+            font-weight: 700;
+            color: var(--item-color, #667eea);
+            margin-bottom: 8px;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .mindmap {
+                min-width: 100%;
+                flex-direction: column;
+            }
+
+            .mindmap-center {
+                width: 120px;
+                height: 120px;
+                font-size: 1rem;
+            }
+
+            .branch {
+                position: relative !important;
+                transform: none !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+                margin: 10px 0;
+                flex-direction: column !important;
+            }
+
+            .branch-line {
+                width: 3px;
+                height: 30px;
+                background: linear-gradient(180deg, transparent, var(--branch-color));
+            }
+
+            .pyramid-label {
+                position: static;
+                margin-top: 10px;
+            }
+
+            .pyramid-level {
+                width: 90% !important;
+            }
+        }
+
+        /* 动画入场 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.6s ease-out;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 浮动装饰 */
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.1;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            background: #FF6B6B;
+            top: 10%;
+            left: 5%;
+            animation-delay: 0s;
+        }
+
+        .shape:nth-child(2) {
+            width: 200px;
+            height: 200px;
+            background: #4ECDC4;
+            top: 60%;
+            right: 10%;
+            animation-delay: -5s;
+        }
+
+        .shape:nth-child(3) {
+            width: 250px;
+            height: 250px;
+            background: #FFE66D;
+            bottom: 10%;
+            left: 20%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(50px, -50px) rotate(90deg); }
+            50% { transform: translate(0, -100px) rotate(180deg); }
+            75% { transform: translate(-50px, -50px) rotate(270deg); }
+        }
+    </style>
+</head>
+<body>
+    <!-- 进度条 -->
+    <div class="progress-bar" id="progressBar"></div>
+
+    <!-- 浮动装饰 -->
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+
+    <!-- 主题切换 -->
+    <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">
+        <span id="themeIcon">🌙</span>
+    </button>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="hero glass-card fade-in">
+            <h1>🧠 DOSE效应</h1>
+            <p class="subtitle">解码大脑的神经调节密码<br>多巴胺 · 催产素 · 血清素 · 内啡肽</p>
+            <p style="margin-top: 20px; font-size: 0.9rem; opacity: 0.7;">
+                基于 Tj·鲍尔《The DOSE Effect》| 万维钢解读
+            </p>
+        </header>
+
+        <!-- DOSE四元素 -->
+        <section class="dose-grid fade-in">
+            <div class="dose-item dopamine" onclick="scrollToSection('dopamine')">
+                <div class="dose-icon">🔥</div>
+                <div class="dose-title">多巴胺 Dopamine</div>
+                <div class="dose-desc">追求的快乐<br>让你识别目标，产生激励</div>
+            </div>
+            <div class="dose-item oxytocin" onclick="scrollToSection('oxytocin')">
+                <div class="dose-icon">💝</div>
+                <div class="dose-title">催产素 Oxytocin</div>
+                <div class="dose-desc">分享的快乐<br>建立信任与亲密联结</div>
+            </div>
+            <div class="dose-item serotonin" onclick="scrollToSection('serotonin')">
+                <div class="dose-icon">☀️</div>
+                <div class="dose-title">血清素 Serotonin</div>
+                <div class="dose-desc">保持的快乐<br>情绪稳定的回弹力</div>
+            </div>
+            <div class="dose-item endorphin" onclick="scrollToSection('endorphin')">
+                <div class="dose-icon">⚡</div>
+                <div class="dose-title">内啡肽 Endorphin</div>
+                <div class="dose-desc">享受的快乐<br>最强烈的愉悦奖励</div>
+            </div>
+        </section>
+
+        <!-- 核心洞察 -->
+        <section class="glass-card fade-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                💡 核心洞察：大脑的三层决策系统
+            </h2>
+
+            <!-- 金字塔图 -->
+            <div class="infographic">
+                <div class="infographic-title">🏛️ 大脑决策系统金字塔</div>
+                <div class="pyramid">
+                    <div class="pyramid-level">
+                        <span>🎯 第三层：理性思维</span>
+                        <span class="pyramid-label" style="color: inherit;">最高级决策，但力量有限</span>
+                    </div>
+                    <div class="pyramid-level">
+                        <span>⚖️ 第二层：神经调节 (DOSE)</span>
+                        <span class="pyramid-label" style="color: inherit;">自动调节，让你感觉良好</span>
+                    </div>
+                    <div class="pyramid-level">
+                        <span>⚡ 第一层：情绪反应</span>
+                        <span class="pyramid-label" style="color: inherit;">速度最快，只顾眼前</span>
+                    </div>
+                </div>
+            </div>
+
+            <p style="font-size: 1.1rem; line-height: 2; margin-top: 30px;">
+                <span class="highlight-purple">DOSE不是理性，也不是情绪</span>，而是介于二者之间的<span class="highlight-red">中间调控层</span>。
+                它的反应速度比情绪慢，但也是<span class="highlight-blue">自动的</span>！
+                它不会让你产生抗拒，反而会让你<span class="highlight-green">感觉很好</span>。
+            </p>
+
+            <div style="background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1)); padding: 25px; border-radius: 16px; margin-top: 25px;">
+                <p style="font-size: 1.2rem; font-weight: 600; text-align: center;">
+                    简单说，神经调节系统的作用是<br>
+                    <span style="font-size: 1.5rem; color: #764ba2;">「哄着你做对的事儿」</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <div class="expert-comment fade-in">
+            <div class="expert-avatar">🎓</div>
+            <div class="expert-content">
+                <div class="expert-title">💎 精英视角 | 全球顶级认知</div>
+                <div class="expert-text">
+                    <p style="margin-bottom: 15px;">
+                        <strong style="color: #4ECDC4;">关于成功的真相：</strong>
+                        世界上真正成功的人，从来不是靠"吃苦"——他们靠的是<span class="highlight-red">慢多巴胺</span>带来的「努力→进展」正反馈循环。当你理解了这套机制，就会明白为什么有些人能持续高效工作而不觉得累。
+                    </p>
+                    <p style="margin-bottom: 15px;">
+                        <strong style="color: #FFE66D;">关于社交的本质：</strong>
+                        催产素告诉我们，<span class="highlight-purple">帮助别人就是帮助自己</span>。这不是鸡汤，而是神经科学事实。你为他人付出时，自己的自信和幸福感也在同步提升。
+                    </p>
+                    <p>
+                        <strong style="color: #95E1D3;">关于情绪管理：</strong>
+                        真正的情绪稳定不是压抑，而是<span class="highlight-green">血清素</span>的「回弹力」。这就解释了为什么晒太阳、接触大自然、慢呼吸能让人平静——它们都在提升你的神经调节基线。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金句区 -->
+        <section class="quotes-section fade-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 30px; text-align: center; background: linear-gradient(135deg, #FF6B6B, #4ECDC4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                ✨ 精华金句
+            </h2>
+            <div class="quotes-grid">
+                <div class="quote-card" style="--quote-color: #FF6B6B;">
+                    <p class="quote-text">做难而正确的事，其实是很爽的。成功者最大的秘密是「乐」在其中。</p>
+                    <p class="quote-source">—— 关于多巴胺</p>
+                </div>
+                <div class="quote-card" style="--quote-color: #4ECDC4;">
+                    <p class="quote-text">帮助别人就是帮助自己。你不可能帮助他人而自己不感到愉快。</p>
+                    <p class="quote-source">—— 关于催产素</p>
+                </div>
+                <div class="quote-card" style="--quote-color: #667eea;">
+                    <p class="quote-text">泰然自若、怡然自乐、悠然自得——这不是思想修养问题，主要是生理问题。</p>
+                    <p class="quote-source">—— 关于血清素</p>
+                </div>
+                <div class="quote-card" style="--quote-color: #95E1D3;">
+                    <p class="quote-text">我们不但应该允许快乐、理解快乐，而且应该欣赏快乐，追求快乐。</p>
+                    <p class="quote-source">—— 关于内啡肽</p>
+                </div>
+                <div class="quote-card" style="--quote-color: #f093fb;">
+                    <p class="quote-text">上瘾是让你感到快乐的事物在不断减少，幸福是让你感到快乐的事物在不断增加。</p>
+                    <p class="quote-source">—— Andrew Huberman</p>
+                </div>
+                <div class="quote-card" style="--quote-color: #764ba2;">
+                    <p class="quote-text">「投入→反馈」永远高于「预测→实现」。球迷猜的再准也只是球迷，球员踢的再差也真干了。</p>
+                    <p class="quote-source">—— 关于行动</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 多巴胺详解 -->
+        <section id="dopamine" class="fade-in">
+            <div class="collapsible active" style="--header-color: #FF6B6B; --header-color-end: #ee5a5a;">
+                <div class="collapsible-header" onclick="toggleCollapsible(this.parentElement)">
+                    <h3>🔥 多巴胺：追逐的快乐</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <h4 style="color: #FF6B6B; font-size: 1.3rem; margin-bottom: 20px;">⚡ 快多巴胺 vs 慢多巴胺</h4>
+                        
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>特性</th>
+                                    <th style="background: linear-gradient(135deg, #ff4757, #ff6b81);">快多巴胺 ⚡</th>
+                                    <th style="background: linear-gradient(135deg, #2ed573, #7bed9f);">慢多巴胺 🌱</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>触发模式</strong></td>
+                                    <td>预测 → 实现</td>
+                                    <td>努力 → 进展</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>特点</strong></td>
+                                    <td>高起点、小波动、快消退</td>
+                                    <td>低起点、慢上升、慢消退</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>来源</strong></td>
+                                    <td>刷短视频、赌博、甜食</td>
+                                    <td>读书、锻炼、深度工作</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>结果</strong></td>
+                                    <td><span class="highlight-red">让你上瘾</span></td>
+                                    <td><span class="highlight-green">给你赋能</span></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>受体类型</strong></td>
+                                    <td>D2受体（易脱敏）</td>
+                                    <td>D1受体（促进学习）</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 style="color: #FF6B6B; font-size: 1.2rem; margin: 30px 0 20px;">🛠️ 培养慢多巴胺的方法</h4>
+                        <div class="method-cards">
+                            <div class="method-card" style="--card-color: #ff4757;">
+                                <div class="method-icon">📱</div>
+                                <div class="method-title">限制手机时间</div>
+                                <div class="method-desc">每天只在特定时段刷手机，先看阳光再看屏幕</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #3742fa;">
+                                <div class="method-icon">🛏️</div>
+                                <div class="method-title">起床整理床铺</div>
+                                <div class="method-desc">第一个小成就启动正反馈循环</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #2ed573;">
+                                <div class="method-icon">🥶</div>
+                                <div class="method-title">冷水浴</div>
+                                <div class="method-desc">从快多巴胺中校准系统</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #a55eea;">
+                                <div class="method-icon">🎯</div>
+                                <div class="method-title">设定长远目标</div>
+                                <div class="method-desc">追逐目标本身就是奖励</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 催产素详解 -->
+        <section id="oxytocin" class="fade-in">
+            <div class="collapsible" style="--header-color: #4ECDC4; --header-color-end: #44a08d;">
+                <div class="collapsible-header" onclick="toggleCollapsible(this.parentElement)">
+                    <h3>💝 催产素：联结的力量</h3>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div style="background: linear-gradient(135deg, rgba(78,205,196,0.2), rgba(68,160,141,0.1)); padding: 25px; border-radius: 16px; margin-bottom: 25px;">
+                            <p style="font-size: 1.2rem; text-align: center;">
+                                <span class="highlight-purple">催产素水平低</span> 的两大表现：<br>
+                                <strong style="font-size: 1.4rem;">① 感到孤独 &nbsp;&nbsp; ② 缺乏自信</strong>
+                            </p>
+                        </div>
+
+                        <h4 style="color: #4ECDC4; font-size: 1.2rem; margin-bottom: 20px;">🔄 催产素的良性循环</h4>
+                        <div class="timeline">
+                            <div class="timeline-item" style="--item-color: #4ECDC4;">
+                                <div class="timeline-title">帮助他人</div>
+                                <p>为别人做点什么，哪怕是小事</p>
+                            </div>
+                            <div class="timeline-item" style="--item-color: #2ed573;">
+                                <div class="timeline-title">催产素提升</div>
+                                <p>大脑自动释放温暖与平静感</p>
+                            </div>
+                            <div class="timeline-item" style="--item-color: #FFE66D;">
+                                <div class="timeline-title">自信增强</div>
+                                <p>内心声音变得鼓励而非批评</p>
+                            </div>
+                            <div class="timeline-item" style="--item-color: #FF6B6B;">
+                                <div class="timeline-title">更敢社交</div>
+                                <p>进入正反馈，关系越来越好</p>
+                            </div>
+                        </div>
+
+                        <h4 style="color: #4ECDC4; font-size: 1.2rem; margin: 30px 0 20px;">💡 提升催产素的方法</h4>
+                        <div class="method-cards">
+                            <div class="method-card" style="--card-color: #4ECDC4;">
+                                <div class="method-icon">🤗</div>
+                                <div class="method-title">拥抱</div>
+                                <div class="method-desc">身体接触中效果最显著</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #f093fb;">
+                                <div class="method-icon">🤝</div>
+                                <div class="method-title">真实社交</div>
+                                <div class="method-desc">面对面交流胜过文字</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #667eea;">
+                                <div class="method-icon">🎁</div>
+                                <div class="method-title">送出礼物</div>
+                                <div class="method-desc">送礼比收礼更让人满足</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #ff7f50;">
+                                <div class="method-icon">🐕</div>
+                                <div class="method-title">拥抱宠物</div>
+                                <div class="method-desc">没人时的替代方案</div>
+                            </div>
+                        </div>
+
+                        <div style="background: rgba(255,107,107,0.1); padding: 20px; border-radius: 12px; margin-top: 25px; border-left: 4px solid #FF6B6B;">
+                            <p style="font-weight: 600; color: #FF6B6B; margin-bottom: 10px;">⚠️ 催产素的黑暗面</p>
+                            <p>催产素强化的是「我们是一伙的」，而不是「大家都是朋友」。它能增强内部团结，但在群体竞争情境下，也可能增强对外部的敌意。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 血清素详解 -->
+        <section id="serotonin" class="fade-in">
+            <div class="collapsible" style="--header-color: #f0c929; --header-color-end: #d4a91e;">
+                <div class="collapsible-header" onclick="toggleCollapsible(this.parentElement)">
+                    <h3 style="color: #333;">☀️ 血清素：平和的基线</h3>
+                    <span class="collapsible-icon" style="color: #333;">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div style="display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 25px;">
+                            <div style="flex: 1; min-width: 280px; background: linear-gradient(135deg, #FFE66D, #f0c929); padding: 25px; border-radius: 16px; color: #333;">
+                                <h4 style="margin-bottom: 15px;">🎯 血清素的核心作用</h4>
+                                <p>让你的情绪稳定地保持在<br><strong style="font-size: 1.2rem;">「不以物喜不以己悲」</strong><br>的基线水平</p>
+                            </div>
+                            <div style="flex: 1; min-width: 280px; background: linear-gradient(135deg, rgba(255,230,109,0.2), rgba(240,201,41,0.1)); padding: 25px; border-radius: 16px;">
+                                <h4 style="color: #d4a91e; margin-bottom: 15px;">⚡ 回弹力机制</h4>
+                                <p>当情绪剧烈波动时，血清素帮助你平复情绪，回到基线。就像弹簧一样，拉高或压低都会往回弹。</p>
+                            </div>
+                        </div>
+
+                        <h4 style="color: #d4a91e; font-size: 1.2rem; margin: 30px 0 20px;">🌿 提升血清素的方法</h4>
+                        <div class="method-cards">
+                            <div class="method-card" style="--card-color: #FFE66D;">
+                                <div class="method-icon">🌲</div>
+                                <div class="method-title">森林浴</div>
+                                <div class="method-desc">日本研究证实的解压良方</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #ff7f50;">
+                                <div class="method-icon">🌅</div>
+                                <div class="method-title">晒太阳</div>
+                                <div class="method-desc">先看阳光再看手机</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #4ECDC4;">
+                                <div class="method-icon">🌬️</div>
+                                <div class="method-title">慢呼吸</div>
+                                <div class="method-desc">共鸣式呼吸 / 生理叹息</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #a55eea;">
+                                <div class="method-icon">😴</div>
+                                <div class="method-title">优质睡眠</div>
+                                <div class="method-desc">神经恢复的基础</div>
+                            </div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 25px; border-radius: 16px; margin-top: 25px; text-align: center;">
+                            <p style="font-size: 1.2rem;">
+                                <strong>生理叹息法：</strong><br>
+                                用鼻子深吸气 → 追加一次短促吸气 → 用嘴长长呼出<br>
+                                <span style="font-size: 0.9rem; opacity: 0.9;">反复10次，立即见效</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 内啡肽详解 -->
+        <section id="endorphin" class="fade-in">
+            <div class="collapsible" style="--header-color: #95E1D3; --header-color-end: #6dd5c8;">
+                <div class="collapsible-header" onclick="toggleCollapsible(this.parentElement)">
+                    <h3 style="color: #333;">⚡ 内啡肽：极致的奖励</h3>
+                    <span class="collapsible-icon" style="color: #333;">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div style="background: linear-gradient(135deg, #95E1D3, #6dd5c8); padding: 30px; border-radius: 16px; color: #333; text-align: center; margin-bottom: 25px;">
+                            <p style="font-size: 1.3rem; font-weight: 600;">
+                                在所有神经递质之中，<br>
+                                <span style="font-size: 1.6rem;">内啡肽提供最强烈的快乐</span>
+                            </p>
+                        </div>
+
+                        <h4 style="color: #6dd5c8; font-size: 1.2rem; margin-bottom: 20px;">🎭 五种快乐的本质对比</h4>
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>神经物质</th>
+                                    <th>快乐类型</th>
+                                    <th>作用</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="highlight-red">多巴胺</span></td>
+                                    <td>兴奋 · 刺激</td>
+                                    <td>让你追求快乐</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-purple">催产素</span></td>
+                                    <td>温暖 · 亲密</td>
+                                    <td>让你分享快乐</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-orange">血清素</span></td>
+                                    <td>平和 · 稳定</td>
+                                    <td>让你保持快乐</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-green">内啡肽</span></td>
+                                    <td>满足 · 强烈</td>
+                                    <td>让你享受快乐</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-blue">内源性大麻素</span></td>
+                                    <td>柔和 · 放松</td>
+                                    <td>让你忘却烦恼</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <h4 style="color: #6dd5c8; font-size: 1.2rem; margin: 30px 0 20px;">🏃 释放内啡肽的方法</h4>
+                        <div class="method-cards">
+                            <div class="method-card" style="--card-color: #FF6B6B;">
+                                <div class="method-icon">🏃</div>
+                                <div class="method-title">剧烈运动</div>
+                                <div class="method-desc">跑向极限，苦尽甘来</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #ff7f50;">
+                                <div class="method-icon">🧖</div>
+                                <div class="method-title">热水澡/桑拿</div>
+                                <div class="method-desc">温度带来的轻微痛感</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #a55eea;">
+                                <div class="method-icon">🎤</div>
+                                <div class="method-title">唱歌</div>
+                                <div class="method-desc">卡拉OK解压有道理</div>
+                            </div>
+                            <div class="method-card" style="--card-color: #4ECDC4;">
+                                <div class="method-icon">😂</div>
+                                <div class="method-title">大笑</div>
+                                <div class="method-desc">脱口秀的神经科学</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="glass-card fade-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 30px; text-align: center; background: linear-gradient(135deg, #667eea, #764ba2); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                🧠 DOSE系统思维导图
+            </h2>
+            <div class="mindmap-container">
+                <div class="mindmap" style="height: 400px;">
+                    <div class="mindmap-center">
+                        神经调节<br>DOSE
+                    </div>
+                    <div class="mindmap-branches">
+                        <div class="branch" style="top: 50%; left: calc(50% + 80px); transform: translateY(-50%);">
+                            <div class="branch-line"></div>
+                            <div class="branch-node">🔥 多巴胺<br><small>追求 · 激励</small></div>
+                        </div>
+                        <div class="branch" style="top: 50%; right: calc(50% + 80px); transform: translateY(-50%); flex-direction: row-reverse;">
+                            <div class="branch-line" style="background: linear-gradient(270deg, transparent, #4ECDC4);"></div>
+                            <div class="branch-node" style="background: #4ECDC4;">💝 催产素<br><small>联结 · 信任</small></div>
+                        </div>
+                        <div class="branch" style="top: 15%; left: calc(50% + 60px);">
+                            <div class="branch-line" style="transform: rotate(-30deg); background: linear-gradient(90deg, transparent, #FFE66D);"></div>
+                            <div class="branch-node" style="background: #FFE66D; color: #333;">☀️ 血清素<br><small>平和 · 稳定</small></div>
+                        </div>
+                        <div class="branch" style="bottom: 15%; left: calc(50% + 60px);">
+                            <div class="branch-line" style="transform: rotate(30deg); background: linear-gradient(90deg, transparent, #95E1D3);"></div>
+                            <div class="branch-node" style="background: #95E1D3; color: #333;">⚡ 内啡肽<br><small>奖励 · 快乐</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 行动清单 -->
+        <section class="glass-card fade-in">
+            <h2 style="font-size: 1.8rem; margin-bottom: 25px; background: linear-gradient(135deg, #2ed573, #7bed9f); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                ✅ 今日行动清单
+            </h2>
+            <div style="display: grid; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 15px; padding: 18px; background: rgba(255,107,107,0.1); border-radius: 12px; border-left: 4px solid #FF6B6B;">
+                    <span style="font-size: 1.5rem;">🔥</span>
+                    <div>
+                        <strong style="color: #FF6B6B;">多巴胺：</strong>
+                        <span>起床整理床铺，设定今日一个小目标</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; padding: 18px; background: rgba(78,205,196,0.1); border-radius: 12px; border-left: 4px solid #4ECDC4;">
+                    <span style="font-size: 1.5rem;">💝</span>
+                    <div>
+                        <strong style="color: #4ECDC4;">催产素：</strong>
+                        <span>给家人/朋友一个拥抱，真诚赞美一个人</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; padding: 18px; background: rgba(255,230,109,0.1); border-radius: 12px; border-left: 4px solid #FFE66D;">
+                    <span style="font-size: 1.5rem;">☀️</span>
+                    <div>
+                        <strong style="color: #d4a91e;">血清素：</strong>
+                        <span>出门前先看阳光，做5分钟慢呼吸</span>
+                    </div>
+                </div>
+                <div style="display: flex; align-items: center; gap: 15px; padding: 18px; background: rgba(149,225,211,0.1); border-radius: 12px; border-left: 4px solid #95E1D3;">
+                    <span style="font-size: 1.5rem;">⚡</span>
+                    <div>
+                        <strong style="color: #6dd5c8;">内啡肽：</strong>
+                        <span>运动到微微出汗，或洗个热水澡</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 终极结论 -->
+        <section class="glass-card fade-in" style="text-align: center; padding: 50px 30px;">
+            <h2 style="font-size: 2rem; margin-bottom: 30px; background: linear-gradient(135deg, #FF6B6B, #4ECDC4, #FFE66D, #95E1D3); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                💫 终极启示
+            </h2>
+            <p style="font-size: 1.3rem; line-height: 2; max-width: 700px; margin: 0 auto 30px;">
+                我们不是完全靠理性驱动的机器。<br>
+                我们<span class="highlight-red">需要快乐</span>，需要各种层面、各种方式的快乐。<br><br>
+                如果你感到压力和痛苦，想让自己暂时快乐一下，<br>
+                <strong style="font-size: 1.4rem; color: #667eea;">你完全应该这么做。</strong>
+            </p>
+            <div style="background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 30px; border-radius: 20px; max-width: 600px; margin: 0 auto;">
+                <p style="font-size: 1.2rem; margin: 0;">
+                    通过理解并主动调节这四种神经物质，<br>
+                    我们不仅能缓解现代生活的焦虑，<br>
+                    更能设计出<strong>更充实、更有韧性的生活方式</strong>。
+                </p>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer style="text-align: center; padding: 40px 20px; opacity: 0.7;">
+            <p>基于《The DOSE Effect》by Tj Power | 万维钢解读</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">🧠 理解大脑，掌控人生</p>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('themeIcon');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // 折叠面板
+        function toggleCollapsible(element) {
+            element.classList.toggle('active');
+        }
+
+        // 滚动到指定区域
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 进度条
+        window.addEventListener('scroll', () => {
+            const scrollTop = window.scrollY;
+            const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / docHeight) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+        // 初始化第一个折叠面板为打开状态
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.fade-in').forEach(el => {
+                setTimeout(() => el.classList.add('visible'), 100);
+            });
+        });
+    </script>
+</body>
+</html>

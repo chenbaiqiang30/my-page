@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>错信：理性人的非理性陷阱 | 深度解读</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --info: #3b82f6;
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        .dark-mode {
+            --glass-bg: rgba(30, 41, 59, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.5s ease;
+        }
+
+        .background-pattern {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 80%, rgba(255,255,255,0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255,255,255,0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(255,255,255,0.05) 0%, transparent 30%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 顶部导航 */
+        .nav-bar {
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 25px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+
+        .nav-logo {
+            font-size: 1.2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--danger));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: linear-gradient(135deg, #fcd34d, #f59e0b);
+            border-radius: 13px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .dark-mode .theme-toggle {
+            background: linear-gradient(135deg, #312e81, #4c1d95);
+        }
+
+        .theme-toggle::after {
+            content: '☀️';
+            position: absolute;
+            left: 3px;
+            top: 2px;
+            width: 22px;
+            height: 22px;
+            background: white;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .dark-mode .theme-toggle::after {
+            left: 25px;
+            content: '🌙';
+        }
+
+        .reading-progress {
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--danger));
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+            transition: width 0.1s ease;
+        }
+
+        /* 头部英雄区 */
+        .hero {
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--primary), var(--danger));
+            color: white;
+            border-radius: 25px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--text-primary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4em;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .meta-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+
+        /* 金句卡片区 */
+        .quotes-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .quote-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 30px 60px -20px rgba(99, 102, 241, 0.3);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 5em;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .quote-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            color: var(--text-primary);
+            position: relative;
+            z-index: 1;
+            margin-bottom: 15px;
+        }
+
+        .quote-source {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quote-tag {
+            display: inline-block;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, var(--primary), var(--danger));
+            color: white;
+            border-radius: 15px;
+            font-size: 0.75em;
+            font-weight: 600;
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--danger), #f97316);
+            color: white;
+            padding: 25px 45px;
+            border-radius: 25px;
+            font-size: 1.3em;
+            font-weight: 700;
+            box-shadow: 0 15px 40px -10px rgba(239, 68, 68, 0.5);
+            position: relative;
+            z-index: 10;
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+            width: 100%;
+            margin-top: 40px;
+            position: relative;
+        }
+
+        .mindmap-branches::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--danger), var(--primary));
+        }
+
+        .branch {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            border: 2px solid var(--glass-border);
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .branch:hover {
+            transform: scale(1.03);
+            border-color: var(--primary);
+        }
+
+        .branch::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: var(--primary);
+        }
+
+        .branch-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            margin-bottom: 15px;
+        }
+
+        .branch:nth-child(1) .branch-icon { background: linear-gradient(135deg, #ef4444, #f97316); }
+        .branch:nth-child(2) .branch-icon { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+        .branch:nth-child(3) .branch-icon { background: linear-gradient(135deg, #8b5cf6, #a855f7); }
+        .branch:nth-child(4) .branch-icon { background: linear-gradient(135deg, #10b981, #22c55e); }
+
+        .branch-title {
+            font-size: 1.1em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .branch-items {
+            list-style: none;
+        }
+
+        .branch-items li {
+            padding: 8px 0;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            border-bottom: 1px dashed var(--glass-border);
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .branch-items li:last-child {
+            border-bottom: none;
+        }
+
+        .branch-items li::before {
+            content: '→';
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* 信息图 */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .funnel-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 30px 0;
+        }
+
+        .funnel-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            text-align: center;
+            color: var(--text-primary);
+        }
+
+        .funnel-stage {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 10px 0;
+            position: relative;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .funnel-stage:hover {
+            transform: scale(1.05);
+        }
+
+        .funnel-stage:nth-child(2) { width: 100%; }
+        .funnel-stage:nth-child(3) { width: 85%; }
+        .funnel-stage:nth-child(4) { width: 70%; }
+        .funnel-stage:nth-child(5) { width: 55%; }
+        .funnel-stage:nth-child(6) { width: 40%; }
+
+        .funnel-content {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 40px;
+            border-radius: 15px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.5);
+        }
+
+        .funnel-stage:nth-child(3) .funnel-content {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            box-shadow: 0 10px 30px -10px rgba(245, 158, 11, 0.5);
+        }
+
+        .funnel-stage:nth-child(4) .funnel-content {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            box-shadow: 0 10px 30px -10px rgba(249, 115, 22, 0.5);
+        }
+
+        .funnel-stage:nth-child(5) .funnel-content {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.5);
+        }
+
+        .funnel-stage:nth-child(6) .funnel-content {
+            background: linear-gradient(135deg, #7c3aed, #5b21b6);
+            box-shadow: 0 10px 30px -10px rgba(124, 58, 237, 0.5);
+        }
+
+        .funnel-label {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+
+        .funnel-desc {
+            font-size: 0.85em;
+            opacity: 0.9;
+        }
+
+        .funnel-arrow {
+            font-size: 1.5em;
+            color: var(--text-secondary);
+            margin: 5px 0;
+        }
+
+        /* 内容卡片 */
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .content-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 25px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .card-header {
+            padding: 25px 30px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .card-header:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15), rgba(139, 92, 246, 0.15));
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .card-number {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .card-title h3 {
+            font-size: 1.25em;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-toggle {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            transition: all 0.3s ease;
+        }
+
+        .card-toggle.active {
+            transform: rotate(180deg);
+        }
+
+        .card-body {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card-body.active {
+            padding: 30px;
+            max-height: 2000px;
+        }
+
+        /* 高亮文本 */
+        .highlight-red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(239, 68, 68, 0.1));
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #dc2626;
+        }
+
+        .dark-mode .highlight-red {
+            color: #fca5a5;
+        }
+
+        .highlight-blue {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(59, 130, 246, 0.1));
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #2563eb;
+        }
+
+        .dark-mode .highlight-blue {
+            color: #93c5fd;
+        }
+
+        .highlight-green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1));
+            padding: 2px 8px;
+            border-radius: 5px;
+            font-weight: 600;
+            color: #059669;
+        }
+
+        .dark-mode .highlight-green {
+            color: #6ee7b7;
+        }
+
+        /* 专家评论 */
+        .expert-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .expert-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 25px;
+            background: linear-gradient(135deg, var(--primary), var(--danger));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            box-shadow: 0 15px 30px -10px rgba(99, 102, 241, 0.4);
+        }
+
+        .expert-info h3 {
+            font-size: 1.4em;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+        }
+
+        .expert-info p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        .expert-content {
+            display: grid;
+            gap: 20px;
+        }
+
+        .expert-point {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+            border-left: 4px solid var(--primary);
+            padding: 25px;
+            border-radius: 0 15px 15px 0;
+        }
+
+        .expert-point h4 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .expert-point p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            line-height: 1.9;
+        }
+
+        /* 统计数据卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px -15px rgba(99, 102, 241, 0.3);
+        }
+
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--danger));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 8px;
+        }
+
+        /* 关键洞察 */
+        .insights-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 30px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .insight-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+            padding: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .insight-item:hover {
+            transform: translateX(10px);
+        }
+
+        .insight-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--danger));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            flex-shrink: 0;
+        }
+
+        .insight-content h4 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .insight-content p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            margin-top: 40px;
+        }
+
+        .footer-quote {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-style: italic;
+        }
+
+        .footer-meta {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero-meta {
+                flex-direction: column;
+                gap: 20px;
+            }
+
+            .mindmap-branches {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .quotes-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .funnel-stage {
+                width: 100% !important;
+            }
+
+            .nav-logo {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .mindmap-branches {
+                grid-template-columns: 1fr;
+            }
+
+            .container {
+                padding: 15px;
+            }
+        }
+
+        /* 交互式提示框 */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: help;
+            border-bottom: 2px dotted var(--primary);
+        }
+
+        .tooltip:hover::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--text-primary);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            white-space: nowrap;
+            z-index: 100;
+            opacity: 0;
+            animation: tooltipFade 0.3s forwards;
+        }
+
+        @keyframes tooltipFade {
+            to { opacity: 1; }
+        }
+
+        /* 列表样式 */
+        .styled-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .styled-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .styled-list li:last-child {
+            border-bottom: none;
+        }
+
+        .styled-list li::before {
+            content: '✦';
+            color: var(--primary);
+            font-size: 0.9em;
+            margin-top: 3px;
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .comparison-table th {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .comparison-table td {
+            color: var(--text-secondary);
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(99, 102, 241, 0.05);
+        }
+    </style>
+</head>
+<body>
+    <div class="reading-progress" id="progress"></div>
+    <div class="background-pattern"></div>
+
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="nav-bar">
+            <div class="nav-logo">📚 深度阅读</div>
+            <div class="nav-controls">
+                <button class="theme-toggle" id="themeToggle" aria-label="切换主题"></button>
+            </div>
+        </nav>
+
+        <!-- 英雄区 -->
+        <header class="hero animate-in">
+            <span class="hero-badge">📖 书籍解读 · 认知升级</span>
+            <h1>错信：理性人的非理性陷阱</h1>
+            <p class="hero-subtitle">为什么聪明人也会相信阴谋论？</p>
+            <div class="hero-meta">
+                <div class="meta-item">
+                    <div class="meta-icon">✍️</div>
+                    <div>
+                        <strong>丹·艾瑞里</strong>
+                        <div style="font-size: 0.85em;">杜克大学教授</div>
+                    </div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon">📅</div>
+                    <div>
+                        <strong>2023年9月</strong>
+                        <div style="font-size: 0.85em;">行为经济学新作</div>
+                    </div>
+                </div>
+                <div class="meta-item">
+                    <div class="meta-icon">🎯</div>
+                    <div>
+                        <strong>错信漏斗模型</strong>
+                        <div style="font-size: 0.85em;">四维度解析</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 金句区 -->
+        <section class="quotes-section animate-in">
+            <h2 class="section-title">💎 核心金句</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p class="quote-text">在现代社会做个明白人很不容易。世界过于复杂，稀缺大脑很不适应这个时代。</p>
+                    <div class="quote-source">
+                        <span class="quote-tag">认知困境</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">阴谋论只是症状，真正的病更深。放下书本，泪洒衣襟，众生皆是可怜人。</p>
+                    <div class="quote-source">
+                        <span class="quote-tag">人文关怀</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">能用愚蠢解释就不要用恶意——社会上很多不合理的事情，是愚蠢、错误和不得已造成的。</p>
+                    <div class="quote-source">
+                        <span class="quote-tag">汉隆剃刀</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">信任可以因为一件小事而打破，又可以因为一件小事而建立。信任，是社会的资本。</p>
+                    <div class="quote-source">
+                        <span class="quote-tag">社会资本</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">世界不完美，但不完美也可以出现在这里。如果你非得找一个完美的社群，你只会走向错信漏斗。</p>
+                    <div class="quote-source">
+                        <span class="quote-tag">务实智慧</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">当极端被当做忠诚，常识就成了叛逆。</p>
+                    <div class="quote-source">
+                        <span class="quote-tag">组织病态</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section animate-in">
+            <h2 class="section-title">🧠 错信漏斗模型</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">错信漏斗 Funnel of Misbelief</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-icon">💔</div>
+                        <h4 class="branch-title">情感因素</h4>
+                        <ul class="branch-items">
+                            <li>不可预测的压力</li>
+                            <li>稀缺心态降智</li>
+                            <li>社会孤立感</li>
+                            <li>寻找迁怒对象</li>
+                        </ul>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-icon">🧩</div>
+                        <h4 class="branch-title">认知偏误</h4>
+                        <ul class="branch-items">
+                            <li>确认偏误（初级）</li>
+                            <li>动机推理（高级）</li>
+                            <li>过度自信</li>
+                            <li>解决方案厌恶</li>
+                        </ul>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-icon">🎭</div>
+                        <h4 class="branch-title">人格特质</h4>
+                        <ul class="branch-items">
+                            <li>模式识别倾向强</li>
+                            <li>神神叨叨</li>
+                            <li>自恋型人格</li>
+                            <li>记忆力偏差</li>
+                        </ul>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-icon">👥</div>
+                        <h4 class="branch-title">社会机制</h4>
+                        <ul class="branch-items">
+                            <li>被排斥的痛苦</li>
+                            <li>抱团取暖</li>
+                            <li>认知失调</li>
+                            <li>组织极端化</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 漏斗信息图 -->
+        <section class="infographic animate-in">
+            <h2 class="section-title">📊 陷入深渊的五个阶段</h2>
+            <div class="funnel-container">
+                <p class="funnel-title">从正常人到错信者的渐进过程</p>
+                
+                <div class="funnel-stage">
+                    <div class="funnel-content">
+                        <div class="funnel-label">🌤️ 阶段一：压力来袭</div>
+                        <div class="funnel-desc">失业、疾病、不可预测事件让人感到失控</div>
+                    </div>
+                </div>
+                <div class="funnel-arrow">⬇️</div>
+                
+                <div class="funnel-stage">
+                    <div class="funnel-content">
+                        <div class="funnel-label">🔍 阶段二：寻找解释</div>
+                        <div class="funnel-desc">需要一个"坏人"来解释一切苦难</div>
+                    </div>
+                </div>
+                <div class="funnel-arrow">⬇️</div>
+                
+                <div class="funnel-stage">
+                    <div class="funnel-content">
+                        <div class="funnel-label">🎯 阶段三：确认偏误</div>
+                        <div class="funnel-desc">只接收符合预设的信息，屏蔽反面证据</div>
+                    </div>
+                </div>
+                <div class="funnel-arrow">⬇️</div>
+                
+                <div class="funnel-stage">
+                    <div class="funnel-content">
+                        <div class="funnel-label">👥 阶段四：抱团取暖</div>
+                        <div class="funnel-desc">加入同类社群，获得认同感和归属感</div>
+                    </div>
+                </div>
+                <div class="funnel-arrow">⬇️</div>
+                
+                <div class="funnel-stage">
+                    <div class="funnel-content">
+                        <div class="funnel-label">🌀 阶段五：深陷漏斗</div>
+                        <div class="funnel-desc">认知失调 + 组织极端化 = 几乎无法挽救</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心内容展开 -->
+        <section class="content-section">
+            <h2 class="section-title">📖 深度解析</h2>
+
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <div class="card-number" style="background: linear-gradient(135deg, #ef4444, #f97316);">1</div>
+                        <h3>情感：三把刀摧残成年人</h3>
+                    </div>
+                    <div class="card-toggle">▼</div>
+                </div>
+                <div class="card-body">
+                    <p>成年人面临三种压力来源，每一种都可能把人推向阴谋论：</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">🗡️</div>
+                            <div class="stat-label">不可预测的压力<br><small>导致习得性无助</small></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">🧠</div>
+                            <div class="stat-label">稀缺心态<br><small>降低25%智力</small></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">😔</div>
+                            <div class="stat-label">孤立感<br><small>产生被害妄想</small></div>
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 20px;">研究发现，<span class="highlight-blue">印度甘蔗农民在收获前比收获后智力得分低25%</span>。稀缺心态真的会让人变笨。</p>
+                    
+                    <p style="margin-top: 15px;"><strong>解药：</strong><span class="highlight-green">安全依恋</span>——从小被父母真诚关爱的人，最能从压力中恢复，不容易信阴谋论。好消息是，安全依恋不是从小定型的，每增加一分安全感，就多一分恢复力。</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <div class="card-number" style="background: linear-gradient(135deg, #3b82f6, #06b6d4);">2</div>
+                        <h3>认知：从偏误到主动欺骗自己</h3>
+                    </div>
+                    <div class="card-toggle">▼</div>
+                </div>
+                <div class="card-body">
+                    <table class="comparison-table">
+                        <tr>
+                            <th>阶段</th>
+                            <th>机制</th>
+                            <th>表现</th>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-blue">初级：确认偏误</span></td>
+                            <td>选择性吸收</td>
+                            <td>只看想看的，对反面证据视而不见</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-red">高级：动机推理</span></td>
+                            <td>主动辩护</td>
+                            <td>不但不看反面证据，还认为提供者居心不良</td>
+                        </tr>
+                    </table>
+
+                    <p style="margin-top: 20px;">经典实验：研究者让共和党人看两篇关于气候变暖的文章——</p>
+                    <ul class="styled-list">
+                        <li>第一篇主张政府监管 → <span class="highlight-red">只有22%</span>同意变暖事实</li>
+                        <li>第二篇主张自由市场 → <span class="highlight-green">55%</span>同意变暖事实</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><strong>启示：</strong>人们先有了想要的解决方案，再决定是否承认事实。事实不重要，立场才重要。</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <div class="card-number" style="background: linear-gradient(135deg, #8b5cf6, #a855f7);">3</div>
+                        <h3>人格：魔怔人画像</h3>
+                    </div>
+                    <div class="card-toggle">▼</div>
+                </div>
+                <div class="card-body">
+                    <p>不是所有人都容易成为阴谋论患者。研究发现，容易"魔怔"的人有几个共同特点：</p>
+                    
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">🔮</div>
+                            <div class="stat-label">神神叨叨<br><small>相信超自然因果</small></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">👁️</div>
+                            <div class="stat-label">模式识别过强<br><small>在随机中发现规律</small></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">🪞</div>
+                            <div class="stat-label">自恋型人格<br><small>渴望成为关注中心</small></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">📝</div>
+                            <div class="stat-label">记忆偏差<br><small>容易无中生有</small></div>
+                        </div>
+                    </div>
+
+                    <p style="margin-top: 20px;"><strong>有趣发现：</strong>研究"外星人绑架"案例的人发现，这些人其实都是<span class="tooltip" data-tip="正常的生理现象，有8%的人经历过">睡眠瘫痪</span>（鬼压床）的受害者。但只有具备以上特质的人，才会把这种正常现象解释成被外星人绑架。</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <div class="card-number" style="background: linear-gradient(135deg, #10b981, #22c55e);">4</div>
+                        <h3>社会：失意者联盟的向心力</h3>
+                    </div>
+                    <div class="card-toggle">▼</div>
+                </div>
+                <div class="card-body">
+                    <p>被社会排斥的感觉，<span class="highlight-red">在大脑中的神经反应与身体疼痛一样</span>。这种痛苦驱使人们寻找归属。</p>
+                    
+                    <p style="margin-top: 15px;">阴谋论社区的特点：</p>
+                    <ul class="styled-list">
+                        <li><strong>极度友爱</strong>——哪怕发不靠谱的帖子也有人吹捧</li>
+                        <li><strong>没有质疑</strong>——提出质疑会被视为卧底</li>
+                        <li><strong>身份认同</strong>——比主流社会的群体认同感强得多</li>
+                    </ul>
+
+                    <p style="margin-top: 20px;"><strong>两个加速机制：</strong></p>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">🔄</div>
+                            <div class="stat-label">认知失调<br><small>付出越多越相信</small></div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">⬆️</div>
+                            <div class="stat-label">极端化竞赛<br><small>争当最忠诚的人</small></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <section class="expert-section animate-in">
+            <div class="expert-header">
+                <div class="expert-avatar">🎓</div>
+                <div class="expert-info">
+                    <h3>全球精英视角</h3>
+                    <p>基于跨学科分析的深度洞察</p>
+                </div>
+            </div>
+            <div class="expert-content">
+                <div class="expert-point">
+                    <h4>🔬 从进化心理学看</h4>
+                    <p>阴谋论思维可能是远古生存机制的"过度激活"。在丛林中，对威胁保持高度警觉能救命；但在现代社会，这种机制反而制造焦虑。<strong>问题不在于怀疑——怀疑是健康的，问题在于"确信有人在作恶"。</strong></p>
+                </div>
+                <div class="expert-point">
+                    <h4>📊 从系统论看</h4>
+                    <p>艾瑞里揭示的"错信漏斗"本质是一个<strong>正反馈系统</strong>：压力→寻找解释→确认偏误→加入社群→更极端→更被排斥→更大压力。打破循环的关键在早期干预——一旦进入社会层面，几乎无解。</p>
+                </div>
+                <div class="expert-point">
+                    <h4>🌐 从社会资本看</h4>
+                    <p>信任是现代社会运转的润滑油。当合同和手续越来越复杂，反而说明信任在流失。<strong>官僚主义的本质是"走程序保护自己"，结果却让机构变得不可理解，进一步减少信任</strong>——这是一个悲剧性的悖论。</p>
+                </div>
+                <div class="expert-point">
+                    <h4>💡 给普通人的建议</h4>
+                    <p>不要试图用逻辑说服深度错信者——那只会让他们更坚定。<strong>富兰克林效应</strong>更有效：让对方帮你一个小忙，建立信任关系。更重要的是预防：主动加入主流社会，接受世界的不完美，找到自己能贡献的独特价值。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 关键洞察 -->
+        <section class="insights-section animate-in">
+            <h2 class="section-title">🎯 行动指南</h2>
+            <div class="insight-list">
+                <div class="insight-item">
+                    <div class="insight-icon">🛡️</div>
+                    <div class="insight-content">
+                        <h4>给自己打预防针</h4>
+                        <p>感觉压力大、被排斥、想找人怪罪时，警惕自己正在滑向漏斗入口。</p>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">🤝</div>
+                    <div class="insight-content">
+                        <h4>不要疏远"魔怔"的朋友</h4>
+                        <p>越疏远他们，越把他们推向那个社群。用"先同步后领导"的方式保持联系。</p>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">🔍</div>
+                    <div class="insight-content">
+                        <h4>区分怀疑和错信</h4>
+                        <p>怀疑是健康的——专家和媒体确实常错。错信是认定"有人故意作恶"。</p>
+                    </div>
+                </div>
+                <div class="insight-item">
+                    <div class="insight-icon">🌟</div>
+                    <div class="insight-content">
+                        <h4>加入主流，贡献价值</h4>
+                        <p>主流不完美，但接受不完美才能建立信任。找到你独特的贡献，让局面更好。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 阴谋论 vs 科学解释对比图 -->
+        <section class="infographic animate-in">
+            <h2 class="section-title">⚖️ 两种解释风格</h2>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px;">
+                <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05)); padding: 30px; border-radius: 20px; border-left: 4px solid #10b981;">
+                    <h3 style="color: #10b981; margin-bottom: 15px;">🔬 科学家的解释</h3>
+                    <ul class="styled-list">
+                        <li>追求<strong>简单</strong>，用最少的假设解释最多的现象</li>
+                        <li>使用奥卡姆剃刀：简单原因足够就不用复杂原因</li>
+                        <li>承认不确定性，欢迎证伪</li>
+                        <li>相信蝴蝶效应：小原因可以导致大结果</li>
+                    </ul>
+                </div>
+                <div style="background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05)); padding: 30px; border-radius: 20px; border-left: 4px solid #ef4444;">
+                    <h3 style="color: #ef4444; margin-bottom: 15px;">🕵️ 阴谋论者的解释</h3>
+                    <ul class="styled-list">
+                        <li>喜欢<strong>复杂</strong>，一个阴谋需要无数谎言遮掩</li>
+                        <li>比例偏误：大事件必须有大原因</li>
+                        <li>绝对确信，拒绝任何反面证据</li>
+                        <li>认为一切都是精心策划的结果</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer class="footer animate-in">
+            <p class="footer-quote">"我看一切的纠结归结于「不可控」这三个字——<br>如果你能坦然接受世间很多事就是不可控的，你或是少数从容之人；<br>如果你非得认为一切都是操控的结果，<br>你终究只能不是信这个神就是信那个神。"</p>
+            <p class="footer-meta">
+                《错信》· 丹·艾瑞里 · 2023<br>
+                <small style="opacity: 0.7;">本页面由 Claude 智能生成 · 仅供学习交流</small>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 阅读进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progress').style.width = scrolled + '%';
+        });
+
+        // 主题切换
+        const themeToggle = document.getElementById('themeToggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        // 恢复主题偏好
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // 卡片展开收起
+        function toggleCard(header) {
+            const body = header.nextElementSibling;
+            const toggle = header.querySelector('.card-toggle');
+            body.classList.toggle('active');
+            toggle.classList.toggle('active');
+        }
+
+        // 滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+
+        // 金句卡片点击效果
+        document.querySelectorAll('.quote-card').forEach(card => {
+            card.addEventListener('click', () => {
+                card.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    card.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>

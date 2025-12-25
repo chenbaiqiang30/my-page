@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>政经参考 · 深度分析报告</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: linear-gradient(135deg, #e8f0ff 0%, #f0e6ff 50%, #fff5f5 100%);
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6a;
+            --accent-blue: #4f46e5;
+            --accent-purple: #7c3aed;
+            --accent-pink: #db2777;
+            --accent-teal: #0d9488;
+            --accent-orange: #ea580c;
+            --shadow: 0 8px 32px rgba(100, 80, 180, 0.15);
+            --nav-width: 280px;
+        }
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #2d1b4e 50%, #1e1e3f 100%);
+            --glass-bg: rgba(30, 30, 60, 0.8);
+            --glass-border: rgba(100, 100, 150, 0.3);
+            --text-primary: #e8e8f0;
+            --text-secondary: #b8b8d0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        /* Navigation */
+        .nav-sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--nav-width);
+            height: 100vh;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-right: 1px solid var(--glass-border);
+            padding: 2rem 1.5rem;
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 2rem;
+        }
+        .nav-item {
+            display: block;
+            padding: 0.8rem 1rem;
+            margin: 0.3rem 0;
+            border-radius: 12px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+        .nav-item:hover, .nav-item.active {
+            background: linear-gradient(135deg, rgba(79,70,229,0.15), rgba(124,58,237,0.15));
+            color: var(--accent-purple);
+            transform: translateX(5px);
+        }
+        .nav-item.active { font-weight: 600; }
+        .theme-toggle {
+            position: absolute;
+            bottom: 2rem;
+            left: 1.5rem;
+            right: 1.5rem;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: transform 0.3s;
+        }
+        .theme-toggle:hover { transform: scale(1.02); }
+        /* Main Content */
+        .main-content {
+            margin-left: var(--nav-width);
+            padding: 3rem;
+            max-width: 1200px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 3rem;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+        }
+        .header h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+        .header p { color: var(--text-secondary); }
+        /* Article Section */
+        .article-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+        }
+        .section-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, rgba(79,70,229,0.08), rgba(124,58,237,0.08));
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .section-header h2 {
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        .section-header .toggle-icon {
+            transition: transform 0.3s;
+            font-size: 1.2rem;
+            color: var(--accent-purple);
+        }
+        .section-header.collapsed .toggle-icon { transform: rotate(-90deg); }
+        .section-content {
+            padding: 2rem;
+            max-height: 5000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease, padding 0.3s;
+        }
+        .section-content.collapsed {
+            max-height: 0;
+            padding: 0 2rem;
+        }
+        /* Subsection */
+        .subsection {
+            margin: 1.5rem 0;
+            padding: 1.5rem;
+            background: rgba(255,255,255,0.5);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+        [data-theme="dark"] .subsection { background: rgba(40,40,80,0.4); }
+        .subsection-header {
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        .subsection-header h3 {
+            font-size: 1.1rem;
+            color: var(--accent-purple);
+        }
+        .subsection-content {
+            max-height: 3000px;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+        .subsection-content.collapsed { max-height: 0; }
+        /* Golden Quote */
+        .golden-quote {
+            background: linear-gradient(135deg, rgba(234,179,8,0.15), rgba(249,115,22,0.15));
+            border-left: 4px solid #f59e0b;
+            padding: 1.2rem 1.5rem;
+            margin: 1rem 0;
+            border-radius: 0 12px 12px 0;
+            font-style: italic;
+            color: var(--text-primary);
+        }
+        .golden-quote::before {
+            content: '💎 ';
+            font-style: normal;
+        }
+        /* Expert Comment */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(79,70,229,0.1), rgba(124,58,237,0.1));
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border: 1px solid rgba(124,58,237,0.2);
+        }
+        .expert-comment h4 {
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        /* Mermaid Charts */
+        .chart-container {
+            background: rgba(255,255,255,0.8);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            overflow-x: auto;
+        }
+        [data-theme="dark"] .chart-container { background: rgba(50,50,80,0.5); }
+        .chart-title {
+            font-weight: 600;
+            color: var(--accent-teal);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .key-point {
+            padding: 1.2rem;
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+        }
+        .key-point:nth-child(1) { background: linear-gradient(135deg, rgba(79,70,229,0.1), transparent); border-left: 3px solid var(--accent-blue); }
+        .key-point:nth-child(2) { background: linear-gradient(135deg, rgba(124,58,237,0.1), transparent); border-left: 3px solid var(--accent-purple); }
+        .key-point:nth-child(3) { background: linear-gradient(135deg, rgba(219,39,119,0.1), transparent); border-left: 3px solid var(--accent-pink); }
+        /* Data Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .stat-card {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--glass-bg);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { font-size: 0.85rem; color: var(--text-secondary); margin-top: 0.5rem; }
+        /* Responsive */
+        @media (max-width: 900px) {
+            .nav-sidebar { display: none; }
+            .main-content { margin-left: 0; padding: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+    <nav class="nav-sidebar">
+        <div class="nav-logo">📊 政经参考</div>
+        <a href="#article1" class="nav-item">🎨 艺考培训的起落</a>
+        <a href="#article2" class="nav-item">🇺🇸 美国的权力转变</a>
+        <a href="#article3" class="nav-item">🏆 赛事经济爆发</a>
+        <a href="#article4" class="nav-item">🏥 医院结构性过剩</a>
+        <a href="#article5" class="nav-item">🔬 科技教育变革</a>
+        <button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+    </nav>
+
+    <main class="main-content">
+        <header class="header">
+            <h1>政经参考 · 深度分析报告</h1>
+            <p>主讲人：马江博 | 报告生成时间：2025年12月</p>
+        </header>
+
+        <!-- ARTICLE 1 -->
+        <section id="article1" class="article-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🎨 艺考和艺术培训的起落</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">世界上的大趋势没有突然发生的，只有看没看见，所以一定要看清潮水的方向。</div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-value">16万</div><div class="stat-label">艺考人数下降</div></div>
+                    <div class="stat-card"><div class="stat-value">50%+</div><div class="stat-label">钢琴产量跌幅</div></div>
+                    <div class="stat-card"><div class="stat-value">2/3</div><div class="stat-label">培训机构萎缩</div></div>
+                    <div class="stat-card"><div class="stat-value">80%</div><div class="stat-label">全球学琴儿童在中国</div></div>
+                </div>
+
+                <div class="subsection">
+                    <div class="subsection-header" onclick="toggleSubsection(this)">
+                        <h3>📉 核心现象：艺术培训全链条寒冬</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="subsection-content">
+                        <div class="key-points">
+                            <div class="key-point"><strong>艺考人数锐减</strong><br>2024年艺考约100万人，较2020年峰值减少16万，而同期高考增加271万</div>
+                            <div class="key-point"><strong>培训机构萎缩</strong><br>2/3上海钢琴培训机构表示学生下降，美术机构新客签约断崖式下跌</div>
+                            <div class="key-point"><strong>产业链冲击</strong><br>2023年全国钢琴产量仅19万架，较2019年跌幅超过一半</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">📊 艺术培训兴衰因果链</div>
+                    <pre class="mermaid">
+flowchart TB
+    subgraph 繁荣期["🔥 非理性繁荣期"]
+        A[1999年素质教育改革] --> B[2004年艺术特长生政策]
+        B --> C[降20分录取激励]
+        C --> D[投机心态滋长]
+        D --> E[中产身份消费]
+        E --> F[4000万儿童学钢琴]
+    end
+    subgraph 循环["🔄 自我循环系统"]
+        G[学艺术] --> H[考艺术院校]
+        H --> I[毕业当培训老师]
+        I --> J[培养新学生]
+        J --> G
+    end
+    subgraph 崩塌期["❄️ 崩塌期"]
+        K[2015年取消特长生加分] --> L[房地产降温]
+        L --> M[出生人口下降]
+        M --> N[中产消费萎缩]
+        N --> O[培训需求土壤崩塌]
+    end
+    F --> G
+    O --> P[产业链全面寒冬]
+                    </pre>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🧠 四大趋势变化</div>
+                    <pre class="mermaid">
+mindmap
+  root((艺术培训<br>兴衰逻辑))
+    政策杠杆
+      2004年特长生政策推高
+      2015年取消加分
+      2024年高校停招艺术团
+    财富效应
+      房地产带来财富
+      中产投资教育
+      房地产衰落消费萎缩
+    产业结构
+      传统产业衰落
+      新科技产业崛起
+      市场需要理工科
+    国家战略
+      大国博弈背景
+      培养新理工科学生
+      减少文科艺术类培养
+                    </pre>
+                </div>
+
+                <div class="golden-quote">任何时代的大溃败背后，总有非理性繁荣的影子。</div>
+
+                <div class="expert-comment">
+                    <h4>🎯 专家点评</h4>
+                    <p><strong>总体评价：</strong>这篇文章精准揭示了艺术培训行业从繁荣到衰落的深层逻辑。马江博老师提出的"非理性繁荣"框架极具洞察力——当艺术教育被异化为升学工具时，就已埋下崩塌的种子。</p>
+                    <p style="margin-top:1rem"><strong>关键论点分析：</strong></p>
+                    <ul style="margin-left:1.5rem;margin-top:0.5rem">
+                        <li><strong>自我循环结构</strong>：学生→院校→培训老师→新学生的闭环，是泡沫持续的核心机制，一旦入口收紧，整个链条必然断裂</li>
+                        <li><strong>政策杠杆效应</strong>：2004年特长生政策是推手，2015年取消是拐点，印证了政策对教育产业的决定性影响</li>
+                        <li><strong>时代坐标意识</strong>：文章最核心的价值在于提醒读者建立"趋势判断坐标"，这比分析艺考本身更重要</li>
+                    </ul>
+                </div>
+
+                <div class="golden-quote">在宏观趋势的巨浪面前，个人真的只是浪花一朵。</div>
+            </div>
+        </section>
+
+        <!-- ARTICLE 2 -->
+        <section id="article2" class="article-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🇺🇸 美国从"世界警察"到"世界黑帮"</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">世界正在从利益逻辑转向权力逻辑：利益逻辑是有矛盾先坐下来谈，有规则；权力逻辑是有矛盾就站起来干，看拳头。</div>
+
+                <div class="subsection">
+                    <div class="subsection-header" onclick="toggleSubsection(this)">
+                        <h3>⚡ 三件大事：权力逻辑的压力测试</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="subsection-content">
+                        <div class="key-points">
+                            <div class="key-point"><strong>国防部改名"战争部"</strong><br>恢复二战前称谓，传递战争冷峻寒意</div>
+                            <div class="key-point"><strong>控制美联储</strong><br>提前提名心腹候选人，打破央行独立性</div>
+                            <div class="key-point"><strong>部署国民警卫队</strong><br>4000人部署加州，计划扩展多个大城市</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🔄 美国政治身份转变</div>
+                    <pre class="mermaid">
+flowchart LR
+    subgraph 过去["🛡️ 世界警察时代"]
+        A[承担义务] --> B[维持秩序]
+        B --> C[换取霸权]
+        C --> D[按规则解决问题]
+    end
+    subgraph 现在["💀 世界黑帮时代"]
+        E[放弃义务] --> F[破坏秩序]
+        F --> G[收保护费]
+        G --> H[谁拳头大听谁的]
+    end
+    过去 -->|特朗普2.0| 现在
+                    </pre>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">📈 内政外交化逻辑</div>
+                    <pre class="mermaid">
+flowchart TB
+    A[美国内部撕裂] --> B{内政外交化}
+    B --> C[内部压力外部化]
+    B --> D[动用外部资源解决内部问题]
+    C --> E[关税谈判要求增加投资]
+    C --> F[要求购买美国产品]
+    D --> G[关税战逼企业回流]
+    D --> H[让别人不好过解决自己问题]
+                    </pre>
+                </div>
+
+                <div class="golden-quote">俄罗斯是一个大国，而他们不是。——特朗普谈乌克兰</div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🌍 全球秩序重组趋势</div>
+                    <pre class="mermaid">
+mindmap
+  root((全球秩序<br>重组))
+    美国收缩
+      孤立主义
+      影响力真空
+      秩序空窗期
+    多中心时代
+      区域化加剧
+      国际组织衰退
+      联合国WTO弱化
+    中国机会
+      牵头国际调解院
+      提供法治公共产品
+      承担大国责任
+    国家韧性
+      经济韧性
+      社会韧性
+      顺应趋势
+                    </pre>
+                </div>
+
+                <div class="expert-comment">
+                    <h4>🎯 专家点评</h4>
+                    <p><strong>总体评价：</strong>这篇分析深刻揭示了特朗普2.0时代美国政治逻辑的根本转变。从"世界警察"到"世界黑帮"的比喻虽然夸张，但精准捕捉了美国从"规则维护者"到"规则破坏者"的身份蜕变。</p>
+                    <p style="margin-top:1rem"><strong>关键论点分析：</strong></p>
+                    <ul style="margin-left:1.5rem;margin-top:0.5rem">
+                        <li><strong>权力vs权利</strong>：权力靠实力，权利靠契约，这一区分是理解当前国际秩序变化的钥匙</li>
+                        <li><strong>政客vs商人</strong>：马斯克要效率，特朗普要权力，两个"疯子"的分道扬镳印证了政商之间的本质差异</li>
+                        <li><strong>免疫反应论</strong>：将特朗普现象解读为美国应对外部风险的免疫反应，暗示这种政治遗产会被继承</li>
+                    </ul>
+                </div>
+
+                <div class="golden-quote">未来比拼的是国家韧性，包括经济韧性和社会韧性。</div>
+            </div>
+        </section>
+
+        <!-- ARTICLE 3 -->
+        <section id="article3" class="article-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🏆 赛事经济的爆发</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">办赛事就是办城市。</div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-value">380亿</div><div class="stat-label">苏超带动消费</div></div>
+                    <div class="stat-card"><div class="stat-value">7万亿</div><div class="stat-label">2030年体育产业目标</div></div>
+                    <div class="stat-card"><div class="stat-value">22.2%</div><div class="stat-label">体育用品零售增速</div></div>
+                    <div class="stat-card"><div class="stat-value">6万+</div><div class="stat-label">苏超单场上座人数</div></div>
+                </div>
+
+                <div class="subsection">
+                    <div class="subsection-header" onclick="toggleSubsection(this)">
+                        <h3>🔥 各地赛事热潮</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="subsection-content">
+                        <div class="key-points">
+                            <div class="key-point"><strong>一线城市领跑</strong><br>上海67项国际赛事+111项全国赛事<br>广州500+场赛事活动</div>
+                            <div class="key-point"><strong>省域全面铺开</strong><br>山东上半年700项赛事<br>河北上半年5500+场比赛</div>
+                            <div class="key-point"><strong>经济效益显著</strong><br>武汉马拉松1.17亿直接消费<br>河北赛事带动269亿消费</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">💰 赛事经济乘数效应</div>
+                    <pre class="mermaid">
+flowchart TB
+    A[顶级赛事IP] --> B{磁石效应}
+    B --> C[人流]
+    B --> D[资金流]
+    B --> E[信息流]
+    C --> F[酒店餐饮]
+    C --> G[交通零售]
+    C --> H[文旅景点]
+    D --> I[媒体版权]
+    D --> J[商业赞助]
+    D --> K[衍生品开发]
+    E --> L[数字技术应用]
+    E --> M[城市品牌塑造]
+    E --> N[软实力提升]
+                    </pre>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">📋 国务院体育产业政策要点</div>
+                    <pre class="mermaid">
+mindmap
+  root((体育产业<br>高质量发展))
+    赛事经济
+      出台专项政策
+      开放公共资源
+      优化审批流程
+      提高可售票数
+    户外运动
+      山地水上汽摩航空
+      低空运动发展
+      精品线路推出
+    冰雪经济
+      设备纳入国补
+      南展西扩东进
+      三亿人参与冰雪
+    消费场景
+      工厂仓库改体育空间
+      商圈景区引入体育
+      老年体育赛事
+                    </pre>
+                </div>
+
+                <div class="golden-quote">赛事经济不再只是体育竞技，而是一种复合型、体验式的消费包。</div>
+
+                <div class="expert-comment">
+                    <h4>🎯 专家点评</h4>
+                    <p><strong>总体评价：</strong>这篇文章准确捕捉了中国从"生产型社会"向"消费型社会"转型中，赛事经济作为服务消费新引擎的战略定位。国务院首次将"赛事经济"提升到国家战略高度，信号极为明确。</p>
+                    <p style="margin-top:1rem"><strong>关键论点分析：</strong></p>
+                    <ul style="margin-left:1.5rem;margin-top:0.5rem">
+                        <li><strong>乘数效应</strong>：赛事不只是门票收入，而是拉动酒店、餐饮、交通、文旅等多产业的"消费放大器"</li>
+                        <li><strong>城市软实力</strong>：与淄博烧烤等短期网红相比，赛事可形成完整产业链，热度更持久</li>
+                        <li><strong>政策窗口</strong>：审批放松、资源开放、场景拓展，地方发展赛事经济的政策之门已经打开</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARTICLE 4 -->
+        <section id="article4" class="article-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🏥 中国医院的结构性过剩</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">三甲医院供不应求，二级医院门可罗雀——这不是医疗资源过剩，而是结构性错配。</div>
+
+                <div class="stats-grid">
+                    <div class="stat-card"><div class="stat-value">45%</div><div class="stat-label">医院亏损率</div></div>
+                    <div class="stat-card"><div class="stat-value">614件</div><div class="stat-label">2024年医院破产案</div></div>
+                    <div class="stat-card"><div class="stat-value">60%+</div><div class="stat-label">三级医院服务占比</div></div>
+                    <div class="stat-card"><div class="stat-value">8%</div><div class="stat-label">财政对公立医院投入</div></div>
+                </div>
+
+                <div class="subsection">
+                    <div class="subsection-header" onclick="toggleSubsection(this)">
+                        <h3>📊 结构性分化：三级vs二级</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="subsection-content">
+                        <div class="key-points">
+                            <div class="key-point"><strong>三级医院虹吸</strong><br>门诊住院量占比双双突破60%<br>需求持续上涨</div>
+                            <div class="key-point"><strong>二级医院萎缩</strong><br>诊疗占比从34.9%降至28.64%<br>入院占比从39.56%降至30.74%</div>
+                            <div class="key-point"><strong>破产潮来袭</strong><br>2024年破产案614件<br>同比增幅94%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">⚠️ 医院困境三重压力</div>
+                    <pre class="mermaid">
+flowchart TB
+    subgraph 需求端["📉 需求萎缩"]
+        A[人口外流] --> B[常住人口减少]
+        C[患者流向三甲] --> D[二级医院就诊量下降]
+    end
+    subgraph 供给端["📈 产能过剩"]
+        E[摊大饼式扩张] --> F[负债率攀升]
+        G[床位持续增加] --> H[产能无法消化]
+    end
+    subgraph 政策端["💊 收入压缩"]
+        I[药品零加成] --> J[药品收入萎缩]
+        K[耗材零加成] --> L[器械收入减少]
+        M[财政补贴不足] --> N[无法弥补缺口]
+    end
+    B --> O{医院经营困难}
+    D --> O
+    F --> O
+    H --> O
+    J --> O
+    L --> O
+    N --> O
+    O --> P[降薪/欠薪]
+    O --> Q[破产倒闭]
+                    </pre>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🔮 未来倒闭风险医院</div>
+                    <pre class="mermaid">
+flowchart LR
+    A[第一批] --> B[医疗能力不强<br>全靠医保吃饭<br>民营医院为主]
+    C[第二批] --> D[没有财政补贴<br>的公立医院]
+    E[第三批] --> F[有财政补贴<br>但缺患者<br>负债较大]
+                    </pre>
+                </div>
+
+                <div class="golden-quote">公立医院只是公益二类差额拨款事业单位，财政投入不超过8%，绝大部分要靠自己创收。</div>
+
+                <div class="subsection">
+                    <div class="subsection-header" onclick="toggleSubsection(this)">
+                        <h3>💡 破局之道</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="subsection-content">
+                        <div class="key-points">
+                            <div class="key-point"><strong>主动降级</strong><br>三级降二级，二级降一级<br>减少人员投入，控制成本</div>
+                            <div class="key-point"><strong>政策转型</strong><br>引导转型康复医院、护理院<br>对接老龄化需求</div>
+                            <div class="key-point"><strong>选择建议</strong><br>医学生尽量选人口流入东部城市<br>谨慎选择东北西部</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4>🎯 专家点评</h4>
+                    <p><strong>总体评价：</strong>这篇文章揭示了一个反直觉的现象：老龄化社会医疗需求增长，但医院却在亏损破产。这背后是"结构性过剩"——三甲虹吸效应叠加二级医院产能过剩的供需错配。</p>
+                    <p style="margin-top:1rem"><strong>关键论点分析：</strong></p>
+                    <ul style="margin-left:1.5rem;margin-top:0.5rem">
+                        <li><strong>8%悖论</strong>：公立医院财政投入仅8%，却被公众视为"铁饭碗"，这种认知差是理解医院困境的关键</li>
+                        <li><strong>主动降级现象</strong>：三级医院主动降二级，是市场倒逼下的理性选择，信号意义重大</li>
+                        <li><strong>职业选择警示</strong>：临床医学专业降温，医学生就业区位选择变得比专业选择更重要</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- ARTICLE 5 -->
+        <section id="article5" class="article-section">
+            <div class="section-header" onclick="toggleSection(this)">
+                <h2>🔬 科技特长生与基础教育变革</h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">未来没有纯粹意义上的文科生甚至艺术生、体育生了，人工智能可能是所有学科的基础。</div>
+
+                <div class="subsection">
+                    <div class="subsection-header" onclick="toggleSubsection(this)">
+                        <h3>📚 基础教育三大变革</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="subsection-content">
+                        <div class="key-points">
+                            <div class="key-point"><strong>AI课程体系化</strong><br>小学低年级：感知体验AI<br>小学高年级+初中：理解应用AI<br>高中：项目创作与前沿应用</div>
+                            <div class="key-point"><strong>科技特长生制度</strong><br>机器人、编程、航空航天等方向<br>广东已前置到小学认证</div>
+                            <div class="key-point"><strong>兴建科技中学</strong><br>同济科技中学、北京科学高中<br>18所学校成立科学高中联盟</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🎯 AI教育体系化设计</div>
+                    <pre class="mermaid">
+flowchart LR
+    A[小学低年级] -->|感知体验| B[小学高年级]
+    B -->|理解应用| C[初中阶段]
+    C -->|深化学习| D[高中阶段]
+    D -->|项目创作| E[前沿应用]
+    
+    F[2017年规划] --> G[2024年通知]
+    G --> H[广东/上海/北京方案]
+    H --> I[全国推广]
+                    </pre>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-title">🏫 科技教育双轨发展</div>
+                    <pre class="mermaid">
+mindmap
+  root((科技教育<br>前置化))
+    政策意图
+      修复应试教育弊病
+      提前识别科技人才
+      建立人才储备库
+      应对技术冲击托底
+    选拔机制
+      科技特长生
+      强基计划
+      科技中学
+      科学高中联盟
+    培养领域
+      人工智能
+      机器人
+      编程
+      航空航天
+    地方行动
+      广东小学认证
+      上海同济科技中学
+      北京科学高中
+      深圳科学高中联盟
+                    </pre>
+                </div>
+
+                <div class="golden-quote">基础能力更强的人，在整个职业生涯中更可能获得更高薪资、晋升到更高职位。</div>
+
+                <div class="subsection">
+                    <div class="subsection-header" onclick="toggleSubsection(this)">
+                        <h3>💡 三条建议</h3>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="subsection-content">
+                        <div class="key-points">
+                            <div class="key-point"><strong>避免投机心态</strong><br>科技特长要求比艺术更高<br>看天赋和持续兴趣</div>
+                            <div class="key-point"><strong>科技素养必备</strong><br>AI将是所有学科基础<br>管理模式也要科技化</div>
+                            <div class="key-point"><strong>补强非科技能力</strong><br>跨学科思维<br>团队协作能力</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <h4>🎯 专家点评</h4>
+                    <p><strong>总体评价：</strong>这篇文章敏锐捕捉了基础教育的战略性转向——从"德智体美劳"中增加"科"的权重。与第181讲艺术培训崩塌形成呼应，一降一升之间，国家人才培养导向清晰可见。</p>
+                    <p style="margin-top:1rem"><strong>关键论点分析：</strong></p>
+                    <ul style="margin-left:1.5rem;margin-top:0.5rem">
+                        <li><strong>前置化趋势</strong>：科技人才识别从大学→高中→初中→小学不断前移，广东已将认证前置到小学</li>
+                        <li><strong>避免新泡沫</strong>：作者明智地警告不要重蹈艺术培训覆辙，科技特长要求更高，更看天赋</li>
+                        <li><strong>人机协同</strong>：《人工智能+》提出人机协同组织架构，AI将重塑所有学科和职业</li>
+                    </ul>
+                </div>
+
+                <div class="golden-quote">越是更多人涌向科技能力的时候，或许越是要补强"非科技基础能力"。</div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'base', themeVariables: { primaryColor: '#e8f0ff', primaryTextColor: '#1a1a2e', primaryBorderColor: '#7c3aed', lineColor: '#4f46e5', secondaryColor: '#f0e6ff', tertiaryColor: '#fff5f5' }});
+        
+        function toggleSection(header) {
+            header.classList.toggle('collapsed');
+            header.nextElementSibling.classList.toggle('collapsed');
+        }
+        function toggleSubsection(header) {
+            header.classList.toggle('collapsed');
+            header.nextElementSibling.classList.toggle('collapsed');
+        }
+        function toggleTheme() {
+            const body = document.body;
+            const theme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+            body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        }
+        // Load saved theme
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) document.body.setAttribute('data-theme', savedTheme);
+        
+        // Scroll spy for navigation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                    const activeLink = document.querySelector(`.nav-item[href="#${entry.target.id}"]`);
+                    if (activeLink) activeLink.classList.add('active');
+                }
+            });
+        }, { rootMargin: '-20% 0px -70% 0px' });
+        
+        document.querySelectorAll('.article-section').forEach(section => observer.observe(section));
+        
+        // Smooth scroll
+        document.querySelectorAll('.nav-item').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const target = document.querySelector(link.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
