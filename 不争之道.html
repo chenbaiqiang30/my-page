@@ -1,0 +1,1337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>道德经精解 · 不争之道</title>
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent-red: #ef4444;
+            --accent-blue: #3b82f6;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-purple: #8b5cf6;
+            --accent-cyan: #06b6d4;
+            --accent-rose: #f43f5e;
+            --gold: #d4af37;
+            --bg-light: #f8fafc;
+            --bg-dark: #0f172a;
+            --glass-light: rgba(255,255,255,0.7);
+            --glass-dark: rgba(15,23,42,0.8);
+            --text-light: #1e293b;
+            --text-dark: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-light);
+            color: var(--text-light);
+            line-height: 1.8;
+            transition: all 0.4s ease;
+            overflow-x: hidden;
+        }
+
+        body.dark {
+            background: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background: radial-gradient(circle at 20% 80%, rgba(102,126,234,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(118,75,162,0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(16,185,129,0.1) 0%, transparent 40%);
+            animation: bgMove 20s ease-in-out infinite;
+        }
+
+        body.dark .bg-animation::before {
+            background: radial-gradient(circle at 20% 80%, rgba(102,126,234,0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(118,75,162,0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(212,175,55,0.1) 0%, transparent 40%);
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 2%) rotate(1deg); }
+            66% { transform: translate(-1%, 1%) rotate(-1deg); }
+        }
+
+        /* 头部 */
+        .header {
+            position: relative;
+            padding: 80px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '道';
+            position: absolute;
+            font-size: 400px;
+            opacity: 0.05;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .main-title {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin: 0 auto 30px;
+        }
+
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            font-size: 14px;
+            opacity: 0.8;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s;
+        }
+
+        body.dark .theme-toggle {
+            background: var(--glass-dark);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 核心概念卡片 */
+        .core-concepts {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .concept-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.dark .concept-card {
+            background: var(--glass-dark);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .concept-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .concept-card:nth-child(1)::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .concept-card:nth-child(2)::before { background: linear-gradient(90deg, #10b981, #06b6d4); }
+        .concept-card:nth-child(3)::before { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+
+        .concept-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+
+        .concept-card:nth-child(1) .concept-icon { background: linear-gradient(135deg, #667eea20, #764ba220); }
+        .concept-card:nth-child(2) .concept-icon { background: linear-gradient(135deg, #10b98120, #06b6d420); }
+        .concept-card:nth-child(3) .concept-icon { background: linear-gradient(135deg, #f59e0b20, #ef444420); }
+
+        .concept-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .concept-desc {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        body.dark .concept-desc { color: #94a3b8; }
+
+        /* 金句卡片 */
+        .golden-quotes {
+            margin: 60px 0;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .quote-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
+            transition: all 0.3s;
+        }
+
+        body.dark .quote-card {
+            background: var(--glass-dark);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .quote-card:hover {
+            transform: scale(1.02);
+        }
+
+        .quote-mark {
+            font-size: 60px;
+            line-height: 1;
+            font-family: Georgia, serif;
+            position: absolute;
+            top: 15px;
+            left: 25px;
+            opacity: 0.15;
+        }
+
+        .quote-text {
+            font-size: 1.15rem;
+            font-weight: 500;
+            line-height: 1.9;
+            margin-bottom: 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            font-size: 0.9rem;
+            color: #64748b;
+            text-align: right;
+        }
+
+        body.dark .quote-source { color: #94a3b8; }
+
+        /* 颜色高亮 */
+        .hl-red { color: var(--accent-red); font-weight: 600; }
+        .hl-blue { color: var(--accent-blue); font-weight: 600; }
+        .hl-green { color: var(--accent-green); font-weight: 600; }
+        .hl-amber { color: var(--accent-amber); font-weight: 600; }
+        .hl-purple { color: var(--accent-purple); font-weight: 600; }
+        .hl-cyan { color: var(--accent-cyan); font-weight: 600; }
+        .hl-gold { color: var(--gold); font-weight: 600; }
+        .hl-rose { color: var(--accent-rose); font-weight: 600; }
+
+        /* 思维导图 */
+        .mindmap-section {
+            margin: 60px 0;
+            padding: 40px;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+
+        body.dark .mindmap-section {
+            background: var(--glass-dark);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 50px;
+            border-radius: 100px;
+            font-size: 1.8rem;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(102,126,234,0.4);
+            margin-bottom: 50px;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 30px;
+            width: 100%;
+        }
+
+        .branch {
+            flex: 1;
+            min-width: 280px;
+            max-width: 350px;
+        }
+
+        .branch-title {
+            background: linear-gradient(135deg, rgba(102,126,234,0.1), rgba(118,75,162,0.1));
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            text-align: center;
+            margin-bottom: 20px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .branch:nth-child(2) .branch-title {
+            background: linear-gradient(135deg, rgba(16,185,129,0.1), rgba(6,182,212,0.1));
+            border-left-color: var(--accent-green);
+        }
+
+        .branch:nth-child(3) .branch-title {
+            background: linear-gradient(135deg, rgba(245,158,11,0.1), rgba(239,68,68,0.1));
+            border-left-color: var(--accent-amber);
+        }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .branch-item {
+            background: var(--glass-light);
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            border: 1px solid rgba(0,0,0,0.05);
+            transition: all 0.3s;
+        }
+
+        body.dark .branch-item {
+            background: rgba(255,255,255,0.05);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .branch-item:hover {
+            transform: translateX(5px);
+            border-left: 3px solid var(--primary);
+        }
+
+        /* 可折叠板块 */
+        .collapsible-section {
+            margin: 30px 0;
+        }
+
+        .collapsible {
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-bottom: 15px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        body.dark .collapsible {
+            background: var(--glass-dark);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .collapsible-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+            transition: background 0.3s;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(102,126,234,0.05);
+        }
+
+        .collapsible-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .collapsible-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+
+        .collapsible-text h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .collapsible-text p {
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        body.dark .collapsible-text p { color: #94a3b8; }
+
+        .collapsible-arrow {
+            font-size: 20px;
+            transition: transform 0.3s;
+        }
+
+        .collapsible.active .collapsible-arrow {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .collapsible.active .collapsible-content {
+            max-height: 2000px;
+        }
+
+        .collapsible-inner {
+            padding: 0 30px 30px;
+        }
+
+        /* 内容样式 */
+        .content-block {
+            margin-bottom: 25px;
+        }
+
+        .content-block h4 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content-block p {
+            margin-bottom: 12px;
+            text-align: justify;
+        }
+
+        .content-block ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .content-block li {
+            padding: 10px 0 10px 30px;
+            position: relative;
+        }
+
+        .content-block li::before {
+            content: '●';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(212,175,55,0.1), rgba(245,158,11,0.1));
+            border-left: 4px solid var(--gold);
+            border-radius: 0 16px 16px 0;
+            padding: 25px;
+            margin: 30px 0;
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--gold), var(--accent-amber));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .expert-info h5 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .expert-info span {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        body.dark .expert-info span { color: #94a3b8; }
+
+        .expert-content {
+            font-style: italic;
+            line-height: 1.9;
+        }
+
+        /* 信息图表 */
+        .infographic {
+            margin: 50px 0;
+        }
+
+        .levels-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .level-bar {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .level-label {
+            width: 120px;
+            font-weight: 600;
+            text-align: right;
+            flex-shrink: 0;
+        }
+
+        .level-progress {
+            flex: 1;
+            height: 40px;
+            border-radius: 20px;
+            position: relative;
+            overflow: hidden;
+            background: rgba(0,0,0,0.05);
+        }
+
+        body.dark .level-progress {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .level-fill {
+            height: 100%;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: width 1s ease;
+        }
+
+        .level-bar:nth-child(1) .level-fill { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .level-bar:nth-child(2) .level-fill { background: linear-gradient(90deg, #10b981, #06b6d4); }
+        .level-bar:nth-child(3) .level-fill { background: linear-gradient(90deg, #f59e0b, #ef4444); }
+        .level-bar:nth-child(4) .level-fill { background: linear-gradient(90deg, #64748b, #94a3b8); }
+
+        /* 对比卡片 */
+        .comparison {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .compare-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            text-align: center;
+        }
+
+        body.dark .compare-card {
+            background: var(--glass-dark);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .compare-card.negative {
+            border-top: 4px solid var(--accent-red);
+        }
+
+        .compare-card.positive {
+            border-top: 4px solid var(--accent-green);
+        }
+
+        .compare-icon {
+            font-size: 50px;
+            margin-bottom: 20px;
+        }
+
+        .compare-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .compare-list {
+            text-align: left;
+        }
+
+        .compare-list li {
+            padding: 10px 0;
+            border-bottom: 1px dashed rgba(0,0,0,0.1);
+        }
+
+        body.dark .compare-list li {
+            border-bottom-color: rgba(255,255,255,0.1);
+        }
+
+        /* 案例卡片 */
+        .case-study {
+            background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(139,92,246,0.1));
+            border-radius: 20px;
+            padding: 35px;
+            margin: 40px 0;
+            border: 1px solid rgba(59,130,246,0.2);
+        }
+
+        .case-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .case-badge {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .case-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        .case-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .case-point {
+            padding: 20px;
+            background: var(--glass-light);
+            border-radius: 12px;
+        }
+
+        body.dark .case-point {
+            background: rgba(255,255,255,0.05);
+        }
+
+        .case-point h5 {
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+
+        /* 总结区 */
+        .summary-section {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 24px;
+            padding: 50px 40px;
+            margin: 60px 0;
+            color: white;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .summary-item {
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 25px;
+        }
+
+        .summary-num {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        body.dark .footer { color: #94a3b8; }
+
+        .footer-divider {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            margin: 0 auto 20px;
+            border-radius: 2px;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header { padding: 60px 20px; }
+            .main-title { font-size: 2rem; }
+            .meta-info { flex-direction: column; gap: 15px; }
+            .mindmap-center { padding: 20px 35px; font-size: 1.4rem; }
+            .comparison { grid-template-columns: 1fr; }
+            .level-label { width: 80px; font-size: 0.9rem; }
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 10px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { 
+            background: linear-gradient(var(--primary), var(--secondary));
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <!-- 头部 -->
+    <header class="header">
+        <div class="header-content">
+            <div class="badge">📚 吴伯凡讲透道德经 · 第三模块</div>
+            <h1 class="main-title">不争之道</h1>
+            <p class="subtitle">道的三大核心特征：无名、无为、不争——不争是最积极的退让，是升维竞争的最高智慧</p>
+            <div class="meta-info">
+                <span class="meta-item">📖 《道德经》深度解读</span>
+                <span class="meta-item">🎯 核心概念：不争</span>
+                <span class="meta-item">⏱️ 约30分钟精华</span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 核心概念三卡片 -->
+        <div class="core-concepts">
+            <div class="concept-card">
+                <div class="concept-icon">☁️</div>
+                <h3 class="concept-title"><span class="hl-purple">无名</span></h3>
+                <p class="concept-desc">道常无名，无固定名字、位置、形状、年龄、性别。"道之为物，惟恍惟惚"——世界本体是无可名状之物。</p>
+            </div>
+            <div class="concept-card">
+                <div class="concept-icon">🌊</div>
+                <h3 class="concept-title"><span class="hl-green">无为</span></h3>
+                <p class="concept-desc">道的运行方式，无形而看不见，像整个世界的操作系统。无为不是无所作为，而是无不为。</p>
+            </div>
+            <div class="concept-card">
+                <div class="concept-icon">⚖️</div>
+                <h3 class="concept-title"><span class="hl-amber">不争</span></h3>
+                <p class="concept-desc">不争是最积极的态度，是范式革命与赛道切换。"夫唯不争，故天下莫能与之争。"</p>
+            </div>
+        </div>
+
+        <!-- 金句精选 -->
+        <section class="golden-quotes">
+            <h2 class="section-title">🌟 道德经金句</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text"><span class="hl-gold">上善若水</span>，水利万物而<span class="hl-blue">不争</span>，处众人之所恶，故<span class="hl-purple">几于道</span>。</p>
+                    <p class="quote-source">——《道德经》第八章</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">夫唯<span class="hl-red">不争</span>，故天下<span class="hl-green">莫能与之争</span>。</p>
+                    <p class="quote-source">——《道德经》第二十二章</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text"><span class="hl-amber">勇于敢</span>则杀，<span class="hl-cyan">勇于不敢</span>则活。</p>
+                    <p class="quote-source">——《道德经》第七十三章</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">天之道，<span class="hl-blue">不争而善胜</span>，不言而善应，不召而自来。</p>
+                    <p class="quote-source">——《道德经》第七十三章</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text">天之道，<span class="hl-green">利而不害</span>；圣人之道，<span class="hl-gold">为而不争</span>。</p>
+                    <p class="quote-source">——《道德经》第八十一章（末句）</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-mark">"</span>
+                    <p class="quote-text"><span class="hl-purple">善为士者不武</span>，善战者不怒，<span class="hl-rose">善胜敌者不与</span>。</p>
+                    <p class="quote-source">——《道德经》第六十八章</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section">
+            <h2 class="section-title">🧠 核心概念图谱</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">不争之道</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-title">📜 道德经原文</div>
+                        <div class="branch-items">
+                            <div class="branch-item">「不争」出现 <span class="hl-red">8次</span></div>
+                            <div class="branch-item">「不敢」出现 <span class="hl-blue">8次</span></div>
+                            <div class="branch-item">相通概念：不处、不居、不责、不言</div>
+                            <div class="branch-item">三宝：慈、俭、不敢为天下先</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-title">💡 现代诠释</div>
+                        <div class="branch-items">
+                            <div class="branch-item"><span class="hl-green">蓝海战略</span>：范式转移</div>
+                            <div class="branch-item">5% vs <span class="hl-amber">500%</span> 收益差异</div>
+                            <div class="branch-item">升维竞争 / 降维打击</div>
+                            <div class="branch-item">进化论：不适者生存</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-title">🎯 本质内涵</div>
+                        <div class="branch-items">
+                            <div class="branch-item">归根溯源、<span class="hl-purple">存本守母</span></div>
+                            <div class="branch-item">极致：<span class="hl-gold">利他主义</span></div>
+                            <div class="branch-item">强者哲学 ≠ 弱者护身符</div>
+                            <div class="branch-item">最积极的态度</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <div class="expert-comment">
+            <div class="expert-header">
+                <div class="expert-avatar">🎓</div>
+                <div class="expert-info">
+                    <h5>道德经研究视角</h5>
+                    <span>全球顶级道德经专家深度解读</span>
+                </div>
+            </div>
+            <div class="expert-content">
+                <p>吴伯凡先生对「不争」的解读极具洞见。他准确指出了长期被误读的关键：<span class="hl-red">不争绝非消极退避</span>，而是<span class="hl-gold">强者的哲学</span>。这与西方近代才发现的蓝海战略、范式革命高度契合——老子2600年前已洞见此理。</p>
+                <p style="margin-top:15px;">尤其精彩的是「母」的隐喻：道如同<span class="hl-purple">超级母亲</span>，事当先、人处后、身为之下。不争的极致是<span class="hl-green">利他赋能</span>，这颠覆了「道家出世」的刻板印象。《道德经》首字为「道」，末字为「不争」——从道到不争，这正是整部经典的密码。</p>
+            </div>
+        </div>
+
+        <!-- 详细内容板块 -->
+        <section class="collapsible-section">
+            <h2 class="section-title">📖 核心内容详解</h2>
+
+            <div class="collapsible active">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="collapsible-title">
+                        <div class="collapsible-icon" style="background: linear-gradient(135deg, #ef444420, #f59e0b20);">🔥</div>
+                        <div class="collapsible-text">
+                            <h3>不争的真正含义</h3>
+                            <p>为什么说「不争」是最积极的态度？</p>
+                        </div>
+                    </div>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="content-block">
+                            <h4>🚫 不争不是什么</h4>
+                            <ul>
+                                <li>不是消极被动的放弃</li>
+                                <li>不是懦夫懒汉的护身符</li>
+                                <li>不是被侵犯时的不反抗</li>
+                                <li>不是以放弃利益和地位为代价的妥协</li>
+                            </ul>
+                        </div>
+                        <div class="content-block">
+                            <h4>✅ 不争是什么</h4>
+                            <p><span class="hl-gold">《道德经》是强者的哲学</span>——目的上是强者，手段上表现为弱者特征。不争是：</p>
+                            <ul>
+                                <li><span class="hl-blue">范式层面的取胜</span>：切换赛道，而非同一维度对称竞争</li>
+                                <li><span class="hl-green">升维战略</span>：获取更高的游戏规则，实施降维打击</li>
+                                <li><span class="hl-purple">积极的撤离</span>：从竞争苦海抽身，进入更高维度空间</li>
+                                <li>获取<span class="hl-amber">5倍、10倍收益</span>，而非5%、10%的微弱优势</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="collapsible-title">
+                        <div class="collapsible-icon" style="background: linear-gradient(135deg, #3b82f620, #8b5cf620);">📊</div>
+                        <div class="collapsible-text">
+                            <h3>蓝海战略与范式革命</h3>
+                            <p>托马斯·库恩与钱·金的启示</p>
+                        </div>
+                    </div>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="content-block">
+                            <h4>📚 范式革命（Paradigm Shift）</h4>
+                            <p>托马斯·库恩在《科学革命的结构》中提出：从欧几里得到牛顿到爱因斯坦，空间概念的转变不是结论切换，而是<span class="hl-purple">范式的切换</span>。</p>
+                            <p>「三点水一个来」念「涞」→「三点水一个去」呢？你被前面的规则预置套牢了！这正是范式的力量——<span class="hl-red">你被困在旧规则里而不自知</span>。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>🌊 蓝海 vs 红海</h4>
+                            <ul>
+                                <li><span class="hl-red">红海</span>：低水平过度竞争，付出越来越大，收益越来越低</li>
+                                <li><span class="hl-blue">蓝海</span>：用脑筋急转弯的方式，转向没有竞争的领域</li>
+                                <li><span class="hl-amber">核心</span>：竞争的最高境界是不竞争</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="collapsible-title">
+                        <div class="collapsible-icon" style="background: linear-gradient(135deg, #10b98120, #06b6d420);">⌚</div>
+                        <div class="collapsible-text">
+                            <h3>瑞士手表的不争智慧</h3>
+                            <p>哈耶克如何用「重新定义」击败日本石英表</p>
+                        </div>
+                    </div>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="case-study" style="margin:0;">
+                            <div class="case-header">
+                                <span class="case-badge">经典案例</span>
+                                <span class="case-title">瑞士手表业的重生</span>
+                            </div>
+                            <div class="case-content">
+                                <div class="case-point">
+                                    <h5>🎯 困境</h5>
+                                    <p>1960年代日本发明石英表，成本低、精度高。瑞士机械表在性价比上完全劣势。</p>
+                                </div>
+                                <div class="case-point">
+                                    <h5>❌ 死局选择</h5>
+                                    <p>①提高精度（技术极限）②降低成本（手工瓶颈）③转做石英表（被日本碾压）</p>
+                                </div>
+                                <div class="case-point">
+                                    <h5>✅ 不争之道</h5>
+                                    <p><span class="hl-gold">重新定义手表</span>：让不戴首饰的人（男性）戴首饰，让不戴手表的人（女性）戴手表。</p>
+                                </div>
+                                <div class="case-point">
+                                    <h5>🏆 结果</h5>
+                                    <p>手表成为男性首饰刚需；女性一周戴多块手表配服装。瑞士手表业获得新生。</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="collapsible-title">
+                        <div class="collapsible-icon" style="background: linear-gradient(135deg, #8b5cf620, #f43f5e20);">🌌</div>
+                        <div class="collapsible-text">
+                            <h3>罗辑的逻辑：无形之剑</h3>
+                            <p>《三体》中的不争哲学</p>
+                        </div>
+                    </div>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="content-block">
+                            <h4>🔮 黑暗森林法则</h4>
+                            <p>宇宙底层逻辑：暴露位置即被消灭。罗辑的武器不是舰队，不是炸弹，而是<span class="hl-gold">一种逻辑</span>。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>⚔️ 无形之剑</h4>
+                            <ul>
+                                <li><span class="hl-purple">心脏系统</span>：只要心跳，三体位置就不暴露</li>
+                                <li><span class="hl-red">自杀触发</span>：一旦自杀，位置暴露，全宇宙开炮</li>
+                                <li><span class="hl-green">效果</span>：敌人必须保全你的生命——「不要自杀×3」</li>
+                            </ul>
+                        </div>
+                        <div class="content-block">
+                            <h4>💡 道德经印证</h4>
+                            <p>「<span class="hl-gold">大器免成</span>」「<span class="hl-blue">国之利器不可示于人</span>」——真正的利器是无形的，是一种逻辑，而非有形武器。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="collapsible-title">
+                        <div class="collapsible-icon" style="background: linear-gradient(135deg, #f59e0b20, #ef444420);">👑</div>
+                        <div class="collapsible-text">
+                            <h3>领导者的四个层级</h3>
+                            <p>太上，不知有之</p>
+                        </div>
+                    </div>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="infographic">
+                            <div class="levels-chart">
+                                <div class="level-bar">
+                                    <span class="level-label"><span class="hl-gold">最高境界</span></span>
+                                    <div class="level-progress">
+                                        <div class="level-fill" style="width: 100%;">太上，不知有之</div>
+                                    </div>
+                                </div>
+                                <div class="level-bar">
+                                    <span class="level-label"><span class="hl-green">次等</span></span>
+                                    <div class="level-progress">
+                                        <div class="level-fill" style="width: 75%;">亲而誉之</div>
+                                    </div>
+                                </div>
+                                <div class="level-bar">
+                                    <span class="level-label"><span class="hl-amber">再次</span></span>
+                                    <div class="level-progress">
+                                        <div class="level-fill" style="width: 50%;">畏之</div>
+                                    </div>
+                                </div>
+                                <div class="level-bar">
+                                    <span class="level-label"><span class="hl-red">最低</span></span>
+                                    <div class="level-progress">
+                                        <div class="level-fill" style="width: 25%;">侮之</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="content-block" style="margin-top:30px;">
+                            <p>最高境界的领导者如同操作系统——<span class="hl-purple">重要到稀松平常，以至于无形</span>。层级高下取决于领导者的德行和「不争」程度。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <div class="collapsible-title">
+                        <div class="collapsible-icon" style="background: linear-gradient(135deg, #d4af3720, #f59e0b20);">🌸</div>
+                        <div class="collapsible-text">
+                            <h3>不争的本质：存本守母</h3>
+                            <p>归根溯源与利他主义</p>
+                        </div>
+                    </div>
+                    <span class="collapsible-arrow">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="content-block">
+                            <h4>🌱 母的隐喻</h4>
+                            <p>「母」在《道德经》出现7次。「天下有始，以为天下母。<span class="hl-gold">既得其母，以知其子；既知其子，复守其母</span>。」</p>
+                            <p>王弼：「<span class="hl-purple">崇本以息末，守母以存子</span>」——培根固本，末梢自然生长。</p>
+                        </div>
+                        <div class="content-block">
+                            <h4>💝 不争的极致</h4>
+                            <ul>
+                                <li><span class="hl-green">不在端上争</span>，而在源头赋能</li>
+                                <li>道如超级母亲：<span class="hl-amber">事当先、人处后、身为之下</span></li>
+                                <li>不争的极致是<span class="hl-gold">利他赋能</span></li>
+                                <li>「既以为人己愈有，既以与人己愈多」——梅特卡夫定律</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 争与不争对比 -->
+        <h2 class="section-title">⚔️ 争与不争</h2>
+        <div class="comparison">
+            <div class="compare-card negative">
+                <div class="compare-icon">🔴</div>
+                <h3 class="compare-title">争（内卷）</h3>
+                <ul class="compare-list">
+                    <li>被动屈从现有规则</li>
+                    <li>生态位完全重叠</li>
+                    <li>围绕存量资源争夺</li>
+                    <li>付出越来越大，收益越来越小</li>
+                    <li>逆向进化——低水平重复</li>
+                    <li>追求 <span class="hl-red">5%</span> 优势（惨胜）</li>
+                </ul>
+            </div>
+            <div class="compare-card positive">
+                <div class="compare-icon">🟢</div>
+                <h3 class="compare-title">不争（升维）</h3>
+                <ul class="compare-list">
+                    <li>超越眼下游戏规则</li>
+                    <li>找到隐秘的生态位</li>
+                    <li>在更高维度创造价值</li>
+                    <li>「消灭你，与你无关」</li>
+                    <li>正向进化——开拓新物种</li>
+                    <li>追求 <span class="hl-green">500%</span> 收益（碾压）</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 专家评论2 -->
+        <div class="expert-comment">
+            <div class="expert-header">
+                <div class="expert-avatar">🔮</div>
+                <div class="expert-info">
+                    <h5>跨学科洞察</h5>
+                    <span>连接东方智慧与现代理论</span>
+                </div>
+            </div>
+            <div class="expert-content">
+                <p>吴伯凡将《道德经》与《蓝海战略》《科学革命的结构》《三体》《孙子兵法》打通，展现了惊人的思想穿透力。「<span class="hl-red">内卷</span>」本义即「逆向进化」，与「争」完全对应；「<span class="hl-green">进化</span>」本质是找到新生态位，与「不争」高度契合。</p>
+                <p style="margin-top:15px;">更深层的洞见是：<span class="hl-gold">不争是领导者而非普通人的特性</span>。「欲上民，必以言下之；欲先民，必以身后之」——这不是懦弱，而是最高明的领导艺术。老子的利他主义是「<span class="hl-purple">有浓烈客观主义色彩</span>」的，「天道无亲，常与善人」正是此意。</p>
+            </div>
+        </div>
+
+        <!-- 总结 -->
+        <section class="summary-section">
+            <h2 class="summary-title">📌 核心要义</h2>
+            <p style="font-size:1.2rem; opacity:0.95; max-width:800px; margin:0 auto;">
+                《道德经》第一个词是「<strong>道</strong>」，最后一个词是「<strong>不争</strong>」<br>
+                整部经典就是<strong>从道到不争</strong>——不争是道的源代码
+            </p>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-num">3</div>
+                    <div class="summary-label">道的核心特征<br>无名·无为·不争</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">8</div>
+                    <div class="summary-label">「不争」出现次数</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">4</div>
+                    <div class="summary-label">领导者层级</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-num">∞</div>
+                    <div class="summary-label">不争之德<br>利他赋能</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结语金句 -->
+        <div class="quote-card" style="text-align:center; padding:40px; margin:40px 0;">
+            <p class="quote-text" style="font-size:1.4rem;">
+                <span class="hl-gold">「天之道，利而不害；圣人之道，为而不争。」</span>
+            </p>
+            <p class="quote-source" style="margin-top:20px;">——《道德经》第八十一章（全书最后一句）</p>
+        </div>
+
+    </div>
+
+    <footer class="footer">
+        <div class="footer-divider"></div>
+        <p>基于吴伯凡《吴伯凡讲透道德经》第三模块内容整理</p>
+        <p style="margin-top:10px; opacity:0.7;">道可道，非常道 · 名可名，非常名</p>
+    </footer>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('dark') ? '☀️' : '🌙';
+        }
+
+        // 折叠面板
+        function toggleCollapsible(header) {
+            const collapsible = header.parentElement;
+            collapsible.classList.toggle('active');
+        }
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.concept-card, .quote-card, .collapsible, .compare-card, .case-study, .expert-comment').forEach(el => {
+            el.style.opacity = '0';
+            observer.observe(el);
+        });
+
+        // 进度条动画
+        setTimeout(() => {
+            document.querySelectorAll('.level-fill').forEach(fill => {
+                const width = fill.style.width;
+                fill.style.width = '0';
+                setTimeout(() => {
+                    fill.style.width = width;
+                }, 500);
+            });
+        }, 1000);
+    </script>
+</body>
+</html>
