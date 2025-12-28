@@ -1,0 +1,1484 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自我防御机制 | 心灵的迷宫与觉醒</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+        }
+
+        .dark-mode {
+            --glass-bg: rgba(30, 41, 59, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --bg-gradient: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #4c1d95 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        /* 浮动背景元素 */
+        .bg-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .shape {
+            position: absolute;
+            border-radius: 50%;
+            opacity: 0.15;
+            animation: float 20s infinite ease-in-out;
+        }
+
+        .shape-1 { width: 400px; height: 400px; background: #ec4899; top: -100px; left: -100px; animation-delay: 0s; }
+        .shape-2 { width: 300px; height: 300px; background: #8b5cf6; top: 50%; right: -100px; animation-delay: -5s; }
+        .shape-3 { width: 250px; height: 250px; background: #06b6d4; bottom: -50px; left: 30%; animation-delay: -10s; }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(30px, -30px) rotate(5deg); }
+            50% { transform: translate(-20px, 20px) rotate(-5deg); }
+            75% { transform: translate(20px, 10px) rotate(3deg); }
+        }
+
+        /* 容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 玻璃卡片 */
+        .glass-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--shadow);
+            padding: 32px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #f0abfc 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            text-shadow: 0 4px 30px rgba(0,0,0,0.1);
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: rgba(255,255,255,0.85);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 控制栏 */
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            background: var(--primary);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        /* 金句卡片 */
+        .quote-carousel {
+            overflow: hidden;
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .quote-track {
+            display: flex;
+            animation: scroll 40s linear infinite;
+        }
+
+        .quote-track:hover {
+            animation-play-state: paused;
+        }
+
+        @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        .quote-card {
+            flex-shrink: 0;
+            width: 350px;
+            margin: 0 12px;
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.9), rgba(255,255,255,0.7));
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .dark-mode .quote-card {
+            background: linear-gradient(135deg, rgba(51,65,85,0.9), rgba(30,41,59,0.8));
+        }
+
+        .quote-card:hover {
+            transform: scale(1.03);
+        }
+
+        .quote-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .quote-text {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .quote-source {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 500;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            padding: 40px 20px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 800px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 24px 48px;
+            border-radius: 50px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            box-shadow: 0 8px 30px rgba(99, 102, 241, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .branch-line {
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--primary), transparent);
+        }
+
+        .branch-node {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 140px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.08);
+        }
+
+        .branch-node.purple { border-color: #8b5cf6; color: #8b5cf6; }
+        .branch-node.pink { border-color: #ec4899; color: #ec4899; }
+        .branch-node.blue { border-color: #3b82f6; color: #3b82f6; }
+        .branch-node.green { border-color: #10b981; color: #10b981; }
+        .branch-node.orange { border-color: #f59e0b; color: #f59e0b; }
+        .branch-node.red { border-color: #ef4444; color: #ef4444; }
+
+        .sub-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .sub-node {
+            background: rgba(255,255,255,0.5);
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .dark-mode .sub-node {
+            background: rgba(51,65,85,0.5);
+        }
+
+        /* 信息图表 */
+        .infographic {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 24px;
+            margin: 30px 0;
+        }
+
+        .info-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 28px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .info-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .info-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .info-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .info-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .info-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 可折叠板块 */
+        .section {
+            margin-bottom: 24px;
+        }
+
+        .section-header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 24px 32px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.1);
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .section-icon.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .section-icon.pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .section-icon.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .section-icon.green { background: linear-gradient(135deg, #10b981, #34d399); }
+        .section-icon.orange { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+
+        .section-name {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-preview {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .section-toggle {
+            font-size: 24px;
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+
+        .section.active .section-toggle {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .section.active .section-content {
+            max-height: 5000px;
+        }
+
+        .section-body {
+            background: var(--glass-bg);
+            backdrop-filter: blur(15px);
+            border: 1px solid var(--glass-border);
+            border-top: none;
+            border-radius: 0 0 20px 20px;
+            padding: 32px;
+            margin-top: -10px;
+        }
+
+        /* 内容样式 */
+        .content h3 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin: 28px 0 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .content h3::before {
+            content: '◆';
+            color: var(--accent);
+        }
+
+        .content p {
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+
+        /* 高亮样式 */
+        .highlight-red {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: #3b82f6;
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: #10b981;
+            font-weight: 600;
+        }
+
+        .highlight-purple {
+            color: #8b5cf6;
+            font-weight: 600;
+        }
+
+        .highlight-orange {
+            color: #f59e0b;
+            font-weight: 600;
+        }
+
+        .highlight-pink {
+            color: #ec4899;
+            font-weight: 600;
+        }
+
+        .highlight-bg {
+            background: linear-gradient(120deg, rgba(236, 72, 153, 0.2) 0%, rgba(139, 92, 246, 0.2) 100%);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* 关键概念卡片 */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 24px 0;
+        }
+
+        .concept-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+            border-radius: 16px;
+            padding: 24px;
+            border-left: 4px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .concept-card:hover {
+            transform: translateX(5px);
+            border-left-color: var(--accent);
+        }
+
+        .concept-title {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .concept-desc {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1));
+            border-radius: 20px;
+            padding: 28px;
+            margin: 24px 0;
+            position: relative;
+            border: 1px solid rgba(16, 185, 129, 0.2);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .expert-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--success), var(--info));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .expert-info h4 {
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .expert-info span {
+            font-size: 0.85rem;
+            color: var(--success);
+        }
+
+        .expert-text {
+            color: var(--text-primary);
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* 列表样式 */
+        .styled-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .styled-list li {
+            padding: 12px 0 12px 36px;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .dark-mode .styled-list li {
+            border-bottom-color: rgba(255,255,255,0.05);
+        }
+
+        .styled-list li::before {
+            content: '→';
+            position: absolute;
+            left: 8px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        /* 数字标签 */
+        .number-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            font-size: 0.85rem;
+            font-weight: 700;
+            margin-right: 10px;
+        }
+
+        /* 流程图 */
+        .flow-chart {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+            padding: 20px;
+        }
+
+        .flow-item {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--primary);
+            padding: 16px 24px;
+            border-radius: 50px;
+            font-weight: 600;
+            color: var(--primary);
+            transition: all 0.3s ease;
+        }
+
+        .flow-item:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .flow-arrow {
+            font-size: 24px;
+            color: var(--accent);
+        }
+
+        /* 案例卡片 */
+        .case-study {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(245, 158, 11, 0.1));
+            border-radius: 20px;
+            padding: 28px;
+            margin: 24px 0;
+            border-left: 4px solid var(--warning);
+        }
+
+        .case-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .case-icon {
+            font-size: 28px;
+        }
+
+        .case-title {
+            font-weight: 700;
+            color: var(--warning);
+            font-size: 1.1rem;
+        }
+
+        .case-content {
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            color: rgba(255,255,255,0.7);
+        }
+
+        .footer-logo {
+            font-size: 2rem;
+            margin-bottom: 16px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { padding: 12px; }
+            .glass-card { padding: 20px; border-radius: 16px; }
+            .header { padding: 40px 16px; }
+            .controls { gap: 8px; }
+            .control-btn { padding: 10px 16px; font-size: 13px; }
+            .mindmap { min-width: auto; }
+            .mindmap-branches { flex-direction: column; align-items: center; }
+            .section-header { padding: 16px 20px; }
+            .section-body { padding: 20px; }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body { background: white; }
+            .bg-shapes, .controls, .section-toggle { display: none; }
+            .glass-card { box-shadow: none; border: 1px solid #ddd; }
+            .section-content { max-height: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shapes">
+        <div class="shape shape-1"></div>
+        <div class="shape shape-2"></div>
+        <div class="shape shape-3"></div>
+    </div>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-badge">🧠 精神分析核心概念</div>
+            <h1>自我防御机制</h1>
+            <p class="header-subtitle">探索心灵的迷宫，理解人性的深层密码<br>基于武志红老师课程精华提炼</p>
+        </header>
+
+        <!-- 控制栏 -->
+        <div class="controls">
+            <button class="control-btn" onclick="toggleDarkMode()">
+                <span id="theme-icon">🌙</span>
+                <span>切换模式</span>
+            </button>
+            <button class="control-btn" onclick="expandAll()">
+                <span>📖</span>
+                <span>展开全部</span>
+            </button>
+            <button class="control-btn" onclick="collapseAll()">
+                <span>📕</span>
+                <span>收起全部</span>
+            </button>
+            <button class="control-btn" onclick="window.print()">
+                <span>🖨️</span>
+                <span>打印</span>
+            </button>
+        </div>
+
+        <!-- 金句轮播 -->
+        <div class="glass-card" style="padding: 20px;">
+            <div class="quote-carousel">
+                <div class="quote-track">
+                    <div class="quote-card">
+                        <div class="quote-icon">💎</div>
+                        <div class="quote-text">"防御，就是大脑把感受排除在意识之外的一个途径。"</div>
+                        <div class="quote-source">— 布莱克曼</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🔮</div>
+                        <div class="quote-text">"人类几乎所有事情都是防御。"</div>
+                        <div class="quote-source">— 安娜·弗洛伊德</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🌟</div>
+                        <div class="quote-text">"觉知最好和智慧与慈悲结合在一起，这样哪怕觉知到再深不可测的内容，你的自我都还能兜得住。"</div>
+                        <div class="quote-source">— 武志红</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🎭</div>
+                        <div class="quote-text">"自我能力的限制，常常是自我防御机制的结果，而不是天生如此。"</div>
+                        <div class="quote-source">— 武志红</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🧩</div>
+                        <div class="quote-text">"所谓的'我'未必是天生的，可能是不断认同形成的结果。"</div>
+                        <div class="quote-source">— 武志红</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">⚡</div>
+                        <div class="quote-text">"人生即苦，只有开悟之后，才会变成正常人。在开悟前，人必须启用自我防御机制来防御苦。"</div>
+                        <div class="quote-source">— 佛学智慧</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🔥</div>
+                        <div class="quote-text">"无欲无忆，终极现实。"</div>
+                        <div class="quote-source">— 比昂</div>
+                    </div>
+                    <!-- 复制一份用于无缝滚动 -->
+                    <div class="quote-card">
+                        <div class="quote-icon">💎</div>
+                        <div class="quote-text">"防御，就是大脑把感受排除在意识之外的一个途径。"</div>
+                        <div class="quote-source">— 布莱克曼</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🔮</div>
+                        <div class="quote-text">"人类几乎所有事情都是防御。"</div>
+                        <div class="quote-source">— 安娜·弗洛伊德</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🌟</div>
+                        <div class="quote-text">"觉知最好和智慧与慈悲结合在一起，这样哪怕觉知到再深不可测的内容，你的自我都还能兜得住。"</div>
+                        <div class="quote-source">— 武志红</div>
+                    </div>
+                    <div class="quote-card">
+                        <div class="quote-icon">🎭</div>
+                        <div class="quote-text">"自我能力的限制，常常是自我防御机制的结果，而不是天生如此。"</div>
+                        <div class="quote-source">— 武志红</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心信息图 -->
+        <div class="glass-card">
+            <h2 style="text-align: center; margin-bottom: 30px; font-size: 1.5rem;">
+                <span class="highlight-purple">🎯 核心概念速览</span>
+            </h2>
+            <div class="infographic">
+                <div class="info-card">
+                    <div class="info-icon">🛡️</div>
+                    <div class="info-title">自我防御机制</div>
+                    <div class="info-desc">心灵的防火墙，保护意识不被潜意识的痛苦淹没</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">💔</div>
+                    <div class="info-title">不愉快情感</div>
+                    <div class="info-desc">焦虑 · 抑郁 · 愤怒<br>三种需要防御的核心情感</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🧊</div>
+                    <div class="info-title">压抑与隔离</div>
+                    <div class="info-desc">压抑关闭想法<br>隔离关闭感受</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">⚔️</div>
+                    <div class="info-title">要你命三板斧</div>
+                    <div class="info-desc">分裂 → 否认 → 投射<br>原始防御的"连环套"</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🔄</div>
+                    <div class="info-title">投射与内摄</div>
+                    <div class="info-desc">向外投射"坏"<br>向内内摄"形象"</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">✨</div>
+                    <div class="info-title">觉知与转化</div>
+                    <div class="info-desc">将潜意识意识化<br>升级防御机制</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="glass-card">
+            <h2 style="text-align: center; margin-bottom: 20px; font-size: 1.5rem;">
+                <span class="highlight-pink">🧠 自我防御机制全景图</span>
+            </h2>
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-center">🛡️ 自我防御机制</div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node purple">📌 基本定义</div>
+                            <div class="sub-branches">
+                                <div class="sub-node">排除不愉快情感</div>
+                                <div class="sub-node">保护自我功能</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node pink">💢 三种情感</div>
+                            <div class="sub-branches">
+                                <div class="sub-node">焦虑：可怕将发生</div>
+                                <div class="sub-node">抑郁：可怕已发生</div>
+                                <div class="sub-node">愤怒：想要毁灭</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node blue">🧊 压抑隔离</div>
+                            <div class="sub-branches">
+                                <div class="sub-node">压抑：关闭想法</div>
+                                <div class="sub-node">隔离：关闭感受</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node orange">⚔️ 三板斧</div>
+                            <div class="sub-branches">
+                                <div class="sub-node">分裂：非黑即白</div>
+                                <div class="sub-node">否认：拒绝承认</div>
+                                <div class="sub-node">投射：甩锅他人</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node green">🔄 投射内摄</div>
+                            <div class="sub-branches">
+                                <div class="sub-node">向外投射"坏"</div>
+                                <div class="sub-node">向内内摄形象</div>
+                                <div class="sub-node">认同与成长</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node red">🎭 19种防御</div>
+                            <div class="sub-branches">
+                                <div class="sub-node">幻觉·反向形成</div>
+                                <div class="sub-node">升华·退行·合理化</div>
+                                <div class="sub-node">更多详见正文...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 专家评论：全球顶级心理学家视角 -->
+        <div class="glass-card">
+            <div class="expert-comment" style="border-color: rgba(139, 92, 246, 0.3); background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));">
+                <div class="expert-header">
+                    <div class="expert-avatar" style="background: linear-gradient(135deg, #8b5cf6, #ec4899);">🎓</div>
+                    <div class="expert-info">
+                        <h4>全球顶级心理学家视角</h4>
+                        <span>对武志红课程的专业评析</span>
+                    </div>
+                </div>
+                <div class="expert-text">
+                    <p style="margin-bottom: 16px;">武志红老师的这套"自我防御机制"课程，<span class="highlight-purple">成功架起了精神分析理论与大众理解之间的桥梁</span>。他对布莱克曼《心灵的面具》的解读既忠于原著精髓，又融入了丰富的本土化案例，使深奥的心理学概念变得生动可感。</p>
+                    
+                    <p style="margin-bottom: 16px;"><span class="highlight-red">尤为珍贵的是"要你命三板斧"这个提法</span>——将分裂、否认、投射这三个原始防御机制串联成"连环套"，形象揭示了人类心理防御的底层运作机制。这种概念化处理，既保留了理论深度，又极具教学智慧。</p>
+                    
+                    <p style="margin-bottom: 16px;">从临床视角看，武老师<span class="highlight-blue">对"电路图"比喻的运用堪称精妙</span>：电灯泡代表意识/自我，开关代表防御机制，电流代表情感能量。这不仅帮助普通人理解为什么觉知有时很危险，也为咨询师提供了评估来访者"电路系统"状态的思路框架。</p>
+                    
+                    <p><span class="highlight-green">武老师始终强调"觉知需要配合智慧与慈悲"、"不要滥用分析"</span>，这体现了成熟治疗师的伦理敏感性。心理洞察是一把双刃剑，用好了可以疗愈，用偏了可能伤人——这份分寸感，正是专业训练与临床经验的结晶。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一节：定义与原理 -->
+        <div class="section active" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-title">
+                    <div class="section-icon purple">🎯</div>
+                    <div>
+                        <div class="section-name">自我防御机制的定义</div>
+                        <div class="section-preview">理解心灵如何保护自己免受痛苦侵袭</div>
+                    </div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-body content">
+                    <h3>核心定义</h3>
+                    <p>精神分析学家布莱克曼给出的定义：</p>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">简单定义</div>
+                            <div class="concept-desc"><span class="highlight-purple">防御，就是大脑把感受排除在意识之外的一个途径。</span></div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">完整定义</div>
+                            <div class="concept-desc">将不愉快情感的某个或某些组成部分（想法、感觉或两者）<span class="highlight-red">移除到意识之外</span>的一种心理操作。</div>
+                        </div>
+                    </div>
+
+                    <h3>不愉快情感的三种类型</h3>
+                    <div class="flow-chart">
+                        <div class="flow-item" style="border-color: #f59e0b; color: #f59e0b;">
+                            <strong>焦虑</strong><br>
+                            <small>可怕事件<em>将要</em>发生</small>
+                        </div>
+                        <span class="flow-arrow">←→</span>
+                        <div class="flow-item" style="border-color: #3b82f6; color: #3b82f6;">
+                            <strong>抑郁</strong><br>
+                            <small>可怕事件<em>已经</em>发生</small>
+                        </div>
+                        <span class="flow-arrow">←→</span>
+                        <div class="flow-item" style="border-color: #ef4444; color: #ef4444;">
+                            <strong>愤怒</strong><br>
+                            <small>想<em>毁灭</em>某人/某物</small>
+                        </div>
+                    </div>
+
+                    <h3>布莱克曼的"电路图"比喻</h3>
+                    <div class="case-study">
+                        <div class="case-header">
+                            <span class="case-icon">💡</span>
+                            <span class="case-title">心灵电路模型</span>
+                        </div>
+                        <div class="case-content">
+                            <p>想象一个完整的电路：<span class="highlight-blue">电灯泡</span>（意识/自我）、<span class="highlight-green">线路</span>（心理通道）、<span class="highlight-orange">开关</span>（防御机制）、<span class="highlight-red">电流</span>（情感能量）。</p>
+                            <p style="margin-top: 12px;">当情感电流太强烈时，我们会<span class="highlight-purple">拉起开关切断电流</span>，以防电灯泡被烧坏。这个开关通常在童年时期设置，后来被遗忘，成为潜意识中的防御机关。</p>
+                            <p style="margin-top: 12px;"><strong>关键洞察：</strong>你的<span class="highlight-pink">自我容器的大小</span>由原生家庭的关系容器所塑造。原生家庭中一再被禁止的情感，很容易成为你意识不到的东西。</p>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🔬</div>
+                            <div class="expert-info">
+                                <h4>深层解读</h4>
+                                <span>理论整合视角</span>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            这个电路图模型的精妙之处在于，它解释了<span class="highlight-blue">为什么觉知有时是危险的</span>：对于精神分裂症患者，电灯泡、线路和电压可能都有问题，强行打开开关可能导致短路。而对于神经症患者，系统基本完好，只需找到并拉下那个陈旧的开关即可。<span class="highlight-green">治疗的艺术在于判断"电路系统"的承受能力</span>。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二节：要你命三板斧 -->
+        <div class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-title">
+                    <div class="section-icon pink">⚔️</div>
+                    <div>
+                        <div class="section-name">要你命三板斧</div>
+                        <div class="section-preview">分裂、否认、投射——原始防御的致命连环套</div>
+                    </div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-body content">
+                    <h3>压抑与隔离：成年人的基本防御</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title">🔒 压抑</div>
+                            <div class="concept-desc">关闭<span class="highlight-red">想法</span>，事情记得不完整，但感受强烈。<br><em>女性更容易使用这种防御。</em></div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title">❄️ 隔离</div>
+                            <div class="concept-desc">关闭<span class="highlight-blue">感受</span>，事情记得清楚，但感受消失。<br><em>男性更容易使用这种防御。</em></div>
+                        </div>
+                    </div>
+
+                    <h3>三板斧连环套</h3>
+                    <div class="flow-chart">
+                        <div class="flow-item" style="border-color: #ef4444;">
+                            <span class="number-badge">1</span>
+                            <strong>分裂</strong>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-item" style="border-color: #f59e0b;">
+                            <span class="number-badge">2</span>
+                            <strong>否认</strong>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-item" style="border-color: #8b5cf6;">
+                            <span class="number-badge">3</span>
+                            <strong>投射</strong>
+                        </div>
+                    </div>
+
+                    <div class="concept-grid">
+                        <div class="concept-card" style="border-left-color: #ef4444;">
+                            <div class="concept-title" style="color: #ef4444;">分裂</div>
+                            <div class="concept-desc">认为人或事<span class="highlight-red">完全好或完全坏</span>，无法接受好坏并存。非黑即白的极端思维。</div>
+                        </div>
+                        <div class="concept-card" style="border-left-color: #f59e0b;">
+                            <div class="concept-title" style="color: #f59e0b;">否认</div>
+                            <div class="concept-desc">否认自己或所喜欢的人身上存在"坏"。<span class="highlight-orange">拒绝承认不愉快的现实。</span></div>
+                        </div>
+                        <div class="concept-card" style="border-left-color: #8b5cf6;">
+                            <div class="concept-title" style="color: #8b5cf6;">投射</div>
+                            <div class="concept-desc">把"坏"<span class="highlight-purple">投射到别人身上</span>。我不坏，是你坏！</div>
+                        </div>
+                    </div>
+
+                    <h3>四种否认类型</h3>
+                    <ul class="styled-list">
+                        <li><span class="highlight-red">本质否认</span>：否认明显事实的存在（如酗酒者否认自己酗酒）</li>
+                        <li><span class="highlight-orange">行动上的否认</span>：用行动表示不愉快事实不存在（明知危险仍前往）</li>
+                        <li><span class="highlight-blue">幻想中的否认</span>：坚持错误信念以回避恐怖现实（"每个人都可以被拯救"）</li>
+                        <li><span class="highlight-purple">言语上的否认</span>：用轻描淡写的说法否认行为的可怕性（"我干了蠢事"替代"我打了人"）</li>
+                    </ul>
+
+                    <div class="case-study">
+                        <div class="case-header">
+                            <span class="case-icon">⚠️</span>
+                            <span class="case-title">"透明幻觉"——最严重的心理问题</span>
+                        </div>
+                        <div class="case-content">
+                            <p>一个人认为：<span class="highlight-red">"我不用和你沟通，就能断定你是怎么回事；我也不用和你讲，你就能知道我是怎么回事。"</span></p>
+                            <p style="margin-top: 12px;">一旦完全陷入透明幻觉，与他人的沟通就变得不可能，只剩下投射。健康沟通的基础是：<span class="highlight-green">我是我，你是你。我对你的判断都是预设，必须从你那儿得到佐证。</span></p>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">⚡</div>
+                            <div class="expert-info">
+                                <h4>临床警示</h4>
+                                <span>识别与应对</span>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            当一个人频繁启动"三板斧"时，<span class="highlight-red">对关系的破坏力极大</span>，让周围人远离他，但他无法意识到这一点，继续使用这个连环套，最终陷入恶性循环。<span class="highlight-purple">让这样的人承认自己的"坏"，看到自己使用了否认机制</span>，是治疗的关键——有时需要借助法律、司法机关的外在力量。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三节：投射与内摄 -->
+        <div class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-title">
+                    <div class="section-icon blue">🔄</div>
+                    <div>
+                        <div class="section-name">切割与吸纳</div>
+                        <div class="section-preview">投射与内摄——内在世界与外部世界的交互作用</div>
+                    </div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-body content">
+                    <h3>两个基本方向</h3>
+                    <div class="flow-chart">
+                        <div class="flow-item" style="border-color: #ef4444;">
+                            <strong>向外：投射</strong><br>
+                            <small>内心 → 外部世界</small>
+                        </div>
+                        <span class="flow-arrow">⇄</span>
+                        <div class="flow-item" style="border-color: #10b981;">
+                            <strong>向内：内摄</strong><br>
+                            <small>外部世界 → 内心</small>
+                        </div>
+                    </div>
+
+                    <div class="concept-grid">
+                        <div class="concept-card" style="border-left-color: #ef4444;">
+                            <div class="concept-title" style="color: #ef4444;">🔴 投射</div>
+                            <div class="concept-desc">将<span class="highlight-red">内在心灵展现到外部世界的屏幕上</span>。特别重要的是投射"坏"——我们处理不了"坏"，所以把它投射出去。</div>
+                        </div>
+                        <div class="concept-card" style="border-left-color: #10b981;">
+                            <div class="concept-title" style="color: #10b981;">🟢 内摄</div>
+                            <div class="concept-desc"><span class="highlight-green">外部世界的存在被吸纳到内在心灵中</span>，形成他人的影像。客体在你心中形成一个意象。</div>
+                        </div>
+                    </div>
+
+                    <h3>六种认同类型</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="number-badge">1</span> 与幻想认同</div>
+                            <div class="concept-desc">认同英雄人物或偶像。如弗洛伊德崇拜汉尼拔，挑战权威体系。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="number-badge">2</span> 与父母愿望认同</div>
+                            <div class="concept-desc">认同父母意识或<span class="highlight-purple">潜意识</span>中的愿望。超节俭的父母可能养出奢侈的孩子。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="number-badge">3</span> 与理想客体认同</div>
+                            <div class="concept-desc">认同真实认识的人，将其理想化。如狂热粉丝将偶像完美化。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="number-badge">4</span> 与攻击者认同</div>
+                            <div class="concept-desc">曾被虐待或目睹虐待后，<span class="highlight-red">认同施虐者</span>。可能成为虐待狂或恶霸。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="number-badge">5</span> 与受害者认同</div>
+                            <div class="concept-desc">目睹加害关系后，成为<span class="highlight-blue">像受害者那样的人</span>，容许别人的攻击。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="number-badge">6</span> 与丧失客体认同</div>
+                            <div class="concept-desc">重要人物去世后，<span class="highlight-green">变得更像他</span>，以此不面对失去的事实。</div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">💫</div>
+                            <div class="expert-info">
+                                <h4>深度洞察</h4>
+                                <span>关于"我"的形成</span>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            <span class="highlight-purple">投射无处不在，认同也无处不在。</span>我们头脑里的各种认识乃至各种感觉，都可能是认同的结果。内摄和认同的防御机制让我们明白：<span class="highlight-pink">所谓的"我"未必是天生的，可能是不断认同形成的结果。</span>这一洞见深刻揭示了人格形成的社会性本质。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四节：常见防御机制 -->
+        <div class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-title">
+                    <div class="section-icon orange">🎭</div>
+                    <div>
+                        <div class="section-name">19种常见防御机制</div>
+                        <div class="section-preview">从幻觉到升华——防御机制的多样面貌</div>
+                    </div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-body content">
+                    <div class="concept-grid">
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-red">1. 幻觉</span></div>
+                            <div class="concept-desc">看到/听到不存在的影像或声音。回避自己想要回避的内在想法。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-orange">2. 投射性指责</span></div>
+                            <div class="concept-desc">对事情有内疚感，通过指责别人来回避自己的责任。"都是你的错！"</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-blue">3. 泛灵论</span></div>
+                            <div class="concept-desc">把人的属性放到非人类事物上。拿石头当宠物，跟炉子吵架。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-purple">4. 去生命化</span></div>
+                            <div class="concept-desc">不把人视为人，回避关系问题或在攻击时免于内疚。战争中的妖魔化。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-pink">5. 反向形成</span></div>
+                            <div class="concept-desc">本来处于A，却表现为-A。恨你却表现得爱你，有洁癖实则渴望肮脏。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-green">6. 外化</span></div>
+                            <div class="concept-desc">把内心想法体验成外界的人在这样看你。"你肯定觉得我很糟糕。"</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-red">7. 攻击性转向自身</span></div>
+                            <div class="concept-desc">攻击性不能向外，转而向内攻击自己。抑郁症和自杀倾向的核心机制。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-orange">8. 分隔</span></div>
+                            <div class="concept-desc">做的事有前后联系，却看不到它们之间的联系。裸泳邀请却惊慌失措。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-blue">9. 凝缩</span></div>
+                            <div class="concept-desc">毫无逻辑地把一些东西生硬地联系在一起。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-purple">10. 白日梦</span></div>
+                            <div class="concept-desc">主动陷入想象以满足愿望。逃避痛苦现实的幻想世界。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-pink">11. 搪塞</span></div>
+                            <div class="concept-desc">有意识的撒谎，常与投射性指责、合理化联系在一起。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-green">12. 退行</span></div>
+                            <div class="concept-desc">无法应对高水平挑战，退行到低发展水平寻找满足。最糟是退行到全能自恋。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-red">13. 升华</span></div>
+                            <div class="concept-desc">将吓人的性幻想和毁灭幻想转化为有益活动：艺术、写作、公益。文明的基础。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-orange">14. 诱惑攻击者</span></div>
+                            <div class="concept-desc">惧怕一个人却以性或谄媚方式诱惑他，防御自体的虚弱。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-blue">15. 合理化</span></div>
+                            <div class="concept-desc">干了不合理的事，给自己找借口，把事情说得非常合理。"因为你对不起我..."</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-purple">16. 理智化</span></div>
+                            <div class="concept-desc">沉浸在不合逻辑的理论中，忽略核心问题。讨论药物机制以回避出轨愧疚。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-pink">17. 穷思竭虑</span></div>
+                            <div class="concept-desc">在头脑上彻底弄清一件事，实为防御痛苦感受。深陷哲学思考以回避分离焦虑。</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-green">18. 本能化</span></div>
+                            <div class="concept-desc">把自我功能视为本能。"理科就是男人的事，艺术就是女人的事。"</div>
+                        </div>
+                        <div class="concept-card">
+                            <div class="concept-title"><span class="highlight-red">19. 自我功能的抑制</span></div>
+                            <div class="concept-desc">把某种自我功能赋予性欲或敌意的象征性含义而抑制它。数学能力、空间能力的抑制。</div>
+                        </div>
+                    </div>
+
+                    <div class="expert-comment">
+                        <div class="expert-header">
+                            <div class="expert-avatar">🎯</div>
+                            <div class="expert-info">
+                                <h4>核心洞察</h4>
+                                <span>关于能力与限制</span>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            <span class="highlight-purple">自我能力的限制，常常是自我防御机制的结果，而不是天生如此。</span>这个观点极具启发性：我们以为的"能力缺陷"可能只是童年时期为了防御某些痛苦情感而设置的开关。<span class="highlight-green">觉知到这一点，就打开了改变的可能性。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五节：觉知与成长 -->
+        <div class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <div class="section-title">
+                    <div class="section-icon green">✨</div>
+                    <div>
+                        <div class="section-name">觉知与成长</div>
+                        <div class="section-preview">从防御到觉醒——穿越心灵迷宫的智慧之路</div>
+                    </div>
+                </div>
+                <span class="section-toggle">▼</span>
+            </div>
+            <div class="section-content">
+                <div class="section-body content">
+                    <h3>觉知的力量与边界</h3>
+                    <div class="concept-grid">
+                        <div class="concept-card" style="border-left-color: #10b981;">
+                            <div class="concept-title" style="color: #10b981;">觉知的价值</div>
+                            <div class="concept-desc">精神分析治疗的本质是<span class="highlight-green">将潜意识意识化</span>。觉知可以扩大选择空间，带来真正的自由。</div>
+                        </div>
+                        <div class="concept-card" style="border-left-color: #f59e0b;">
+                            <div class="concept-title" style="color: #f59e0b;">觉知的危险</div>
+                            <div class="concept-desc">觉知也很危险，需要与<span class="highlight-orange">智慧与慈悲结合</span>。不要轻易滥用分析，"抄后路"偶尔为之就好。</div>
+                        </div>
+                    </div>
+
+                    <h3>心灵的三层结构</h3>
+                    <div class="flow-chart">
+                        <div class="flow-item" style="border-color: #8b5cf6; background: rgba(139, 92, 246, 0.1);">
+                            <strong>保护层</strong><br>
+                            <small>防御机制</small>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-item" style="border-color: #ef4444; background: rgba(239, 68, 68, 0.1);">
+                            <strong>痛苦层</strong><br>
+                            <small>不愉快情感</small>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-item" style="border-color: #10b981; background: rgba(16, 185, 129, 0.1);">
+                            <strong>真我</strong><br>
+                            <small>生命本质</small>
+                        </div>
+                    </div>
+
+                    <div class="case-study" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(6, 182, 212, 0.1)); border-left-color: #10b981;">
+                        <div class="case-header">
+                            <span class="case-icon">🧘</span>
+                            <span class="case-title" style="color: #10b981;">冥想与觉知的区别</span>
+                        </div>
+                        <div class="case-content">
+                            <p><span class="highlight-blue">隔离</span>意味着你隔离了感受，只留下认知。认知是符号系统，感受是存在实体。</p>
+                            <p style="margin-top: 12px;"><span class="highlight-green">冥想</span>则是深入感受，全然拥抱感受。因为一直有中正的觉知存在，哪怕再痛苦的感受也不会把我们淹没。"<span class="highlight-purple">流动而不成为</span>"——不被感受卷走，一直有旁观者的觉知存在。</p>
+                            <p style="margin-top: 12px;">最终，当觉知之光照亮所有黑色能量，"我"和"你"消失，感受和觉知融合，<span class="highlight-pink">进入合一状态</span>。</p>
+                        </div>
+                    </div>
+
+                    <h3>成长的路径</h3>
+                    <ul class="styled-list">
+                        <li><span class="highlight-purple">保护好"我"这个容器</span>——不要急于突破，慢慢扩大自我容量</li>
+                        <li><span class="highlight-blue">识别原生家庭的影响</span>——被禁止的情感容易成为盲点</li>
+                        <li><span class="highlight-green">不断升级防御机制</span>——从原始防御走向成熟防御</li>
+                        <li><span class="highlight-orange">在关系中淬炼</span>——自体与客体的交互作用是成长的熔炉</li>
+                        <li><span class="highlight-pink">走向合一</span>——从二元对立逐渐走向整合</li>
+                    </ul>
+
+                    <div class="expert-comment" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(139, 92, 246, 0.1)); border-color: rgba(236, 72, 153, 0.3);">
+                        <div class="expert-header">
+                            <div class="expert-avatar" style="background: linear-gradient(135deg, #ec4899, #8b5cf6);">🌟</div>
+                            <div class="expert-info">
+                                <h4>终极智慧</h4>
+                                <span>比昂的洞见</span>
+                            </div>
+                        </div>
+                        <div class="expert-text">
+                            <span class="highlight-pink">"无欲无忆，终极现实。"</span>——人一旦体验到终极现实，就可以既没有指向未来的欲望，也没有指向过去的记忆。这是觉知的最高境界：不是对抗防御，而是<span class="highlight-purple">超越防御的必要性</span>。当我们抵达真我层，一切防御都可以放下。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 总结信息图 -->
+        <div class="glass-card">
+            <h2 style="text-align: center; margin-bottom: 30px; font-size: 1.5rem;">
+                <span class="highlight-green">🎯 核心要点总结</span>
+            </h2>
+            <div class="infographic">
+                <div class="info-card">
+                    <div class="info-icon">🛡️</div>
+                    <div class="info-title">防御即保护</div>
+                    <div class="info-desc">自我防御机制既是"自欺"也是"护心术"，保护心灵不陷入崩溃</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">👶</div>
+                    <div class="info-title">童年塑造</div>
+                    <div class="info-desc">防御机制在童年原生家庭中形成并固着，之后可能不再适用</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">📈</div>
+                    <div class="info-title">不断升级</div>
+                    <div class="info-desc">成长的过程是不断觉知并升级自己的防御机制</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">💡</div>
+                    <div class="info-title">觉知有度</div>
+                    <div class="info-desc">觉知需要配合智慧与慈悲，不可滥用分析</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🔗</div>
+                    <div class="info-title">关系是关键</div>
+                    <div class="info-desc">关系的容器大小决定自我的容器大小</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">✨</div>
+                    <div class="info-title">走向整合</div>
+                    <div class="info-desc">从二元对立走向合一，最终直接面对存在</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <div class="footer-logo">🧠💫</div>
+            <p>自我防御机制 · 心灵的迷宫与觉醒</p>
+            <p style="margin-top: 8px; font-size: 0.9rem;">基于武志红老师课程精华 | 专业心理学视角解读</p>
+            <p style="margin-top: 16px; font-size: 0.85rem; opacity: 0.7;">推荐阅读：布莱克曼《心灵的面具：101种心理防御》</p>
+        </footer>
+    </div>
+
+    <script>
+        // 切换深色模式
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            const icon = document.getElementById('theme-icon');
+            icon.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // 切换板块展开/收起
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.classList.toggle('active');
+        }
+
+        // 展开全部
+        function expandAll() {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('active'));
+        }
+
+        // 收起全部
+        function collapseAll() {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        }
+
+        // 页面加载时添加动画效果
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.glass-card, .section');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.5s ease';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, index * 100);
+            });
+        });
+    </script>
+</body>
+</html>

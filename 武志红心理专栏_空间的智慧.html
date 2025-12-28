@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>武志红心理专栏 · 空间的智慧</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #f43f5e;
+            --gold: #f59e0b;
+            --teal: #14b8a6;
+            --rose: #ec4899;
+            --sky: #0ea5e9;
+            --emerald: #10b981;
+            --glass-bg: rgba(255, 255, 255, 0.72);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+        
+        .dark-mode {
+            --glass-bg: rgba(30, 41, 59, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #ffd89b 100%);
+            background-size: 400% 400%;
+            animation: gradientBG 20s ease infinite;
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+        }
+        
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* 头部 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.1) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.1); opacity: 0.8; }
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2em;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .header .author {
+            margin-top: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: linear-gradient(135deg, var(--secondary), var(--rose));
+            padding: 8px 20px;
+            border-radius: 50px;
+            color: white;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        
+        .control-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            border: none;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            font-size: 1.3em;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        
+        .control-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 核心金句区 */
+        .golden-quotes {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(236, 72, 153, 0.15));
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--gold);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .golden-quotes h2 {
+            color: var(--gold);
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quote-carousel {
+            position: relative;
+            min-height: 150px;
+        }
+        
+        .quote-item {
+            position: absolute;
+            width: 100%;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            text-align: center;
+        }
+        
+        .quote-item.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .quote-text {
+            font-size: 1.4em;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+        
+        .quote-text span.highlight-red { color: var(--accent); }
+        .quote-text span.highlight-blue { color: var(--sky); }
+        .quote-text span.highlight-green { color: var(--emerald); }
+        .quote-text span.highlight-gold { color: var(--gold); }
+        .quote-text span.highlight-purple { color: var(--secondary); }
+        
+        .quote-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+        
+        .quote-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .quote-dot.active {
+            background: var(--gold);
+            transform: scale(1.3);
+        }
+        
+        /* 思维导图 */
+        .mindmap-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            overflow-x: auto;
+        }
+        
+        .mindmap-section h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+        }
+        
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+            min-width: 800px;
+        }
+        
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px 35px;
+            border-radius: 20px;
+            font-size: 1.3em;
+            font-weight: bold;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .mindmap-branches {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            margin-left: 30px;
+            gap: 15px;
+        }
+        
+        .branch {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .branch-line {
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), transparent);
+        }
+        
+        .branch-node {
+            padding: 12px 20px;
+            border-radius: 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .branch-node:hover {
+            transform: translateX(10px);
+        }
+        
+        .branch-node.node-red { background: linear-gradient(135deg, rgba(244, 63, 94, 0.2), rgba(244, 63, 94, 0.1)); border: 2px solid var(--accent); color: var(--accent); }
+        .branch-node.node-blue { background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(14, 165, 233, 0.1)); border: 2px solid var(--sky); color: var(--sky); }
+        .branch-node.node-green { background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.1)); border: 2px solid var(--emerald); color: var(--emerald); }
+        .branch-node.node-gold { background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.1)); border: 2px solid var(--gold); color: var(--gold); }
+        .branch-node.node-purple { background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.1)); border: 2px solid var(--secondary); color: var(--secondary); }
+        
+        .sub-branches {
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            margin-left: 20px;
+        }
+        
+        .branch-node.expanded + .sub-branches {
+            display: flex;
+        }
+        
+        .sub-branch {
+            padding: 8px 15px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            border-left: 3px solid currentColor;
+        }
+        
+        /* 信息图区域 */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .infographic h2 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--secondary);
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        
+        .info-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .info-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .info-icon {
+            font-size: 3em;
+            margin-bottom: 15px;
+        }
+        
+        .info-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .info-card:nth-child(1) .info-title { color: var(--accent); }
+        .info-card:nth-child(2) .info-title { color: var(--sky); }
+        .info-card:nth-child(3) .info-title { color: var(--emerald); }
+        .info-card:nth-child(4) .info-title { color: var(--gold); }
+        
+        .info-desc {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        
+        /* 进度条 */
+        .progress-bar {
+            height: 8px;
+            background: rgba(0,0,0,0.1);
+            border-radius: 10px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+        
+        .progress-fill.red { background: linear-gradient(90deg, var(--accent), var(--rose)); }
+        .progress-fill.blue { background: linear-gradient(90deg, var(--sky), var(--primary)); }
+        .progress-fill.green { background: linear-gradient(90deg, var(--emerald), var(--teal)); }
+        .progress-fill.gold { background: linear-gradient(90deg, var(--gold), #fbbf24); }
+        
+        /* 内容板块 */
+        .content-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+        
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.05);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        
+        .icon-red { background: linear-gradient(135deg, var(--accent), var(--rose)); color: white; }
+        .icon-blue { background: linear-gradient(135deg, var(--sky), var(--primary)); color: white; }
+        .icon-green { background: linear-gradient(135deg, var(--emerald), var(--teal)); color: white; }
+        .icon-gold { background: linear-gradient(135deg, var(--gold), #fbbf24); color: white; }
+        .icon-purple { background: linear-gradient(135deg, var(--secondary), var(--primary)); color: white; }
+        
+        .section-title h3 {
+            font-size: 1.3em;
+        }
+        
+        .section-preview {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        .section-arrow {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+            color: var(--text-secondary);
+        }
+        
+        .content-section.expanded .section-arrow {
+            transform: rotate(180deg);
+        }
+        
+        .section-body {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .content-section.expanded .section-body {
+            max-height: 3000px;
+        }
+        
+        .section-content {
+            padding: 0 30px 30px;
+        }
+        
+        /* 内容样式 */
+        .key-point {
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.1), transparent);
+            border-left: 4px solid var(--primary);
+            padding: 15px 20px;
+            margin: 15px 0;
+            border-radius: 0 10px 10px 0;
+        }
+        
+        .case-study {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(236, 72, 153, 0.05));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .case-study-title {
+            color: var(--gold);
+            font-weight: 600;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .insight-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(20, 184, 166, 0.05));
+            border: 1px solid var(--emerald);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .insight-title {
+            color: var(--emerald);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .highlight { font-weight: 600; }
+        .hl-red { color: var(--accent); }
+        .hl-blue { color: var(--sky); }
+        .hl-green { color: var(--emerald); }
+        .hl-gold { color: var(--gold); }
+        .hl-purple { color: var(--secondary); }
+        
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(99, 102, 241, 0.1));
+            border: 2px solid var(--secondary);
+            border-radius: 20px;
+            padding: 25px;
+            margin: 30px 0;
+            position: relative;
+        }
+        
+        .expert-comment::before {
+            content: '💬';
+            position: absolute;
+            top: -15px;
+            left: 20px;
+            background: var(--glass-bg);
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 1.5em;
+        }
+        
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        
+        .expert-info h4 {
+            color: var(--secondary);
+            font-size: 1.1em;
+        }
+        
+        .expert-info span {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        .expert-content {
+            line-height: 1.9;
+        }
+        
+        /* 对比图 */
+        .comparison {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        @media (max-width: 768px) {
+            .comparison {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .comparison-card {
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+        
+        .comparison-bad {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(239, 68, 68, 0.05));
+            border: 2px solid #ef4444;
+        }
+        
+        .comparison-good {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border: 2px solid var(--emerald);
+        }
+        
+        .comparison-card h4 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+        }
+        
+        .comparison-bad h4 { color: #ef4444; }
+        .comparison-good h4 { color: var(--emerald); }
+        
+        .comparison-card ul {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .comparison-card li {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .comparison-card li:last-child {
+            border-bottom: none;
+        }
+        
+        /* 数据可视化 */
+        .stats-row {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            flex: 1;
+            min-width: 150px;
+            background: var(--glass-bg);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* 公式框 */
+        .formula-box {
+            background: linear-gradient(135deg, rgba(14, 165, 233, 0.1), rgba(99, 102, 241, 0.1));
+            border: 2px dashed var(--sky);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        
+        .formula {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--sky);
+        }
+        
+        .formula-desc {
+            color: var(--text-secondary);
+            margin-top: 10px;
+        }
+        
+        /* 底部 */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        
+        .footer-title {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+        
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .takeaway-item {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.05));
+            padding: 15px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .footer-quote {
+            font-style: italic;
+            color: var(--text-secondary);
+            padding: 20px;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 20px;
+        }
+        
+        .footer-quote span {
+            color: var(--gold);
+            font-weight: 600;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header h1 { font-size: 1.8em; }
+            .mindmap { flex-direction: column; align-items: center; min-width: auto; }
+            .mindmap-branches { margin-left: 0; margin-top: 20px; }
+            .branch { flex-direction: column; text-align: center; }
+            .branch-line { width: 3px; height: 30px; background: linear-gradient(180deg, var(--primary), transparent); }
+        }
+        
+        /* 动画 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.6s ease forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+    </style>
+</head>
+<body>
+    <!-- 控制按钮 -->
+    <div class="controls">
+        <button class="control-btn" onclick="toggleDarkMode()" title="切换主题">🌓</button>
+        <button class="control-btn" onclick="expandAll()" title="全部展开">📖</button>
+    </div>
+    
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header fade-in">
+            <h1>🏠 空间的智慧</h1>
+            <p class="subtitle">生活空间与心理空间的深度解读</p>
+            <div class="author">📚 武志红心理学专栏 · 第36-37周精华提炼</div>
+        </header>
+        
+        <!-- 金句轮播 -->
+        <section class="golden-quotes fade-in delay-1">
+            <h2>✨ 核心金句</h2>
+            <div class="quote-carousel">
+                <div class="quote-item active" data-index="0">
+                    <div class="quote-text">
+                        <span class="highlight-red">房子就是你的心</span>，敞开还是关闭，是你的<span class="highlight-gold">基本权力</span>
+                    </div>
+                </div>
+                <div class="quote-item" data-index="1">
+                    <div class="quote-text">
+                        <span class="highlight-blue">安全感</span>是<span class="highlight-green">安全空间</span>的内化
+                    </div>
+                </div>
+                <div class="quote-item" data-index="2">
+                    <div class="quote-text">
+                        当确认放下控制时会遇到<span class="highlight-purple">充满善意的"你"</span>，才能接受失控
+                    </div>
+                </div>
+                <div class="quote-item" data-index="3">
+                    <div class="quote-text">
+                        <span class="highlight-red">控制欲望是万恶之源</span>，但人人都需要<span class="highlight-gold">掌控力</span>
+                    </div>
+                </div>
+                <div class="quote-item" data-index="4">
+                    <div class="quote-text">
+                        任何员工都需要一个<span class="highlight-blue">说了算的空间</span>，这是他的<span class="highlight-green">权力空间</span>
+                    </div>
+                </div>
+                <div class="quote-item" data-index="5">
+                    <div class="quote-text">
+                        做一棵<span class="highlight-gold">永远成长的苹果树</span>，<span class="highlight-purple">成长</span>才是最重要的
+                    </div>
+                </div>
+            </div>
+            <div class="quote-dots">
+                <span class="quote-dot active" onclick="showQuote(0)"></span>
+                <span class="quote-dot" onclick="showQuote(1)"></span>
+                <span class="quote-dot" onclick="showQuote(2)"></span>
+                <span class="quote-dot" onclick="showQuote(3)"></span>
+                <span class="quote-dot" onclick="showQuote(4)"></span>
+                <span class="quote-dot" onclick="showQuote(5)"></span>
+            </div>
+        </section>
+        
+        <!-- 思维导图 -->
+        <section class="mindmap-section fade-in delay-2">
+            <h2>🧠 核心概念思维导图</h2>
+            <div class="mindmap">
+                <div class="mindmap-center">空间的智慧</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-line"></div>
+                        <div class="branch-node node-red" onclick="toggleBranch(this)">🏠 房子的隐喻</div>
+                        <div class="sub-branches">
+                            <div class="sub-branch">房子 = 心灵的象征</div>
+                            <div class="sub-branch">敞开/关闭 = 基本权力</div>
+                            <div class="sub-branch">迷宫式房子 = 防御机制</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-line"></div>
+                        <div class="branch-node node-blue" onclick="toggleBranch(this)">🛡️ 安全空间</div>
+                        <div class="sub-branches">
+                            <div class="sub-branch">安全感 = 安全空间内化</div>
+                            <div class="sub-branch">善意客体的守护</div>
+                            <div class="sub-branch">60分妈妈理论</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-line"></div>
+                        <div class="branch-node node-green" onclick="toggleBranch(this)">⚓ 家的港湾</div>
+                        <div class="sub-branches">
+                            <div class="sub-branch">需要争取甚至战斗</div>
+                            <div class="sub-branch">警惕入侵者</div>
+                            <div class="sub-branch">界限意识</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-line"></div>
+                        <div class="branch-node node-gold" onclick="toggleBranch(this)">🎮 掌控力</div>
+                        <div class="sub-branches">
+                            <div class="sub-branch">过渡客体理论</div>
+                            <div class="sub-branch">专属空间的重要性</div>
+                            <div class="sub-branch">车/爱好=掌控感练习</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-line"></div>
+                        <div class="branch-node node-purple" onclick="toggleBranch(this)">💼 权力空间</div>
+                        <div class="sub-branches">
+                            <div class="sub-branch">工作中的说了算空间</div>
+                            <div class="sub-branch">攻击性的释放</div>
+                            <div class="sub-branch">避免自断经脉</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 信息图 -->
+        <section class="infographic fade-in delay-3">
+            <h2>📊 空间心理学四大维度</h2>
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-icon">🏠</div>
+                    <div class="info-title">心灵空间</div>
+                    <div class="info-desc">房子是心的隐喻，需要自主决定敞开还是关闭的权力</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill red" style="width: 85%;"></div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🛡️</div>
+                    <div class="info-title">安全空间</div>
+                    <div class="info-desc">来自父母持续关爱的安全感内化，是一切的基础</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill blue" style="width: 90%;"></div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">🎮</div>
+                    <div class="info-title">掌控空间</div>
+                    <div class="info-desc">一个彻底由自己说了算的空间，带来安全感与自由感</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill green" style="width: 80%;"></div>
+                    </div>
+                </div>
+                <div class="info-card">
+                    <div class="info-icon">💼</div>
+                    <div class="info-title">权力空间</div>
+                    <div class="info-desc">工作中释放创造力和热情的前提，是成长的土壤</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill gold" style="width: 75%;"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 内容板块1：房子的隐喻 -->
+        <section class="content-section fade-in delay-4">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-title">
+                    <div class="section-icon icon-red">🏠</div>
+                    <div>
+                        <h3>房子的隐喻：心灵的投射</h3>
+                        <p class="section-preview">为什么我们对房子如此执着？因为房子就是心的隐喻...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="key-point">
+                        <strong class="hl-red">核心洞见：</strong>房子有重要隐喻，<span class="hl-red">房子就是你的心</span>。敞开还是关闭，是我的基本权力。
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-study-title">📖 案例：买了8套房的张女士</div>
+                        <p>张女士40来岁，买过8套房子，而且买卖房子挣的钱远超她老公做生意的收入。奇怪的是，她买的房子都处于<span class="hl-gold">犄角旮旯</span>，形状特殊。</p>
+                        <p style="margin-top: 10px;">核心原因：她的主卧室必须在<span class="hl-red">最里面</span>，进卧室要七绕八绕。因为从小到大，<span class="hl-purple">妈妈不允许她给自己的卧室上锁</span>，她的心灵空间从未真正属于自己。</p>
+                    </div>
+                    
+                    <div class="insight-box">
+                        <div class="insight-title">💡 心理学解读</div>
+                        <p>每个人都需要<span class="hl-green">秘密空间</span>，最重要的是需要这样一种感觉：<span class="hl-blue">我的心灵空间和地理空间，由我说了算</span>。</p>
+                        <p style="margin-top: 10px;">张女士表面上满足了妈妈的愿望，但她通过"迷宫式房子"给自己构建了一个隐秘的、向任何人封闭的世界——这是<span class="hl-red">心理补偿机制</span>的体现。</p>
+                    </div>
+                    
+                    <div class="comparison">
+                        <div class="comparison-card comparison-bad">
+                            <h4>❌ 失去空间的后果</h4>
+                            <ul>
+                                <li>😰 不能做叛逆、天马行空的想象</li>
+                                <li>😰 创造力来源被切断</li>
+                                <li>😰 生命力无法走向成熟</li>
+                                <li>😰 外表会呈现"娃娃脸"</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-card comparison-good">
+                            <h4>✅ 拥有空间的意义</h4>
+                            <ul>
+                                <li>😊 掌控感和熟悉感</li>
+                                <li>😊 安全感和自由感</li>
+                                <li>😊 活得舒服自在</li>
+                                <li>😊 生命力自由流动</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <div class="formula">不允许孩子锁门 ≠ 爱 = 权力控制</div>
+                        <div class="formula-desc">父母不允许孩子有隐私，本质上是权力问题，而非关系亲密</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 内容板块2：安全空间 -->
+        <section class="content-section fade-in delay-5">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-title">
+                    <div class="section-icon icon-blue">🛡️</div>
+                    <div>
+                        <h3>安全空间：安全感的源头</h3>
+                        <p class="section-preview">安全感是安全空间的内化，有赖于父母的持续关爱...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="key-point">
+                        <strong class="hl-blue">核心洞见：</strong><span class="hl-blue">安全感是安全空间的内化</span>。我们最初有赖于父母给我们提供一个安全空间。
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-study-title">📖 案例：俾斯麦的失眠与治愈</div>
+                        <p>德国铁血首相俾斯麦有严重失眠。"江湖医生"施文宁格用独特方法治好了他：</p>
+                        <ul style="margin-top: 10px; margin-left: 20px;">
+                            <li>入睡前守在俾斯麦床边，确认他睡着后才离开</li>
+                            <li>第二天快醒来时，又守在床边</li>
+                            <li>穿着打扮和昨晚<span class="hl-gold">一模一样</span></li>
+                        </ul>
+                        <p style="margin-top: 10px;"><span class="hl-green">心理奥秘</span>：当放下控制进入睡眠时，有一个充满善意的客体在身边守护，所以可以彻底安心入睡。</p>
+                    </div>
+                    
+                    <div class="insight-box">
+                        <div class="insight-title">💡 一元世界与失眠</div>
+                        <p>活在<span class="hl-red">一元世界</span>中的人，谁都不能信任，觉得一切只能靠自己支撑。他们担心一旦放下掌控，<span class="hl-red">外界的敌意就可能侵袭自己</span>，因此睡觉时做不到放松，难以入睡。</p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <div class="formula">放下控制 + 善意的"你" = 可以接受失控</div>
+                        <div class="formula-desc">只有确认放下控制时会遇到善意客体，才能真正放松</div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number">60</div>
+                            <div class="stat-label">分妈妈理论</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">∞</div>
+                            <div class="stat-label">善意守护</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">1</div>
+                            <div class="stat-label">安全容器</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 内容板块3：家的港湾 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-title">
+                    <div class="section-icon icon-green">⚓</div>
+                    <div>
+                        <h3>家的港湾：需要争取与战斗</h3>
+                        <p class="section-preview">让家成为真正的港湾，有时需要勇气和行动...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="key-point">
+                        <strong class="hl-green">核心洞见：</strong>很多时候，你需要<span class="hl-green">争取甚至战斗</span>，才能让你的家真正成为一个舒适宜人的港湾。
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-study-title">📖 案例：黄玉玲老师的父亲</div>
+                        <p>黄老师的父亲强悍有力，特别有意识保护自己的小家。当婆媳冲突激化时，父亲<span class="hl-red">把自己的母亲请出了家</span>。</p>
+                        <p style="margin-top: 10px;">当舅舅们来"撑腰"要打他耳光时，他说：<span class="hl-gold">"你要是敢打我一个耳光，信不信，你们五个都会倒下。"</span></p>
+                        <p style="margin-top: 10px;"><span class="hl-green">结果</span>：一条界限就此划出，奶奶再也不想到儿子家里去做女主人了。</p>
+                    </div>
+                    
+                    <div class="insight-box">
+                        <div class="insight-title">💡 入侵者的识别</div>
+                        <p>在我们社会中，你很可能会面临一些<span class="hl-red">入侵者</span>。特别是当这些入侵者是亲人乃至父母时，你可能都认识不到他们是入侵者，需要请走，不行就赶走。</p>
+                    </div>
+                    
+                    <div class="comparison">
+                        <div class="comparison-card comparison-bad">
+                            <h4>❌ 软弱的后果（武志红的父母）</h4>
+                            <ul>
+                                <li>😰 接受极其不公平的对待</li>
+                                <li>😰 家失去温暖港湾的作用</li>
+                                <li>😰 孩子继承缺乏界限意识</li>
+                                <li>😰 把软弱合理化为"善良"</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-card comparison-good">
+                            <h4>✅ 强悍的守护（黄玉玲的父亲）</h4>
+                            <ul>
+                                <li>😊 清晰划出界限</li>
+                                <li>😊 保护小家的空间</li>
+                                <li>😊 家成为真正的港湾</li>
+                                <li>😊 孩子获得安全感</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <div class="formula">小家庭 = 父母 + 孩子的世界（必须保护）</div>
+                        <div class="formula-desc">我们得意识到小家庭首先是父母和孩子的世界，必须保护好这个空间</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 内容板块4：掌控力 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-title">
+                    <div class="section-icon icon-gold">🎮</div>
+                    <div>
+                        <h3>修炼掌控力：从过渡客体开始</h3>
+                        <p class="section-preview">人应该有掌控力，即便失控也深信能恢复掌控...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="key-point">
+                        <strong class="hl-gold">核心洞见：</strong>人应该有掌控力，形成这样的状态：<span class="hl-gold">我的生活，我能掌控</span>，即便现在有失控甚至崩溃，但我深信能通过努力恢复掌控。
+                    </div>
+                    
+                    <div class="insight-box">
+                        <div class="insight-title">💡 婴儿的控制逻辑</div>
+                        <p>在个人的体验中，<span class="hl-blue">能控制的就是善；不能控制的就是恶</span>。</p>
+                        <p style="margin-top: 10px;">婴儿最初觉得：一睁开眼睛，世界就会存在；一闭上眼睛，世界就会消失。对于不能掌控的事物，婴儿会把它们投射出去，认为是<span class="hl-red">外界敌意力量</span>所操控的。</p>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-study-title">📖 过渡客体理论</div>
+                        <p><span class="hl-purple">温尼科特</span>提出的概念：一个存在既不是自体，也不是脱离于自体之外的客体，而是介于其中的"过渡客体"。</p>
+                        <ul style="margin-top: 10px; margin-left: 20px;">
+                            <li><span class="hl-green">价值一</span>：找不到妈妈时，通过过渡客体得到安慰</li>
+                            <li><span class="hl-green">价值二</span>：过渡客体可以被孩子<span class="hl-gold">完全控制</span>，形成基本控制感</li>
+                        </ul>
+                        <p style="margin-top: 10px;">例子：孩子的安慰物（公仔、小毯子、枕头、小被子）</p>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number">🚗</div>
+                            <div class="stat-label">车=掌控感象征</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">🎯</div>
+                            <div class="stat-label">爱好=掌控练习</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">📦</div>
+                            <div class="stat-label">专属空间=安全岛</div>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-study-title">📖 案例：猫咪阿白的专属空间</div>
+                        <p>加菲猫阿白因为太可爱，总被随意玩弄。后来给它一个纸箱子作为<span class="hl-gold">专属空间</span>，只要它进入纸箱子，就不能碰它。</p>
+                        <p style="margin-top: 10px;">结果：它特别喜欢这个纸箱子。第一次雷雨天气时，它就躲在这个纸箱子里。</p>
+                        <p style="margin-top: 10px;"><span class="hl-green">启示</span>：一个能自己彻底掌控的空间，是多么有安全感，多么重要。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 内容板块5：权力空间 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection(this.parentElement)">
+                <div class="section-title">
+                    <div class="section-icon icon-purple">💼</div>
+                    <div>
+                        <h3>权力空间：职场成长的土壤</h3>
+                        <p class="section-preview">任何员工都需要一个说了算的空间，这是他的权力空间...</p>
+                    </div>
+                </div>
+                <span class="section-arrow">▼</span>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="key-point">
+                        <strong class="hl-purple">核心洞见：</strong>任何一位员工，不管工作看起来多么普通，都需要一个<span class="hl-purple">他能说了算的空间</span>，这是他的权力空间。
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-study-title">📖 案例：武志红在广州日报的变革</div>
+                        <p><span class="hl-gold">问题发现</span>：工作流程完全由主任掌控，编辑只是执行。"招北大心理学硕士做什么？招高中生就行。"</p>
+                        <p style="margin-top: 10px;"><span class="hl-green">主动改变</span>：只尊重主任的两个决定（稿件安排和份量），其他全部自己来。</p>
+                        <p style="margin-top: 10px;"><span class="hl-blue">结果</span>：创造力立即发挥，版面漂亮精致。主任改变流程，部门版面成为报社典范。</p>
+                    </div>
+                    
+                    <div class="insight-box">
+                        <div class="insight-title">💡 "自断经脉"的真相</div>
+                        <p>带着攻击性的原初生命力，需要在工作中展开。如果<span class="hl-red">缺乏说了算的空间</span>，这份攻击性就不能向外释放，于是转而<span class="hl-red">向内攻击自己</span>，变成了"自断经脉"。</p>
+                    </div>
+                    
+                    <div class="formula-box">
+                        <div class="formula">第一年：10个苹果 → 9个被拿走 → 得1个 → 愤怒自断经脉 ❌</div>
+                        <div class="formula-desc" style="margin-top: 15px;">
+                            <strong>正确做法：</strong>继续成长 → 第三年结1000个果子 → 成长才是最重要的 ✅
+                        </div>
+                    </div>
+                    
+                    <div class="comparison">
+                        <div class="comparison-card comparison-bad">
+                            <h4>❌ 权力集中式管理</h4>
+                            <ul>
+                                <li>😰 280条罚款条款（山木基本法）</li>
+                                <li>😰 法国电信35人自杀</li>
+                                <li>😰 员工无任何权力空间</li>
+                                <li>😰 传递"我可以对你为所欲为"</li>
+                            </ul>
+                        </div>
+                        <div class="comparison-card comparison-good">
+                            <h4>✅ 尊重权力空间</h4>
+                            <ul>
+                                <li>😊 趋向平等与开放</li>
+                                <li>😊 释放创造力和热情</li>
+                                <li>😊 能力持续提升</li>
+                                <li>😊 吸引顶尖人才</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-number">3x</div>
+                            <div class="stat-label">出稿量提升</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">150</div>
+                            <div class="stat-label">全球年新AI人才</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">90后</div>
+                            <div class="stat-label">第一代"正常"中国人</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 专家评论 -->
+        <section class="expert-comment fade-in">
+            <div class="expert-header">
+                <div class="expert-avatar">🧠</div>
+                <div class="expert-info">
+                    <h4>全球顶级心理学家视角</h4>
+                    <span>整合精神分析、发展心理学与组织心理学</span>
+                </div>
+            </div>
+            <div class="expert-content">
+                <p><span class="hl-purple"><strong>武志红这组文章展现了令人惊叹的理论整合能力。</strong></span></p>
+                
+                <p style="margin-top: 15px;">从<span class="hl-blue">温尼科特的过渡客体理论</span>出发，武志红巧妙地将"房子"这个日常意象升华为<span class="hl-red">心灵空间的隐喻</span>。这一连接既有精神分析的深度，又有存在主义心理学的广度——<span class="hl-gold">"存在先于本质"在此化为"空间决定心灵"</span>。</p>
+                
+                <p style="margin-top: 15px;">尤其值得关注的是<span class="hl-green">"一元世界"与失眠的关联分析</span>。这与John Bowlby的依附理论、D.W. Winnicott的"足够好的妈妈"概念形成完美呼应。<span class="hl-purple">俾斯麦案例</span>的引用堪称神来之笔——即便是欧洲最有权势的人，他的权力带来的力量感都不能让他安心入睡，还是需要一个善意客体的守护。</p>
+                
+                <p style="margin-top: 15px;">文章最后将心理空间延伸到<span class="hl-gold">职场的权力空间</span>，这是对<span class="hl-blue">Deci & Ryan自我决定理论</span>的绝佳本土化应用。"自断经脉"的比喻精准捕捉了<span class="hl-red">攻击性内转</span>的心理机制——当外部表达受阻，能量便指向自身。</p>
+                
+                <p style="margin-top: 15px;"><span class="hl-gold"><strong>核心贡献：</strong></span>武志红成功地将抽象的心理学概念<span class="hl-green">具象化、生活化</span>，让"空间"成为理解人格发展、家庭动力和职业成长的统一框架。这种<span class="hl-purple">整合性思维</span>，正是心理学科普所急需的。</p>
+            </div>
+        </section>
+        
+        <!-- 底部总结 -->
+        <footer class="footer fade-in">
+            <h3 class="footer-title">📌 行动指南</h3>
+            <div class="takeaway-grid">
+                <div class="takeaway-item">🏠 问问自己：你有属于你的空间吗？</div>
+                <div class="takeaway-item">🛡️ 确认"放下控制"时有善意客体守护</div>
+                <div class="takeaway-item">⚓ 警惕入侵者，必要时战斗守护家</div>
+                <div class="takeaway-item">🎮 给孩子一个他说了算的专属空间</div>
+                <div class="takeaway-item">💼 在工作中争取你的权力空间</div>
+                <div class="takeaway-item">🌱 做一棵永远成长的苹果树</div>
+            </div>
+            <div class="footer-quote">
+                <span>鲁米说：</span>"展开你自己的神话，让每个人都知道经上这句话的意义：我们打开了你。"
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+        // 暗色模式切换
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+        }
+        
+        // 展开所有板块
+        function expandAll() {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.add('expanded');
+            });
+        }
+        
+        // 切换板块展开/收起
+        function toggleSection(section) {
+            section.classList.toggle('expanded');
+        }
+        
+        // 切换思维导图分支
+        function toggleBranch(node) {
+            node.classList.toggle('expanded');
+        }
+        
+        // 金句轮播
+        let currentQuote = 0;
+        const quotes = document.querySelectorAll('.quote-item');
+        const dots = document.querySelectorAll('.quote-dot');
+        
+        function showQuote(index) {
+            quotes.forEach(q => q.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+            quotes[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentQuote = index;
+        }
+        
+        setInterval(() => {
+            currentQuote = (currentQuote + 1) % quotes.length;
+            showQuote(currentQuote);
+        }, 5000);
+        
+        // 进度条动画
+        setTimeout(() => {
+            document.querySelectorAll('.progress-fill').forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0%';
+                setTimeout(() => {
+                    bar.style.width = width;
+                }, 100);
+            });
+        }, 500);
+        
+        // 滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.content-section, .expert-comment, .footer').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
