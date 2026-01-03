@@ -1,0 +1,1518 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>好好活，是一门技术 | 尹烨 × 脱不花《长谈》</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a365d 0%, #2d3748 50%, #1a202c 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-primary: #f7fafc;
+            --text-secondary: #a0aec0;
+            --highlight-key: #fc8181;
+            --highlight-data: #63b3ed;
+            --highlight-quote: #68d391;
+            --highlight-gold: #fbd38d;
+            --highlight-purple: #b794f4;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --accent: #667eea;
+            --accent-pink: #ed64a6;
+            --accent-green: #48bb78;
+            --accent-orange: #ed8936;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #e0e5ec 0%, #f7fafc 50%, #edf2f7 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #1a202c;
+            --text-secondary: #4a5568;
+            --shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1;
+            opacity: 0.4;
+        }
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(237, 100, 166, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(72, 187, 120, 0.1) 0%, transparent 40%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(-5%, -5%) rotate(1deg); }
+            66% { transform: translate(5%, 5%) rotate(-1deg); }
+        }
+
+        /* 顶部导航 */
+        .nav-bar {
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 12px 24px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow);
+        }
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .nav-link {
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: rgba(102, 126, 234, 0.1);
+            color: var(--text-primary);
+            border: none;
+            text-decoration: none;
+        }
+        .nav-link:hover {
+            background: rgba(102, 126, 234, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* 头部区域 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #fc8181, #63b3ed, #68d391, #fbd38d, #b794f4);
+            animation: gradientFlow 3s ease infinite;
+        }
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .header-content { position: relative; z-index: 1; }
+        .header-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            color: white;
+        }
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.2rem);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #a0aec0 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.3;
+        }
+        [data-theme="light"] h1 {
+            background: linear-gradient(135deg, #1a202c 0%, #4a5568 100%);
+            -webkit-background-clip: text;
+        }
+        .header-meta {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .meta-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        /* 核心金句区 */
+        .golden-quotes {
+            background: linear-gradient(135deg, rgba(251, 211, 141, 0.15), rgba(237, 100, 166, 0.1));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(251, 211, 141, 0.3);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .quotes-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--highlight-gold);
+        }
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .quote-card {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border-left: 4px solid var(--highlight-gold);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 80px;
+            font-family: Georgia, serif;
+            color: rgba(251, 211, 141, 0.15);
+            line-height: 1;
+        }
+        .quote-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(251, 211, 141, 0.2);
+        }
+        .quote-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-author {
+            margin-top: 12px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ed64a6 100%);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+            animation: pulse 3s ease-in-out infinite;
+            text-align: center;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 50px rgba(102, 126, 234, 0.5); }
+        }
+        .branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+        .branch {
+            background: rgba(102, 126, 234, 0.08);
+            border-radius: 20px;
+            padding: 25px;
+            border-top: 4px solid;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { border-color: var(--highlight-key); animation-delay: 0.1s; }
+        .branch:nth-child(2) { border-color: var(--highlight-data); animation-delay: 0.2s; }
+        .branch:nth-child(3) { border-color: var(--highlight-quote); animation-delay: 0.3s; }
+        .branch:nth-child(4) { border-color: var(--highlight-gold); animation-delay: 0.4s; }
+        .branch:nth-child(5) { border-color: var(--highlight-purple); animation-delay: 0.5s; }
+        .branch-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .branch-item {
+            padding: 10px 15px;
+            background: var(--glass-bg);
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+        .branch-item:hover {
+            transform: translateX(8px);
+            background: rgba(102, 126, 234, 0.15);
+        }
+
+        /* 信息图表区 */
+        .infographic {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .infographic-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--highlight-data);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(99, 179, 237, 0.1), rgba(102, 126, 234, 0.1));
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            border: 1px solid rgba(99, 179, 237, 0.2);
+            transition: all 0.4s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 30px rgba(99, 179, 237, 0.2);
+        }
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--highlight-data), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+        .stat-label {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            margin-top: 8px;
+        }
+        .stat-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+            opacity: 0.7;
+        }
+
+        /* 时间轴/日程表 */
+        .timeline-section {
+            background: linear-gradient(135deg, rgba(104, 211, 145, 0.1), rgba(72, 187, 120, 0.05));
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(104, 211, 145, 0.2);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .timeline-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--highlight-quote);
+        }
+        .day-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        .day-timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--highlight-quote), var(--accent), var(--accent-pink));
+            border-radius: 3px;
+        }
+        .timeline-item {
+            position: relative;
+            padding: 20px 0 20px 30px;
+            border-bottom: 1px dashed var(--glass-border);
+        }
+        .timeline-item:last-child { border-bottom: none; }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 28px;
+            width: 16px;
+            height: 16px;
+            background: var(--highlight-quote);
+            border-radius: 50%;
+            box-shadow: 0 0 0 4px rgba(104, 211, 145, 0.3);
+        }
+        .timeline-time {
+            display: inline-block;
+            padding: 4px 12px;
+            background: rgba(104, 211, 145, 0.15);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--highlight-quote);
+            margin-bottom: 8px;
+        }
+        .timeline-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .timeline-content p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* 内容板块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            transition: all 0.4s ease;
+        }
+        .section:hover {
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 22px;
+        }
+        .section-icon.red { background: linear-gradient(135deg, rgba(252, 129, 129, 0.3), rgba(252, 129, 129, 0.1)); }
+        .section-icon.blue { background: linear-gradient(135deg, rgba(99, 179, 237, 0.3), rgba(99, 179, 237, 0.1)); }
+        .section-icon.green { background: linear-gradient(135deg, rgba(104, 211, 145, 0.3), rgba(104, 211, 145, 0.1)); }
+        .section-icon.gold { background: linear-gradient(135deg, rgba(251, 211, 141, 0.3), rgba(251, 211, 141, 0.1)); }
+        .section-icon.purple { background: linear-gradient(135deg, rgba(183, 148, 244, 0.3), rgba(183, 148, 244, 0.1)); }
+        .collapse-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(102, 126, 234, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+        .collapse-btn:hover { background: rgba(102, 126, 234, 0.2); }
+        .collapse-icon {
+            font-size: 1.2rem;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            opacity: 0;
+        }
+        .collapsed .section-preview {
+            max-height: 100px;
+            margin-top: 15px;
+            opacity: 1;
+        }
+        .section-content {
+            max-height: 5000px;
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .collapsed .section-content {
+            max-height: 0;
+        }
+
+        /* 高亮样式 */
+        .key { 
+            color: var(--highlight-key); 
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(252, 129, 129, 0.15);
+            border-radius: 6px;
+        }
+        .data { 
+            color: var(--highlight-data); 
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(99, 179, 237, 0.15);
+            border-radius: 6px;
+        }
+        .quote-inline { 
+            color: var(--highlight-quote); 
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(104, 211, 145, 0.15);
+            border-radius: 6px;
+        }
+        .gold { 
+            color: var(--highlight-gold); 
+            font-weight: 600;
+        }
+        .purple {
+            color: var(--highlight-purple);
+            font-weight: 600;
+        }
+
+        /* 要点列表 */
+        .point-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .point-item {
+            display: flex;
+            gap: 15px;
+            padding: 18px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 14px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+        .point-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(8px);
+        }
+        .point-icon {
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+        .point-content h4 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+        .point-content p {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+        }
+
+        /* 专家评论 */
+        .expert-panel {
+            background: linear-gradient(135deg, rgba(183, 148, 244, 0.1), rgba(237, 100, 166, 0.08));
+            border: 1px solid rgba(183, 148, 244, 0.2);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .expert-panel-title {
+            text-align: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--highlight-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .experts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .expert-card {
+            background: var(--glass-bg);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        .expert-card.illumina::before { background: linear-gradient(90deg, #00a0dc, #003366); }
+        .expert-card.berry::before { background: linear-gradient(90deg, #e63946, #f4a261); }
+        .expert-card.novogene::before { background: linear-gradient(90deg, #2a9d8f, #264653); }
+        .expert-card.bgi::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .expert-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: white;
+        }
+        .illumina .expert-avatar { background: linear-gradient(135deg, #00a0dc, #003366); }
+        .berry .expert-avatar { background: linear-gradient(135deg, #e63946, #f4a261); }
+        .novogene .expert-avatar { background: linear-gradient(135deg, #2a9d8f, #264653); }
+        .bgi .expert-avatar { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .expert-info h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+        .expert-info span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        .expert-company {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .illumina .expert-company { background: rgba(0, 160, 220, 0.2); color: #00a0dc; }
+        .berry .expert-company { background: rgba(230, 57, 70, 0.2); color: #e63946; }
+        .novogene .expert-company { background: rgba(42, 157, 143, 0.2); color: #2a9d8f; }
+        .bgi .expert-company { background: rgba(102, 126, 234, 0.2); color: #667eea; }
+        .expert-quote {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 15px;
+            border-left: 3px solid var(--glass-border);
+        }
+        .expert-quote::before {
+            content: '💬';
+            position: absolute;
+            top: -30px;
+            right: 10px;
+            font-size: 2rem;
+            opacity: 0.3;
+        }
+
+        /* 底部 */
+        .footer {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            text-align: center;
+            margin-top: 40px;
+        }
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+        .footer-quote {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 回到顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 1000;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .back-to-top:hover {
+            transform: translateY(-5px);
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header { padding: 30px 20px; }
+            .nav-bar { flex-direction: column; gap: 15px; }
+            .nav-links { justify-content: center; }
+            .section { padding: 25px 20px; }
+            .experts-grid { grid-template-columns: 1fr; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .branches { grid-template-columns: 1fr; }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body { background: white !important; color: black !important; }
+            .nav-bar, .theme-toggle, .back-to-top { display: none !important; }
+            .section { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <div class="container">
+        <!-- 导航栏 -->
+        <nav class="nav-bar">
+            <div style="font-weight: 700; font-size: 1.1rem;">📖 长谈笔记</div>
+            <div class="nav-links">
+                <a href="#quotes" class="nav-link">💎 金句</a>
+                <a href="#mindmap" class="nav-link">🧠 导图</a>
+                <a href="#data" class="nav-link">📊 数据</a>
+                <a href="#schedule" class="nav-link">⏰ 日程</a>
+                <a href="#experts" class="nav-link">👥 专家</a>
+                <button class="nav-link" onclick="toggleAll()">📑 展开/收起</button>
+            </div>
+        </nav>
+
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-content">
+                <span class="header-badge">🎙️ 得到《长谈》2026开年特辑</span>
+                <h1>好好活，是一门技术</h1>
+                <p style="font-size: 1.15rem; color: var(--text-secondary); max-width: 800px;">
+                    华大集团CEO<span class="key">尹烨</span>与得到联合创始人<span class="key">脱不花</span>深度对谈，
+                    解码<span class="data">百岁人生</span>的科学密码，揭示<span class="quote-inline">健康长寿</span>的底层逻辑。
+                </p>
+                <div class="header-meta">
+                    <div class="meta-item">
+                        <div class="meta-icon">🎯</div>
+                        <div>
+                            <div style="font-weight: 600;">核心主题</div>
+                            <div style="font-size: 12px;">生命科学 × 养生智慧</div>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-icon">⏱️</div>
+                        <div>
+                            <div style="font-weight: 600;">对谈时长</div>
+                            <div style="font-size: 12px;">约3小时深度内容</div>
+                        </div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-icon">📅</div>
+                        <div>
+                            <div style="font-weight: 600;">发布时间</div>
+                            <div style="font-size: 12px;">2026年1月</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 核心金句 -->
+        <section class="golden-quotes" id="quotes">
+            <div class="quotes-title">
+                <span style="font-size: 2rem;">💎</span>
+                尹烨核心金句
+            </div>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <div class="quote-text">怎么过今天，就怎么过今生。今生是由无数个一天决定的。</div>
+                    <div class="quote-author">—— 关于当下</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">用无私的人性，去克服基因的自私性。</div>
+                    <div class="quote-author">—— 关于自律</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">睡眠是重启，而不是休息。</div>
+                    <div class="quote-author">—— 关于睡眠</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">你的过去可以被你的未来所治愈。</div>
+                    <div class="quote-author">—— 关于希望</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">生命最怕的是波动，不要大喜大悲，不要忽高忽低。</div>
+                    <div class="quote-author">—— 关于稳态</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">福往者福来，爱出者爱返。</div>
+                    <div class="quote-author">—— 关于善行</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">吃到不饿，不是要饿自己，而是吃到不饿那个点就停。</div>
+                    <div class="quote-author">—— 关于饮食</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">尽我所能，敬我所不能。每个人心中都有自己的珠峰。</div>
+                    <div class="quote-author">—— 关于运动</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section" id="mindmap">
+            <h2 class="mindmap-title">🧠 百岁人生核心框架</h2>
+            <div class="mindmap">
+                <div class="center-node">好好活的技术</div>
+                <div class="branches">
+                    <div class="branch">
+                        <div class="branch-title" style="color: var(--highlight-key);">
+                            <span>🍽️</span> 调好嘴
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">先吃蔬菜 → 蛋白 → 碳水</div>
+                            <div class="branch-item">吃到不饿就停</div>
+                            <div class="branch-item">多醋少盐，多茶少酒</div>
+                            <div class="branch-item">多吃食物，少吃食品</div>
+                            <div class="branch-item">温着吃，不要烫</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-title" style="color: var(--highlight-data);">
+                            <span>🏃</span> 迈开腿
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">每天7000-9000步</div>
+                            <div class="branch-item">饭后走5分钟平抑血糖</div>
+                            <div class="branch-item">游泳和挥拍运动最佳</div>
+                            <div class="branch-item">能说话不能唱歌=有氧</div>
+                            <div class="branch-item">力量+心肺+柔韧+平衡</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-title" style="color: var(--highlight-quote);">
+                            <span>😴</span> 睡好觉
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">深度睡眠=大脑清洗</div>
+                            <div class="branch-item">环境要够黑、够凉、够静</div>
+                            <div class="branch-item">盖重被子(10斤+)</div>
+                            <div class="branch-item">睡前不刷手机</div>
+                            <div class="branch-item">睡前培养成就感</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-title" style="color: var(--highlight-gold);">
+                            <span>🧘</span> 好心情
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">远离多巴胺刺激</div>
+                            <div class="branch-item">追求内啡肽成就</div>
+                            <div class="branch-item">达观态度：不以物喜不以己悲</div>
+                            <div class="branch-item">冥想正念15分钟/天</div>
+                            <div class="branch-item">保持稳态，避免波动</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-title" style="color: var(--highlight-purple);">
+                            <span>💜</span> 做好事
+                        </div>
+                        <div class="branch-items">
+                            <div class="branch-item">日行一善产生内啡肽</div>
+                            <div class="branch-item">写感恩日记</div>
+                            <div class="branch-item">善有善报=正向心理加强</div>
+                            <div class="branch-item">与人为善，释放善意</div>
+                            <div class="branch-item">行善是养生行为</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 数据信息图 -->
+        <section class="infographic" id="data">
+            <h2 class="infographic-title">📊 关键数据洞察</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <span class="stat-number">87岁</span>
+                    <div class="stat-label">香港平均预期寿命</div>
+                    <div class="stat-desc">全球城市最高</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">50%</span>
+                    <div class="stat-label">50岁+中国人餐前血糖偏高</div>
+                    <div class="stat-desc">营养过剩的代价</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">70%</span>
+                    <div class="stat-label">2030年成人超重+肥胖率预测</div>
+                    <div class="stat-desc">不控制的后果</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">14年</span>
+                    <div class="stat-label">日本结婚vs单身男性寿命差</div>
+                    <div class="stat-desc">81岁 vs 67岁</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">5.6%</span>
+                    <div class="stat-label">中国出生缺陷比例</div>
+                    <div class="stat-desc">每20个孩子有1个</div>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">7-9K</span>
+                    <div class="stat-label">每日最佳步数</div>
+                    <div class="stat-desc">低于7K收益不够</div>
+                </div>
+            </div>
+            
+            <!-- 对比图 -->
+            <div style="margin-top: 40px;">
+                <h3 style="text-align: center; margin-bottom: 25px; color: var(--text-secondary);">📈 中美癌症谱系对比</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div style="background: rgba(252, 129, 129, 0.1); border-radius: 16px; padding: 25px;">
+                        <h4 style="color: var(--highlight-key); margin-bottom: 15px;">🇨🇳 中国高发</h4>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">肝癌 (乙肝相关)</span>
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">食道癌 (趁热吃)</span>
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">胃癌 (饮食习惯)</span>
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">结直肠癌 (生活方式)</span>
+                        </div>
+                    </div>
+                    <div style="background: rgba(99, 179, 237, 0.1); border-radius: 16px; padding: 25px;">
+                        <h4 style="color: var(--highlight-data); margin-bottom: 15px;">🇺🇸 美国高发</h4>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">前列腺癌 (激素相关)</span>
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">乳腺癌 (BRCA基因)</span>
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">肺癌 (吸烟)</span>
+                            <span style="padding: 8px 15px; background: var(--glass-bg); border-radius: 8px;">皮肤癌 (紫外线)</span>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; margin-top: 20px; color: var(--text-secondary); font-size: 0.9rem;">
+                    💡 结论：中国很多癌症是<span class="key">生活方式相关</span>，可以通过改变习惯<span class="quote-inline">主动预防</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 一日时间表 -->
+        <section class="timeline-section" id="schedule">
+            <h2 class="timeline-title">⏰ 尹烨的理想一日时间表</h2>
+            <div class="day-timeline">
+                <div class="timeline-item">
+                    <span class="timeline-time">🌅 清晨</span>
+                    <div class="timeline-content">
+                        <h4>早起沐浴阳光</h4>
+                        <p>20-30分钟快走/慢跑，让蓝光刺激大脑，天人合一</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">🥗 早餐</span>
+                    <div class="timeline-content">
+                        <h4>健康早餐组合</h4>
+                        <p>沙拉 + 蛋白质 + 杂粮 + 咖啡/茶，避免白粥+咸菜</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">💼 上午</span>
+                    <div class="timeline-content">
+                        <h4>深情告别家人出门</h4>
+                        <p>正能量开启一天，给家人、植物打招呼，不踢猫效应</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">⏱️ 每50分钟</span>
+                    <div class="timeline-content">
+                        <h4>站起来活动5分钟</h4>
+                        <p>看窗外绿色，拉伸、高抬腿，开电话会议可以走着开</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">🍱 午餐</span>
+                    <div class="timeline-content">
+                        <h4>不刷手机，与同事聊天</h4>
+                        <p>先吃蔬菜→蛋白→碳水，控制碳水在能量的45-55%</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">😴 午后</span>
+                    <div class="timeline-content">
+                        <h4>饭后走5分钟 + 小憩15-30分钟</h4>
+                        <p>平抑血糖峰值，用靠枕休息而非伏案（伤颈椎）</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">🏃 下班后</span>
+                    <div class="timeline-content">
+                        <h4>5-7点运动时间</h4>
+                        <p>完成7000-9000步，有利于晚间睡眠</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">🏠 晚餐</span>
+                    <div class="timeline-content">
+                        <h4>回家卸掉负面情绪，笑脸相迎</h4>
+                        <p>与家人共进晚餐，互相感恩，少吃到不饿即可</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">📚 晚间</span>
+                    <div class="timeline-content">
+                        <h4>留时间给自己学习</h4>
+                        <p>亲子互动、阅读、培养成就感，泡脚（不要太烫）</p>
+                    </div>
+                </div>
+                <div class="timeline-item">
+                    <span class="timeline-time">🌙 睡前</span>
+                    <div class="timeline-content">
+                        <h4>不刷手机，背单词/古文</h4>
+                        <p>发感恩信息给家人朋友，创造成就感入睡</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 深度内容板块 -->
+        <section class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-title">
+                    <div class="section-icon red">🧬</div>
+                    <span style="background: linear-gradient(135deg, var(--highlight-key), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">预期寿命：按百岁规划人生</span>
+                </div>
+                <div class="collapse-btn">
+                    <span class="collapse-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-preview">遗传、环境、生活方式共同决定寿命，女性按105岁，男性按95-100岁规划...</div>
+            <div class="section-content">
+                <div class="point-list">
+                    <div class="point-item">
+                        <span class="point-icon">🔬</span>
+                        <div class="point-content">
+                            <h4>遗传因素：先问家族史</h4>
+                            <p>父母及祖辈寿命是重要参考。<span class="data">男性活到100岁</span>属于极端群体，<span class="data">女性要到105岁</span>才算同等水平。染色体XX的女性在基因代码量上天然占优。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🧠</span>
+                        <div class="point-content">
+                            <h4>排查阿尔兹海默风险</h4>
+                            <p>家族中是否有人出现过<span class="key">老年痴呆</span>，尤其是50-60岁就出现认知障碍的情况，这与遗传高度相关。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">📊</span>
+                        <div class="point-content">
+                            <h4>两个关键指标</h4>
+                            <p><span class="quote-inline">预期寿命</span>和<span class="quote-inline">健康预期寿命</span>越趋近，生命质量越高。活到60岁健康，后30年不健康，那30年的意义何在？</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">⚡</span>
+                        <div class="point-content">
+                            <h4>历史性进步</h4>
+                            <p>1949年中国平均预期寿命<span class="data">不到39岁</span>，今天已<span class="data">接近80岁</span>。我们是历史上活得最长、最健康的一代智人。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-title">
+                    <div class="section-icon blue">🍽️</div>
+                    <span style="background: linear-gradient(135deg, var(--highlight-data), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">饮食革命：血糖管理是关键</span>
+                </div>
+                <div class="collapse-btn">
+                    <span class="collapse-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-preview">糖尿病不是遗传问题，是"基因不适"——我们的基因还没跟上营养过剩的时代...</div>
+            <div class="section-content">
+                <div class="point-list">
+                    <div class="point-item">
+                        <span class="point-icon">🚫</span>
+                        <div class="point-content">
+                            <h4>常见饮食误区</h4>
+                            <p><span class="key">趁热吃</span>→食道癌风险（中国占全球一半）<br>
+                            <span class="key">单纯喝白粥</span>→GI值极高，等于喝糖水<br>
+                            <span class="key">五谷打成糊</span>→加快吸收，失去缓释效果<br>
+                            <span class="key">剩菜舍不得扔</span>→亚硝酸盐+过饱双重伤害</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">✅</span>
+                        <div class="point-content">
+                            <h4>正确饮食顺序</h4>
+                            <p><span class="quote-inline">先吃沙拉（油醋汁）→再吃蛋白质→最后吃主食</span><br>
+                            这样碳水被缓释，整体摄入量也会降低。多嚼能平抑血糖。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🥗</span>
+                        <div class="point-content">
+                            <h4>多吃食物，少吃食品</h4>
+                            <p><span class="gold">食物</span>=直接能吃的（越接近原始形态越好）<br>
+                            <span class="gold">食品</span>=加工过的（加工越多越要警惕）</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🦠</span>
+                        <div class="point-content">
+                            <h4>对抗肠道菌群的"勾引"</h4>
+                            <p>睡前很饿？那是菌群在勾搭你。<span class="purple">坚持不吃</span>，第二天早上就不饿了——你战胜了一次肠道菌群的攻击。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-title">
+                    <div class="section-icon green">😴</div>
+                    <span style="background: linear-gradient(135deg, var(--highlight-quote), var(--accent-green)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">睡眠科学：大脑的"洗脑"时刻</span>
+                </div>
+                <div class="collapse-btn">
+                    <span class="collapse-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-preview">深度睡眠时，脑脊液会清洗大脑，带走废物和毒素...</div>
+            <div class="section-content">
+                <div class="point-list">
+                    <div class="point-item">
+                        <span class="point-icon">🧠</span>
+                        <div class="point-content">
+                            <h4>真正的"洗脑"机制</h4>
+                            <p>大脑漂浮在颅骨内，<span class="data">脑脊液</span>每天清洗大脑，带走废物。<span class="key">深度睡眠时清洗最彻底</span>。阿尔兹海默症的Amyloid-β蛋白和tau蛋白，就是靠脑脊液带走的。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🌙</span>
+                        <div class="point-content">
+                            <h4>最佳睡眠环境</h4>
+                            <p><span class="quote-inline">够黑</span>——光污染是现代人睡眠问题的根源<br>
+                            <span class="quote-inline">够凉</span>——18-25度，最好18-20度<br>
+                            <span class="quote-inline">够静</span>——可用白噪音<br>
+                            <span class="quote-inline">重被子</span>——10斤以上，显著改善睡眠</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">❌</span>
+                        <div class="point-content">
+                            <h4>睡前禁忌</h4>
+                            <p>不要刷手机（手机屏把光移到一尺以内）<br>
+                            不要看恐怖片、打游戏、剁手购物（多巴胺刺激）<br>
+                            不要吃太饱（胃肠道被"喊醒"工作）<br>
+                            <span class="key">不要睡板床</span>——这是大误区，会产生应力损伤</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">✨</span>
+                        <div class="point-content">
+                            <h4>建立入睡仪式</h4>
+                            <p><span class="gold">背单词、背古文</span>——进入学习状态需要调动大脑，产生成就感<br>
+                            发感恩信息给家人朋友<br>
+                            日行一善回顾——正向心理学的闭环</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-title">
+                    <div class="section-icon gold">🧘</div>
+                    <span style="background: linear-gradient(135deg, var(--highlight-gold), var(--accent-orange)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">大脑训练：保持认知能力的秘密</span>
+                </div>
+                <div class="collapse-btn">
+                    <span class="collapse-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-preview">注意力训练、学乐器、冥想、行善——这些都有脑科学依据...</div>
+            <div class="section-content">
+                <div class="point-list">
+                    <div class="point-item">
+                        <span class="point-icon">🎯</span>
+                        <div class="point-content">
+                            <h4>注意力训练：最容易恢复的能力</h4>
+                            <p>短视频3秒完播率把大脑用废了。<span class="key">看书一分钟</span>开始训练，逐步延长。同时做多件事=同时炒5个菜，哪个都炒不好。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🎹</span>
+                        <div class="point-content">
+                            <h4>学一门乐器：最后忘记的技能</h4>
+                            <p>乐器用的是<span class="quote-inline">远缘脑区</span>（后天学习开发的新脑区）。《寻梦环游记》里Coco奶奶什么都忘了，但听到吉他旋律记忆被唤醒——这是真实的脑科学。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🧘</span>
+                        <div class="point-content">
+                            <h4>冥想：让神经元同步</h4>
+                            <p>正念冥想的正向作用已被科学证实。方法：想一件愉快的事，比如环游宇宙——<span class="purple">把自己的思想放飞到无限远的地方</span>。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">💝</span>
+                        <div class="point-content">
+                            <h4>行善：不是道德，是养生</h4>
+                            <p>行善产生<span class="gold">内啡肽</span>（成就激素），而不是多巴胺（刺激激素）。<span class="key">日行一善</span>是正向心理学的加强建设，有神经生物学基础。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🥜</span>
+                        <div class="point-content">
+                            <h4>大脑营养</h4>
+                            <p>大脑以脂肪为主，需要<span class="quote-inline">多不饱和脂肪</span>（鱼油、亚麻籽油、橄榄油）+ 优质蛋白 + 坚果 + 新鲜蔬菜</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <div class="section-title">
+                    <div class="section-icon purple">💊</div>
+                    <span style="background: linear-gradient(135deg, var(--highlight-purple), var(--accent)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">抗衰真相：绝大部分不花钱</span>
+                </div>
+                <div class="collapse-btn">
+                    <span class="collapse-icon">▼</span>
+                </div>
+            </div>
+            <div class="section-preview">把抗衰与昂贵解耦，硅谷抗衰狂人的各种方法都失败了...</div>
+            <div class="section-content">
+                <div class="point-list">
+                    <div class="point-item">
+                        <span class="point-icon">💰</span>
+                        <div class="point-content">
+                            <h4>抗衰≠昂贵</h4>
+                            <p>硅谷那位抗衰狂人（约翰逊）三代换血等各种方法都失败了。<span class="key">养生的方法绝大部分都不花钱</span>——调好嘴、迈开腿、睡好觉、做好事、好心情。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">⚠️</span>
+                        <div class="point-content">
+                            <h4>识别智商税</h4>
+                            <p><span class="key">单一配方就能抗衰 = 智商税</span><br>
+                            化学物质是低维度的，不可能单靠一个维度改变复杂的生命系统。但安慰剂效应是真实存在的——安全性没问题，愿意买就让父母买。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">🔬</span>
+                        <div class="point-content">
+                            <h4>干细胞与免疫细胞</h4>
+                            <p>日本2013年率先允许<span class="quote-inline">自体干细胞</span>临床应用。长期看再生医学有前景，但当前仍有未说清楚的问题。尹烨自己回输了5次自体免疫细胞，感觉精力好、感冒少。</p>
+                        </div>
+                    </div>
+                    <div class="point-item">
+                        <span class="point-icon">💡</span>
+                        <div class="point-content">
+                            <h4>VC的真相</h4>
+                            <p>VC就是VC，化学物质没有橙子味（那是橙子香精）。<span class="data">两块钱一百片的药品VC</span>和昂贵的保健品VC效果一样。泡腾片的好处？多喝了一杯水。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论区 -->
+        <section class="expert-panel" id="experts">
+            <h2 class="expert-panel-title">👥 基因行业专家点评</h2>
+            <div class="experts-grid">
+                <div class="expert-card illumina">
+                    <div class="expert-header">
+                        <div class="expert-avatar">FD</div>
+                        <div class="expert-info">
+                            <h4>Francis deSouza</h4>
+                            <span>前CEO</span>
+                            <div class="expert-company">Illumina 因美纳</div>
+                        </div>
+                    </div>
+                    <div class="expert-quote">
+                        尹烨在对谈中将复杂的基因科学转化为大众能理解的生活智慧，这正是精准医疗普惠化的关键。他提到的"预期寿命"与"健康预期寿命"两个指标的差距，恰恰是基因组学可以介入的空间——通过早筛早诊，让更多人在生命长度之外获得质量。从Illumina的角度看，华大在降低测序成本、推动公共卫生应用方面的实践，与我们推动基因测序民主化的愿景不谋而合。
+                    </div>
+                </div>
+                
+                <div class="expert-card berry">
+                    <div class="expert-header">
+                        <div class="expert-avatar">高</div>
+                        <div class="expert-info">
+                            <h4>高 扬</h4>
+                            <span>董事长</span>
+                            <div class="expert-company">贝瑞基因</div>
+                        </div>
+                    </div>
+                    <div class="expert-quote">
+                        尹烨提到的无创产前基因检测（NIPT）从2014年获批到现在河北省三百多块钱就能做，这是中国基因产业真正的成就。"天下无唐"不是口号，是我们行业十年努力的结果。他说的"公共卫生领域市场的手是失灵的"太精准了——出生缺陷防控、肿瘤早筛这些领域，需要政府采购和医保支持，不能只靠商业逻辑。这是行业共识。
+                    </div>
+                </div>
+                
+                <div class="expert-card novogene">
+                    <div class="expert-header">
+                        <div class="expert-avatar">李</div>
+                        <div class="expert-info">
+                            <h4>李瑞强</h4>
+                            <span>CEO</span>
+                            <div class="expert-company">诺禾致源</div>
+                        </div>
+                    </div>
+                    <div class="expert-quote">
+                        从科研服务的角度，尹烨对"发病率vs发现率"的区分特别重要。很多疾病数据增长是因为检测能力提升，而非真的发病增加。这对我们做科研数据分析的启示是：要区分技术进步带来的数据变化和真实的生物学变化。他强调的"孤证不立"也是基因研究的基本原则——单一案例不能证明因果关系，必须有大样本验证。
+                    </div>
+                </div>
+                
+                <div class="expert-card bgi">
+                    <div class="expert-header">
+                        <div class="expert-avatar">汪</div>
+                        <div class="expert-info">
+                            <h4>汪 建</h4>
+                            <span>联合创始人 · 董事长</span>
+                            <div class="expert-company">华大集团 BGI</div>
+                        </div>
+                    </div>
+                    <div class="expert-quote">
+                        尹烨说"每个人心中都有自己的珠峰"，这是我登珠峰时跟他反复交流的观点。科学家不是要证明自己多牛，是要让更多人受益。他在直播间做科普、捐博物馆、推动基因检测降价，都是在实践"基因科技造福人类"。他说的"共同健康"应该是"共同富裕"的一部分，这个思想高度我很认同。生命科学的下一步，就是让基因检测像血压计一样进入每个家庭。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <div class="footer-quote">"怎么过今天，就怎么过今生"</div>
+            <p class="footer-text">
+                📝 内容整理自得到App《长谈》栏目 | 嘉宾：尹烨（华大集团CEO） × 脱不花（得到联合创始人）<br>
+                🎨 设计说明：苹果玻璃风格 · 深色/浅色模式 · 响应式布局 · 纯CSS思维导图<br>
+                💡 核心理念：健康是自己的，好好活是一门技术，更是一种选择
+            </p>
+        </footer>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <!-- 回到顶部 -->
+    <div class="back-to-top" onclick="scrollToTop()">
+        <span>↑</span>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+
+        // 展开/收起所有
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+
+        // 单个板块切换
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // 回到顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 滚动显示回到顶部按钮
+        window.addEventListener('scroll', function() {
+            const btn = document.querySelector('.back-to-top');
+            if (window.scrollY > 500) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+
+        // 平滑滚动到锚点
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // 添加入场动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.section, .branch').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>
