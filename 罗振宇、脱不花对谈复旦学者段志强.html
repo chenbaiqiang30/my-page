@@ -1,0 +1,1407 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>逃离一致性 | 罗振宇×段志强对谈精华</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --highlight-key: #f43f5e;
+            --highlight-data: #38bdf8;
+            --highlight-quote: #4ade80;
+            --highlight-gold: #fbbf24;
+            --highlight-purple: #a78bfa;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --accent: #8b5cf6;
+            --accent-pink: #ec4899;
+            --card-bg: rgba(30, 41, 59, 0.8);
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --card-bg: rgba(255, 255, 255, 0.9);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f43f5e, #8b5cf6, #38bdf8, #4ade80, #fbbf24);
+        }
+        .header::after {
+            content: '🎯';
+            position: absolute;
+            top: 30px; right: 40px;
+            font-size: 4em;
+            opacity: 0.15;
+        }
+        h1 {
+            font-size: clamp(2em, 5vw, 3.2em);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #f43f5e, #8b5cf6, #38bdf8);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.02em;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            animation: fadeInUp 0.6s ease;
+            transition: transform 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-icon { font-size: 2.5em; margin-bottom: 10px; }
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: var(--text-secondary); font-size: 0.9em; margin-top: 5px; }
+        
+        /* Core Insight Box */
+        .core-insight {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--accent);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            animation: fadeInUp 0.8s ease;
+        }
+        .core-insight::before {
+            content: '💎 核心洞见';
+            position: absolute;
+            top: -15px; left: 30px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+        .insight-quote {
+            font-size: 1.5em;
+            font-weight: 600;
+            line-height: 1.6;
+            margin-top: 20px;
+            color: var(--text-primary);
+        }
+        .insight-author {
+            margin-top: 15px;
+            color: var(--highlight-gold);
+            font-weight: 500;
+        }
+        
+        /* Mindmap */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, #f43f5e, #8b5cf6);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(244, 63, 94, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+        }
+        .branches {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            width: 100%;
+            max-width: 1000px;
+        }
+        @media (max-width: 768px) {
+            .branches { grid-template-columns: 1fr; }
+        }
+        .branch {
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.4s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch-main {
+            background: var(--card-bg);
+            border: 2px solid;
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        .branch:nth-child(1) .branch-main { border-color: #f43f5e; color: #f43f5e; }
+        .branch:nth-child(2) .branch-main { border-color: #38bdf8; color: #38bdf8; }
+        .branch:nth-child(3) .branch-main { border-color: #4ade80; color: #4ade80; }
+        .branch-main:hover { transform: scale(1.05); }
+        .branch-items { display: flex; flex-direction: column; gap: 10px; }
+        .branch-item {
+            background: rgba(139, 92, 246, 0.08);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.95em;
+            border-left: 3px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+        .branch-item:hover {
+            background: rgba(139, 92, 246, 0.15);
+            transform: translateX(5px);
+        }
+        
+        /* Logic Flow */
+        .logic-flow {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 30px;
+            margin-bottom: 30px;
+        }
+        .flow-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #38bdf8, #4ade80);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .flow-steps {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            align-items: center;
+        }
+        .flow-step {
+            background: var(--card-bg);
+            border: 2px solid var(--glass-border);
+            padding: 20px 25px;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 150px;
+            transition: all 0.3s ease;
+        }
+        .flow-step:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+        .flow-step-num {
+            width: 35px; height: 35px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 10px;
+        }
+        .flow-arrow {
+            font-size: 2em;
+            color: var(--accent);
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+        
+        /* Gold Quotes Section */
+        .gold-quotes {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));
+            backdrop-filter: blur(20px);
+            border: 2px solid rgba(251, 191, 36, 0.3);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 30px;
+        }
+        .gold-quotes-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--highlight-gold);
+        }
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .quote-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px; left: 15px;
+            font-size: 4em;
+            color: var(--highlight-gold);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(251, 191, 36, 0.2);
+        }
+        .quote-text {
+            font-size: 1.1em;
+            line-height: 1.7;
+            margin-bottom: 15px;
+            padding-left: 30px;
+        }
+        .quote-author {
+            color: var(--highlight-gold);
+            font-weight: 600;
+            text-align: right;
+        }
+        
+        /* Section Cards */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 30px 35px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .section-header:hover {
+            background: rgba(139, 92, 246, 0.08);
+        }
+        .section-title-wrap {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            font-size: 1.8em;
+        }
+        .section-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .collapse-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 0 35px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .collapsed .section-preview {
+            max-height: 80px;
+            padding-bottom: 20px;
+        }
+        .section-content {
+            padding: 0 35px 35px;
+            max-height: 3000px;
+            transition: all 0.5s ease;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+            padding: 0 35px;
+            overflow: hidden;
+        }
+        
+        /* Content Styling */
+        .content-block { margin-bottom: 25px; }
+        .content-block p {
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(244, 63, 94, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(56, 189, 248, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(74, 222, 128, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-gold {
+            color: var(--highlight-gold);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(251, 191, 36, 0.12);
+            border-radius: 6px;
+        }
+        .highlight-purple {
+            color: var(--highlight-purple);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(167, 139, 250, 0.12);
+            border-radius: 6px;
+        }
+        
+        /* Key Points List */
+        .key-points {
+            background: rgba(139, 92, 246, 0.08);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+        .key-point {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            align-items: flex-start;
+        }
+        .key-point:last-child { margin-bottom: 0; }
+        .key-point-icon {
+            width: 30px; height: 30px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            flex-shrink: 0;
+        }
+        
+        /* Expert Comments */
+        .expert-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.08));
+            border-left: 4px solid;
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+        }
+        .expert-comment.wu-jun { border-color: #38bdf8; }
+        .expert-comment.shen { border-color: #4ade80; }
+        .expert-avatar {
+            position: absolute;
+            top: -20px; left: 25px;
+            width: 50px; height: 50px;
+            background: var(--card-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            box-shadow: var(--shadow);
+        }
+        .expert-name {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-top: 10px;
+            margin-bottom: 5px;
+        }
+        .expert-title {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-bottom: 15px;
+        }
+        .expert-content {
+            line-height: 1.8;
+        }
+        
+        /* Action Items */
+        .action-box {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(56, 189, 248, 0.1));
+            border: 2px solid rgba(74, 222, 128, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin-top: 25px;
+        }
+        .action-title {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--highlight-quote);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .action-list {
+            list-style: none;
+        }
+        .action-list li {
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .action-list li:last-child { border-bottom: none; }
+        .action-check {
+            width: 24px; height: 24px;
+            border: 2px solid var(--highlight-quote);
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .action-check.checked {
+            background: var(--highlight-quote);
+            color: white;
+        }
+        
+        /* Case Study */
+        .case-study {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            border-left: 4px solid var(--highlight-gold);
+        }
+        .case-title {
+            font-weight: 700;
+            font-size: 1.2em;
+            color: var(--highlight-gold);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            border: none;
+            color: white;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px; right: 30px;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Scroll to Top */
+        .scroll-top {
+            position: fixed;
+            bottom: 100px; right: 30px;
+            width: 50px; height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3em;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .scroll-top:hover {
+            transform: translateY(-5px);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+        
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 10px 40px rgba(244, 63, 94, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 15px 50px rgba(244, 63, 94, 0.5); }
+        }
+        
+        /* Print Styles */
+        @media print {
+            body { background: white; color: black; }
+            .theme-toggle, .scroll-top, .controls { display: none; }
+            .section { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🚀 逃离一致性</h1>
+            <p class="subtitle">罗振宇、脱不花对谈复旦学者段志强：AI时代，如何帮助孩子找到独特的人生路径</p>
+            <div class="meta-info">
+                <div class="meta-item">📅 2026年1月6日</div>
+                <div class="meta-item">👤 段志强 · 复旦大学文史研究院副研究员</div>
+                <div class="meta-item">🎯 主题：教育与成长</div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">📂 展开/收起全部</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印笔记</button>
+            </div>
+        </header>
+        
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card" style="animation-delay: 0.1s;">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">1个</div>
+                <div class="stat-label">核心命题</div>
+            </div>
+            <div class="stat-card" style="animation-delay: 0.2s;">
+                <div class="stat-icon">💡</div>
+                <div class="stat-value">8个</div>
+                <div class="stat-label">关键洞见</div>
+            </div>
+            <div class="stat-card" style="animation-delay: 0.3s;">
+                <div class="stat-icon">📖</div>
+                <div class="stat-value">5个</div>
+                <div class="stat-label">真实案例</div>
+            </div>
+            <div class="stat-card" style="animation-delay: 0.4s;">
+                <div class="stat-icon">🔧</div>
+                <div class="stat-value">6条</div>
+                <div class="stat-label">行动建议</div>
+            </div>
+        </div>
+        
+        <!-- Core Insight -->
+        <div class="core-insight">
+            <div class="insight-quote">
+                "我最烦别人说<span class="highlight-key">阳光下没有新鲜事</span>——<span class="highlight-gold">我就是新鲜事</span>。"
+            </div>
+            <div class="insight-author">—— 段志强</div>
+            <p style="margin-top: 20px; color: var(--text-secondary);">
+                这句话道出了"逃离一致性"的本质：每个人在任何维度上都能找出和其他人的区别，你生而独特。真正的教育不是把孩子规训成标准件，而是帮助他们发现并绽放自己的独特性。
+            </p>
+        </div>
+        
+        <!-- Mindmap: 元认知图 -->
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">🧠 元认知图：逃离一致性的三层理解</h2>
+            <div class="mindmap">
+                <div class="center-node">逃离一致性</div>
+                <div class="branches">
+                    <div class="branch">
+                        <div class="branch-main">🔴 是什么</div>
+                        <div class="branch-items">
+                            <div class="branch-item">不是反对基本规范和社会秩序</div>
+                            <div class="branch-item">不是简单的"斜杠青年"式加法</div>
+                            <div class="branch-item">是超越标签、升维思考</div>
+                            <div class="branch-item">是活成"没有竞品的人"</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-main">🔵 为什么</div>
+                        <div class="branch-items">
+                            <div class="branch-item">AI时代：有确定边界的事都是AI的</div>
+                            <div class="branch-item">工业社会→后工业社会转型</div>
+                            <div class="branch-item">单一赛道卷到天花板</div>
+                            <div class="branch-item">任何职业做好都能成功</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-main">🟢 怎么做</div>
+                        <div class="branch-items">
+                            <div class="branch-item">阴差阳错，因势利导</div>
+                            <div class="branch-item">把不利转化为有利</div>
+                            <div class="branch-item">保护孩子的热爱火苗</div>
+                            <div class="branch-item">少干预、多支持</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Logic Flow: 逻辑思维图 -->
+        <div class="logic-flow">
+            <h2 class="flow-title">🔄 逻辑链条：从一致性到独特性</h2>
+            <div class="flow-steps">
+                <div class="flow-step">
+                    <div class="flow-step-num">1</div>
+                    <div>人天生独特</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">2</div>
+                    <div>社会规训趋同</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">3</div>
+                    <div>AI替代标准化</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">4</div>
+                    <div>独特性成稀缺</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">5</div>
+                    <div>回归真实自我</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 30px; padding: 20px; background: rgba(139, 92, 246, 0.1); border-radius: 16px;">
+                <p style="font-size: 1.1em; color: var(--text-secondary);">
+                    <strong style="color: var(--highlight-purple);">核心逻辑：</strong>只要事情有<span class="highlight-key">确定性的边界</span>，将来都是AI的。人能做的是<span class="highlight-quote">无限游戏</span>——时间无边界、空间无边界、规则不明确的"局"。
+                </p>
+            </div>
+        </div>
+        
+        <!-- Gold Quotes -->
+        <div class="gold-quotes">
+            <h2 class="gold-quotes-title">✨ 金句收藏</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p class="quote-text">孩子的头脑不是一个需要装满的水桶，而是一个<span class="highlight-key">需要点燃的火把</span>。</p>
+                    <div class="quote-author">—— 罗振宇</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text"><span class="highlight-gold">热爱是个能力</span>，这个能力也是需要培养的。</p>
+                    <div class="quote-author">—— 刀哥（得到员工）</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">命是<span class="highlight-purple">性格的惯性</span>，运是人每一次<span class="highlight-quote">脱离轨道的努力</span>。</p>
+                    <div class="quote-author">—— 段志强</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">一生的使命是为世界<span class="highlight-key">发明一个只有我最称职的职业</span>。</p>
+                    <div class="quote-author">—— 罗振宇</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">君子不器——君子不是螺丝，你应该<span class="highlight-data">了解全局、驾驭全局</span>。</p>
+                    <div class="quote-author">—— 孔子（段志强引用）</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">这个世界有两种活法：一种是<span class="highlight-quote">视一切皆为奇迹</span>，另一种是视一切皆为寻常。</p>
+                    <div class="quote-author">—— 爱因斯坦</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 1: AI时代的底层逻辑 -->
+        <div class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-title-wrap">
+                    <span class="section-icon">🤖</span>
+                    <span class="section-title">AI时代的底层逻辑</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">时代变了：有边界的归AI，无边界的归人...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <p>段志强提出了一个振聋发聩的判断：<span class="highlight-key">只要事情有确定性的边界，将来几乎都是AI的</span>。</p>
+                    
+                    <div class="key-points">
+                        <div class="key-point">
+                            <div class="key-point-icon">1</div>
+                            <div><strong>有限游戏属于AI</strong>：时间有边界、空间有边界、规则明确——比如下棋，这肯定是AI比人强。</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">2</div>
+                            <div><strong>无限游戏属于人</strong>：做一个"局"，大量的因素混搭在一起，AI就传不出来。</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">3</div>
+                            <div><strong>专业教育的局限</strong>：凡是专业教育能教给你的，AI几乎都能做到。</div>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-title">📌 案例：三亚网球教练的生态位</div>
+                        <p>一个三亚的网球教练，随身带着大单反相机。约他的人学半天网球，他还能给你拍出极好的照片发朋友圈。他是摄影师还是网球教练？说不清楚。但正是这种<span class="highlight-gold">混搭</span>，造就了独特的生态位——他提供的不只是网球技能，而是<span class="highlight-quote">发朋友圈的情绪和社交价值</span>。</p>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment wu-jun">
+                        <div class="expert-avatar">📚</div>
+                        <div class="expert-name">吴军老师视角</div>
+                        <div class="expert-title">硅谷投资人、计算机科学家</div>
+                        <div class="expert-content">
+                            这个判断与我在《智能时代》中的观点高度一致。<span class="highlight-data">2%的人会掌握AI，98%的人会被AI所用</span>。关键区别不在于你会不会用AI工具，而在于你能否<span class="highlight-key">定义问题、创造需求、整合资源</span>——这些都是"无限游戏"的能力。教育的重点应该从"学会什么"转向"能创造什么"。
+                        </div>
+                    </div>
+                    <div class="expert-comment shen">
+                        <div class="expert-avatar">🎓</div>
+                        <div class="expert-name">沈祖芸老师视角</div>
+                        <div class="expert-title">教育战略顾问、学校变革专家</div>
+                        <div class="expert-content">
+                            段老师说的"无限游戏"，在教育实践中就是<span class="highlight-quote">项目式学习</span>的底层逻辑。我在全球调研中发现，最具创新力的学校都在做一件事：让学生解决<span class="highlight-gold">真实的、没有标准答案的问题</span>。芬兰的现象式教学、新加坡的应用学习项目，本质上都是在训练孩子玩"无限游戏"。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 2: 逃离一致性≠斜杠 -->
+        <div class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-title-wrap">
+                    <span class="section-icon">🔀</span>
+                    <span class="section-title">逃离一致性 ≠ 斜杠</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">斜杠是加法，逃离一致性是升维...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <p>有观众问：逃离一致性不就是"斜杠青年"吗？段志强给出了精彩的辨析：</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 25px 0;">
+                        <div style="background: rgba(244, 63, 94, 0.1); padding: 25px; border-radius: 16px; border: 2px solid rgba(244, 63, 94, 0.3);">
+                            <h4 style="color: var(--highlight-key); margin-bottom: 10px;">❌ 斜杠青年</h4>
+                            <p>我既干这个又干那个，是<span class="highlight-key">加法思维</span></p>
+                            <p style="margin-top: 10px; color: var(--text-secondary);">例：文员 + 健身教练</p>
+                        </div>
+                        <div style="background: rgba(74, 222, 128, 0.1); padding: 25px; border-radius: 16px; border: 2px solid rgba(74, 222, 128, 0.3);">
+                            <h4 style="color: var(--highlight-quote); margin-bottom: 10px;">✓ 逃离一致性</h4>
+                            <p>超越职业标签，活成<span class="highlight-quote">另一个level的人</span></p>
+                            <p style="margin-top: 10px; color: var(--text-secondary);">例：罗振宇→跨年演讲主理人</p>
+                        </div>
+                    </div>
+                    
+                    <p>罗振宇的自我定位很有启发性："你非要给我下标签，说我是自媒体、文史博主，我也认。但实际上我是什么我非常清楚——我是<span class="highlight-gold">时间的朋友跨年演讲和文明之旅二十年工程主理人</span>。我跟谁都不竞争，我就是为自己发明了一个职业。"</p>
+                    
+                    <div class="key-points" style="background: rgba(251, 191, 36, 0.1);">
+                        <h4 style="color: var(--highlight-gold); margin-bottom: 15px;">💡 关键区别</h4>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-gold);">→</div>
+                            <div>斜杠是<strong>横向扩展</strong>：在现有框架内增加技能</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-gold);">↑</div>
+                            <div>逃离一致性是<strong>纵向升维</strong>：重新定义游戏规则</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment wu-jun">
+                        <div class="expert-avatar">📚</div>
+                        <div class="expert-name">吴军老师视角</div>
+                        <div class="expert-title">硅谷投资人、计算机科学家</div>
+                        <div class="expert-content">
+                            这个区分非常精准。我常说<span class="highlight-data">"向上一个台阶看问题"</span>。斜杠是在同一个平面上画更多的线，而逃离一致性是跳到更高的维度。在硅谷，真正成功的创业者都不是在已有品类里竞争，而是<span class="highlight-key">定义新品类</span>。乔布斯没有做更好的MP3播放器，而是创造了iPod+iTunes的生态。
+                        </div>
+                    </div>
+                    <div class="expert-comment shen">
+                        <div class="expert-avatar">🎓</div>
+                        <div class="expert-name">沈祖芸老师视角</div>
+                        <div class="expert-title">教育战略顾问、学校变革专家</div>
+                        <div class="expert-content">
+                            在学校变革中，我们也在推动这种思维转变。传统的"素质教育"往往是斜杠思维：学科+艺术+体育+社团。但真正有效的是<span class="highlight-quote">整合式学习</span>——让孩子围绕一个真实问题，自然地调用各种知识和技能。<span class="highlight-gold">问题驱动而非技能堆叠</span>，这才是"逃离一致性"在教育中的体现。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 3: 段志强的人生算法 -->
+        <div class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-title-wrap">
+                    <span class="section-icon">🧮</span>
+                    <span class="section-title">段志强的人生算法：阴差阳错，因势利导</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">把不利转化为有利的八字方针...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <p>段志强是一个活生生的"逃离一致性"样本：武汉大学管理学院本科→清华历史系硕士→复旦历史系博士，中间还在河南当过四年公务员。现在作为复旦教授，却在崇明岛租了农舍种地，开着名为"赤兔"的电动三轮车穿行田间。</p>
+                    
+                    <p>他的人生哲学浓缩为<span class="highlight-key">八个字</span>：<strong style="font-size: 1.3em; color: var(--highlight-gold);">阴差阳错，因势利导</strong></p>
+                    
+                    <div class="case-study">
+                        <div class="case-title">📌 案例：买不起房→住进农村</div>
+                        <p>段志强坦言，选择住在崇明岛的直接原因是"城里房子太贵买不起"。但他没有坐那儿抱怨，而是开着十万块的SUV，带女儿在上海郊区转。他发现了一个<span class="highlight-quote">世界的bug</span>：</p>
+                        <ul style="margin: 15px 0; padding-left: 20px;">
+                            <li>市中心房子贵到永远买不起</li>
+                            <li>四十分钟车程外，大量漂亮的独栋农舍闲置</li>
+                            <li><span class="highlight-data">两万块钱</span>一年就能租到四层楼</li>
+                        </ul>
+                        <p>他说："这不是无可救药的浪漫主义，是非常具体地在解决问题。我专门测算了通勤路径，四十五分钟就能开到学校——住市区堵车可能也这么久。"</p>
+                    </div>
+                    
+                    <div class="key-points">
+                        <h4 style="margin-bottom: 15px;">🔑 因势利导的方法论</h4>
+                        <div class="key-point">
+                            <div class="key-point-icon">1</div>
+                            <div><strong>接受阴差阳错</strong>：人生很难规划十年后的详细路径，大多数计划都实现不了</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">2</div>
+                            <div><strong>转化不利因素</strong>：在每个岔路口，把看起来不利的转化为对自己有利的</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">3</div>
+                            <div><strong>保持探索精神</strong>：保持好奇心，在已有道路上发挥最大效用</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment wu-jun">
+                        <div class="expert-avatar">📚</div>
+                        <div class="expert-name">吴军老师视角</div>
+                        <div class="expert-title">硅谷投资人、计算机科学家</div>
+                        <div class="expert-content">
+                            段老师的"因势利导"，在我的框架里叫<span class="highlight-data">"见识的力量"</span>。很多人困在问题里，是因为只看到了问题本身。但见识广的人能看到问题背后的<span class="highlight-key">结构性机会</span>。城里房价贵是问题，但也意味着郊区有价值洼地。这不是鸡汤，是<span class="highlight-quote">重新定义问题边界</span>的能力。
+                        </div>
+                    </div>
+                    <div class="expert-comment shen">
+                        <div class="expert-avatar">🎓</div>
+                        <div class="expert-name">沈祖芸老师视角</div>
+                        <div class="expert-title">教育战略顾问、学校变革专家</div>
+                        <div class="expert-content">
+                            段老师展示的其实是一种<span class="highlight-gold">成长型思维</span>在成年人身上的实践。很多家长焦虑孩子的"弯路"，但段老师的经历告诉我们：<span class="highlight-quote">弯路本身就是风景</span>。教育不是帮孩子规避所有风险，而是培养他们在任何境遇下都能"因势利导"的能力。这比任何具体技能都重要。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 4: 家长的角色转变 -->
+        <div class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-title-wrap">
+                    <span class="section-icon">👨‍👩‍👧</span>
+                    <span class="section-title">家长的角色：从"装水桶"到"点火把"</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">少干预、多支持，保护孩子的火苗...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <p>段志强提出了一个颠覆性观点：<span class="highlight-key">很多时候不是我们做的太少，而是我们做的太多</span>。</p>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1)); padding: 30px; border-radius: 20px; margin: 25px 0;">
+                        <p style="font-size: 1.3em; text-align: center; margin-bottom: 20px;">
+                            "当我们把人生从<span class="highlight-data">一百岁为尺度</span>来思考，我宁愿在我八九十岁的时候，逼我六十岁的儿女报个班，也不愿意在三四十岁时逼我十岁的孩子去报班。"
+                        </p>
+                        <p style="text-align: center; color: var(--text-secondary);">—— 段志强</p>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-title">📌 案例：刀哥的cosplay女儿</div>
+                        <p>得到员工刀哥的女儿西西，初中时特别喜欢二次元和cosplay。很多家长会忧虑甚至反对，但刀哥两口子：</p>
+                        <ul style="margin: 15px 0; padding-left: 20px;">
+                            <li>不仅给预算支持cosplay</li>
+                            <li>每次女儿去漫展，亲自开车接送</li>
+                            <li>在门口咖啡厅等她玩完再接回家</li>
+                        </ul>
+                        <p>刀哥说了一句话：<span class="highlight-gold">"她难得有个热爱的事儿，热爱个啥都行。热爱是个能力，这个能力也需要培养。"</span></p>
+                        <p style="margin-top: 15px;">结果呢？孩子上高中后变成了学霸。因为被父母支持，她的<span class="highlight-quote">热爱能力养成了</span>，这个能力可以释放在任何领域。</p>
+                    </div>
+                    
+                    <div class="key-points">
+                        <h4 style="margin-bottom: 15px;">🔑 家长可以做的转变</h4>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <div><strong>减少干预</strong>：我们计划的太多、期待的太多、干预的太多</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <div><strong>保护火苗</strong>：看到孩子眼里的光，拿鼓风机去呵护，不是泼冷水</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <div><strong>善用虚荣心</strong>：虚荣心可能是孩子第一次发现自己与别人不同的时刻</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon">✓</div>
+                            <div><strong>拉长视角</strong>：以一百岁为尺度思考，不要被眼前几年的得失绑架</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment wu-jun">
+                        <div class="expert-avatar">📚</div>
+                        <div class="expert-name">吴军老师视角</div>
+                        <div class="expert-title">硅谷投资人、计算机科学家</div>
+                        <div class="expert-content">
+                            刀哥的故事印证了我的一个观察：<span class="highlight-data">美国顶尖大学录取时，最看重的不是全面发展，而是"尖"</span>——在某个领域有深度热情和成就。cosplay看似"不务正业"，但如果孩子能做到极致，展现的是<span class="highlight-key">专注力、创造力、执行力</span>，这些是可迁移的。家长要区分"兴趣"和"热爱"：热爱是愿意为之吃苦的。
+                        </div>
+                    </div>
+                    <div class="expert-comment shen">
+                        <div class="expert-avatar">🎓</div>
+                        <div class="expert-name">沈祖芸老师视角</div>
+                        <div class="expert-title">教育战略顾问、学校变革专家</div>
+                        <div class="expert-content">
+                            段老师说"做的太多"，这在教育研究中叫<span class="highlight-quote">"过度脚手架"</span>。脚手架本是帮助建造的，但如果一直不撤，建筑就永远立不起来。我走访的很多创新学校都在实践<span class="highlight-gold">"渐进式放手"</span>：小学扶着走，初中带着走，高中放开走。家长也应如此——你的目标是让自己变得"没用"。
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-box">
+                    <div class="action-title">🎯 家长行动清单</div>
+                    <ul class="action-list">
+                        <li>
+                            <span class="action-check" onclick="this.classList.toggle('checked')"></span>
+                            这周观察孩子主动做什么事时眼睛会发光
+                        </li>
+                        <li>
+                            <span class="action-check" onclick="this.classList.toggle('checked')"></span>
+                            下次孩子"不务正业"时，先问自己：这是不是他发现自己独特性的机会？
+                        </li>
+                        <li>
+                            <span class="action-check" onclick="this.classList.toggle('checked')"></span>
+                            试着把"你看别人家孩子"换成"你跟上周的自己比怎么样"
+                        </li>
+                        <li>
+                            <span class="action-check" onclick="this.classList.toggle('checked')"></span>
+                            列出孩子已有的3个独特之处，而非需要改进的缺点
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 5: 鲍鹏山的三层修炼 -->
+        <div class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <div class="section-title-wrap">
+                    <span class="section-icon">🎭</span>
+                    <span class="section-title">人生的三层修炼：德性→智性→诗性</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从遵守规范到创造意义...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <p>罗振宇引用鲍鹏山老师的观点，给出了人生修炼的三个层次：</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin: 25px 0;">
+                        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px; border-top: 4px solid #f43f5e;">
+                            <h4 style="color: #f43f5e; font-size: 1.3em; margin-bottom: 15px;">① 德性</h4>
+                            <p>人生下来是动物，需要装入基本操作系统：不偷东西、要勤劳等。</p>
+                            <p style="margin-top: 10px; color: var(--text-secondary);">→ 这是"一致性"中永远需要的部分</p>
+                        </div>
+                        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px; border-top: 4px solid #38bdf8;">
+                            <h4 style="color: #38bdf8; font-size: 1.3em; margin-bottom: 15px;">② 智性</h4>
+                            <p>面对没有绝对对错的选择时（买股票、选职业），需要智慧判断。</p>
+                            <p style="margin-top: 10px; color: var(--text-secondary);">→ 这是在不确定性中做决策的能力</p>
+                        </div>
+                        <div style="background: var(--card-bg); padding: 30px; border-radius: 20px; border-top: 4px solid #4ade80;">
+                            <h4 style="color: #4ade80; font-size: 1.3em; margin-bottom: 15px;">③ 诗性</h4>
+                            <p>在人生的每一个境遇、面对每一个对象，都能找到美好和意义。</p>
+                            <p style="margin-top: 10px; color: var(--text-secondary);">→ 这是"逃离一致性"的最高境界</p>
+                        </div>
+                    </div>
+                    
+                    <p>段志强就是"诗性"的典范：面对一棵杂草，他写论文研究它的历史；面对槐花，他追溯到左宗棠；面对冰箱里冻了一年的白菜，他看到的是人生的乐趣。</p>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(74, 222, 128, 0.15), rgba(56, 189, 248, 0.1)); padding: 30px; border-radius: 20px; margin-top: 25px;">
+                        <p style="font-size: 1.2em; text-align: center;">
+                            <span class="highlight-quote">"诗性"不是会写诗</span>，而是能在一切平凡中看到奇迹。<br>
+                            如爱因斯坦所说：这个世界有两种活法——<br>
+                            一种是<span class="highlight-gold">视一切皆为奇迹</span>，另一种是视一切皆为寻常。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment wu-jun">
+                        <div class="expert-avatar">📚</div>
+                        <div class="expert-name">吴军老师视角</div>
+                        <div class="expert-title">硅谷投资人、计算机科学家</div>
+                        <div class="expert-content">
+                            这三层结构让我想起<span class="highlight-data">马斯洛需求层次</span>的另一种表达。德性是生存需求，智性是安全和社交需求，诗性是自我实现。有趣的是，在AI时代，德性可以被规则系统替代，智性可以被算法辅助，但<span class="highlight-key">诗性——在万物中发现意义的能力——是人类独有的</span>。这可能是未来教育最应该培养的核心素养。
+                        </div>
+                    </div>
+                    <div class="expert-comment shen">
+                        <div class="expert-avatar">🎓</div>
+                        <div class="expert-name">沈祖芸老师视角</div>
+                        <div class="expert-title">教育战略顾问、学校变革专家</div>
+                        <div class="expert-content">
+                            "诗性"在教育中有个专业术语叫<span class="highlight-quote">"审美素养"</span>，但远不止艺术审美。它是一种<span class="highlight-gold">发现问题、创造意义的能力</span>。我在访问以色列学校时发现，他们特别强调"chutzpah"（胆大妄为），鼓励学生质疑一切——这就是在培养"诗性"思维：不把任何事情视为理所当然。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Section 6: 时代的变与不变 -->
+        <div class="section" id="section6">
+            <div class="section-header" onclick="toggleSection('section6')">
+                <div class="section-title-wrap">
+                    <span class="section-icon">⏳</span>
+                    <span class="section-title">时代的变与不变</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从"考上大学就坐飞机"到"任何职业都能成功"...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <p>罗振宇分享了一个强烈的时代对比：</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px; margin: 25px 0;">
+                        <div style="background: rgba(244, 63, 94, 0.1); padding: 30px; border-radius: 20px;">
+                            <h4 style="color: #f43f5e; margin-bottom: 15px;">🕰️ 1990年</h4>
+                            <p>高考第二天，罗振宇去同学家，发现他已经"考砸了去厂里上班当工人"了。</p>
+                            <p style="margin-top: 15px; color: var(--text-secondary);">那个时代：不按一致性走，人生就被判定了。考上大学=坐飞机，否则只能走路。</p>
+                        </div>
+                        <div style="background: rgba(74, 222, 128, 0.1); padding: 30px; border-radius: 20px;">
+                            <h4 style="color: #4ade80; margin-bottom: 15px;">📱 2026年</h4>
+                            <p>蜜雪冰城全球45000家店，霸王茶姬创始人18岁前是文盲。</p>
+                            <p style="margin-top: 15px; color: var(--text-secondary);">这个时代：<span class="highlight-quote">任何职业只要做好都能有出息</span>。这是给所有家长最大的福音。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="case-study">
+                        <div class="case-title">📌 案例：罗振宇女儿学化妆</div>
+                        <p>罗振宇女儿有一次看化妆师工作，立刻被点燃了，说"我要学化妆，将来当化妆师"。如果是他父母那一代，肯定觉得这是"歪门邪道"。但罗振宇的反应是：</p>
+                        <blockquote style="border-left: 4px solid var(--highlight-gold); padding-left: 20px; margin: 20px 0; font-style: italic;">
+                            "我看见女儿突然对一个手艺特别感兴趣，太开心了！我要<span class="highlight-gold">拿鼓风机来</span>，生怕这个小火星灭了。"
+                        </blockquote>
+                        <p>他的逻辑：就算化妆只学到倒数20%的水平，将来干别的职业时，也可能因为会化妆而多拿一单子——<span class="highlight-quote">这件事就没有浪费</span>。</p>
+                    </div>
+                    
+                    <div class="key-points" style="background: rgba(56, 189, 248, 0.1);">
+                        <h4 style="color: var(--highlight-data); margin-bottom: 15px;">💡 两个时代的本质区别</h4>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-data);">旧</div>
+                            <div><strong>工业社会</strong>：每个人都是螺丝，必须搞清楚是哪种螺丝，社会才知道怎么用你</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-data);">新</div>
+                            <div><strong>后工业社会</strong>：君子不器——不是工具，可以了解全局、驾驭全局、充分可变</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment wu-jun">
+                        <div class="expert-avatar">📚</div>
+                        <div class="expert-name">吴军老师视角</div>
+                        <div class="expert-title">硅谷投资人、计算机科学家</div>
+                        <div class="expert-content">
+                            罗老师说的"任何职业都能成功"，背后是<span class="highlight-data">信息时代的长尾效应</span>。过去你在小城市做小众爱好，找不到受众；现在通过互联网，你能连接全球志同道合的人。<span class="highlight-key">小众+极致+互联网=可持续的事业</span>。所以今天的孩子，不需要挤"热门赛道"，找到自己的"小众热爱"反而可能是更好的策略。
+                        </div>
+                    </div>
+                    <div class="expert-comment shen">
+                        <div class="expert-avatar">🎓</div>
+                        <div class="expert-name">沈祖芸老师视角</div>
+                        <div class="expert-title">教育战略顾问、学校变革专家</div>
+                        <div class="expert-content">
+                            这个时代变化对学校冲击最大的是<span class="highlight-quote">"职业教育观"的重塑</span>。我接触的很多学校还在用"热门专业排名"指导学生选科，这是刻舟求剑。真正应该培养的是<span class="highlight-gold">可迁移能力</span>：学习力、沟通力、创造力、适应力。具体学什么专业反而没那么重要——因为这些专业未来可能都不存在了。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Final Summary -->
+        <div class="section" id="summary" style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.15));">
+            <div class="section-header" onclick="toggleSection('summary')">
+                <div class="section-title-wrap">
+                    <span class="section-icon">🎁</span>
+                    <span class="section-title">总结：找到人生的"那点意思"</span>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">世俗成功重要，但幸福更重要...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <p>段志强在最后的总结中说：</p>
+                    
+                    <div style="background: var(--card-bg); padding: 35px; border-radius: 20px; margin: 25px 0; text-align: center;">
+                        <p style="font-size: 1.4em; line-height: 1.8;">
+                            "我们希望孩子<span class="highlight-gold">世俗成功</span>，这很重要。但我们最终希望的是他<span class="highlight-quote">过幸福的一生</span>。<br><br>
+                            幸福的一生和世俗的成功<span class="highlight-key">不必然画等号</span>。<br><br>
+                            中间缺的那一点是什么？是找到<span class="highlight-purple">人生的那点意思</span>。"
+                        </p>
+                    </div>
+                    
+                    <div class="key-points" style="background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(245, 158, 11, 0.1));">
+                        <h4 style="color: var(--highlight-gold); margin-bottom: 20px; font-size: 1.2em;">✨ 核心要点回顾</h4>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-key);">1</div>
+                            <div><strong>一致性是后天的</strong>——人天生独特，是外在力量让我们趋同</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-data);">2</div>
+                            <div><strong>AI时代需要"无限游戏"能力</strong>——有边界的归AI，无边界的归人</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-quote);">3</div>
+                            <div><strong>热爱是种能力</strong>——保护孩子的热爱火苗，比塞给他技能更重要</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-gold);">4</div>
+                            <div><strong>因势利导比规划重要</strong>——接受阴差阳错，把不利转为有利</div>
+                        </div>
+                        <div class="key-point">
+                            <div class="key-point-icon" style="background: var(--highlight-purple);">5</div>
+                            <div><strong>修炼诗性</strong>——在万物中发现美好和意义，而非视一切为寻常</div>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 40px; padding: 30px; background: var(--card-bg); border-radius: 20px;">
+                        <p style="font-size: 1.5em; font-weight: 700; background: linear-gradient(135deg, #f43f5e, #8b5cf6, #38bdf8); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                            "在我身上总有一种力量，让我竭尽全力不要成为什么样的人。"
+                        </p>
+                        <p style="margin-top: 15px; color: var(--text-secondary);">—— 加缪</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <p>📝 基于罗振宇、脱不花与段志强对谈整理 | 2026年1月6日</p>
+            <p style="margin-top: 10px; opacity: 0.7;">专家评论由AI基于吴军、沈祖芸老师的著作和理念生成，仅供参考</p>
+        </footer>
+    </div>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+    
+    <!-- Scroll to Top -->
+    <div class="scroll-top" id="scrollTop" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+        
+        // Toggle All Sections
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+        
+        // Toggle Single Section
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+        
+        // Scroll to Top
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Show/Hide Scroll Button
+        window.addEventListener('scroll', function() {
+            const scrollTop = document.getElementById('scrollTop');
+            if (window.pageYOffset > 500) {
+                scrollTop.classList.add('visible');
+            } else {
+                scrollTop.classList.remove('visible');
+            }
+        });
+        
+        // Add animation delay to stat cards
+        document.querySelectorAll('.stat-card').forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>
