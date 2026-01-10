@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Coding 实战训练营 | 深度解析</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-light: #f8fafc;
+            --bg-dark: #0f172a;
+            --glass-light: rgba(255, 255, 255, 0.7);
+            --glass-dark: rgba(15, 23, 42, 0.8);
+            --text-light: #1e293b;
+            --text-dark: #e2e8f0;
+            --gold: #fbbf24;
+            --purple: #a855f7;
+            --teal: #14b8a6;
+            --orange: #f97316;
+            --rose: #f43f5e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            min-height: 100vh;
+            transition: all 0.5s ease;
+            line-height: 1.8;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+            border-radius: 50%;
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+            50% { transform: translateX(-50%) scale(1.2); opacity: 0.8; }
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            background: linear-gradient(135deg, #fff 0%, #ffd700 50%, #ff6b6b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            position: relative;
+            text-shadow: 0 0 60px rgba(255,255,255,0.5);
+        }
+
+        .header .subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+
+        .header .meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255,255,255,0.15);
+            padding: 8px 16px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        body.dark-mode .theme-toggle {
+            background: var(--glass-dark);
+        }
+
+        /* Glass Card */
+        .glass-card {
+            background: var(--glass-light);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: all 0.4s ease;
+        }
+
+        body.dark-mode .glass-card {
+            background: var(--glass-dark);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+        }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 16px;
+            font-size: 1.5rem;
+            flex-shrink: 0;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-light);
+            flex: 1;
+        }
+
+        body.dark-mode .section-title {
+            color: var(--text-dark);
+        }
+
+        .section-toggle {
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 50%;
+            transition: transform 0.3s ease;
+        }
+
+        .section-toggle.collapsed {
+            transform: rotate(-90deg);
+        }
+
+        .section-preview {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .section-header.collapsed .section-preview {
+            display: block;
+        }
+
+        .section-content {
+            max-height: 3000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .section-content.collapsed {
+            max-height: 0;
+        }
+
+        /* Highlights */
+        .highlight-red {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .highlight-gold {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .highlight-purple {
+            color: var(--purple);
+            font-weight: 600;
+        }
+
+        .highlight-orange {
+            color: var(--orange);
+            font-weight: 600;
+        }
+
+        .highlight-rose {
+            color: var(--rose);
+            font-weight: 600;
+        }
+
+        /* Golden Quote */
+        .golden-quote {
+            background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+            border-left: 5px solid var(--gold);
+            padding: 20px 25px;
+            border-radius: 0 16px 16px 0;
+            margin: 20px 0;
+            font-size: 1.15rem;
+            font-style: italic;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .golden-quote::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            font-size: 6rem;
+            color: rgba(251, 191, 36, 0.3);
+            font-family: Georgia, serif;
+        }
+
+        body.dark-mode .golden-quote {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(251, 191, 36, 0.1) 100%);
+        }
+
+        .quote-author {
+            text-align: right;
+            margin-top: 10px;
+            font-weight: 600;
+            color: #92400e;
+        }
+
+        body.dark-mode .quote-author {
+            color: var(--gold);
+        }
+
+        /* Expert Comment */
+        .expert-comment {
+            display: flex;
+            gap: 20px;
+            padding: 25px;
+            border-radius: 20px;
+            margin: 25px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expert-comment.michael {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.15) 0%, rgba(168, 85, 247, 0.15) 100%);
+            border: 2px solid rgba(99, 102, 241, 0.3);
+        }
+
+        .expert-comment.dario {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.15) 0%, rgba(16, 185, 129, 0.15) 100%);
+            border: 2px solid rgba(6, 182, 212, 0.3);
+        }
+
+        .expert-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            flex-shrink: 0;
+            position: relative;
+        }
+
+        .expert-comment.michael .expert-avatar {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--purple) 100%);
+        }
+
+        .expert-comment.dario .expert-avatar {
+            background: linear-gradient(135deg, var(--accent) 0%, var(--success) 100%);
+        }
+
+        .expert-info h4 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .expert-info h4 {
+            color: var(--text-dark);
+        }
+
+        .expert-role {
+            font-size: 0.85rem;
+            color: #64748b;
+            margin-bottom: 12px;
+        }
+
+        .expert-content {
+            color: var(--text-light);
+            line-height: 1.8;
+        }
+
+        body.dark-mode .expert-content {
+            color: var(--text-dark);
+        }
+
+        /* Mind Map */
+        .mind-map {
+            padding: 40px 20px;
+            overflow-x: auto;
+        }
+
+        .mind-map-container {
+            display: flex;
+            justify-content: center;
+            min-width: 900px;
+        }
+
+        .map-center {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: white;
+            padding: 25px 40px;
+            border-radius: 30px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            position: relative;
+        }
+
+        .map-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-left: 60px;
+            position: relative;
+        }
+
+        .map-branches::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+            border-radius: 3px;
+        }
+
+        .map-branch {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            position: relative;
+        }
+
+        .map-branch::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            width: 30px;
+            height: 3px;
+            background: var(--primary);
+        }
+
+        .branch-node {
+            padding: 15px 25px;
+            border-radius: 16px;
+            font-weight: 600;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.05);
+        }
+
+        .branch-node.bg-primary { background: linear-gradient(135deg, #6366f1, #818cf8); }
+        .branch-node.bg-secondary { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .branch-node.bg-accent { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+        .branch-node.bg-success { background: linear-gradient(135deg, #10b981, #34d399); }
+        .branch-node.bg-warning { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .branch-node.bg-purple { background: linear-gradient(135deg, #a855f7, #c084fc); }
+
+        .sub-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .sub-branch {
+            background: rgba(255,255,255,0.9);
+            color: var(--text-light);
+            padding: 10px 18px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            border-left: 4px solid var(--primary);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        body.dark-mode .sub-branch {
+            background: rgba(30, 41, 59, 0.9);
+            color: var(--text-dark);
+        }
+
+        /* Logic Flow */
+        .logic-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 30px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .flow-box {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            color: white;
+            text-align: center;
+            font-weight: 600;
+            padding: 15px;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .flow-box:hover {
+            transform: translateY(-10px);
+        }
+
+        .flow-box .icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+        }
+
+        /* Key Points */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .key-point {
+            padding: 25px;
+            border-radius: 20px;
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+
+        .key-point:hover {
+            transform: translateX(10px);
+        }
+
+        .key-point.type-1 {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(99, 102, 241, 0.05));
+            border-color: var(--primary);
+        }
+
+        .key-point.type-2 {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.1), rgba(236, 72, 153, 0.05));
+            border-color: var(--secondary);
+        }
+
+        .key-point.type-3 {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(6, 182, 212, 0.05));
+            border-color: var(--accent);
+        }
+
+        .key-point.type-4 {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(16, 185, 129, 0.05));
+            border-color: var(--success);
+        }
+
+        .key-point h4 {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .key-point h4 {
+            color: var(--text-dark);
+        }
+
+        .key-point p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 25px;
+            border-radius: 20px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.5), rgba(255,255,255,0.3));
+            border: 1px solid rgba(255,255,255,0.4);
+        }
+
+        body.dark-mode .stat-card {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.5), rgba(30, 41, 59, 0.3));
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #64748b;
+            margin-top: 8px;
+            font-size: 0.9rem;
+        }
+
+        /* Dry Goods */
+        .dry-goods {
+            margin: 25px 0;
+        }
+
+        .dry-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 16px;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.4), rgba(255,255,255,0.2));
+            border: 1px solid rgba(255,255,255,0.3);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .dry-item {
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.4), rgba(30, 41, 59, 0.2));
+        }
+
+        .dry-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .dry-number {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            font-weight: 700;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .dry-content h4 {
+            font-size: 1.05rem;
+            margin-bottom: 8px;
+            color: var(--text-light);
+        }
+
+        body.dark-mode .dry-content h4 {
+            color: var(--text-dark);
+        }
+
+        .dry-content p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        /* Product Stack */
+        .product-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .stack-layer {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 25px;
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .stack-layer:hover {
+            transform: scale(1.02);
+        }
+
+        .stack-layer.layer-1 { background: linear-gradient(135deg, #6366f1, #818cf8); }
+        .stack-layer.layer-2 { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .stack-layer.layer-3 { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+        .stack-layer.layer-4 { background: linear-gradient(135deg, #10b981, #34d399); }
+        .stack-layer.layer-5 { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .stack-layer.layer-6 { background: linear-gradient(135deg, #a855f7, #c084fc); }
+
+        .stack-icon {
+            font-size: 2rem;
+        }
+
+        .stack-info {
+            flex: 1;
+            color: white;
+        }
+
+        .stack-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+
+        .stack-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .stack-tools {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tool-tag {
+            background: rgba(255,255,255,0.25);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        /* Content Paragraph */
+        .content-para {
+            color: var(--text-light);
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+
+        body.dark-mode .content-para {
+            color: var(--text-dark);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px 20px;
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2rem;
+            }
+
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .glass-card {
+                padding: 20px;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+            }
+
+            .expert-comment {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .flow-step {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .mind-map-container {
+                flex-direction: column;
+                min-width: auto;
+            }
+
+            .map-branches {
+                margin-left: 30px;
+                margin-top: 30px;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white !important;
+            }
+
+            .theme-toggle {
+                display: none;
+            }
+
+            .glass-card {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🚀 Vibe Coding 实战训练营</h1>
+            <p class="subtitle">当编程变成与AI的对话，每个人都能成为创造者</p>
+            <div class="meta">
+                <div class="meta-item">📅 2026年1月9日</div>
+                <div class="meta-item">👨‍🏫 龙龙老师 & 云舒老师</div>
+                <div class="meta-item">⏱️ 约2小时</div>
+                <div class="meta-item">👥 WaytoAGI</div>
+            </div>
+        </header>
+
+        <!-- 核心金句 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #fbbf24, #f59e0b);">💎</div>
+                <div>
+                    <h2 class="section-title">灵魂金句</h2>
+                    <p class="section-preview">8条改变认知的思维锦囊...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="golden-quote">
+                    唯有不断试错，路才会清晰。
+                    <div class="quote-author">— 龙龙老师的人生信条</div>
+                </div>
+
+                <div class="golden-quote">
+                    凡产品皆用户，凡工程皆产品。
+                    <div class="quote-author">— 超级个体的核心心法</div>
+                </div>
+
+                <div class="golden-quote">
+                    技术平权有一天一定会被达到的，大家始终看到这个也不要焦虑。
+                    <div class="quote-author">— 对AI时代的坚定判断</div>
+                </div>
+
+                <div class="golden-quote">
+                    用户说我想要一个桌面端软件，这只是他基于已有认知得出的结论。高阶产品经理要洞察——他最终需要的是什么？
+                    <div class="quote-author">— 第一性原理的产品思维</div>
+                </div>
+
+                <div class="golden-quote">
+                    我们做产品的，收钱不丢脸。你辛辛苦苦做完了，你就要收钱。
+                    <div class="quote-author">— 商业化的正确心态</div>
+                </div>
+
+                <div class="golden-quote">
+                    我们必须得是自己产品的用户，这句话永远没有错。当我们不是自己产品的用户时，怎么能知道用户需要什么？
+                    <div class="quote-author">— 产品经理的第一原则</div>
+                </div>
+
+                <div class="golden-quote">
+                    产品经理其实不是一个职业，它应该是一种态度，是我们看世界的方法论。
+                    <div class="quote-author">— 对产品思维的重新定义</div>
+                </div>
+
+                <div class="golden-quote">
+                    Vibe Coding对于独立开发者来说进入到了一种癫狂的状态——只要有想法就去编码，你一直编码，运动前发指令让AI做，运动之后它肯定做完了。
+                    <div class="quote-author">— 新时代的生产力革命</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 专家评论：Michael Truell -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #6366f1, #a855f7);">🎯</div>
+                <div>
+                    <h2 class="section-title">行业领袖视角</h2>
+                    <p class="section-preview">Cursor CEO与Anthropic创始人的深度解读...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="expert-comment michael">
+                    <div class="expert-avatar">👨‍💻</div>
+                    <div class="expert-info">
+                        <h4>Michael Truell（迈克尔・特鲁尔）</h4>
+                        <p class="expert-role">Cursor CEO | AI编程革命的推动者</p>
+                        <div class="expert-content">
+                            <p><strong style="color: var(--primary);">关于Vibe Coding的本质：</strong></p>
+                            <p>龙龙老师说得很对——<span class="highlight-purple">工具只是工具</span>。无论是Cursor、Enter还是Lovable，核心不在于你用什么，而在于你如何思考问题。我们做Cursor的初衷就是让开发者从<span class="highlight-blue">"写代码"变成"表达意图"</span>。当采纳率达到20-30%时，开发者已经从"自己写90%"变成"只需要写10%"。</p>
+                            <br>
+                            <p><strong style="color: var(--primary);">关于技术平权：</strong></p>
+                            <p>我完全认同"<span class="highlight-gold">你们是最大的受益者</span>"这个观点。传统程序员确实面临冲击，但这也意味着<span class="highlight-green">更多人可以参与创造</span>。那个Emoji网站月流量上百万的案例完美说明了——<span class="highlight-rose">简单的产品也能创造巨大价值</span>，关键是你能不能发现需求并快速交付。</p>
+                            <br>
+                            <p><strong style="color: var(--primary);">给学习者的建议：</strong></p>
+                            <p>不要焦虑自己"不会编程"。正如龙龙老师说的——<span class="highlight-orange">你需要的不是编程技能，而是产品思维和工程思维的结合</span>。到了26年、27年，你可能根本不需要关心什么部署、环境、框架。因为这些都会被抽象掉。专注于"用户需要什么"，工具会越来越简单。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment dario">
+                    <div class="expert-avatar">🧠</div>
+                    <div class="expert-info">
+                        <h4>Dario Amodei（达里奥・阿莫代伊）</h4>
+                        <p class="expert-role">Anthropic CEO | Claude的创造者</p>
+                        <div class="expert-content">
+                            <p><strong style="color: var(--accent);">关于AI与人类协作：</strong></p>
+                            <p>这堂课展示了<span class="highlight-blue">AI应该如何赋能人类</span>。龙龙老师提到的"Agentic"阶段正是我们在Claude上持续探索的方向。让AI不仅仅是补全代码，而是<span class="highlight-green">理解意图、执行任务、交付产物</span>。这符合我们"AI as Helpful Assistant"的核心理念。</p>
+                            <br>
+                            <p><strong style="color: var(--accent);">关于产品的八步法则：</strong></p>
+                            <p>数据→服务→形态→分发→触达→埋点→SEO→支付——这八步法非常清晰。我想补充的是，在AI时代，<span class="highlight-purple">每一步都可以被AI加速</span>。但正如课程强调的，AI只是"8个步骤中的第一步"。真正的价值在于<span class="highlight-gold">完整的商业闭环</span>。</p>
+                            <br>
+                            <p><strong style="color: var(--accent);">关于"第一性原理"案例：</strong></p>
+                            <p>那个直播切片工具的案例堪称教科书级别。用户说要"桌面端软件"，但<span class="highlight-rose">实际只需要"原片"</span>。这种洞察力无法被AI替代。AI可以帮你更快地建造，但<span class="highlight-orange">你必须知道该建造什么</span>。这就是为什么"产品思维"比"编程能力"更重要的原因。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 元认知思维图 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #a855f7, #ec4899);">🧠</div>
+                <div>
+                    <h2 class="section-title">元认知图谱：超级个体的能力模型</h2>
+                    <p class="section-preview">产品思维 + 工程思维 = 超级个体...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="mind-map">
+                    <div class="mind-map-container">
+                        <div class="map-center">
+                            🦸 超级个体<br>
+                            <small style="opacity: 0.8; font-size: 0.8rem;">凡产品皆用户 · 凡工程皆产品</small>
+                        </div>
+                        <div class="map-branches">
+                            <div class="map-branch">
+                                <div class="branch-node bg-primary">
+                                    🎯 产品思维
+                                </div>
+                                <div class="sub-branches">
+                                    <div class="sub-branch">❓ 用户的问题究竟是什么？</div>
+                                    <div class="sub-branch">💡 用户究竟需要的是什么？</div>
+                                    <div class="sub-branch">📦 用什么产品来满足用户？</div>
+                                </div>
+                            </div>
+                            <div class="map-branch">
+                                <div class="branch-node bg-accent">
+                                    ⚙️ 工程思维
+                                </div>
+                                <div class="sub-branches">
+                                    <div class="sub-branch">🔧 我要怎么做这个产品？</div>
+                                    <div class="sub-branch">🔌 我要怎么实现这个东西？</div>
+                                    <div class="sub-branch">🚀 下一个版本还能做什么？</div>
+                                </div>
+                            </div>
+                            <div class="map-branch">
+                                <div class="branch-node bg-success">
+                                    🧪 第一性原理
+                                </div>
+                                <div class="sub-branches">
+                                    <div class="sub-branch">🎭 用户说的 ≠ 用户需要的</div>
+                                    <div class="sub-branch">🔍 洞察表象背后的真实需求</div>
+                                    <div class="sub-branch">🎯 永远比用户多走一步</div>
+                                </div>
+                            </div>
+                            <div class="map-branch">
+                                <div class="branch-node bg-warning">
+                                    🔄 试错心态
+                                </div>
+                                <div class="sub-branches">
+                                    <div class="sub-branch">💪 失败是清晰之路的必经站</div>
+                                    <div class="sub-branch">📈 越做越多，越做越快</div>
+                                    <div class="sub-branch">🏆 比的是试过多少次</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产品搭建八步法 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #06b6d4, #10b981);">🏗️</div>
+                <div>
+                    <h2 class="section-title">产品搭建八步法：从0到商业化</h2>
+                    <p class="section-preview">完整的产品构建路径与工具链...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="content-para">
+                    <span class="highlight-purple">编程只是8个步骤中的第一步</span>。一个完整的产品需要从数据、服务、形态、分发到商业化的完整闭环。以下是龙龙老师分享的实战工具栈：
+                </div>
+
+                <div class="product-stack">
+                    <div class="stack-layer layer-1">
+                        <div class="stack-icon">1️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">做"壳" — 产品形态</div>
+                            <div class="stack-desc">用AI工具快速搭建产品原型，验证思路是否可行</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">Lovable</span>
+                            <span class="tool-tag">Enter Pro</span>
+                            <span class="tool-tag">Cursor</span>
+                            <span class="tool-tag">Trae</span>
+                        </div>
+                    </div>
+
+                    <div class="stack-layer layer-6">
+                        <div class="stack-icon">2️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">版本管理 — 安全存档</div>
+                            <div class="stack-desc">自然语言容易犯错，疯狂存档，不行就回滚</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">Git</span>
+                            <span class="tool-tag">GitHub</span>
+                        </div>
+                    </div>
+
+                    <div class="stack-layer layer-2">
+                        <div class="stack-icon">3️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">接数据 — 持久化存储</div>
+                            <div class="stack-desc">数据放在永不宕机、随时可访问的地方</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">Supabase ⭐</span>
+                            <span class="tool-tag">Cloudflare</span>
+                            <span class="tool-tag">阿里云</span>
+                        </div>
+                    </div>
+
+                    <div class="stack-layer layer-3">
+                        <div class="stack-icon">4️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">接服务 — 连接数据与壳</div>
+                            <div class="stack-desc">让数据能被外部访问，监控服务运行状态</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">API服务</span>
+                            <span class="tool-tag">监控面板</span>
+                        </div>
+                    </div>
+
+                    <div class="stack-layer layer-4">
+                        <div class="stack-icon">5️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">分发部署 — 发布上线</div>
+                            <div class="stack-desc">把产品放到互联网上，让用户能够访问</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">Vercel</span>
+                            <span class="tool-tag">Websites</span>
+                        </div>
+                    </div>
+
+                    <div class="stack-layer layer-5">
+                        <div class="stack-icon">6️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">数据埋点 — 用户行为分析</div>
+                            <div class="stack-desc">记录用户动线、留存、功能使用情况</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">Google Analytics</span>
+                            <span class="tool-tag">自定义埋点</span>
+                        </div>
+                    </div>
+
+                    <div class="stack-layer layer-1">
+                        <div class="stack-icon">7️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">SEO优化 — 被搜索引擎发现</div>
+                            <div class="stack-desc">让百度、Google能搜到你的产品</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">SEO工具</span>
+                            <span class="tool-tag">站长工具</span>
+                        </div>
+                    </div>
+
+                    <div class="stack-layer layer-2">
+                        <div class="stack-icon">8️⃣</div>
+                        <div class="stack-info">
+                            <div class="stack-title">接支付 — 商业化变现</div>
+                            <div class="stack-desc">为你的付出收取回报，这不丢脸！</div>
+                        </div>
+                        <div class="stack-tools">
+                            <span class="tool-tag">支付宝</span>
+                            <span class="tool-tag">微信支付</span>
+                            <span class="tool-tag">Stripe（海外）</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心干货 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">🔥</div>
+                <div>
+                    <h2 class="section-title">核心干货：你必须知道的10件事</h2>
+                    <p class="section-preview">从认知到实践的关键洞察...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="dry-goods">
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #6366f1, #818cf8);">1</div>
+                        <div class="dry-content">
+                            <h4>行业演进的三个阶段</h4>
+                            <p><span class="highlight-blue">纯手写代码</span> → <span class="highlight-purple">模型统计补全（Copilot采纳率20-30%）</span> → <span class="highlight-green">智能体Agentic（完全不用看代码）</span>。现在我们正处于第三阶段的爆发期。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #ec4899, #f472b6);">2</div>
+                        <div class="dry-content">
+                            <h4>工具形态的革命性变化</h4>
+                            <p>从<span class="highlight-rose">必须装软件</span>到<span class="highlight-blue">打开网页就能编码</span>，从<span class="highlight-orange">只能在电脑前工作</span>到<span class="highlight-green">移动端随时编程</span>。24小时都可以编码，创造力和生产力达到巅峰。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #06b6d4, #22d3ee);">3</div>
+                        <div class="dry-content">
+                            <h4>技术平权的真正含义</h4>
+                            <p><span class="highlight-red">程序员是最大的受冲击者</span>，而<span class="highlight-gold">非技术人员是最大的受益者</span>。当大家都不需要写代码、看代码时，能做产品的人群扩大了无数倍。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #10b981, #34d399);">4</div>
+                        <div class="dry-content">
+                            <h4>简单产品的巨大价值</h4>
+                            <p>那个<span class="highlight-gold">Emoji搜索网站月流量上百万</span>，业务逻辑极其简单。龙龙老师判断：<span class="highlight-purple">未来50-60%的产品</span>可以通过Vibe Coding实现，完全不需要懂代码。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">5</div>
+                        <div class="dry-content">
+                            <h4>直播切片案例的启示</h4>
+                            <p>用户要"定时录制工具"，实际需要的是"直播原片"。<span class="highlight-rose">第一性原理：用户基于已有认知提需求</span>，高阶产品经理要<span class="highlight-blue">洞察表象背后的真实需求</span>。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #a855f7, #c084fc);">6</div>
+                        <div class="dry-content">
+                            <h4>产品经理 vs 工程师思维</h4>
+                            <p><span class="highlight-purple">产品思维</span>：关注用户是谁、痛点是什么、需要什么。<span class="highlight-blue">工程思维</span>：关注怎么做、怎么实现、下一步做什么。<span class="highlight-gold">两者结合才能突破职业瓶颈</span>。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #ef4444, #f87171);">7</div>
+                        <div class="dry-content">
+                            <h4>Supabase优于传统云厂商</h4>
+                            <p>国内云厂商<span class="highlight-red">使用成本太高，不适合个人开发者</span>。<span class="highlight-green">Supabase</span>更早地为简单使用场景做了优化，是更好的选择。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #14b8a6, #2dd4bf);">8</div>
+                        <div class="dry-content">
+                            <h4>学习成本与回报率</h4>
+                            <p>现在学习需要付费（工具成本），但<span class="highlight-gold">回报率也更高</span>——更短时间做更多事，更快交付和验证商业思维，<span class="highlight-green">触达用户的成本极速降低</span>。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #f97316, #fb923c);">9</div>
+                        <div class="dry-content">
+                            <h4>龙龙老师的试错清单</h4>
+                            <p>抖店无货源电商、线下游戏店（被迫关闭）、WEB3币圈（21年2万刀入场比特币，12万刀卖出）、SEO流量站、直播带货系统……<span class="highlight-rose">讲的都是成功的，没讲的都是血泪</span>。</p>
+                        </div>
+                    </div>
+
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: linear-gradient(135deg, #6366f1, #818cf8);">10</div>
+                        <div class="dry-content">
+                            <h4>课程的核心目标</h4>
+                            <p>不是为了学编程而学编程。目标是<span class="highlight-gold">找到第二曲线、做副业、能做网站和小程序</span>。编程只是途径，<span class="highlight-purple">思维的变化比技能的变化更难、更有价值</span>。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 逻辑思维流程图 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #10b981, #06b6d4);">🔄</div>
+                <div>
+                    <h2 class="section-title">产品认知逻辑图</h2>
+                    <p class="section-preview">从用户触达到价值交付的完整链路...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="content-para">
+                    一个产品不仅仅是"网页"或"APP"，而是一个<span class="highlight-purple">完整的价值交付系统</span>。以飞书为例，理解产品的六层结构：
+                </div>
+
+                <div class="logic-flow">
+                    <div class="flow-step">
+                        <div class="flow-box" style="background: linear-gradient(135deg, #6366f1, #818cf8);">
+                            <div class="icon">📊</div>
+                            <div>数据</div>
+                        </div>
+                        <small style="color: #64748b;">文字、图片、权限</small>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-box" style="background: linear-gradient(135deg, #ec4899, #f472b6);">
+                            <div class="icon">⚙️</div>
+                            <div>服务</div>
+                        </div>
+                        <small style="color: #64748b;">编辑、授权、协作</small>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-box" style="background: linear-gradient(135deg, #06b6d4, #22d3ee);">
+                            <div class="icon">📱</div>
+                            <div>形态</div>
+                        </div>
+                        <small style="color: #64748b;">网页/APP/小程序</small>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-box" style="background: linear-gradient(135deg, #10b981, #34d399);">
+                            <div class="icon">🚀</div>
+                            <div>分发</div>
+                        </div>
+                        <small style="color: #64748b;">云/应用商店</small>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-box" style="background: linear-gradient(135deg, #f59e0b, #fbbf24);">
+                            <div class="icon">👆</div>
+                            <div>触达</div>
+                        </div>
+                        <small style="color: #64748b;">浏览器/手机/微信</small>
+                    </div>
+                </div>
+
+                <div class="key-points">
+                    <div class="key-point type-1">
+                        <h4>🎯 用户需要的是什么？</h4>
+                        <p>不是"网页"或"工具"，而是<span class="highlight-purple">解决问题的能力</span>。产品只是载体。</p>
+                    </div>
+                    <div class="key-point type-2">
+                        <h4>📦 形态不等于产品</h4>
+                        <p>React、Vue只是让你做网页更轻松的框架，<span class="highlight-rose">用户根本不在乎你用什么框架</span>。</p>
+                    </div>
+                    <div class="key-point type-3">
+                        <h4>🔗 链路完整性</h4>
+                        <p>不能只看编程，要看<span class="highlight-blue">触达、分发、部署、监控</span>的完整链路。</p>
+                    </div>
+                    <div class="key-point type-4">
+                        <h4>💰 最终目标</h4>
+                        <p>验证商业化思维，让产品<span class="highlight-green">能被发现、能被使用、能够收费</span>。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行业趋势 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #f43f5e, #fb7185);">📈</div>
+                <div>
+                    <h2 class="section-title">行业大势：不可逆的技术平权</h2>
+                    <p class="section-preview">AI普及率从2%到100%的必然进程...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number">20-30%</div>
+                        <div class="stat-label">长文本补全采纳率</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">50-60%</div>
+                        <div class="stat-label">未来可Vibe Coding的产品</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">100万+</div>
+                        <div class="stat-label">简单Emoji站月流量</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number">8步</div>
+                        <div class="stat-label">产品从0到变现的步骤</div>
+                    </div>
+                </div>
+
+                <div class="content-para">
+                    <span class="highlight-gold">大势不可逆，得势者必胜。</span>这个"势"就是Vibe Coding。从纯手写代码，到Copilot辅助，再到Agentic智能体——我们正在见证<span class="highlight-purple">从"写代码"到"表达意图"的范式转变</span>。
+                </div>
+
+                <div class="content-para">
+                    龙龙老师的判断：到<span class="highlight-blue">26年、27年</span>，我们可能<span class="highlight-green">不再需要关心部署、环境、框架</span>。因为这些都会被更好的工具抽象掉。专注于用户需求，工具会越来越傻瓜化。
+                </div>
+
+                <div class="golden-quote">
+                    我从学生开始做互联网，看过很多趋势——VR、AR、MR、无人驾驶、机器人……我从来没看到过像AI这样给大家的生活、认知带来这么大冲击的。没有谁会卖VR课程，但有很多人通过AI课程发家致富。
+                    <div class="quote-author">— 龙龙老师</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 实战案例 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">💼</div>
+                <div>
+                    <h2 class="section-title">真实案例：Vibe Coding能做什么</h2>
+                    <p class="section-preview">文档站、梦话记录器、AI生图工具、地产原型...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="key-points">
+                    <div class="key-point type-1">
+                        <h4>📄 Freeme.pro 文档站</h4>
+                        <p>一个创意Agent产品的文档站，完全用AI生成。<span class="highlight-purple">不用外包，沟通成本低，可能只要十几二十刀</span>。非核心模块用AI做，成本最优。</p>
+                    </div>
+                    <div class="key-point type-2">
+                        <h4>🌙 梦话记录器</h4>
+                        <p>客户是导演，为自己的电影做的小工具。<span class="highlight-rose">记录梦话，AI分析情绪和统计</span>。小工具也能创造独特价值。</p>
+                    </div>
+                    <div class="key-point type-3">
+                        <h4>📸 AI换景照片工具</h4>
+                        <p>把自己P进不同国家景点的APP，小红书帖子<span class="highlight-blue">上百万阅读量</span>。产品就是用Enter Pro做的。</p>
+                    </div>
+                    <div class="key-point type-4">
+                        <h4>🏠 美国地产销售原型</h4>
+                        <p>给美国卖地产的原型设计，请专业设计师可能要<span class="highlight-green">小2万</span>，用AI可能几十刀搞定。</p>
+                    </div>
+                </div>
+
+                <div class="content-para">
+                    还有印度小哥用Enter Pro做的<span class="highlight-gold">印度餐厅下单系统</span>——完整的菜单发布、下单功能。这些案例说明：<span class="highlight-purple">复杂的系统是少数，大部分需求都很简单</span>，而简单的产品能解决90%的需求。
+                </div>
+            </div>
+        </div>
+
+        <!-- 作业布置 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #0ea5e9, #38bdf8);">📝</div>
+                <div>
+                    <h2 class="section-title">实战作业：开启你的第一步</h2>
+                    <p class="section-preview">产品思维作业 + 工程思维作业...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="key-points">
+                    <div class="key-point type-1">
+                        <h4>作业一：发现你的痛点（产品思维）</h4>
+                        <p>回顾过去一段时间，你有哪些觉得麻烦、低效、反复的事情？写下来：<span class="highlight-purple">用户是谁（自己）、痛点是什么、想要什么样的工具</span>。几百字即可。</p>
+                    </div>
+                    <div class="key-point type-3">
+                        <h4>作业二：设计你的MVP（工程思维）</h4>
+                        <p>基于痛点，思考<span class="highlight-blue">怎么用八步法把产品拼出来</span>？写一个方案文档。记住：<span class="highlight-gold">永远比用户多走一步</span>。</p>
+                    </div>
+                </div>
+
+                <div class="golden-quote">
+                    我们学编程的目的是什么？是为了找到第二曲线，找到副业。只要能做网站、能做小程序，管它是什么工具？编程只是途径。
+                    <div class="quote-author">— 课程的核心定位</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 课程路线图 -->
+        <div class="glass-card">
+            <div class="section-header" onclick="toggleSection(this)">
+                <div class="section-icon" style="background: linear-gradient(135deg, #22c55e, #4ade80);">🗺️</div>
+                <div>
+                    <h2 class="section-title">课程路线图</h2>
+                    <p class="section-preview">龙龙老师10节 + 云舒老师10节 = 完整能力体系...</p>
+                </div>
+                <div class="section-toggle">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="content-para">
+                    <strong style="color: var(--primary);">龙龙老师（前半程）：</strong>低代码平台、产品思维、商业化逻辑
+                </div>
+                <div class="dry-goods">
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: var(--primary);">下周一</div>
+                        <div class="dry-content">
+                            <h4>实战：不写一行代码做出产品</h4>
+                            <p>体验完整的产品搭建流程（步骤1-6），接支付需要资质</p>
+                        </div>
+                    </div>
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: var(--secondary);">后续</div>
+                        <div class="dry-content">
+                            <h4>接AI能力 + 接Agent</h4>
+                            <p>生图、智能体商业化、运势小程序等实战案例</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-para" style="margin-top: 25px;">
+                    <strong style="color: var(--accent);">云舒老师（后半程）：</strong>IDE/CLI编程工具实战
+                </div>
+                <div class="dry-goods">
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: var(--accent);">第4课</div>
+                        <div class="dry-content">
+                            <h4>AI编程工具选择与日常提效</h4>
+                            <p>Cursor、Trae、Claude Code、Codex的选择与使用</p>
+                        </div>
+                    </div>
+                    <div class="dry-item">
+                        <div class="dry-number" style="background: var(--success);">第6-7课</div>
+                        <div class="dry-content">
+                            <h4>从PRD到产品交付</h4>
+                            <p>AI写PRD、开发、测试、发版（APP Store/Chrome插件/Web端）</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>📚 基于 WaytoAGI Vibe Coding 实战训练营第四期直播内容整理</p>
+            <p style="margin-top: 10px;">💡 唯有不断试错，路才会清晰</p>
+            <p style="margin-top: 15px; opacity: 0.7;">Generated with ❤️ by Claude</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        function toggleSection(header) {
+            const content = header.nextElementSibling;
+            const toggle = header.querySelector('.section-toggle');
+            
+            content.classList.toggle('collapsed');
+            toggle.classList.toggle('collapsed');
+            header.classList.toggle('collapsed');
+        }
+
+        // Add smooth scroll behavior
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Initialize with all sections expanded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Optional: collapse some sections by default on mobile
+            if (window.innerWidth < 768) {
+                document.querySelectorAll('.section-content').forEach((content, index) => {
+                    if (index > 2) {
+                        content.classList.add('collapsed');
+                        content.previousElementSibling.classList.add('collapsed');
+                        content.previousElementSibling.querySelector('.section-toggle').classList.add('collapsed');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
