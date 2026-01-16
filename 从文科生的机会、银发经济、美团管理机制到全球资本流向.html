@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>蔡钰·商业参考4 | 深度洞察</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+            --accent: #ec4899;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --info: #3b82f6;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            min-height: 100vh;
+            color: #e2e8f0;
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        body.light-mode {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            color: #1e293b;
+        }
+
+        /* 动态背景粒子 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 60px 20px;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, #a78bfa 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        @keyframes glow {
+            0%, 100% { filter: drop-shadow(0 0 20px rgba(139, 92, 246, 0.5)); }
+            50% { filter: drop-shadow(0 0 40px rgba(236, 72, 153, 0.8)); }
+        }
+
+        .header .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .light-mode .header .subtitle {
+            color: rgba(30, 41, 59, 0.8);
+        }
+
+        /* 控制面板 */
+        .controls {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+
+        .control-btn {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .control-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .light-mode .control-btn {
+            background: rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+            border-color: rgba(0, 0, 0, 0.2);
+        }
+
+        /* 导航标签 */
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 40px 0;
+            padding: 20px;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            color: white;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .nav-tab:hover, .nav-tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-color: transparent;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+        }
+
+        .light-mode .nav-tab {
+            background: rgba(255, 255, 255, 0.5);
+            color: #1e293b;
+        }
+
+        /* 内容区 */
+        .content-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 玻璃卡片 */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .light-mode .glass-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: rgba(255, 255, 255, 0.8);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        /* 金句卡片 */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(139, 92, 246, 0.2));
+            border-left: 4px solid var(--accent);
+            padding: 25px 30px;
+            margin: 20px 0;
+            border-radius: 0 16px 16px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            font-size: 120px;
+            color: rgba(255, 255, 255, 0.1);
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            margin-top: 15px;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* 语义高亮 */
+        .highlight-red {
+            color: #f87171;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(248, 113, 113, 0.5);
+        }
+
+        .highlight-blue {
+            color: #60a5fa;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(96, 165, 250, 0.5);
+        }
+
+        .highlight-green {
+            color: #34d399;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(52, 211, 153, 0.5);
+        }
+
+        .highlight-purple {
+            color: #c084fc;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(192, 132, 252, 0.5);
+        }
+
+        .highlight-orange {
+            color: #fb923c;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(251, 146, 60, 0.5);
+        }
+
+        .highlight-cyan {
+            color: #22d3ee;
+            font-weight: 600;
+            text-shadow: 0 0 20px rgba(34, 211, 238, 0.5);
+        }
+
+        /* 数据标签 */
+        .data-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 12px;
+            background: linear-gradient(135deg, var(--info), var(--primary));
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin: 0 4px;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            padding: 40px 20px;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 1000px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            padding: 20px 40px;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.5);
+            margin-bottom: 40px;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            gap: 20px;
+        }
+
+        .mindmap-branch {
+            flex: 1;
+            max-width: 280px;
+        }
+
+        .branch-title {
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            padding: 15px 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .branch-title::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: linear-gradient(to bottom, transparent, var(--secondary));
+        }
+
+        .branch-items {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            padding: 15px;
+        }
+
+        .branch-item {
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            border-left: 3px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+
+        .branch-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        /* 专家评论 */
+        .expert-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .expert-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+        }
+
+        .expert-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .expert-avatar.wang { background: linear-gradient(135deg, #f59e0b, #ef4444); }
+        .expert-avatar.bezos { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+        .expert-avatar.zong { background: linear-gradient(135deg, #10b981, #84cc16); }
+        .expert-avatar.trump { background: linear-gradient(135deg, #ef4444, #f97316); }
+
+        .expert-info h4 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .expert-info span {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .expert-comment {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .light-mode .expert-comment {
+            color: #374151;
+        }
+
+        /* 干货清单 */
+        .insight-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .insight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .insight-item:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary);
+            transform: translateX(10px);
+        }
+
+        .insight-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .insight-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #f8fafc;
+        }
+
+        .insight-content p {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.7;
+        }
+
+        .light-mode .insight-content h4 {
+            color: #1e293b;
+        }
+
+        .light-mode .insight-content p {
+            color: #4b5563;
+        }
+
+        /* 逻辑图 */
+        .logic-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            padding: 40px 0;
+        }
+
+        .logic-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .logic-node {
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            text-align: center;
+            min-width: 150px;
+            transition: all 0.3s ease;
+        }
+
+        .logic-node.premise {
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+        }
+
+        .logic-node.process {
+            background: linear-gradient(135deg, #8b5cf6, #6d28d9);
+        }
+
+        .logic-node.result {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .logic-node.action {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .logic-arrow {
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .logic-node:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 元认知图 */
+        .meta-cognition {
+            position: relative;
+            padding: 60px 20px;
+        }
+
+        .meta-center {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 0 60px rgba(99, 102, 241, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .meta-orbit {
+            position: absolute;
+            width: 100%;
+            max-width: 800px;
+            height: 400px;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .meta-satellite {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 15px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .meta-satellite:hover {
+            transform: scale(1.1);
+            background: rgba(255, 255, 255, 0.2);
+            border-color: var(--accent);
+        }
+
+        .meta-satellite:nth-child(1) { top: 0; left: 50%; transform: translateX(-50%); }
+        .meta-satellite:nth-child(2) { top: 20%; right: 5%; }
+        .meta-satellite:nth-child(3) { bottom: 20%; right: 5%; }
+        .meta-satellite:nth-child(4) { bottom: 0; left: 50%; transform: translateX(-50%); }
+        .meta-satellite:nth-child(5) { bottom: 20%; left: 5%; }
+        .meta-satellite:nth-child(6) { top: 20%; left: 5%; }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 8px;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent), var(--secondary));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            margin-left: 20px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 25px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 20px var(--accent);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .timeline-content {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* 可折叠面板 */
+        .accordion {
+            margin: 20px 0;
+        }
+
+        .accordion-item {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .accordion-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .accordion-header h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .accordion-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            max-height: 2000px;
+        }
+
+        .accordion-body {
+            padding: 0 25px 25px;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .mindmap-branches {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .mindmap-branch {
+                max-width: 100%;
+            }
+
+            .meta-orbit {
+                position: relative;
+                height: auto;
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 15px;
+                padding: 20px;
+            }
+
+            .meta-satellite {
+                position: relative !important;
+                transform: none !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                bottom: auto !important;
+            }
+
+            .meta-center {
+                grid-column: span 2;
+                width: 150px;
+                height: 150px;
+                margin: 20px auto;
+            }
+
+            .controls {
+                position: static;
+                justify-content: center;
+                margin: 20px;
+            }
+
+            .logic-row {
+                flex-direction: column;
+            }
+
+            .logic-arrow {
+                transform: rotate(90deg);
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+
+            .controls, .nav-tabs {
+                display: none;
+            }
+
+            .glass-card {
+                background: #f8fafc;
+                border: 1px solid #e2e8f0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 控制面板 -->
+    <div class="controls">
+        <button class="control-btn" onclick="toggleTheme()">🌓 切换主题</button>
+        <button class="control-btn" onclick="window.print()">🖨️ 打印</button>
+    </div>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <h1>蔡钰·商业参考4</h1>
+            <p class="subtitle">从文科生的机会、银发经济、美团管理机制到全球资本流向 —— 一份关于时代变局的深度洞察</p>
+        </header>
+
+        <!-- 核心数据 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">10+</div>
+                <div class="stat-label">核心主题</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">200+</div>
+                <div class="stat-label">高校区域国别研究院</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">30+</div>
+                <div class="stat-label">美团业务线</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">6</div>
+                <div class="stat-label">全球资本转向关键事件</div>
+            </div>
+        </div>
+
+        <!-- 导航标签 -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showSection('overview')">📊 全局概览</button>
+            <button class="nav-tab" onclick="showSection('mindmap')">🧠 思维导图</button>
+            <button class="nav-tab" onclick="showSection('metacog')">🔮 元认知图</button>
+            <button class="nav-tab" onclick="showSection('logic')">⚡ 逻辑链路</button>
+            <button class="nav-tab" onclick="showSection('experts')">💬 大佬视角</button>
+            <button class="nav-tab" onclick="showSection('insights')">💎 干货精选</button>
+            <button class="nav-tab" onclick="showSection('quotes')">✨ 金句集锦</button>
+        </nav>
+
+        <!-- 全局概览 -->
+        <section id="overview" class="content-section active">
+            <div class="glass-card">
+                <h2 class="card-title">
+                    <span class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #ef4444);">🎯</span>
+                    十大核心洞察
+                </h2>
+                
+                <div class="accordion">
+                    <!-- 主题1 -->
+                    <div class="accordion-item open">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">01</span>
+                                文科生的时代正在归来
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">AI淘汰的是常规劳动者，而不是那些能为人类提供解释、安慰与方向的人。</span></p>
+                                <br>
+                                <p>两个黄金方向：</p>
+                                <ul style="margin: 15px 0 15px 20px;">
+                                    <li><span class="highlight-blue">人文、历史专业</span> → 响应文化繁荣和重构中国故事的长期趋势</li>
+                                    <li><span class="highlight-green">国际政治专业</span> → 响应新全球化、新出海的长期趋势</li>
+                                </ul>
+                                <p>翟东升的观点更激进：<span class="highlight-orange">AI时代，理工科的失业会更加惨烈</span>，因为中国AI正在改造工厂、车间、矿山、港口。</p>
+                                <br>
+                                <p>区域国别研究院 = <span class="highlight-purple">人文</span> + <span class="highlight-blue">历史</span> + <span class="highlight-green">国际政治</span> + <span class="highlight-orange">多学科知识</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题2 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">02</span>
+                                年轻人市场正在变成小众市场
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">消费投资人黄海的警告：18到35岁一二线城市女性不再是消费主力。</span></p>
+                                <br>
+                                <p><strong>三个关键案例：</strong></p>
+                                <div class="insight-list" style="margin-top: 15px;">
+                                    <div class="insight-item">
+                                        <div class="insight-number" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8);">日</div>
+                                        <div class="insight-content">
+                                            <h4>优衣库的启示</h4>
+                                            <p>日本无印良品、优衣库、宜得利的核心消费人群都是<span class="highlight-blue">40岁以上女性</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <div class="insight-number" style="background: linear-gradient(135deg, #ef4444, #dc2626);">怂</div>
+                                        <div class="insight-content">
+                                            <h4>怂火锅的受挫</h4>
+                                            <p>同店日均销售额降幅超<span class="data-tag">30%</span>，年轻市场天花板显现</p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <div class="insight-number" style="background: linear-gradient(135deg, #10b981, #059669);">染</div>
+                                        <div class="insight-content">
+                                            <h4>染博士的突破</h4>
+                                            <p>年增速超<span class="data-tag">100%</span>，秘诀是<span class="highlight-green">"慢速沟通"——语速放慢到正常的一半</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题3 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">03</span>
+                                美团"良将如云"的方法论
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">美团的秘密武器：把"良将如云"变成可复用的组织能力</span></p>
+                                <br>
+                                <p><strong>核心工具链：</strong></p>
+                                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin: 20px 0;">
+                                    <div style="background: linear-gradient(135deg, #6366f1, #8b5cf6); padding: 15px; border-radius: 12px; text-align: center;">
+                                        <strong>PR·FAQ</strong><br>
+                                        <small>产品发布想象</small>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #8b5cf6, #a855f7); padding: 15px; border-radius: 12px; text-align: center;">
+                                        <strong>MVP验证</strong><br>
+                                        <small>最小可行性验证</small>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #a855f7, #d946ef); padding: 15px; border-radius: 12px; text-align: center;">
+                                        <strong>LRP</strong><br>
+                                        <small>5年长程规划</small>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #d946ef, #ec4899); padding: 15px; border-radius: 12px; text-align: center;">
+                                        <strong>OP</strong><br>
+                                        <small>年度运营规划</small>
+                                    </div>
+                                    <div style="background: linear-gradient(135deg, #ec4899, #f43f5e); padding: 15px; border-radius: 12px; text-align: center;">
+                                        <strong>MBR/WBR</strong><br>
+                                        <small>月/周复盘</small>
+                                    </div>
+                                </div>
+                                <p><span class="highlight-purple">本质：把商业直觉给结构化、数据化</span></p>
+                                <p><span class="highlight-green">关键差异：大部分公司的管理工具做到"管人"就止步了，而美团还有"育人"环节</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题4 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">04</span>
+                                K签证与全球人才潮汐
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">中国正在等来两个时间窗口接盘全球人才：</span></p>
+                                <br>
+                                <p>❶ <span class="highlight-blue">美国H-1B签证费涨到10万美元</span>，系统性排斥外来技术人才</p>
+                                <p>❷ <span class="highlight-green">2025年以来世界对中国好感度急速上升</span>（小红书大对账、DeepSeek、93阅兵）</p>
+                                <br>
+                                <p><strong>历史参照：美国"三步走"成为人才磁场</strong></p>
+                                <div class="timeline" style="margin-top: 20px;">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">1945年</div>
+                                        <div class="timeline-title">"回形针行动"</div>
+                                        <div class="timeline-content">从战败国抢夺几千名纳粹科学家</div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">1950年代</div>
+                                        <div class="timeline-title">《国防教育法案》</div>
+                                        <div class="timeline-content">鼓励STEM教育，给外国留学生开奖学金</div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">1965年</div>
+                                        <div class="timeline-title">废除按国别配额</div>
+                                        <div class="timeline-content">按技能接收移民，为亚洲高技能人才打开大门</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <p><span class="highlight-orange">未来"中国人"的定义：文化认同 + 利益绑定</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题5 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">05</span>
+                                "肉烂在锅里"的商业伦理重构
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">核心冲突：旧全球化退潮、新全球化诞生的商业伦理重构</span></p>
+                                <br>
+                                <p><strong>三个中国案例：</strong></p>
+                                <ul style="margin: 15px 0 15px 20px;">
+                                    <li><span class="highlight-blue">娃哈哈</span>：遗产纷争从"大女主守家业"变成"国有资产防掏空"</li>
+                                    <li><span class="highlight-green">农夫山泉</span>：钟睒睒表态"永远属于中国"才平息舆论</li>
+                                    <li><span class="highlight-purple">海底捞</span>：张勇"去家族化"应对国籍质疑</li>
+                                </ul>
+                                <br>
+                                <p><span class="highlight-orange">公众逻辑：比起"肉被谁吃了"，更介意"肉有没有烂在锅里"</span></p>
+                                <p>肉 = 资产，锅 = 国境</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题6 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">06</span>
+                                婚姻正在变成"合伙制生活单元"
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">2024年全国结婚登记人数只有610.6万对，比2023年下降20.5%</span></p>
+                                <br>
+                                <p><strong>婚姻模式演变：</strong></p>
+                                <div style="display: flex; flex-wrap: wrap; gap: 15px; margin: 20px 0;">
+                                    <div style="flex: 1; min-width: 200px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                                        <strong style="color: #60a5fa;">农业时代</strong><br>
+                                        CEO(丈夫) + COO(妻子)
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                                        <strong style="color: #34d399;">工业时代</strong><br>
+                                        COO也开始带业务
+                                    </div>
+                                    <div style="flex: 1; min-width: 200px; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px;">
+                                        <strong style="color: #f472b6;">信息时代</strong><br>
+                                        双CEO结构
+                                    </div>
+                                </div>
+                                <p><span class="highlight-purple">本质转变：情感功能压缩，事业功能放大</span></p>
+                                <p><span class="highlight-green">婚姻稳定者退休前财富是独身者的3.8倍（美国企业研究所数据）</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题7 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">07</span>
+                                亚马逊"把文化落地"的三大机制
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">美团口号："苦练基本功，猛学亚马逊"</span></p>
+                                <br>
+                                <p><strong>亚马逊16条领导力准则的落地机制：</strong></p>
+                                <div class="insight-list" style="margin-top: 15px;">
+                                    <div class="insight-item">
+                                        <div class="insight-number">OP</div>
+                                        <div class="insight-content">
+                                            <h4>年度计划流程</h4>
+                                            <p>4-8周全员参与，<span class="highlight-blue">把制定OP变成内化价值观的训练场</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <div class="insight-number">ST</div>
+                                        <div class="insight-content">
+                                            <h4>S-Team目标</h4>
+                                            <p>每年几百个具体目标，<span class="highlight-green">把"纸面推演"升级成季度KPI</span></p>
+                                        </div>
+                                    </div>
+                                    <div class="insight-item">
+                                        <div class="insight-number">💰</div>
+                                        <div class="insight-content">
+                                            <h4>薪酬制度</h4>
+                                            <p>基本工资上限35万美元，<span class="highlight-purple">股权占比可达98.6%</span></p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <br>
+                                <p><span class="highlight-orange">核心理念：奖励短期目标会耽误创造长期价值</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题8 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">08</span>
+                                抬杆者：招聘中的文化守门人
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">亚马逊招聘理念：招"传教士"，不招"雇佣军"</span></p>
+                                <br>
+                                <p><strong>抬杆者机制的核心：</strong></p>
+                                <ul style="margin: 15px 0 15px 20px;">
+                                    <li>确保每个新人<span class="highlight-blue">至少在一个方面比原团队成员优秀</span></li>
+                                    <li>现场面试<span class="data-tag">5-7小时</span>，考察16条领导力原则</span></li>
+                                    <li>抬杆者<span class="highlight-purple">有否决权但无推荐权</span></li>
+                                    <li>让员工<span class="highlight-green">互相替别人面试未来的老板</span></li>
+                                </ul>
+                                <br>
+                                <p><span class="highlight-orange">抬杆者的"杆"不是专业能力，而是文化认同</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 主题9 -->
+                    <div class="accordion-item">
+                        <div class="accordion-header" onclick="toggleAccordion(this)">
+                            <h3>
+                                <span style="color: var(--accent);">09</span>
+                                从ABC到EAC：全球资本转向中国
+                            </h3>
+                            <span class="accordion-icon">▼</span>
+                        </div>
+                        <div class="accordion-content">
+                            <div class="accordion-body">
+                                <p><span class="highlight-red">2025年全球资本态度转变：从"Anything But China"到"Everything About China"</span></p>
+                                <br>
+                                <p><strong>六大关键事件：</strong></p>
+                                <div class="timeline" style="margin-top: 20px;">
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2024.9.24</div>
+                                        <div class="timeline-title">A股"924转向"</div>
+                                        <div class="timeline-content">央行一揽子组合拳，A股两周内从2700涨到3600</div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2025.4月</div>
+                                        <div class="timeline-title">扛住关税攻击</div>
+                                        <div class="timeline-content">中国反制能力经受住考验</div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2025.9.3</div>
+                                        <div class="timeline-title">九三大阅兵</div>
+                                        <div class="timeline-content">"东亚战争折价"减小</div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2025.9月</div>
+                                        <div class="timeline-title">TikTok框架协议</div>
+                                        <div class="timeline-content">中美利益可以谈判、妥协、成交</div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2025.9月</div>
+                                        <div class="timeline-title">美国豆农施压</div>
+                                        <div class="timeline-content">产业票仓倒逼对华政策缓和</div>
+                                    </div>
+                                    <div class="timeline-item">
+                                        <div class="timeline-date">2025.9.30</div>
+                                        <div class="timeline-title">铁矿石人民币结算</div>
+                                        <div class="timeline-content">必和必拓同意用人民币结算</div>
+                                    </div>
+                                </div>
+                                <br>
+                                <p><span class="highlight-green">资本发现：中国政治意志可预测、东亚冲突风险可控、中美摩擦可沟通</span></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section id="mindmap" class="content-section">
+            <div class="glass-card">
+                <h2 class="card-title">
+                    <span class="card-icon" style="background: linear-gradient(135deg, #10b981, #059669);">🧠</span>
+                    核心思维导图
+                </h2>
+                
+                <div class="mindmap-container">
+                    <div class="mindmap">
+                        <div class="mindmap-center">
+                            🎯 商业参考4<br>
+                            <small>时代变局下的十大洞察</small>
+                        </div>
+                        
+                        <div class="mindmap-branches">
+                            <div class="mindmap-branch">
+                                <div class="branch-title">📚 人才与教育</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">文科生时代归来</div>
+                                    <div class="branch-item">区域国别研究院兴起</div>
+                                    <div class="branch-item">K签证抢夺全球人才</div>
+                                    <div class="branch-item">"中国视角"价值重估</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mindmap-branch">
+                                <div class="branch-title">💰 消费与市场</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">年轻市场→小众市场</div>
+                                    <div class="branch-item">银发经济主流化</div>
+                                    <div class="branch-item">"慢速沟通"竞争力</div>
+                                    <div class="branch-item">全龄段品牌更有韧性</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mindmap-branch">
+                                <div class="branch-title">🏢 组织与管理</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">美团"良将如云"方法论</div>
+                                    <div class="branch-item">亚马逊文化落地三机制</div>
+                                    <div class="branch-item">抬杆者招聘流程</div>
+                                    <div class="branch-item">"育人"vs"管人"</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mindmap-branch">
+                                <div class="branch-title">🌏 全球化与资本</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">ABC→EAC资本转向</div>
+                                    <div class="branch-item">"肉烂在锅里"伦理</div>
+                                    <div class="branch-item">中国资产重新定价</div>
+                                    <div class="branch-item">人民币国际化提速</div>
+                                </div>
+                            </div>
+                            
+                            <div class="mindmap-branch">
+                                <div class="branch-title">👨‍👩‍👧 社会与生活</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">婚姻→合伙制单元</div>
+                                    <div class="branch-item">双CEO家庭结构</div>
+                                    <div class="branch-item">"并表"应对经济压力</div>
+                                    <div class="branch-item">情感功能↓事业功能↑</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 元认知图 -->
+        <section id="metacog" class="content-section">
+            <div class="glass-card">
+                <h2 class="card-title">
+                    <span class="card-icon" style="background: linear-gradient(135deg, #8b5cf6, #6d28d9);">🔮</span>
+                    元认知地图：时代变局的底层逻辑
+                </h2>
+                
+                <div class="meta-cognition">
+                    <div class="meta-orbit">
+                        <div class="meta-satellite">
+                            🤖<br>AI重塑<br>劳动价值
+                        </div>
+                        <div class="meta-satellite">
+                            👴<br>人口结构<br>银发主流化
+                        </div>
+                        <div class="meta-satellite">
+                            🌍<br>全球化<br>版本切换
+                        </div>
+                        <div class="meta-satellite">
+                            💵<br>资本流向<br>重新校准
+                        </div>
+                        <div class="meta-satellite">
+                            🏠<br>家庭形态<br>契约化
+                        </div>
+                        <div class="meta-satellite">
+                            🇨🇳<br>中国叙事<br>价值重估
+                        </div>
+                    </div>
+                    <div class="meta-center">
+                        ⚡<br>
+                        百年未有之<br>大变局
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; text-align: center;">
+                    <h3 style="margin-bottom: 20px; color: var(--accent);">🎯 核心元认知框架</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <div style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2)); padding: 25px; border-radius: 16px; border-left: 4px solid var(--primary);">
+                            <h4 style="color: #a5b4fc; margin-bottom: 10px;">🔄 趋势认知</h4>
+                            <p style="font-size: 0.95rem;">趋势不是抽象概念，而是已经在影响市场的具体力量</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.2)); padding: 25px; border-radius: 16px; border-left: 4px solid var(--success);">
+                            <h4 style="color: #6ee7b7; margin-bottom: 10px;">⚖️ 价值认知</h4>
+                            <p style="font-size: 0.95rem;">法理与情理的冲突，本质是"无国界资本"遇到"有边界民情"</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(244, 114, 182, 0.2)); padding: 25px; border-radius: 16px; border-left: 4px solid var(--accent);">
+                            <h4 style="color: #f9a8d4; margin-bottom: 10px;">🎭 身份认知</h4>
+                            <p style="font-size: 0.95rem;">未来"中国人"定义：血缘身份→文化认同+利益绑定</p>
+                        </div>
+                        <div style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(251, 146, 60, 0.2)); padding: 25px; border-radius: 16px; border-left: 4px solid var(--warning);">
+                            <h4 style="color: #fcd34d; margin-bottom: 10px;">🔮 机会认知</h4>
+                            <p style="font-size: 0.95rem;">时间窗口稍纵即逝，好感可能转为忌惮</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑链路 -->
+        <section id="logic" class="content-section">
+            <div class="glass-card">
+                <h2 class="card-title">
+                    <span class="card-icon" style="background: linear-gradient(135deg, #f59e0b, #d97706);">⚡</span>
+                    核心逻辑链路图
+                </h2>
+                
+                <!-- 逻辑链1：文科生机会 -->
+                <h3 style="margin: 30px 0 20px; color: var(--accent);">📚 文科生的机会逻辑</h3>
+                <div class="logic-flow">
+                    <div class="logic-row">
+                        <div class="logic-node premise">AI替代常规劳动</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node process">解释/安慰/方向需求↑</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node result">文科生价值重估</div>
+                    </div>
+                    <div class="logic-row">
+                        <div class="logic-node premise">文化繁荣+出海趋势</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node process">人文/历史/国际政治</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node action">区域国别研究</div>
+                    </div>
+                </div>
+
+                <!-- 逻辑链2：银发经济 -->
+                <h3 style="margin: 30px 0 20px; color: var(--accent);">👴 银发经济逻辑</h3>
+                <div class="logic-flow">
+                    <div class="logic-row">
+                        <div class="logic-node premise">老龄化+少子化</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node process">年轻市场萎缩</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node result">熟龄人群=主流</div>
+                    </div>
+                    <div class="logic-row">
+                        <div class="logic-node premise">银发群体特征</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node process">信息处理速度↓</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node action">"慢速沟通"致胜</div>
+                    </div>
+                </div>
+
+                <!-- 逻辑链3：组织能力 -->
+                <h3 style="margin: 30px 0 20px; color: var(--accent);">🏢 组织能力逻辑</h3>
+                <div class="logic-flow">
+                    <div class="logic-row">
+                        <div class="logic-node premise">30+业务线作战</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node process">文化结构化落地</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node result">"良将如云"涌现</div>
+                    </div>
+                    <div class="logic-row">
+                        <div class="logic-node premise">PR·FAQ+OP+复盘</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node process">商业直觉数据化</div>
+                        <span class="logic-arrow">→</span>
+                        <div class="logic-node action">2年骨干成将</div>
+                    </div>
+                </div>
+
+                <!-- 逻辑链4：全球资本 -->
+                <h3 style="margin: 30px 0 20px; color: var(--accent);">💰 全球资本逻辑</h3>
+                <div class="logic-flow">
+                    <div class="logic-row">
+                        <div class="logic-node premise">政治意志可预测</div>
+                        <span class="logic-arrow">+</span>
+                        <div class="logic-node premise">冲突风险可控</div>
+                        <span class="logic-arrow">+</span>
+                        <div class="logic-node premise">摩擦可沟通</div>
+                    </div>
+                    <div class="logic-row">
+                        <span class="logic-arrow">↓</span>
+                    </div>
+                    <div class="logic-row">
+                        <div class="logic-node result" style="background: linear-gradient(135deg, #10b981, #059669);">ABC → EAC 资本转向</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 大佬视角 -->
+        <section id="experts" class="content-section">
+            <div class="glass-card">
+                <h2 class="card-title">
+                    <span class="card-icon" style="background: linear-gradient(135deg, #ec4899, #f43f5e);">💬</span>
+                    大佬视角：四位巨头怎么看
+                </h2>
+                
+                <div class="expert-panel">
+                    <!-- 王兴 -->
+                    <div class="expert-card">
+                        <div class="expert-header">
+                            <div class="expert-avatar wang">王</div>
+                            <div class="expert-info">
+                                <h4>王兴</h4>
+                                <span>美团创始人 CEO</span>
+                            </div>
+                        </div>
+                        <div class="expert-comment">
+                            <p>"<span class="highlight-orange">苦练基本功，猛学亚马逊</span>"不是一句空话。我们从亚马逊学到的最重要的东西，不是具体的工具，而是<span class="highlight-blue">把文化变成机制</span>的思维方式。</p>
+                            <br>
+                            <p>很多公司的管理工具只是在"管人"，而我们想做的是"育人"。当一个技术工程师经过两年历练，自信地说"我可以带业务"的时候，<span class="highlight-green">这就是组织能力的胜利</span>。</p>
+                            <br>
+                            <p>外卖大战的关键不在于谁有更多的钱，而在于谁有<span class="highlight-purple">持续培养良将的能力</span>。这是一场"无限游戏"。</p>
+                        </div>
+                    </div>
+
+                    <!-- 贝索斯 -->
+                    <div class="expert-card">
+                        <div class="expert-header">
+                            <div class="expert-avatar bezos">贝</div>
+                            <div class="expert-info">
+                                <h4>杰夫·贝索斯</h4>
+                                <span>亚马逊创始人</span>
+                            </div>
+                        </div>
+                        <div class="expert-comment">
+                            <p>我们招聘时寻找的是"<span class="highlight-blue">传教士</span>"，不是"雇佣军"。雇佣军图的是眼前利益，传教士认同的是<span class="highlight-green">使命和长期价值</span>。</p>
+                            <br>
+                            <p>为什么基本工资上限35万美元？为什么股权占比高达98%？因为<span class="highlight-orange">奖励短期目标会耽误创造长期价值</span>。</p>
+                            <br>
+                            <p>抬杆者机制的本质是：<span class="highlight-purple">每一个新人都必须抬高团队的平均水平</span>。这不是精英主义，这是对卓越的坚持。文化不是墙上的标语，而是每天的决策和行动。</p>
+                        </div>
+                    </div>
+
+                    <!-- 宗庆后 -->
+                    <div class="expert-card">
+                        <div class="expert-header">
+                            <div class="expert-avatar zong">宗</div>
+                            <div class="expert-info">
+                                <h4>宗庆后</h4>
+                                <span>娃哈哈创始人（已故）</span>
+                            </div>
+                        </div>
+                        <div class="expert-comment">
+                            <p>娃哈哈能从达能手里守住资产，靠的是<span class="highlight-green">民族企业的身份认同</span>。这不是空洞的情怀，而是真实的市场竞争力。</p>
+                            <br>
+                            <p>今天大家讨论"<span class="highlight-blue">肉烂在锅里</span>"，本质上讨论的是：<span class="highlight-red">在本土赚的钱，应该怎么回馈社会</span>？这个问题没有标准答案，但有道德底线。</p>
+                            <br>
+                            <p>我一辈子在杭州，企业就是我的孩子。我希望下一代企业家明白：<span class="highlight-purple">根在哪里，心就应该在哪里</span>。</p>
+                        </div>
+                    </div>
+
+                    <!-- 特朗普 -->
+                    <div class="expert-card">
+                        <div class="expert-header">
+                            <div class="expert-avatar trump">特</div>
+                            <div class="expert-info">
+                                <h4>唐纳德·特朗普</h4>
+                                <span>美国总统</span>
+                            </div>
+                        </div>
+                        <div class="expert-comment">
+                            <p>H-1B签证费涨到10万美元？这是为了<span class="highlight-red">把工作还给美国人</span>。美国人优先，这没什么不对。</p>
+                            <br>
+                            <p>中国的阅兵确实很震撼，我在推特上说过。但别搞错了，这是<span class="highlight-orange">竞争</span>，不是投降。我会跟中国领导人谈，大豆、芯片、关税，什么都可以谈。</p>
+                            <br>
+                            <p>商人懂交易。<span class="highlight-blue">可以谈判、妥协、成交</span>——但前提是对等。America First永远是核心，<span class="highlight-purple">谁对美国好，美国就对谁好</span>。</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货精选 -->
+        <section id="insights" class="content-section">
+            <div class="glass-card">
+                <h2 class="card-title">
+                    <span class="card-icon" style="background: linear-gradient(135deg, #6366f1, #8b5cf6);">💎</span>
+                    30条干货精选
+                </h2>
+                
+                <div class="insight-list">
+                    <!-- 人才教育 -->
+                    <div style="margin: 20px 0 10px;"><span style="color: var(--accent); font-weight: 700; font-size: 1.1rem;">📚 人才与教育</span></div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-number">1</div>
+                        <div class="insight-content">
+                            <h4>AI淘汰的是常规劳动者</h4>
+                            <p>而不是那些能为人类提供<span class="highlight-red">解释、安慰与方向</span>的人</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">2</div>
+                        <div class="insight-content">
+                            <h4>未来世界只有两类人</h4>
+                            <p><span class="highlight-blue">操纵和使用AI的人</span>，和被AI操纵和使用的人</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">3</div>
+                        <div class="insight-content">
+                            <h4>区域国别研究的价值</h4>
+                            <p>用<span class="highlight-green">中国人的眼光和视角</span>解释当前的世界，而不是沿用美国教科书的过时理论</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">4</div>
+                        <div class="insight-content">
+                            <h4>中国年轻人的全球优势</h4>
+                            <p>今天中国的生活对很多国家而言是未来，走向全球<span class="highlight-purple">不是去打工，而是去游历、去改造</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">5</div>
+                        <div class="insight-content">
+                            <h4>出海岗位的核心要求</h4>
+                            <p>站在中国公司的立场，当好一个陌生市场的"<span class="highlight-orange">本地通</span>"</p>
+                        </div>
+                    </div>
+
+                    <!-- 消费市场 -->
+                    <div style="margin: 30px 0 10px;"><span style="color: var(--accent); font-weight: 700; font-size: 1.1rem;">💰 消费与市场</span></div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-number">6</div>
+                        <div class="insight-content">
+                            <h4>年轻人市场可能变小众</h4>
+                            <p>18-35岁一二线城市女性<span class="highlight-red">不再是最有消费意愿的群体</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">7</div>
+                        <div class="insight-content">
+                            <h4>日本经验的启示</h4>
+                            <p>无印良品、优衣库、宜得利的核心消费人群都是<span class="highlight-blue">40岁以上女性</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">8</div>
+                        <div class="insight-content">
+                            <h4>品牌定位的关键区分</h4>
+                            <p>"只做年轻人市场"vs"<span class="highlight-green">年轻人所代表的主流市场</span>"——后者可能不成立</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">9</div>
+                        <div class="insight-content">
+                            <h4>全龄段品牌更有韧性</h4>
+                            <p>只盯年轻人可能热闹一时，却<span class="highlight-purple">难以抵御周期波动</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">10</div>
+                        <div class="insight-content">
+                            <h4>慢速沟通的竞争力</h4>
+                            <p>染博士秘诀：语速放慢到正常的<span class="highlight-orange">一半</span>，年增速超100%</p>
+                        </div>
+                    </div>
+
+                    <!-- 组织管理 -->
+                    <div style="margin: 30px 0 10px;"><span style="color: var(--accent); font-weight: 700; font-size: 1.1rem;">🏢 组织与管理</span></div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-number">11</div>
+                        <div class="insight-content">
+                            <h4>美团的核心能力</h4>
+                            <p>把"<span class="highlight-red">良将如云</span>"变成可复用的组织能力</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">12</div>
+                        <div class="insight-content">
+                            <h4>PR·FAQ的本质</h4>
+                            <p>"以终为始"——想象产品发布那一刻，<span class="highlight-blue">消费者凭什么买单</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">13</div>
+                        <div class="insight-content">
+                            <h4>美团工具链的实质</h4>
+                            <p>把<span class="highlight-green">商业直觉给结构化、数据化</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">14</div>
+                        <div class="insight-content">
+                            <h4>"管人"vs"育人"</h4>
+                            <p>大部分公司做到"管人"就止步，美团的"育人"让员工<span class="highlight-purple">感觉被支持</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">15</div>
+                        <div class="insight-content">
+                            <h4>商分的价值</h4>
+                            <p>不只是军师，更是给管理者<span class="highlight-orange">搭建成长阶梯的导师</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">16</div>
+                        <div class="insight-content">
+                            <h4>亚马逊文化落地的秘密</h4>
+                            <p>OP制定过程=<span class="highlight-red">内化价值观的训练场</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">17</div>
+                        <div class="insight-content">
+                            <h4>薪酬设计的深意</h4>
+                            <p><span class="highlight-blue">奖励短期目标会耽误创造长期价值</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">18</div>
+                        <div class="insight-content">
+                            <h4>抬杆者的本质</h4>
+                            <p>抬的杆不是专业能力，而是<span class="highlight-green">文化认同</span></p>
+                        </div>
+                    </div>
+
+                    <!-- 全球化与资本 -->
+                    <div style="margin: 30px 0 10px;"><span style="color: var(--accent); font-weight: 700; font-size: 1.1rem;">🌏 全球化与资本</span></div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-number">19</div>
+                        <div class="insight-content">
+                            <h4>K签证的时间窗口</h4>
+                            <p>美国排斥外来人才+世界对中国好感度上升=<span class="highlight-purple">接盘窗口期</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">20</div>
+                        <div class="insight-content">
+                            <h4">"中国人"定义的演变</h4>
+                            <p>除了血缘身份证，还有<span class="highlight-orange">文化认同+利益绑定</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">21</div>
+                        <div class="insight-content">
+                            <h4>"肉烂在锅里"逻辑</h4>
+                            <p>比起"肉被谁吃了"，公众更介意"<span class="highlight-red">肉有没有烂在锅里</span>"</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">22</div>
+                        <div class="insight-content">
+                            <h4>ABC到EAC的转向</h4>
+                            <p>从"<span class="highlight-blue">Anything But China</span>"到"<span class="highlight-green">Everything About China</span>"</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">23</div>
+                        <div class="insight-content">
+                            <h4>资本的新认知</h4>
+                            <p>中国政治意志<span class="highlight-purple">可预测</span>、东亚冲突风险<span class="highlight-purple">可控</span>、中美摩擦<span class="highlight-purple">可沟通</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">24</div>
+                        <div class="insight-content">
+                            <h4>TikTok协议的意义</h4>
+                            <p>中美利益之争可以<span class="highlight-orange">谈判、妥协、成交</span>，模式可复用</p>
+                        </div>
+                    </div>
+
+                    <!-- 社会生活 -->
+                    <div style="margin: 30px 0 10px;"><span style="color: var(--accent); font-weight: 700; font-size: 1.1rem;">👨‍👩‍👧 社会与生活</span></div>
+                    
+                    <div class="insight-item">
+                        <div class="insight-number">25</div>
+                        <div class="insight-content">
+                            <h4>婚姻的本质转变</h4>
+                            <p>从共产主义最小单元→<span class="highlight-red">合伙制生活单元</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">26</div>
+                        <div class="insight-content">
+                            <h4>婚姻功能的迁移</h4>
+                            <p><span class="highlight-blue">情感功能压缩</span>，<span class="highlight-green">事业功能放大</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">27</div>
+                        <div class="insight-content">
+                            <h4>双CEO家庭结构</h4>
+                            <p>女性经济独立能力增强→对家务分工要求变高=<span class="highlight-purple">责权利平衡</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">28</div>
+                        <div class="insight-content">
+                            <h4>婚姻的财富效应</h4>
+                            <p>婚姻状态稳定者退休前财富=独身者的<span class="highlight-orange">3.8倍</span></p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">29</div>
+                        <div class="insight-content">
+                            <h4>巴菲特的婚姻观</h4>
+                            <p>"我选择的<span class="highlight-red">配偶让我实现了事业成功</span>"</p>
+                        </div>
+                    </div>
+                    <div class="insight-item">
+                        <div class="insight-number">30</div>
+                        <div class="insight-content">
+                            <h4>经济下行期的选择</h4>
+                            <p>用"<span class="highlight-blue">并表</span>"来应对经济下行——找个合适的人，降本增效</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句集锦 -->
+        <section id="quotes" class="content-section">
+            <div class="glass-card">
+                <h2 class="card-title">
+                    <span class="card-icon" style="background: linear-gradient(135deg, #ec4899, #f43f5e);">✨</span>
+                    金句集锦
+                </h2>
+                
+                <div class="quote-card">
+                    <p class="quote-text">"<span class="highlight-red">AI淘汰的是常规劳动者，而不是那些能为人类提供解释、安慰与方向的人。</span>文科生的时代，从未远离，正在归来。"</p>
+                    <p class="quote-source">—— 蔡钰 | 关于文科生的未来</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"<span class="highlight-blue">未来这个世界上只有两类人，一类是能够操纵和使用人工智能的人，一类是被人工智能操纵和使用的人。</span>"</p>
+                    <p class="quote-source">—— 翟东升 | 关于AI时代的生存法则</p>
+                <div class="quote-card">
+                    <p class="quote-text">"今天中国的生活对于许多国家而言是未来，所以这个时代的中国年轻人走向全球各地会有巨大优势，他们<span class="highlight-green">不再是去打工，而是去游历、去改造</span>。"</p>
+                    <p class="quote-source">—— 翟东升 | 关于中国年轻人的全球优势</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"<span class="highlight-purple">只盯年轻人可能热闹一时，却难以抵御周期波动；而能兼顾全龄段的品牌，才更具韧性。</span>"</p>
+                    <p class="quote-source">—— 黄海 | 关于品牌定位</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"<span class="highlight-orange">学会慢下来，不只是为了抓住银发市场，更是为了适应所有人想要慢下来、变从容的需求本质。</span>"</p>
+                    <p class="quote-source">—— 蔡钰 | 关于慢速沟通</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"大部分公司的管理工具，做到'管人'就止步了，而美团的管理工具里，还有几个重要的'<span class="highlight-red">育人</span>'环节。前者让员工感觉被要求，后者让员工感觉<span class="highlight-green">在被支持</span>。"</p>
+                    <p class="quote-source">—— 于冬琪 | 关于美团管理机制</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"<span class="highlight-blue">奖励短期目标，会耽误员工们创造长期价值；奖励局部和部门的目标，也会影响员工们认同和关心公司的全局利益。</span>"</p>
+                    <p class="quote-source">—— 亚马逊 | 关于薪酬设计哲学</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"抬杆者的杆，其实不是职场惯常理解的专业能力和市场经验的杆，而是<span class="highlight-purple">文化认同的杆</span>。"</p>
+                    <p class="quote-source">—— 《亚马逊逆向工作法》 | 关于招聘标准</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"比起'肉被谁吃了'，大众更介意'<span class="highlight-red">肉有没有烂在锅里</span>'。肉是资产，而锅是国境。"</p>
+                    <p class="quote-source">—— 蔡钰 | 关于商业伦理重构</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"在未来，除了血缘和身份证，我们对'中国人'的定义，可能会往两条脉络上延展：一条是<span class="highlight-blue">文化认同</span>，一条是<span class="highlight-green">利益绑定</span>。"</p>
+                    <p class="quote-source">—— 蔡钰 | 关于身份认同的演变</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"<span class="highlight-orange">婚姻状态稳定的人，退休前的财富水平，是独身者财富水平的3.8倍。</span>"</p>
+                    <p class="quote-source">—— 美国企业研究所 | 关于婚姻的经济效应</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"这一系列事件让资本发现，中国的政治意志虽强，但<span class="highlight-purple">可预测</span>；东亚的冲突风险虽在，但<span class="highlight-green">可控</span>；中美的制度摩擦虽有，但<span class="highlight-blue">可沟通</span>。"</p>
+                    <p class="quote-source">—— 蔡钰 | 关于全球资本的新认知</p>
+                </div>
+
+                <div class="quote-card">
+                    <p class="quote-text">"<span class="highlight-cyan">苦练基本功，猛学亚马逊。</span>"</p>
+                    <p class="quote-source">—— 美团内部口号 | 关于学习标杆</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>📚 内容来源：蔡钰·商业参考4</p>
+            <p style="margin-top: 10px; font-size: 0.85rem;">由 Claude AI 智能整理 | 苹果玻璃风格设计</p>
+        </footer>
+    </div>
+
+    <script>
+        // 生成粒子背景
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (10 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+        }
+
+        // 导航切换
+        function showSection(sectionId) {
+            // 隐藏所有内容区
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            // 显示目标内容区
+            document.getElementById(sectionId).classList.add('active');
+            
+            // 更新导航标签状态
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+        }
+
+        // 手风琴折叠
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const wasOpen = item.classList.contains('open');
+            
+            // 关闭所有
+            document.querySelectorAll('.accordion-item').forEach(acc => {
+                acc.classList.remove('open');
+            });
+            
+            // 如果之前是关闭的，则打开
+            if (!wasOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // 卡片入场动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card, .expert-card, .insight-item').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
+        });
+
+        // 元认知图悬停效果
+        document.querySelectorAll('.meta-satellite').forEach(satellite => {
+            satellite.addEventListener('mouseenter', function() {
+                this.style.boxShadow = '0 0 30px var(--accent)';
+            });
+            satellite.addEventListener('mouseleave', function() {
+                this.style.boxShadow = 'none';
+            });
+        });
+
+        // 统计数字动画
+        function animateNumbers() {
+            document.querySelectorAll('.stat-value').forEach(stat => {
+                const target = stat.innerText;
+                if (target.includes('+')) {
+                    const num = parseInt(target);
+                    let current = 0;
+                    const increment = num / 30;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= num) {
+                            stat.innerText = num + '+';
+                            clearInterval(timer);
+                        } else {
+                            stat.innerText = Math.floor(current) + '+';
+                        }
+                    }, 50);
+                }
+            });
+        }
+
+        // 页面加载后执行动画
+        window.addEventListener('load', () => {
+            setTimeout(animateNumbers, 500);
+        });
+
+        // 键盘导航支持
+        document.addEventListener('keydown', (e) => {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const activeTab = document.querySelector('.nav-tab.active');
+            const currentIndex = Array.from(tabs).indexOf(activeTab);
+            
+            if (e.key === 'ArrowRight' && currentIndex < tabs.length - 1) {
+                tabs[currentIndex + 1].click();
+            } else if (e.key === 'ArrowLeft' && currentIndex > 0) {
+                tabs[currentIndex - 1].click();
+            }
+        });
+    </script>
+</body>
+</html>

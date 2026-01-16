@@ -1,0 +1,1735 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>吴军·逻辑思维训练 | 数据分析与统计归纳</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f0f23 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --highlight-key: #f43f5e;
+            --highlight-data: #38bdf8;
+            --highlight-quote: #4ade80;
+            --highlight-gold: #fbbf24;
+            --highlight-purple: #a78bfa;
+            --highlight-orange: #fb923c;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #8b5cf6;
+            --accent-pink: #ec4899;
+            --card-hover: rgba(139, 92, 246, 0.15);
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --card-hover: rgba(139, 92, 246, 0.1);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Noto Sans SC", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 15px 30px;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .nav-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-progress {
+            height: 3px;
+            background: linear-gradient(90deg, var(--highlight-key), var(--highlight-data), var(--highlight-quote), var(--highlight-gold));
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        /* 主标题区 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 60px 50px;
+            margin: 80px 0 40px 0;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f43f5e, #8b5cf6, #38bdf8, #4ade80, #fbbf24);
+            animation: gradientMove 3s linear infinite;
+        }
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 200% 50%; }
+        }
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 30px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 25px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink), var(--highlight-data));
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientText 5s ease infinite;
+        }
+        @keyframes gradientText {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        .header-subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+        }
+        
+        /* 核心金句卡片 */
+        .golden-quotes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .quote-card {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(139, 92, 246, 0.1));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .quote-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(251, 191, 36, 0.2);
+        }
+        .quote-card::before {
+            content: '💎';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            font-size: 1.5em;
+            background: var(--glass-bg);
+            padding: 5px 12px;
+            border-radius: 15px;
+        }
+        .quote-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: var(--highlight-gold);
+            line-height: 1.7;
+        }
+        .quote-source {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 12px;
+            text-align: right;
+        }
+        
+        /* 思维框架导图 - 元认知图 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--highlight-key), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap-core {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 800;
+            box-shadow: 0 15px 50px rgba(139, 92, 246, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+        }
+        .mindmap-layer {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+        .branch-card {
+            background: var(--glass-bg);
+            border: 2px solid transparent;
+            border-radius: 24px;
+            padding: 25px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .branch-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+            border-radius: 4px 0 0 4px;
+        }
+        .branch-card.red::before { background: var(--highlight-key); }
+        .branch-card.blue::before { background: var(--highlight-data); }
+        .branch-card.green::before { background: var(--highlight-quote); }
+        .branch-card.gold::before { background: var(--highlight-gold); }
+        .branch-card.purple::before { background: var(--highlight-purple); }
+        .branch-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+        .branch-card.red:hover { border-color: var(--highlight-key); }
+        .branch-card.blue:hover { border-color: var(--highlight-data); }
+        .branch-card.green:hover { border-color: var(--highlight-quote); }
+        .branch-card.gold:hover { border-color: var(--highlight-gold); }
+        .branch-card.purple:hover { border-color: var(--highlight-purple); }
+        .branch-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .branch-title.red { color: var(--highlight-key); }
+        .branch-title.blue { color: var(--highlight-data); }
+        .branch-title.green { color: var(--highlight-quote); }
+        .branch-title.gold { color: var(--highlight-gold); }
+        .branch-title.purple { color: var(--highlight-purple); }
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .branch-item {
+            padding: 10px 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+        }
+        .branch-item:hover {
+            background: var(--card-hover);
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+        
+        /* 逻辑思维图 - 流程型 */
+        .logic-flow {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+        }
+        .logic-title {
+            text-align: center;
+            font-size: 2em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--highlight-data), var(--highlight-quote));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .flow-container {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        .flow-node {
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 20px 30px;
+            text-align: center;
+            min-width: 180px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .flow-node:hover {
+            transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+        }
+        .flow-node.primary {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            border-color: var(--accent);
+        }
+        .flow-node-icon {
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        .flow-node-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+        }
+        .flow-node-desc {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+        .flow-arrow {
+            font-size: 2em;
+            color: var(--accent);
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 1; transform: scale(1.2); }
+        }
+        
+        /* 内容卡片 - 可折叠 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 0;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeInUp 0.6s ease;
+            transition: all 0.4s ease;
+        }
+        .section:hover {
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            padding: 35px 40px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(236, 72, 153, 0.05));
+            border-bottom: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        .section-header:hover {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+        }
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            border-radius: 16px;
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .section-badge {
+            font-size: 0.8em;
+            padding: 5px 15px;
+            background: rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+        .collapse-icon {
+            font-size: 1.8em;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { transform: rotate(-180deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            padding: 0 40px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        .collapsed .section-preview {
+            max-height: 100px;
+            padding: 20px 40px;
+        }
+        .section-content {
+            padding: 40px;
+            max-height: 10000px;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+            padding: 0 40px;
+        }
+        
+        /* 语义高亮 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(244, 63, 94, 0.15);
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+        .highlight-key:hover {
+            background: rgba(244, 63, 94, 0.3);
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(56, 189, 248, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 600;
+            padding: 3px 10px;
+            background: rgba(74, 222, 128, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-gold {
+            color: var(--highlight-gold);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(251, 191, 36, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-purple {
+            color: var(--highlight-purple);
+            font-weight: 600;
+            padding: 3px 10px;
+            background: rgba(167, 139, 250, 0.15);
+            border-radius: 6px;
+        }
+        
+        /* 专家评论气泡 */
+        .expert-panel {
+            margin-top: 40px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .expert-comment {
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.08));
+            border-left: 5px solid;
+            border-radius: 20px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+        .expert-comment:hover {
+            transform: translateX(10px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+        .expert-comment.chen { border-left-color: var(--highlight-key); }
+        .expert-comment.zhang { border-left-color: var(--highlight-data); }
+        .expert-comment.singer { border-left-color: var(--highlight-quote); }
+        .expert-comment.tao { border-left-color: var(--highlight-gold); }
+        .expert-avatar {
+            position: absolute;
+            top: -20px;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        }
+        .expert-name {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 8px;
+            margin-top: 15px;
+        }
+        .expert-title {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        .expert-content {
+            font-size: 1em;
+            line-height: 1.8;
+        }
+        
+        /* 干货要点卡片 */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin: 30px 0;
+        }
+        .insight-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .insight-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+        .insight-number {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 15px;
+        }
+        .insight-title {
+            font-size: 1.15em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        .insight-desc {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* 执行力行动框架 */
+        .action-framework {
+            background: linear-gradient(135deg, rgba(74, 222, 128, 0.1), rgba(56, 189, 248, 0.1));
+            border: 2px solid var(--highlight-quote);
+            border-radius: 24px;
+            padding: 35px;
+            margin: 40px 0;
+        }
+        .action-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            color: var(--highlight-quote);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .action-steps {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .action-step {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .action-step:hover {
+            transform: scale(1.05);
+            background: rgba(74, 222, 128, 0.15);
+        }
+        .step-number {
+            width: 40px;
+            height: 40px;
+            background: var(--highlight-quote);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            color: white;
+            margin: 0 auto 15px;
+        }
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .step-desc {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        
+        /* 公式卡片 */
+        .formula-card {
+            background: linear-gradient(135deg, rgba(56, 189, 248, 0.15), rgba(139, 92, 246, 0.15));
+            border: 2px solid var(--highlight-data);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 25px 0;
+            text-align: center;
+        }
+        .formula-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--highlight-data);
+            margin-bottom: 20px;
+        }
+        .formula-content {
+            font-size: 1.8em;
+            font-weight: 800;
+            color: var(--text-primary);
+            font-family: "SF Mono", "Fira Code", monospace;
+            padding: 20px;
+            background: var(--glass-bg);
+            border-radius: 15px;
+            display: inline-block;
+        }
+        .formula-note {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+            margin-top: 15px;
+        }
+        
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 25px 0;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            padding: 18px 20px;
+            font-weight: 700;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 16px 20px;
+            border-bottom: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+        }
+        .comparison-table tr:hover td {
+            background: var(--card-hover);
+        }
+        
+        /* 思维陷阱警示 */
+        .warning-box {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.15), rgba(251, 146, 60, 0.15));
+            border: 2px solid var(--highlight-key);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .warning-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: var(--highlight-key);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .warning-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .warning-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background: var(--glass-bg);
+            border-radius: 12px;
+        }
+        .warning-icon {
+            font-size: 1.3em;
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.8em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.4s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+        
+        /* 快速导航 */
+        .quick-nav {
+            position: fixed;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 100;
+        }
+        .nav-dot {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 2px solid var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .nav-dot:hover, .nav-dot.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: scale(1.3);
+        }
+        
+        /* 控制按钮组 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            background: var(--card-hover);
+        }
+        .btn.primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            border: none;
+        }
+        .btn.primary:hover {
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+        
+        /* 动画定义 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .container { padding: 10px; }
+            .header { padding: 40px 25px; margin-top: 70px; }
+            h1 { font-size: 2em; }
+            .section-header { padding: 25px; }
+            .section-content { padding: 25px; }
+            .quick-nav { display: none; }
+            .mindmap-layer { grid-template-columns: 1fr; }
+            .expert-panel { grid-template-columns: 1fr; }
+        }
+        
+        /* 段落样式 */
+        p {
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+        
+        /* 阅读进度指示 */
+        .reading-time {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <nav class="nav-bar">
+        <span class="nav-title">📊 吴军·逻辑思维训练</span>
+        <div class="reading-time">
+            <span>⏱️</span>
+            <span>预计阅读 25 分钟</span>
+        </div>
+        <div class="nav-progress" id="progress"></div>
+    </nav>
+    
+    <!-- 快速导航点 -->
+    <div class="quick-nav">
+        <div class="nav-dot active" onclick="scrollToSection('header')" title="顶部"></div>
+        <div class="nav-dot" onclick="scrollToSection('meta')" title="元认知框架"></div>
+        <div class="nav-dot" onclick="scrollToSection('logic')" title="逻辑思维图"></div>
+        <div class="nav-dot" onclick="scrollToSection('s1')" title="数据对比"></div>
+        <div class="nav-dot" onclick="scrollToSection('s2')" title="数据分布"></div>
+        <div class="nav-dot" onclick="scrollToSection('s3')" title="相关性分析"></div>
+        <div class="nav-dot" onclick="scrollToSection('s4')" title="线性回归"></div>
+        <div class="nav-dot" onclick="scrollToSection('s5')" title="假设检验"></div>
+        <div class="nav-dot" onclick="scrollToSection('action')" title="行动框架"></div>
+    </div>
+
+    <div class="container">
+        <!-- 主标题区 -->
+        <header class="header" id="header">
+            <span class="header-badge">🎯 思维训练系统</span>
+            <h1>数据分析与统计归纳</h1>
+            <p class="header-subtitle">从混沌数据中提炼规律，用科学方法构建认知框架</p>
+            
+            <!-- 核心金句 -->
+            <div class="golden-quotes">
+                <div class="quote-card">
+                    <p class="quote-text">"在没有数据之前，不要轻下结论。"</p>
+                    <p class="quote-source">—— 吴军</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"单一的数据本身没有太大意义，需要通过比对才能了解其价值。"</p>
+                    <p class="quote-source">—— 吴军</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"非常结论一定要有非常证据支持。"</p>
+                    <p class="quote-source">—— 学术界箴言</p>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn primary" onclick="toggleAll()">📑 展开/折叠全部</button>
+                <button class="btn" onclick="scrollToSection('action')">🎯 直达行动框架</button>
+                <button class="btn" onclick="scrollToSection('meta')">🧠 查看思维导图</button>
+            </div>
+        </header>
+
+        <!-- ==================== 元认知框架图 ==================== -->
+        <div class="mindmap-container" id="meta">
+            <h2 class="mindmap-title">🧠 元认知框架：数据思维的底层逻辑</h2>
+            <div class="mindmap-core">
+                <div class="center-node">数据驱动决策</div>
+                
+                <div class="mindmap-layer">
+                    <div class="branch-card red">
+                        <div class="branch-title red">🔴 数据收集</div>
+                        <div class="branch-items">
+                            <div class="branch-item">调查法：问卷、访谈、普查</div>
+                            <div class="branch-item">实验法：控制变量、对照组</div>
+                            <div class="branch-item">观察法：自然场景数据采集</div>
+                            <div class="branch-item">⚠️ 避免：主观臆断替代数据</div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card blue">
+                        <div class="branch-title blue">🔵 数据处理</div>
+                        <div class="branch-items">
+                            <div class="branch-item">均值/中值/极值分析</div>
+                            <div class="branch-item">分布特征：正态/泊松</div>
+                            <div class="branch-item">标准差与Z值计算</div>
+                            <div class="branch-item">⚠️ 警惕：异类数据的干扰</div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card green">
+                        <div class="branch-title green">🟢 规律发现</div>
+                        <div class="branch-items">
+                            <div class="branch-item">相关性分析：正/负相关</div>
+                            <div class="branch-item">线性回归建模预测</div>
+                            <div class="branch-item">假设检验量化结论</div>
+                            <div class="branch-item">⚠️ 区分：相关≠因果</div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card gold">
+                        <div class="branch-title gold">🟡 结论验证</div>
+                        <div class="branch-items">
+                            <div class="branch-item">保留样本集验证</div>
+                            <div class="branch-item">显著性水平检测(5%)</div>
+                            <div class="branch-item">残差与方差评估</div>
+                            <div class="branch-item">⚠️ 注意：时空条件变化</div>
+                        </div>
+                    </div>
+                    
+                    <div class="branch-card purple">
+                        <div class="branch-title purple">🟣 实践应用</div>
+                        <div class="branch-items">
+                            <div class="branch-item">纠正错误认知</div>
+                            <div class="branch-item">发现隐藏规律</div>
+                            <div class="branch-item">指导行动决策</div>
+                            <div class="branch-item">⚠️ 谨记：规律会失效</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 逻辑思维流程图 ==================== -->
+        <div class="logic-flow" id="logic">
+            <h2 class="logic-title">🔄 逻辑思维流程：从问题到结论</h2>
+            <div class="flow-container">
+                <div class="flow-row">
+                    <div class="flow-node primary">
+                        <div class="flow-node-icon">❓</div>
+                        <div class="flow-node-title">提出问题</div>
+                        <div class="flow-node-desc">明确要解决什么</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div class="flow-node-icon">📊</div>
+                        <div class="flow-node-title">收集数据</div>
+                        <div class="flow-node-desc">调查/实验/观察</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div class="flow-node-icon">🔍</div>
+                        <div class="flow-node-title">分析对比</div>
+                        <div class="flow-node-desc">均值/分布/相关性</div>
+                    </div>
+                </div>
+                <div class="flow-row">
+                    <div class="flow-node">
+                        <div class="flow-node-icon">📈</div>
+                        <div class="flow-node-title">建立模型</div>
+                        <div class="flow-node-desc">回归线/预测公式</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node">
+                        <div class="flow-node-icon">✅</div>
+                        <div class="flow-node-title">假设检验</div>
+                        <div class="flow-node-desc">5%显著性水平</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-node primary">
+                        <div class="flow-node-icon">🎯</div>
+                        <div class="flow-node-title">得出结论</div>
+                        <div class="flow-node-desc">指导行动决策</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 第一章：数据对比 ==================== -->
+        <section class="section" id="s1">
+            <div class="section-header" onclick="toggleSection('s1')">
+                <div class="section-title-group">
+                    <div class="section-icon">📊</div>
+                    <div>
+                        <h2 class="section-title">第一章：简单数据对比</h2>
+                        <span class="section-badge">基础能力</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">
+                <p>90分是好还是坏？比较两组数据时要关注哪些指标？异类数据如何处理？</p>
+            </div>
+            <div class="section-content">
+                <p>如果你考试得了<span class="highlight-data">90分</span>，是应该高兴还是沮丧呢？答案取决于<span class="highlight-key">参照系</span>——如果90分是班上第一名，当然高兴；如果比中位数还低，就高兴不起来了。</p>
+                
+                <div class="formula-card">
+                    <div class="formula-title">🎯 核心原则</div>
+                    <div class="formula-content">单一数据无意义 = 必须通过比对</div>
+                    <div class="formula-note">这是数据分析的第一性原理</div>
+                </div>
+                
+                <p>来看一个实际例子：男生和女生谁玩手机时间更长？</p>
+                <p><span class="highlight-key">危险的思维方式</span>：凭主观想象得出结论（"男生爱玩游戏所以时间更长"）</p>
+                <p><span class="highlight-quote">正确的思维方式</span>：用数据说话，不带预设</p>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>指标</th>
+                        <th>男生(分钟)</th>
+                        <th>女生(分钟)</th>
+                    </tr>
+                    <tr>
+                        <td>平均值</td>
+                        <td class="highlight-data">62</td>
+                        <td class="highlight-data">128</td>
+                    </tr>
+                    <tr>
+                        <td>中位数</td>
+                        <td>28</td>
+                        <td>116</td>
+                    </tr>
+                    <tr>
+                        <td>最大值</td>
+                        <td>214</td>
+                        <td>379</td>
+                    </tr>
+                </table>
+                
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <div class="insight-number">1</div>
+                        <div class="insight-title">女生玩手机时间明显更长</div>
+                        <div class="insight-desc">平均值是男生的2倍多，颠覆直觉认知</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number">2</div>
+                        <div class="insight-title">男生中存在异类</div>
+                        <div class="insight-desc">两个高玩家(213,214)把均值拉高，导致均值远高于中位数</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number">3</div>
+                        <div class="insight-title">女生分布更均匀</div>
+                        <div class="insight-desc">均值和中值接近，不存在明显异类</div>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-title">⚠️ 思维陷阱警示</div>
+                    <div class="warning-list">
+                        <div class="warning-item">
+                            <span class="warning-icon">🚫</span>
+                            <div>
+                                <strong>陷阱一：主观臆断</strong>
+                                <p>根据想象做推理，而非根据事实得结论</p>
+                            </div>
+                        </div>
+                        <div class="warning-item">
+                            <span class="warning-icon">🚫</span>
+                            <div>
+                                <strong>陷阱二：忽视异类</strong>
+                                <p>异类数据会严重扭曲均值，需排除后重新分析</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- 专家评论 -->
+                <div class="expert-panel">
+                    <div class="expert-comment chen">
+                        <div class="expert-avatar">🧮</div>
+                        <div class="expert-name">陈景润 视角</div>
+                        <div class="expert-title">数论大师 | 哥德巴赫猜想突破者</div>
+                        <div class="expert-content">
+                            数据的对比如同数论中的筛法——<span class="highlight-key">去掉噪音，留下本质</span>。男生数据中两个异类就像被筛掉的合数，排除它们后，真实的素数规律才会显现。做数学和做数据分析一样，需要极致的专注和耐心。
+                        </div>
+                    </div>
+                    <div class="expert-comment tao">
+                        <div class="expert-avatar">🌟</div>
+                        <div class="expert-name">陶哲轩 视角</div>
+                        <div class="expert-title">菲尔兹奖得主 | 当代数学家</div>
+                        <div class="expert-content">
+                            当均值和中位数差距很大时，这本身就是一个<span class="highlight-gold">重要信号</span>。它告诉我们数据分布不对称，存在极端值。在数学研究中，这种"异常"往往是发现新定理的线索。不要急于排除，先理解它为什么存在。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第二章：数据分布与Z值 ==================== -->
+        <section class="section" id="s2">
+            <div class="section-header" onclick="toggleSection('s2')">
+                <div class="section-title-group">
+                    <div class="section-icon">📈</div>
+                    <div>
+                        <h2 class="section-title">第二章：数据分布与Z值</h2>
+                        <span class="section-badge">定位能力</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">
+                <p>如何知道自己在群体中的位置？正态分布和泊松分布有什么区别？Z值公式怎么用？</p>
+            </div>
+            <div class="section-content">
+                <p>假设你的年薪是<span class="highlight-data">20万元</span>，公司中位数薪资是<span class="highlight-data">10万元</span>，你的收入在公司是什么水平？这需要理解<span class="highlight-key">数据的分布情况</span>。</p>
+                
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <div class="insight-number">📊</div>
+                        <div class="insight-title">正态分布</div>
+                        <div class="insight-desc">完美对称，均值=中值，中间密度最大，两端迅速衰减。如：身高、智商测试</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number">📉</div>
+                        <div class="insight-title">泊松分布</div>
+                        <div class="insight-desc">非对称，向一侧偏移，尾巴拖得很长。如：电器寿命、马拉松成绩</div>
+                    </div>
+                </div>
+                
+                <div class="formula-card">
+                    <div class="formula-title">🔢 Z值公式（标准化分数）</div>
+                    <div class="formula-content">Z = (特定数值 - 平均值) / 标准差</div>
+                    <div class="formula-note">Z值告诉你距离平均水平有多少个标准差</div>
+                </div>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>Z值</th>
+                        <th>排名位置</th>
+                        <th>含义</th>
+                    </tr>
+                    <tr>
+                        <td class="highlight-data">Z = -2</td>
+                        <td>前2.3%</td>
+                        <td>优秀（在均值左侧）</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight-data">Z = -1</td>
+                        <td>前16%</td>
+                        <td>良好</td>
+                    </tr>
+                    <tr>
+                        <td>Z = 0</td>
+                        <td>50%</td>
+                        <td>平均水平</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight-key">Z = 2</td>
+                        <td>97.7%</td>
+                        <td>超过97.7%的人</td>
+                    </tr>
+                </table>
+                
+                <p><strong>实际案例</strong>：公司平均工资<span class="highlight-data">10万</span>，标准差<span class="highlight-data">5万</span>，你挣<span class="highlight-data">20万</span></p>
+                <p>Z = (20-10)/5 = <span class="highlight-gold">2</span> → 你比<span class="highlight-key">97.7%</span>的同事收入高！</p>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment zhang">
+                        <div class="expert-avatar">🔬</div>
+                        <div class="expert-name">张益唐 视角</div>
+                        <div class="expert-title">孪生素数猜想突破者</div>
+                        <div class="expert-content">
+                            Z值的本质是<span class="highlight-data">归一化</span>——把不同尺度的数据放到同一个坐标系比较。这就像我研究素数分布时，要把无穷大的数域"压缩"到可分析的范围。关键不是数字本身，而是它相对于整体的<span class="highlight-key">位置</span>。在黑暗中独行的岁月里，我学会了用这种方法定位自己——不与他人比成就，只与均值比偏离。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第三章：相关性分析 ==================== -->
+        <section class="section" id="s3">
+            <div class="section-header" onclick="toggleSection('s3')">
+                <div class="section-title-group">
+                    <div class="section-icon">🔗</div>
+                    <div>
+                        <h2 class="section-title">第三章：相关性分析</h2>
+                        <span class="section-badge">洞察能力</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">
+                <p>两组数据之间有什么关系？什么是正相关和负相关？如何通过二维点阵图发现规律？</p>
+            </div>
+            <div class="section-content">
+                <p>寻找两件事之间的关系，是从数据中归纳规律的<span class="highlight-key">核心方法</span>。数据之间有三种关系：</p>
+                
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <div class="insight-number" style="background: linear-gradient(135deg, #f43f5e, #ec4899);">A</div>
+                        <div class="insight-title">决定性关系</div>
+                        <div class="insight-desc">一个变量改变，另一个必然改变。如：发动机转速→扭矩</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number" style="background: linear-gradient(135deg, #38bdf8, #8b5cf6);">B</div>
+                        <div class="insight-title">相关性关系</div>
+                        <div class="insight-desc">一个变量改变，另一个有规律地变化。最需深入研究</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number" style="background: linear-gradient(135deg, #94a3b8, #64748b);">C</div>
+                        <div class="insight-title">无关</div>
+                        <div class="insight-desc">一个变量的变化不引起另一个的变化</div>
+                    </div>
+                </div>
+                
+                <p><strong>NBA案例</strong>：得分多和防守好，哪个更能赢球？</p>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>关系对</th>
+                        <th>相关性</th>
+                        <th>结论</th>
+                    </tr>
+                    <tr>
+                        <td>得分 vs 获胜场次</td>
+                        <td class="highlight-key">几乎无相关</td>
+                        <td>得分最高的队未必赢最多</td>
+                    </tr>
+                    <tr>
+                        <td>失分 vs 获胜场次</td>
+                        <td class="highlight-quote">强负相关</td>
+                        <td>失分越少，赢球越多</td>
+                    </tr>
+                </table>
+                
+                <div class="quote-card" style="margin: 30px 0;">
+                    <p class="quote-text">"进球靠进攻，赢得比赛靠防守。"</p>
+                    <p class="quote-source">—— 数据验证的球类运动真理</p>
+                </div>
+                
+                <div class="formula-card">
+                    <div class="formula-title">📐 相关系数 r 的含义</div>
+                    <div class="formula-content">r ∈ [-1, 1]</div>
+                    <div class="formula-note">
+                        <p>r = 1：完全正相关 | r = -1：完全负相关 | r = 0：完全无关</p>
+                        <p>|r| < 0.5 → 相关性非常弱</p>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment singer">
+                        <div class="expert-avatar">🎭</div>
+                        <div class="expert-name">伊萨多·辛格 视角</div>
+                        <div class="expert-title">阿蒂亚-辛格指标定理创立者</div>
+                        <div class="expert-content">
+                            相关性分析的精妙之处在于——它让我们看到<span class="highlight-purple">隐藏的联系</span>。在拓扑学中，我们研究的是空间的内在结构；在数据分析中，相关性揭示的是变量之间的内在联系。二维点阵图就像是把高维空间投影到平面——<span class="highlight-key">简化但不失真</span>。记住：能用眼睛看出的规律，往往是最重要的规律。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第四章：线性回归 ==================== -->
+        <section class="section" id="s4">
+            <div class="section-header" onclick="toggleSection('s4')">
+                <div class="section-title-group">
+                    <div class="section-icon">📉</div>
+                    <div>
+                        <h2 class="section-title">第四章：线性回归与预测</h2>
+                        <span class="section-badge">预测能力</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">
+                <p>如何用已知数据预测未知？什么是回归线？线性回归在什么情况下会失效？</p>
+            </div>
+            <div class="section-content">
+                <p>2002年冬奥会，裁判皮埃尔被指控打分不公。调查结果：他的打分与其他裁判<span class="highlight-data">相关系数0.9</span>。这意味着——他给分虽低，但<span class="highlight-quote">排序一致</span>，并非故意压低特定选手。</p>
+                
+                <div class="formula-card">
+                    <div class="formula-title">📈 线性回归的三个步骤</div>
+                    <div class="formula-content">形式 → 方向 → 强度</div>
+                    <div class="formula-note">
+                        <p>1. 确定是线性还是曲线关系</p>
+                        <p>2. 确定是正相关还是负相关</p>
+                        <p>3. 计算相关系数r判断强度</p>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-title">⚠️ 线性回归失效的四种情况</div>
+                    <div class="warning-list">
+                        <div class="warning-item">
+                            <span class="warning-icon">1️⃣</span>
+                            <div>
+                                <strong>相关性太弱</strong>
+                                <p>SAT成绩与名校录取：达到门槛后，继续提分无意义</p>
+                            </div>
+                        </div>
+                        <div class="warning-item">
+                            <span class="warning-icon">2️⃣</span>
+                            <div>
+                                <strong>方差太大（残差大）</strong>
+                                <p>股市预测：利率与涨跌有相关性，但波动范围-7%~+13%</p>
+                            </div>
+                        </div>
+                        <div class="warning-item">
+                            <span class="warning-icon">3️⃣</span>
+                            <div>
+                                <strong>非线性关系</strong>
+                                <p>纸飞机高度随时间变化：先升后降，不是直线</p>
+                            </div>
+                        </div>
+                        <div class="warning-item">
+                            <span class="warning-icon">4️⃣</span>
+                            <div>
+                                <strong>异类干扰</strong>
+                                <p>一个极端数据点可能让无关数据看起来相关</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <p><strong>残差的概念</strong>：<span class="highlight-key">残差 = 观测值 - 预测值</span></p>
+                <p>残差太大说明预测模型不可靠。美国股市年均回报7%，但残差±18%——意味着一年后可能亏11%也可能赚25%。</p>
+                
+                <div class="quote-card" style="margin: 30px 0;">
+                    <p class="quote-text">"把'勉强做出的'粗糙预测，当作完全确定的规律，是股市失败者的共同特征。"</p>
+                    <p class="quote-source">—— 吴军</p>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment tao">
+                        <div class="expert-avatar">🌟</div>
+                        <div class="expert-name">陶哲轩 视角</div>
+                        <div class="expert-title">菲尔兹奖得主 | 当代数学家</div>
+                        <div class="expert-content">
+                            线性回归是一把<span class="highlight-gold">双刃剑</span>。它的力量在于简化——用一条直线概括复杂关系；它的风险也在于简化——把非线性硬掰成线性。在我的研究中，我总是问自己：这个简化<span class="highlight-key">损失了多少信息</span>？残差就是答案。如果残差大到淹没信号，那这条回归线不过是"数据上的涂鸦"。
+                        </div>
+                    </div>
+                    <div class="expert-comment chen">
+                        <div class="expert-avatar">🧮</div>
+                        <div class="expert-name">陈景润 视角</div>
+                        <div class="expert-title">数论大师 | 哥德巴赫猜想突破者</div>
+                        <div class="expert-content">
+                            异类数据就像数论中的特殊情况——它们可能揭示深刻的规律，也可能只是<span class="highlight-key">随机噪声</span>。我花了多年时间研究素数分布中的"异常"，最终发现：真正的异常是稀有的，大多数"异常"只是我们理解不够深入。处理异类的正确态度是：<span class="highlight-quote">先理解，再决定是否排除</span>。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第五章：假设检验 ==================== -->
+        <section class="section" id="s5">
+            <div class="section-header" onclick="toggleSection('s5')">
+                <div class="section-title-group">
+                    <div class="section-icon">✅</div>
+                    <div>
+                        <h2 class="section-title">第五章：假设检验</h2>
+                        <span class="section-badge">验证能力</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">
+                <p>如何量化结论的可信度？什么是显著性水平？95%把握意味着什么？</p>
+            </div>
+            <div class="section-content">
+                <p>商场转盘抽奖，你连续转<span class="highlight-data">5次</span>都是偶数。商场在作弊吗？</p>
+                
+                <div class="formula-card">
+                    <div class="formula-title">🎲 假设检验三步法</div>
+                    <div class="formula-content">H₀(零假设) → 计算概率 → 判断结论</div>
+                    <div class="formula-note">
+                        <p>1. 假设商场没作弊(H₀)</p>
+                        <p>2. 计算：0.5⁵ = 3.1%（连续5次偶数的概率）</p>
+                        <p>3. 3.1% < 5%（显著性水平）→ 拒绝H₀ → 商场可能作弊</p>
+                    </div>
+                </div>
+                
+                <table class="comparison-table">
+                    <tr>
+                        <th>概率范围</th>
+                        <th>结论</th>
+                    </tr>
+                    <tr>
+                        <td class="highlight-key">< 5%</td>
+                        <td>可以推翻零假设</td>
+                    </tr>
+                    <tr>
+                        <td>5% ~ 95%</td>
+                        <td class="highlight-gold">不确定地带（无法下结论）</td>
+                    </tr>
+                    <tr>
+                        <td class="highlight-quote">> 95%</td>
+                        <td>可以接受零假设</td>
+                    </tr>
+                </table>
+                
+                <p><strong>医药案例</strong>：公司声称新药有效率80%，50例实验只有32例有效。</p>
+                <p>用二项分布计算：如果真是80%，出现≤32例有效的概率只有<span class="highlight-key">0.6%</span> → 公司在吹牛！</p>
+                
+                <div class="warning-box">
+                    <div class="warning-title">⚠️ 假设检验的前提条件</div>
+                    <div class="warning-list">
+                        <div class="warning-item">
+                            <span class="warning-icon">⚠️</span>
+                            <div>
+                                <strong>每次实验条件必须相同</strong>
+                                <p>湖人队vs勇士队：用10年前数据判断今天比赛无效，因为球队实力会变化</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment zhang">
+                        <div class="expert-avatar">🔬</div>
+                        <div class="expert-name">张益唐 视角</div>
+                        <div class="expert-title">孪生素数猜想突破者</div>
+                        <div class="expert-content">
+                            假设检验教会我们一个深刻的道理：<span class="highlight-data">否定比肯定容易</span>。要推翻一个假设，只需找到一个小概率事件发生；但要肯定一个假设，需要大量证据。这就像我的研究——证明孪生素数<span class="highlight-key">无穷多</span>需要构建完整的数学大厦；但证明某个具体数不是素数，只需找到一个因子。在不确定性面前保持谦逊，是科学家的基本素养。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 第六章：从局部到整体 ==================== -->
+        <section class="section" id="s6">
+            <div class="section-header" onclick="toggleSection('s6')">
+                <div class="section-title-group">
+                    <div class="section-icon">🔄</div>
+                    <div>
+                        <h2 class="section-title">第六章：从局部推断整体</h2>
+                        <span class="section-badge">推断能力</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">
+                <p>能否从样本推断全集？中心极限定律和大数定律有什么用？规律为什么会失效？</p>
+            </div>
+            <div class="section-content">
+                <p>二战期间，盟军缴获德国坦克，每辆都有序列号。数学家们用这些编号估算了德国坦克总产量——方法是<span class="highlight-key">最小编号+最大编号</span>。战后证明，估算结果相当准确！</p>
+                
+                <div class="formula-card">
+                    <div class="formula-title">📊 无偏差估计的两个原则</div>
+                    <div class="formula-content">10% 原则 + N×P > 10</div>
+                    <div class="formula-note">
+                        <p>1. 全集至少比样本大10倍（保证独立性）</p>
+                        <p>2. 样本数量×事件概率 > 10（保证代表性）</p>
+                    </div>
+                </div>
+                
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <div class="insight-number">🎯</div>
+                        <div class="insight-title">中心极限定律</div>
+                        <div class="insight-desc">样本足够多时，均值的分布趋向正态分布</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number">📈</div>
+                        <div class="insight-title">大数定律</div>
+                        <div class="insight-desc">样本越多，样本均值越接近真实期望值</div>
+                    </div>
+                </div>
+                
+                <div class="warning-box">
+                    <div class="warning-title">⚠️ 规律失效的两种情况</div>
+                    <div class="warning-list">
+                        <div class="warning-item">
+                            <span class="warning-icon">📏</span>
+                            <div>
+                                <strong>空间（体量）变化</strong>
+                                <p>100人公司停车位规则≠1000人公司。小保险公司需要更高比例的准备金</p>
+                            </div>
+                        </div>
+                        <div class="warning-item">
+                            <span class="warning-icon">⏰</span>
+                            <div>
+                                <strong>时间（应用）变化</strong>
+                                <p>第三刹车灯实验：减少50%追尾；全面推广后：只减少5%。规律的使用导致规律失效</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quote-card" style="margin: 30px 0;">
+                    <p class="quote-text">"当一个经验大规模推广后，所产生的结果可能导致规律本身的失灵。"</p>
+                    <p class="quote-source">—— 吴军</p>
+                </div>
+                
+                <div class="expert-panel">
+                    <div class="expert-comment singer">
+                        <div class="expert-avatar">🎭</div>
+                        <div class="expert-name">伊萨多·辛格 视角</div>
+                        <div class="expert-title">阿蒂亚-辛格指标定理创立者</div>
+                        <div class="expert-content">
+                            从局部到整体的推断，是数学中最优雅也最危险的操作。指标定理告诉我们：<span class="highlight-purple">局部信息可以唯一确定全局性质</span>——但前提是我们理解了空间的拓扑结构。统计推断也是如此：样本能代表全集，前提是<span class="highlight-key">分布结构相同</span>。当条件改变时，"管中窥豹"就变成了"盲人摸象"。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 执行力行动框架 ==================== -->
+        <div class="action-framework" id="action">
+            <div class="action-title">🎯 执行力行动框架：把知识转化为行动</div>
+            <div class="action-steps">
+                <div class="action-step">
+                    <div class="step-number">1</div>
+                    <div class="step-title">遇事先问数据</div>
+                    <div class="step-desc">任何判断前，问自己：我有数据支持吗？</div>
+                </div>
+                <div class="action-step">
+                    <div class="step-number">2</div>
+                    <div class="step-title">建立参照系</div>
+                    <div class="step-desc">单一数据无意义，找对比对象</div>
+                </div>
+                <div class="action-step">
+                    <div class="step-number">3</div>
+                    <div class="step-title">识别异类</div>
+                    <div class="step-desc">极端值可能扭曲结论，先理解再处理</div>
+                </div>
+                <div class="action-step">
+                    <div class="step-number">4</div>
+                    <div class="step-title">寻找相关性</div>
+                    <div class="step-desc">画二维点阵图，目视判断关系</div>
+                </div>
+                <div class="action-step">
+                    <div class="step-number">5</div>
+                    <div class="step-title">验证结论</div>
+                    <div class="step-desc">用保留样本或新数据检验规律</div>
+                </div>
+                <div class="action-step">
+                    <div class="step-number">6</div>
+                    <div class="step-desc">考虑时空条件</div>
+                    <div class="step-desc">规律会失效，持续更新认知</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ==================== 沉浸式阅读建议 ==================== -->
+        <section class="section">
+            <div class="section-header" onclick="toggleSection('reading')">
+                <div class="section-title-group">
+                    <div class="section-icon">📖</div>
+                    <div>
+                        <h2 class="section-title">沉浸式阅读指南</h2>
+                        <span class="section-badge">专为你定制</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-content" id="reading">
+                <p>针对你提到的<span class="highlight-key">缺乏思维框架、执行力不足、沉浸式阅读困难</span>三个问题，这里有具体建议：</p>
+                
+                <div class="insight-grid">
+                    <div class="insight-card">
+                        <div class="insight-number">🧠</div>
+                        <div class="insight-title">建立思维框架</div>
+                        <div class="insight-desc">
+                            <p>1. 每读完一章，用3句话复述核心</p>
+                            <p>2. 画出你自己的简化版思维导图</p>
+                            <p>3. 找一个生活案例套用框架</p>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number">⚡</div>
+                        <div class="insight-title">提升执行力</div>
+                        <div class="insight-desc">
+                            <p>1. 今天就用Z值算一下你的某项指标排名</p>
+                            <p>2. 下次做决定时，写下支持/反对的数据</p>
+                            <p>3. 设定"数据检查点"：每周问自己一次"这个结论有数据支持吗"</p>
+                        </div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-number">🎧</div>
+                        <div class="insight-title">克服阅读困难</div>
+                        <div class="insight-desc">
+                            <p>1. 用25分钟番茄钟，只读一个章节</p>
+                            <p>2. 优先看金句卡片和公式框，建立骨架</p>
+                            <p>3. 利用折叠功能，每次只展开一节</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quote-card" style="margin: 30px 0;">
+                    <p class="quote-text">"思维框架不是记住的，是用出来的。每用一次，它就在你脑中扎根一分。"</p>
+                    <p class="quote-source">—— 给陈百强的建议</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== 终极金句集 ==================== -->
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">💎 终极金句：刻在脑子里的思维准则</h2>
+            <div class="golden-quotes" style="margin-top: 30px;">
+                <div class="quote-card">
+                    <p class="quote-text">"在没有数据之前，不要轻下结论。"</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"非常结论一定要有非常证据支持。"</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"相关性不等于因果性。"</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"残差是衡量预测可靠性的标尺。"</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"否定比肯定容易。"</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"规律的大规模使用可能导致规律失效。"</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"异类数据：先理解，再决定是否排除。"</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">"精益求精 vs 适可而止：看与结果的相关性。"</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+        
+        // 折叠/展开所有
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = [...sections].every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+        
+        // 单个折叠
+        function toggleSection(id) {
+            document.getElementById(id).closest('.section').classList.toggle('collapsed');
+        }
+        
+        // 滚动到指定区域
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 阅读进度条
+        window.addEventListener('scroll', () => {
+            const scrollTop = document.documentElement.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = (scrollTop / scrollHeight) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // 更新导航点
+            const sections = ['header', 'meta', 'logic', 's1', 's2', 's3', 's4', 's5', 'action'];
+            const dots = document.querySelectorAll('.nav-dot');
+            sections.forEach((id, index) => {
+                const el = document.getElementById(id);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top < window.innerHeight / 2 && rect.bottom > 0) {
+                        dots.forEach(d => d.classList.remove('active'));
+                        if (dots[index]) dots[index].classList.add('active');
+                    }
+                }
+            });
+        });
+        
+        // 卡片点击动画
+        document.querySelectorAll('.branch-card, .insight-card, .quote-card').forEach(card => {
+            card.addEventListener('click', function() {
+                this.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    this.style.transform = '';
+                }, 150);
+            });
+        });
+    </script>
+</body>
+</html>
