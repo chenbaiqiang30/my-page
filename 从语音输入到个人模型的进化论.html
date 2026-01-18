@@ -1,0 +1,1717 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>闪电说 | 从语音输入到个人模型的进化论</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0b;
+            --bg-secondary: #141416;
+            --bg-card: rgba(28, 28, 30, 0.72);
+            --bg-glass: rgba(255, 255, 255, 0.03);
+            --text-primary: #f5f5f7;
+            --text-secondary: rgba(245, 245, 247, 0.6);
+            --text-tertiary: rgba(245, 245, 247, 0.4);
+            --accent-blue: #2997ff;
+            --accent-purple: #bf5af2;
+            --accent-orange: #ff9f0a;
+            --accent-green: #30d158;
+            --accent-red: #ff453a;
+            --accent-pink: #ff375f;
+            --border-subtle: rgba(255, 255, 255, 0.08);
+            --gradient-hero: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            --gradient-card: linear-gradient(145deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.01) 100%);
+            --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --shadow-glow: 0 0 60px rgba(102, 126, 234, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* === ANIMATED BACKGROUND === */
+        .bg-ambient {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-ambient::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            top: -25%;
+            left: -25%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(102, 126, 234, 0.12) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 70%, rgba(191, 90, 242, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(240, 147, 251, 0.05) 0%, transparent 60%);
+            animation: ambientDrift 30s ease-in-out infinite;
+        }
+
+        @keyframes ambientDrift {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(2%, 3%) rotate(1deg); }
+            66% { transform: translate(-2%, -1%) rotate(-1deg); }
+        }
+
+        /* === NAVIGATION === */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 1rem 2rem;
+            background: rgba(10, 10, 11, 0.8);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border-bottom: 1px solid var(--border-subtle);
+            transition: all 0.3s ease;
+        }
+
+        nav.scrolled {
+            padding: 0.75rem 2rem;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: color 0.2s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gradient-hero);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* === HERO SECTION === */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 8rem 2rem 4rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease;
+        }
+
+        .hero-badge .pulse {
+            width: 8px;
+            height: 8px;
+            background: var(--accent-green);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2.5rem, 7vw, 5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease 0.1s both;
+        }
+
+        .hero-title .gradient {
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1rem, 2.5vw, 1.25rem);
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease 0.2s both;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .meta-item .label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-tertiary);
+        }
+
+        .meta-item .value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-indicator svg {
+            width: 24px;
+            height: 24px;
+            stroke: var(--text-tertiary);
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* === MAIN CONTENT === */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem 6rem;
+        }
+
+        section {
+            margin-bottom: 6rem;
+        }
+
+        .section-header {
+            margin-bottom: 3rem;
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-purple);
+            margin-bottom: 0.5rem;
+            letter-spacing: 0.2em;
+        }
+
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(1.75rem, 4vw, 2.5rem);
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            max-width: 600px;
+        }
+
+        /* === GLASS CARDS === */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(40px) saturate(150%);
+            -webkit-backdrop-filter: blur(40px) saturate(150%);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* === EVOLUTION TIMELINE === */
+        .evolution-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .evolution-card {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .evolution-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-hero);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .evolution-card:hover::before {
+            opacity: 1;
+        }
+
+        .evolution-phase {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.75rem;
+            letter-spacing: 0.15em;
+        }
+
+        .evolution-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+        }
+
+        .evolution-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        .evolution-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.375rem 0.75rem;
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .status-failed {
+            background: rgba(255, 69, 58, 0.15);
+            color: var(--accent-red);
+        }
+
+        .status-pivot {
+            background: rgba(255, 159, 10, 0.15);
+            color: var(--accent-orange);
+        }
+
+        .status-success {
+            background: rgba(48, 209, 88, 0.15);
+            color: var(--accent-green);
+        }
+
+        .failure-insight {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(255, 69, 58, 0.05);
+            border-left: 3px solid var(--accent-red);
+            border-radius: 0 12px 12px 0;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .failure-insight strong {
+            color: var(--accent-red);
+        }
+
+        /* === MINDMAP === */
+        .mindmap-container {
+            position: relative;
+            padding: 3rem 1rem;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 800px;
+            gap: 2rem;
+        }
+
+        .mindmap-center {
+            flex-shrink: 0;
+            width: 180px;
+            height: 180px;
+            background: var(--gradient-hero);
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 1.5rem;
+            box-shadow: var(--shadow-glow);
+            position: relative;
+        }
+
+        .mindmap-center::after {
+            content: '';
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: var(--gradient-hero);
+            opacity: 0.3;
+            filter: blur(20px);
+            z-index: -1;
+        }
+
+        .mindmap-center-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+
+        .mindmap-center-sub {
+            font-size: 0.75rem;
+            opacity: 0.8;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .mindmap-node {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1rem 1.25rem;
+            max-width: 200px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .mindmap-node:hover {
+            border-color: var(--accent-purple);
+            transform: scale(1.02);
+        }
+
+        .mindmap-node::before {
+            content: '';
+            position: absolute;
+            left: -2rem;
+            top: 50%;
+            width: 2rem;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--border-subtle));
+        }
+
+        .mindmap-branch:first-child .mindmap-node::before {
+            left: auto;
+            right: -2rem;
+            background: linear-gradient(90deg, var(--border-subtle), transparent);
+        }
+
+        .mindmap-node-title {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .mindmap-node-desc {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* === UE MODEL === */
+        .ue-model {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+        }
+
+        .ue-formula {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .ue-formula-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-blue);
+            margin-bottom: 1rem;
+            letter-spacing: 0.15em;
+        }
+
+        .ue-formula-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: clamp(1rem, 2.5vw, 1.5rem);
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .ue-breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .ue-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-glass);
+            border-radius: 16px;
+        }
+
+        .ue-item-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .ue-item-label {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .ue-item-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-green);
+        }
+
+        .ue-item-note {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* === CRITICS TABLE === */
+        .critics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .critic-card {
+            position: relative;
+            padding-top: 1rem;
+        }
+
+        .critic-avatar {
+            position: absolute;
+            top: 0;
+            left: 2rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            z-index: 1;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .critic-card:nth-child(1) .critic-avatar { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .critic-card:nth-child(2) .critic-avatar { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .critic-card:nth-child(3) .critic-avatar { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .critic-card:nth-child(4) .critic-avatar { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+
+        .critic-content {
+            padding: 2.5rem 2rem 1.5rem;
+        }
+
+        .critic-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .critic-title {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        .critic-quote {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            font-style: italic;
+            position: relative;
+            padding-left: 1rem;
+            border-left: 2px solid var(--accent-purple);
+        }
+
+        /* === GOLDEN QUOTES === */
+        .quotes-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .quote-card {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+
+        .quote-number {
+            flex-shrink: 0;
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-hero);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .quote-content {
+            flex: 1;
+        }
+
+        .quote-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            line-height: 1.6;
+        }
+
+        .quote-text .highlight {
+            background: linear-gradient(90deg, rgba(191, 90, 242, 0.3), transparent);
+            padding: 0 0.25rem;
+        }
+
+        .quote-context {
+            font-size: 0.8rem;
+            color: var(--text-tertiary);
+        }
+
+        /* === PERSONA FILTER === */
+        .persona-filter {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 2rem;
+        }
+
+        .persona-btn {
+            padding: 0.625rem 1.25rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-subtle);
+            border-radius: 100px;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .persona-btn:hover {
+            border-color: var(--accent-purple);
+            color: var(--text-primary);
+        }
+
+        .persona-btn.active {
+            background: var(--gradient-hero);
+            border-color: transparent;
+            color: white;
+        }
+
+        .persona-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .persona-card {
+            display: none;
+        }
+
+        .persona-card.visible {
+            display: block;
+            animation: fadeIn 0.4s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .persona-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .persona-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--bg-glass);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .persona-name {
+            font-weight: 600;
+        }
+
+        .persona-freq {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .persona-pain {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .persona-pain strong {
+            color: var(--accent-red);
+        }
+
+        .persona-solution {
+            padding: 1rem;
+            background: rgba(48, 209, 88, 0.08);
+            border-radius: 12px;
+            font-size: 0.85rem;
+            color: var(--accent-green);
+        }
+
+        /* === PROMO SECTION === */
+        .promo-section {
+            background: var(--gradient-hero);
+            border-radius: 32px;
+            padding: 3rem;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .promo-section::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+
+        .promo-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .promo-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .promo-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(1.5rem, 4vw, 2.25rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .promo-code {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 16px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            margin: 1rem 0;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .promo-code:hover {
+            transform: scale(1.05);
+        }
+
+        .promo-steps {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+            margin-top: 2rem;
+        }
+
+        .promo-step {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .promo-step-num {
+            width: 24px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        /* === FOOTER === */
+        footer {
+            border-top: 1px solid var(--border-subtle);
+            padding: 3rem 2rem;
+            text-align: center;
+        }
+
+        .footer-content {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .footer-logo {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: var(--gradient-hero);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .footer-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        .footer-meta {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 768px) {
+            nav {
+                padding: 0.75rem 1rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 6rem 1rem 4rem;
+            }
+
+            .hero-meta {
+                gap: 1.5rem;
+            }
+
+            main {
+                padding: 0 1rem 4rem;
+            }
+
+            .glass-card {
+                padding: 1.5rem;
+            }
+
+            .mindmap-container {
+                padding: 1.5rem 0;
+            }
+
+            .mindmap {
+                flex-direction: column;
+                min-width: unset;
+                gap: 1rem;
+            }
+
+            .mindmap-center {
+                width: 140px;
+                height: 140px;
+            }
+
+            .mindmap-branch {
+                flex-direction: row;
+                overflow-x: auto;
+                padding: 0.5rem;
+            }
+
+            .mindmap-node {
+                min-width: 160px;
+            }
+
+            .mindmap-node::before {
+                display: none;
+            }
+
+            .quote-card {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .promo-section {
+                padding: 2rem 1.5rem;
+            }
+
+            .promo-steps {
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        /* === COLLAPSIBLE === */
+        .collapsible {
+            cursor: pointer;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .collapsible-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--bg-glass);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+
+        .collapsible.open .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.3s ease;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 2000px;
+            padding-top: 1.5rem;
+        }
+
+        /* === DATA HIGHLIGHTS === */
+        .data-highlight {
+            color: var(--accent-blue);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .key-insight {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+
+        .quote-inline {
+            color: var(--accent-green);
+            font-style: italic;
+        }
+
+        /* === GROWTH FOUR PILLARS === */
+        .pillars-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .pillars-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .pillar-card {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .pillar-icon {
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .pillar-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .pillar-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        /* === TOAST === */
+        .toast {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--bg-card);
+            border: 1px solid var(--accent-green);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            z-index: 9999;
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+
+        .toast-icon {
+            color: var(--accent-green);
+            font-size: 1.25rem;
+        }
+
+        .toast-text {
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-ambient"></div>
+
+    <nav id="nav">
+        <div class="nav-content">
+            <div class="nav-logo">未来硅世界</div>
+            <ul class="nav-links">
+                <li><a href="#evolution">进化论</a></li>
+                <li><a href="#competition">非对称竞争</a></li>
+                <li><a href="#growth">增长工程学</a></li>
+                <li><a href="#critics">大咖点评</a></li>
+                <li><a href="#quotes">金句</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <div class="hero-badge">
+            <span class="pulse"></span>
+            <span>深度解析 · 第10期</span>
+        </div>
+        <h1 class="hero-title">
+            从语音输入到<br><span class="gradient">个人模型</span>的进化论
+        </h1>
+        <p class="hero-subtitle">
+            对话「闪电说」创始人余猛 & 龚震：一场关于端侧AI、数据主权与TOKEN分销商生意的深度解剖
+        </p>
+        <div class="hero-meta">
+            <div class="meta-item">
+                <span class="label">时长</span>
+                <span class="value">2h 12min</span>
+            </div>
+            <div class="meta-item">
+                <span class="label">嘉宾</span>
+                <span class="value">余猛 · 龚震</span>
+            </div>
+            <div class="meta-item">
+                <span class="label">日期</span>
+                <span class="value">2026.01.17</span>
+            </div>
+            <div class="meta-item">
+                <span class="label">话题密度</span>
+                <span class="value">极高</span>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+        </div>
+    </header>
+
+    <main>
+        <!-- SECTION 1: EVOLUTION -->
+        <section id="evolution">
+            <div class="section-header">
+                <div class="section-number">01 / THE INTELLIGENCE</div>
+                <h2 class="section-title">决策进化论</h2>
+                <p class="section-desc">从"对话式助手"到"全天候项链"再到"端侧语音输入"——三次失败与一次顿悟</p>
+            </div>
+
+            <div class="evolution-grid">
+                <div class="glass-card evolution-card">
+                    <div class="evolution-phase">PHASE 01 · 2023</div>
+                    <h3 class="evolution-title">对话式记忆助手</h3>
+                    <p class="evolution-desc">用AI作为界面，整合手机上的Todo、大姨妈、生日等所有记录类需求，打造主动式对话助手。</p>
+                    <span class="evolution-status status-failed">✕ 失败</span>
+                    <div class="failure-insight">
+                        <strong>致命伤：</strong>GPT-4时代单用户月成本达 <span class="data-highlight">$10</span>，而"记大姨妈"市场免费产品遍地。更致命的是——<span class="key-insight">本质上没有人喜欢记东西</span>，这是反人性的需求。
+                    </div>
+                </div>
+
+                <div class="glass-card evolution-card">
+                    <div class="evolution-phase">PHASE 02 · 2023-2024</div>
+                    <h3 class="evolution-title">全天候声音记录</h3>
+                    <p class="evolution-desc">用录音笔/项链/耳机记录每日全部声音，端侧转写+AI总结。第一天录下5万字，信息量巨大。</p>
+                    <span class="evolution-status status-pivot">⟳ 方向正确，时机错误</span>
+                    <div class="failure-insight">
+                        <strong>认知跨越：</strong>技术可行但<span class="key-insight">生态未成</span>——打呼噜需要睡眠AI、咳嗽需要医疗AI、情绪需要心理AI。全天候声音是"原材料"，但加工它的"工厂"还未建成。
+                    </div>
+                </div>
+
+                <div class="glass-card evolution-card">
+                    <div class="evolution-phase">PHASE 03 · 2025</div>
+                    <h3 class="evolution-title">端侧语音输入法</h3>
+                    <p class="evolution-desc">在高频使用Claude Code过程中发现痛点：打字速度跟不上Agent的"吞吐量"。于是用端侧SenseVoice+AI纠错，做出"代体"（后更名闪电说）。</p>
+                    <span class="evolution-status status-success">✓ PMF 达成</span>
+                    <div class="failure-insight" style="background: rgba(48, 209, 88, 0.05); border-left-color: var(--accent-green);">
+                        <strong style="color: var(--accent-green);">顿悟时刻：</strong>语音转文字提升<span class="data-highlight">4倍</span>效率，加上个人记忆可提升<span class="data-highlight">10-50倍</span>。Agent改变了人机交互界面，语音输入成为<span class="key-insight">刚性增量</span>。
+                    </div>
+                </div>
+            </div>
+
+            <!-- MINDMAP -->
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-branch">
+                        <div class="mindmap-node">
+                            <div class="mindmap-node-title">💾 存量Context</div>
+                            <div class="mindmap-node-desc">照片、笔记、文档<br>（阻碍多，移动端封闭）</div>
+                        </div>
+                        <div class="mindmap-node">
+                            <div class="mindmap-node-title">📈 增量Context</div>
+                            <div class="mindmap-node-desc">你说的话、你的想法<br>（尚未被记录）</div>
+                        </div>
+                    </div>
+                    <div class="mindmap-center">
+                        <div class="mindmap-center-title">个人模型</div>
+                        <div class="mindmap-center-sub">世界上最了解你的AI</div>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="mindmap-node">
+                            <div class="mindmap-node-title">🎤 语音输入</div>
+                            <div class="mindmap-node-desc">最前置的意图入口<br>比社交发言更真实</div>
+                        </div>
+                        <div class="mindmap-node">
+                            <div class="mindmap-node-title">🧠 记忆模块</div>
+                            <div class="mindmap-node-desc">RAG + 上下文工程<br>自动生成200字描述</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: COMPETITION -->
+        <section id="competition">
+            <div class="section-header">
+                <div class="section-number">02 / ASYMMETRIC ADVANTAGE</div>
+                <h2 class="section-title">非对称竞争优势</h2>
+                <p class="section-desc">闪电说如何在巨头与先行者的夹击中找到生存空间</p>
+            </div>
+
+            <div class="glass-card collapsible open" onclick="toggleCollapsible(this)">
+                <div class="collapsible-header">
+                    <div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">🆚 vs Whisper Flow（云端重模型路径）</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">花了数千万美金教育市场的先行者</p>
+                    </div>
+                    <div class="collapsible-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                        <tr style="border-bottom: 1px solid var(--border-subtle);">
+                            <td style="padding: 0.75rem 0; color: var(--text-tertiary);">延迟</td>
+                            <td style="padding: 0.75rem 0; color: var(--accent-red);">云端传输 2-3秒</td>
+                            <td style="padding: 0.75rem 0; color: var(--accent-green);">端侧处理 <strong>毫秒级</strong></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-subtle);">
+                            <td style="padding: 0.75rem 0; color: var(--text-tertiary);">成本</td>
+                            <td style="padding: 0.75rem 0; color: var(--accent-red);">模型大10倍+，只能云端跑</td>
+                            <td style="padding: 0.75rem 0; color: var(--accent-green);">SenseVoice端侧，<strong>成本极低</strong></td>
+                        </tr>
+                        <tr style="border-bottom: 1px solid var(--border-subtle);">
+                            <td style="padding: 0.75rem 0; color: var(--text-tertiary);">价格</td>
+                            <td style="padding: 0.75rem 0;">订阅制收费</td>
+                            <td style="padding: 0.75rem 0; color: var(--accent-green);"><strong>免费</strong>（自带API Key可解锁更多）</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem 0; color: var(--text-tertiary);">准确率</td>
+                            <td style="padding: 0.75rem 0;">多语言略优，中文≈90%</td>
+                            <td style="padding: 0.75rem 0;">中文同水平，SenseVoice≈90%</td>
+                        </tr>
+                    </table>
+                    <p style="margin-top: 1rem; padding: 1rem; background: var(--bg-glass); border-radius: 12px; font-size: 0.85rem; color: var(--text-secondary);">
+                        <strong style="color: var(--accent-blue);">竞争策略：</strong>"如果你想找<span class="key-insight">免费</span>且<span class="key-insight">最快</span>的语音输入法，可以先用我们试试。"——龚震
+                    </p>
+                </div>
+            </div>
+
+            <div class="glass-card collapsible" onclick="toggleCollapsible(this)" style="margin-top: 1rem;">
+                <div class="collapsible-header">
+                    <div>
+                        <h3 style="font-size: 1.1rem; margin-bottom: 0.25rem;">🏢 vs 大厂原生输入法</h3>
+                        <p style="font-size: 0.85rem; color: var(--text-secondary);">豆包、讯飞等的"不可能三角"</p>
+                    </div>
+                    <div class="collapsible-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M19 9l-7 7-7-7"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="collapsible-content">
+                    <p style="font-size: 0.9rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                        大厂的商业模式是<span class="key-insight">卖广告</span>，这与"保护用户数据主权"存在根本性冲突。
+                    </p>
+                    <ul style="font-size: 0.9rem; color: var(--text-secondary); padding-left: 1.25rem;">
+                        <li style="margin-bottom: 0.5rem;">AI让平台侵犯隐私的<strong>能力</strong>变强了</li>
+                        <li style="margin-bottom: 0.5rem;">AI让个人数据的<strong>价值</strong>变大了</li>
+                        <li>闪电说的初心：提供工具让用户<span class="key-insight">控制并拥有自己的数据</span></li>
+                    </ul>
+                    <p style="margin-top: 1rem; padding: 1rem; background: var(--bg-glass); border-radius: 12px; font-size: 0.85rem; color: var(--text-secondary);">
+                        <strong style="color: var(--accent-purple);">长期愿景：</strong>未来像买电脑一样，你有一个本地的小模型管理你的记忆。当需要调用云端AI时，只暴露必要部分。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: GROWTH -->
+        <section id="growth">
+            <div class="section-header">
+                <div class="section-number">03 / GROWTH ENGINEERING</div>
+                <h2 class="section-title">增长工程学</h2>
+                <p class="section-desc">Monica 0→$10M ARR 的实战经验，与闪电说的出海剧本</p>
+            </div>
+
+            <!-- UE MODEL -->
+            <div class="ue-model">
+                <div class="ue-formula">
+                    <div class="ue-formula-title">TOKEN分销商的单位经济模型</div>
+                    <div class="ue-formula-content">
+                        UE = (客单价 × 付费率) − (流量成本 + TOKEN成本)
+                    </div>
+                </div>
+                <div class="ue-breakdown">
+                    <div class="ue-item">
+                        <div class="ue-item-icon">💰</div>
+                        <div class="ue-item-label">毛利率</div>
+                        <div class="ue-item-value">~70%</div>
+                        <div class="ue-item-note">行业均值，消费品逻辑</div>
+                    </div>
+                    <div class="ue-item">
+                        <div class="ue-item-icon">🇺🇸</div>
+                        <div class="ue-item-label">美国付费率</div>
+                        <div class="ue-item-value">5-7%</div>
+                        <div class="ue-item-note">T0国家天花板</div>
+                    </div>
+                    <div class="ue-item">
+                        <div class="ue-item-icon">🇨🇳</div>
+                        <div class="ue-item-label">中国付费率</div>
+                        <div class="ue-item-value">1-2%</div>
+                        <div class="ue-item-note">PMF产品上限</div>
+                    </div>
+                    <div class="ue-item">
+                        <div class="ue-item-icon">📊</div>
+                        <div class="ue-item-label">客单价差</div>
+                        <div class="ue-item-value">10×</div>
+                        <div class="ue-item-note">同产品美国vs印度</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOUR PILLARS -->
+            <h3 style="font-size: 1.25rem; margin: 2rem 0 1rem;">出海四大件</h3>
+            <div class="pillars-grid">
+                <div class="glass-card pillar-card">
+                    <div class="pillar-icon">🎬</div>
+                    <div class="pillar-name">网红营销</div>
+                    <div class="pillar-desc">找100个小KOL（每个$几百）比1个大网红（$10万）更靠谱。一条爆款回本20条。</div>
+                </div>
+                <div class="glass-card pillar-card">
+                    <div class="pillar-icon">📱</div>
+                    <div class="pillar-name">社交媒体投放</div>
+                    <div class="pillar-desc">YouTube适合PC端产品（即看即装），TikTok偏种草，转化链路长。</div>
+                </div>
+                <div class="glass-card pillar-card">
+                    <div class="pillar-icon">🔍</div>
+                    <div class="pillar-name">搜索引擎投放</div>
+                    <div class="pillar-desc">网红营销见顶后的接力棒。ROI边际递减时切换。</div>
+                </div>
+                <div class="glass-card pillar-card">
+                    <div class="pillar-icon">🌐</div>
+                    <div class="pillar-name">SEO / GEO</div>
+                    <div class="pillar-desc">"Google不会骗你"——有用且被推崇，自然排名就会高。</div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="margin-top: 1.5rem;">
+                <h4 style="font-size: 1rem; margin-bottom: 1rem;">🔑 认知：最贵的是时间，不是钱</h4>
+                <p style="font-size: 0.9rem; color: var(--text-secondary);">
+                    "找Agency/外包是为了<span class="key-insight">学习</span>，不是为了一直把活交给别人。花几万十几万跟专家学一轮，比自己摸索省无数时间和钱。"——龚震
+                </p>
+            </div>
+        </section>
+
+        <!-- SECTION 4: CRITICS -->
+        <section id="critics">
+            <div class="section-header">
+                <div class="section-number">04 / THE CRITICS' TABLE</div>
+                <h2 class="section-title">深度大咖联动点评</h2>
+                <p class="section-desc">模拟四位顶级思考者的视角，辛辣解剖闪电说的商业路径</p>
+            </div>
+
+            <div class="critics-grid">
+                <div class="glass-card critic-card">
+                    <div class="critic-avatar">🎙️</div>
+                    <div class="critic-content">
+                        <div class="critic-name">Sahaj Garg</div>
+                        <div class="critic-title">Whisper Flow 创始人</div>
+                        <p class="critic-quote">
+                            "端侧优先是聪明的差异化——用速度和免费撕开市场。但准确率的天花板在模型层，等我们下沉到方言模型时，这场仗才算真正开始。端侧的电池和算力限制，会让你们在复杂场景（长文本、多人会议）里吃亏。"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card critic-card">
+                    <div class="critic-avatar">📚</div>
+                    <div class="critic-content">
+                        <div class="critic-name">Naval Ravikant</div>
+                        <div class="critic-title">硅谷投资圣经作者</div>
+                        <p class="critic-quote">
+                            "余猛的选择很纯粹——他不是'为了创业而创业'，而是'因为喜欢做东西而创业'。这是编程杠杆的本质：用代码把脑中的想法变成可复制的资产。十年不上班却能持续探索，这才是真正的leverage。"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card critic-card">
+                    <div class="critic-avatar">🤖</div>
+                    <div class="critic-content">
+                        <div class="critic-name">Sam Altman</div>
+                        <div class="critic-title">OpenAI CEO</div>
+                        <p class="critic-quote">
+                            "TOKEN分销商的70%毛利看起来很美，但这是建立在'模型价格稳定'的假设上。当GPT-5把API价格再降一个量级，你们的护城河在哪？答案或许在'记忆'——这是你们唯一无法被模型厂商轻易复制的东西。"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card critic-card">
+                    <div class="critic-avatar">🍎</div>
+                    <div class="critic-content">
+                        <div class="critic-name">Steve Jobs</div>
+                        <div class="critic-title">Apple 创始人</div>
+                        <p class="critic-quote">
+                            "你们在'流式输出'和'一次性出结果'之间做了正确的取舍——用户说话时不应该被屏幕上跳动的文字干扰。但'异步纠错'的交互还可以更优雅。最好的技术是让人感觉不到技术存在。"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 5: QUOTES -->
+        <section id="quotes">
+            <div class="section-header">
+                <div class="section-number">05 / GOLDEN QUOTES</div>
+                <h2 class="section-title">顶级金句提炼</h2>
+                <p class="section-desc">五句话，穿透两小时的信息密度</p>
+            </div>
+
+            <div class="quotes-container">
+                <div class="glass-card quote-card">
+                    <div class="quote-number">1</div>
+                    <div class="quote-content">
+                        <p class="quote-text">"我们希望把<span class="highlight">数据的所有权归还给用户</span>，我们只是提供工具。"</p>
+                        <p class="quote-context">—— 余猛 · 论数据主权的初心</p>
+                    </div>
+                </div>
+
+                <div class="glass-card quote-card">
+                    <div class="quote-number">2</div>
+                    <div class="quote-content">
+                        <p class="quote-text">"Vibe Coding场景下，<span class="highlight">快比准更重要</span>。错几个字真的问题不大，Claude能自己理解。"</p>
+                        <p class="quote-context">—— 评论区用户 · 实战经验的结晶</p>
+                    </div>
+                </div>
+
+                <div class="glass-card quote-card">
+                    <div class="quote-number">3</div>
+                    <div class="quote-content">
+                        <p class="quote-text">"今天卖AI产品跟<span class="highlight">电商卖货没有本质区别</span>——找市场空白，找便宜好用的生产方法，包装好卖出去。"</p>
+                        <p class="quote-context">—— 龚震 · 论AI出海的消费品逻辑</p>
+                    </div>
+                </div>
+
+                <div class="glass-card quote-card">
+                    <div class="quote-number">4</div>
+                    <div class="quote-content">
+                        <p class="quote-text">"语音转文字只提高4倍效率，但<span class="highlight">有了记忆之后，可能可以提高10倍甚至几十倍</span>。"</p>
+                        <p class="quote-context">—— 余猛 · 论记忆的指数级杠杆</p>
+                    </div>
+                </div>
+
+                <div class="glass-card quote-card">
+                    <div class="quote-number">5</div>
+                    <div class="quote-content">
+                        <p class="quote-text">"<span class="highlight">赚1%-5%有钱人的钱</span>。给他们SOTA模型、SOTA体验就好。词库这种功能，免费做好就行，卡不到什么人。"</p>
+                        <p class="quote-context">—— 龚震 · 论商业化的本质</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 6: PERSONAS -->
+        <section id="personas">
+            <div class="section-header">
+                <div class="section-number">06 / USER PERSONAS</div>
+                <h2 class="section-title">场景筛选器</h2>
+                <p class="section-desc">点击查看不同人群的痛点画像与解决方案</p>
+            </div>
+
+            <div class="persona-filter">
+                <button class="persona-btn active" onclick="filterPersona('all')">全部</button>
+                <button class="persona-btn" onclick="filterPersona('coding')">AI Coding</button>
+                <button class="persona-btn" onclick="filterPersona('writing')">写作/自媒体</button>
+                <button class="persona-btn" onclick="filterPersona('professional')">医生/律师/教师</button>
+            </div>
+
+            <div class="persona-cards">
+                <div class="glass-card persona-card visible" data-category="coding">
+                    <div class="persona-header">
+                        <div class="persona-icon">👨‍💻</div>
+                        <div>
+                            <div class="persona-name">程序员 / AI从业者</div>
+                            <div class="persona-freq">频次：日活级 · 最高频用户</div>
+                        </div>
+                    </div>
+                    <p class="persona-pain">
+                        <strong>核心痛点：</strong>用Claude Code从早用到晚，打字速度成为瓶颈。Agent的"吞吐量"远超人的输入速度。
+                    </p>
+                    <div class="persona-solution">
+                        ✓ 端侧毫秒级响应 → 不打断思考流<br>
+                        ✓ 异步AI纠错 → 先出结果，后台润色
+                    </div>
+                </div>
+
+                <div class="glass-card persona-card visible" data-category="writing">
+                    <div class="persona-header">
+                        <div class="persona-icon">✍️</div>
+                        <div>
+                            <div class="persona-name">网文作者 / 自媒体</div>
+                            <div class="persona-freq">频次：日活级 · 高频用户</div>
+                        </div>
+                    </div>
+                    <p class="persona-pain">
+                        <strong>核心痛点：</strong>日产万字，手腕和肩颈职业病。思维流畅时，打字跟不上脑子。
+                    </p>
+                    <div class="persona-solution">
+                        ✓ 语音输入4倍效率 → 解放双手<br>
+                        ✓ AI分段分点 → 自动整理格式
+                    </div>
+                </div>
+
+                <div class="glass-card persona-card visible" data-category="professional">
+                    <div class="persona-header">
+                        <div class="persona-icon">⚕️</div>
+                        <div>
+                            <div class="persona-name">医生</div>
+                            <div class="persona-freq">频次：周几次活 · 意外发现的群体</div>
+                        </div>
+                    </div>
+                    <p class="persona-pain">
+                        <strong>核心痛点：</strong>写病历是日常负担，老医生不熟悉拼音打字，专业术语输入困难。
+                    </p>
+                    <div class="persona-solution">
+                        ✓ 语音直接转病历 → 释放问诊时间<br>
+                        ✓ 自定义词库（规划中）→ 医学术语精准识别
+                    </div>
+                </div>
+
+                <div class="glass-card persona-card visible" data-category="professional">
+                    <div class="persona-header">
+                        <div class="persona-icon">⚖️</div>
+                        <div>
+                            <div class="persona-name">律师</div>
+                            <div class="persona-freq">频次：周几次活</div>
+                        </div>
+                    </div>
+                    <p class="persona-pain">
+                        <strong>核心痛点：</strong>大量文案工作和客户沟通记录，法律术语需要精准表达。
+                    </p>
+                    <div class="persona-solution">
+                        ✓ 长文本语音输入 → 合同/文书起草提速<br>
+                        ✓ 记忆功能（开发中）→ 自动调取过往案例描述
+                    </div>
+                </div>
+
+                <div class="glass-card persona-card visible" data-category="professional">
+                    <div class="persona-header">
+                        <div class="persona-icon">👩‍🏫</div>
+                        <div>
+                            <div class="persona-name">教师</div>
+                            <div class="persona-freq">频次：周几次活</div>
+                        </div>
+                    </div>
+                    <p class="persona-pain">
+                        <strong>核心痛点：</strong>教案和备课需要大量文字工作，批改作业反馈也是负担。
+                    </p>
+                    <div class="persona-solution">
+                        ✓ 语音备课 → 想到哪说到哪<br>
+                        ✓ AI润色 → 口语自动书面化
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- PROMO SECTION -->
+        <section class="promo-section">
+            <div class="promo-content">
+                <div class="promo-badge">
+                    <span>⚡</span>
+                    <span>未来硅世界 × 闪电说 联名福利</span>
+                </div>
+                <h2 class="promo-title">免费获取 AI 纠错额度</h2>
+                <p style="font-size: 0.9rem; opacity: 0.9; margin-bottom: 0.5rem;">无需配置 API Key，直接体验 AI 语音输入</p>
+                <div class="promo-code" onclick="copyCode()">未来硅世界</div>
+                <p style="font-size: 0.75rem; opacity: 0.7;">点击复制口令</p>
+                <div class="promo-steps">
+                    <div class="promo-step">
+                        <span class="promo-step-num">1</span>
+                        <span>下载闪电说</span>
+                    </div>
+                    <div class="promo-step">
+                        <span class="promo-step-num">2</span>
+                        <span>左下角「联名活动」</span>
+                    </div>
+                    <div class="promo-step">
+                        <span class="promo-step-num">3</span>
+                        <span>右上角「口令兑换」</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-logo">未来硅世界</div>
+            <p class="footer-text">
+                一个关于 AI、出海与创造的双周播客<br>
+                主持：向阳乔木、姚全刚、尼克西、元子
+            </p>
+            <p class="footer-meta">
+                本期嘉宾：余猛（闪电说 CEO）· 龚震（闪电说 增长负责人）<br>
+                2026年1月17日 · 时长 2小时12分钟
+            </p>
+        </div>
+    </footer>
+
+    <div class="toast" id="toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-text">口令已复制到剪贴板</span>
+    </div>
+
+    <script>
+        // Navigation scroll effect
+        const nav = document.getElementById('nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Collapsible sections
+        function toggleCollapsible(element) {
+            element.classList.toggle('open');
+        }
+
+        // Persona filter
+        function filterPersona(category) {
+            // Update buttons
+            document.querySelectorAll('.persona-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update cards
+            document.querySelectorAll('.persona-card').forEach(card => {
+                if (category === 'all' || card.dataset.category === category) {
+                    card.classList.add('visible');
+                } else {
+                    card.classList.remove('visible');
+                }
+            });
+        }
+
+        // Copy promo code
+        function copyCode() {
+            navigator.clipboard.writeText('未来硅世界').then(() => {
+                const toast = document.getElementById('toast');
+                toast.classList.add('show');
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2500);
+            });
+        }
+
+        // Smooth scroll for nav links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for fade-in animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card, .section-header').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPT-5.1 深度解析 | AI巅峰对话</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Noto+Sans+SC:wght@300;400;500;700;900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-glass: rgba(18, 18, 26, 0.7);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            
+            /* Expert Colors */
+            --lecun-purple: #9d4edd;
+            --lecun-glow: rgba(157, 78, 221, 0.3);
+            --google-blue: #4285f4;
+            --google-red: #ea4335;
+            --google-yellow: #fbbc05;
+            --google-green: #34a853;
+            --anthropic-green: #00d4aa;
+            --anthropic-glow: rgba(0, 212, 170, 0.3);
+            --openai-white: #ffffff;
+            
+            /* Accent Colors */
+            --accent-cyan: #00f5ff;
+            --accent-magenta: #ff00ff;
+            --accent-gold: #ffd700;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.4);
+            
+            /* Semantic Colors */
+            --highlight-data: #4fc3f7;
+            --highlight-quote: #81c784;
+            --highlight-key: #ff8a80;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* Animated Background */
+        .bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, var(--lecun-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, var(--anthropic-glow) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(66, 133, 244, 0.1) 0%, transparent 60%);
+            animation: meshMove 20s ease-in-out infinite;
+        }
+
+        @keyframes meshMove {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.1) rotate(2deg); }
+        }
+
+        /* Grid Overlay */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+        }
+
+        /* Header */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 600px;
+            height: 600px;
+            background: conic-gradient(from 0deg, var(--lecun-purple), var(--google-blue), var(--anthropic-green), var(--lecun-purple));
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: heroGlow 10s linear infinite;
+        }
+
+        @keyframes heroGlow {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1.5rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            backdrop-filter: blur(20px);
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        .badge-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--anthropic-green);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(3rem, 10vw, 8rem);
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            background: linear-gradient(135deg, var(--text-primary) 0%, var(--accent-cyan) 50%, var(--lecun-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.8s ease-out 0.1s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.5rem;
+            font-weight: 300;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 0.8s ease-out 0.3s both;
+            position: relative;
+            z-index: 1;
+        }
+
+        .meta-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+        }
+
+        .meta-item:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-cyan);
+            box-shadow: 0 20px 40px rgba(0, 245, 255, 0.1);
+        }
+
+        .meta-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 2rem;
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .meta-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Navigation */
+        .nav-float {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 100px;
+            backdrop-filter: blur(20px);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+        }
+
+        /* Main Content */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* Section Headers */
+        .section {
+            padding: 6rem 0;
+            position: relative;
+        }
+
+        .section-header {
+            margin-bottom: 4rem;
+        }
+
+        .section-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            letter-spacing: 0.2em;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .section-lead {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 800px;
+        }
+
+        /* Quote Cards */
+        .quote-hero {
+            padding: 3rem;
+            background: linear-gradient(135deg, var(--bg-glass) 0%, rgba(0, 245, 255, 0.05) 100%);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-hero::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 200px;
+            font-family: Georgia, serif;
+            color: var(--accent-cyan);
+            opacity: 0.1;
+        }
+
+        .quote-text {
+            font-size: 1.75rem;
+            font-weight: 500;
+            line-height: 1.6;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+        }
+
+        .author-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .author-name {
+            font-weight: 600;
+        }
+
+        .author-role {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        /* Glass Cards */
+        .glass-card {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 20px;
+            padding: 2rem;
+            backdrop-filter: blur(20px);
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .card-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Expert Commentary */
+        .expert-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .expert-card {
+            padding: 1.5rem;
+            border-radius: 16px;
+            border: 1px solid var(--border-glass);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+
+        .expert-card.lecun {
+            background: linear-gradient(135deg, rgba(157, 78, 221, 0.1) 0%, var(--bg-glass) 100%);
+        }
+        .expert-card.lecun::before { background: var(--lecun-purple); }
+
+        .expert-card.google {
+            background: linear-gradient(135deg, rgba(66, 133, 244, 0.1) 0%, var(--bg-glass) 100%);
+        }
+        .expert-card.google::before { background: linear-gradient(var(--google-blue), var(--google-red), var(--google-yellow), var(--google-green)); }
+
+        .expert-card.anthropic {
+            background: linear-gradient(135deg, rgba(0, 212, 170, 0.1) 0%, var(--bg-glass) 100%);
+        }
+        .expert-card.anthropic::before { background: var(--anthropic-green); }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .expert-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.9rem;
+        }
+
+        .expert-avatar.lecun { background: var(--lecun-purple); }
+        .expert-avatar.google { background: linear-gradient(135deg, var(--google-blue), var(--google-red)); }
+        .expert-avatar.anthropic { background: var(--anthropic-green); color: var(--bg-primary); }
+
+        .expert-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .expert-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .expert-quote {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            line-height: 1.7;
+        }
+
+        /* Mind Map */
+        .mindmap-container {
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 4rem 0;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 800px;
+        }
+
+        .mindmap-root {
+            background: linear-gradient(135deg, var(--accent-cyan), var(--lecun-purple));
+            padding: 1.5rem 3rem;
+            border-radius: 16px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .mindmap-root::after {
+            content: '';
+            position: absolute;
+            bottom: -2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 2rem;
+            background: var(--accent-cyan);
+        }
+
+        .mindmap-branches {
+            display: flex;
+            gap: 2rem;
+            position: relative;
+        }
+
+        .mindmap-branches::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan), transparent);
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 200px;
+        }
+
+        .branch-connector {
+            width: 2px;
+            height: 2rem;
+            background: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .branch-node {
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 1rem;
+            font-weight: 500;
+        }
+
+        .branch-node.reasoning { background: rgba(157, 78, 221, 0.3); border: 1px solid var(--lecun-purple); }
+        .branch-node.personality { background: rgba(66, 133, 244, 0.3); border: 1px solid var(--google-blue); }
+        .branch-node.memory { background: rgba(0, 212, 170, 0.3); border: 1px solid var(--anthropic-green); }
+        .branch-node.safety { background: rgba(255, 138, 128, 0.3); border: 1px solid var(--highlight-key); }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .branch-item {
+            padding: 0.5rem 1rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* Semantic Highlights */
+        .hl-data {
+            color: var(--highlight-data);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 600;
+        }
+
+        .hl-quote {
+            color: var(--highlight-quote);
+            background: rgba(129, 199, 132, 0.1);
+            padding: 0.1em 0.4em;
+            border-radius: 4px;
+        }
+
+        .hl-key {
+            color: var(--highlight-key);
+            font-weight: 600;
+        }
+
+        /* Collapsible Sections */
+        .collapsible {
+            margin-bottom: 1rem;
+        }
+
+        .collapsible-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            border-color: var(--accent-cyan);
+        }
+
+        .collapsible-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .collapsible-preview {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-top: 0.25rem;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+            color: var(--accent-cyan);
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible.open .collapsible-icon {
+            transform: rotate(45deg);
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 2000px;
+        }
+
+        .collapsible-inner {
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-glass);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+        }
+
+        /* Data Comparison */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 2rem 0;
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-glass);
+        }
+
+        .comparison-table th {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 600;
+            color: var(--accent-cyan);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .comparison-table tr:hover td {
+            background: rgba(0, 245, 255, 0.05);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(var(--accent-cyan), var(--lecun-purple), var(--anthropic-green));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--bg-glass);
+            border: 1px solid var(--border-glass);
+            border-radius: 12px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 1.5rem;
+            width: 12px;
+            height: 12px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            transform: translateX(-5px);
+        }
+
+        .timeline-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 4rem 0;
+            text-align: center;
+            border-top: 1px solid var(--border-glass);
+            margin-top: 6rem;
+        }
+
+        .footer-text {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero-meta {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-float {
+                bottom: 1rem;
+                padding: 0.4rem;
+                flex-wrap: wrap;
+                justify-content: center;
+                width: calc(100% - 2rem);
+            }
+
+            .nav-item {
+                padding: 0.5rem 1rem;
+                font-size: 0.75rem;
+            }
+
+            .expert-panel {
+                grid-template-columns: 1fr;
+            }
+
+            .mindmap-container {
+                padding: 1.5rem;
+            }
+
+            .mindmap {
+                min-width: 600px;
+            }
+
+            .mindmap-branches {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .mindmap-branches::before {
+                display: none;
+            }
+        }
+
+        /* Scroll Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: all 0.8s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-primary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border-glass);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--accent-cyan);
+        }
+
+        /* Print Styles */
+        @media print {
+            .bg-mesh, .grid-overlay, .nav-float { display: none; }
+            body { background: white; color: black; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-mesh"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span class="badge-dot"></span>
+            OpenAI Podcast Ep. 11 深度解析
+        </div>
+        <h1 class="hero-title">GPT-5.1</h1>
+        <p class="hero-subtitle">推理能力全面升级 · 人格定制化 · 用户体验革命<br>首次实现：所有模型皆为推理模型</p>
+        <div class="hero-meta">
+            <div class="meta-item">
+                <span class="meta-value">800M+</span>
+                <span class="meta-label">周活跃用户</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-value">System 1+2</span>
+                <span class="meta-label">双系统思维</span>
+            </div>
+            <div class="meta-item">
+                <span class="meta-value">∞</span>
+                <span class="meta-label">可定制人格</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Navigation -->
+    <nav class="nav-float">
+        <a class="nav-item active" href="#core">核心升级</a>
+        <a class="nav-item" href="#personality">人格系统</a>
+        <a class="nav-item" href="#architecture">架构解析</a>
+        <a class="nav-item" href="#future">未来展望</a>
+    </nav>
+
+    <main class="container">
+        <!-- Section 1: Core Upgrades -->
+        <section class="section" id="core">
+            <div class="section-header reveal">
+                <div class="section-number">01 / CORE BREAKTHROUGH</div>
+                <h2 class="section-title">推理能力的范式跃迁</h2>
+                <p class="section-lead">GPT-5.1 标志着一个历史性时刻：所有面向用户的模型首次全部具备推理能力。这不是简单的性能提升，而是认知架构的根本性变革。</p>
+            </div>
+
+            <div class="quote-hero reveal">
+                <p class="quote-text">"For the first time ever, <span class="hl-key">all of the models in chat are reasoning models</span>. The model can decide to think — it'll decide how much it wants to think based on the prompt."</p>
+                <div class="quote-author">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--accent-cyan), var(--lecun-purple));">CK</div>
+                    <div class="author-info">
+                        <span class="author-name">Christina Kim</span>
+                        <span class="author-role">Research Lead, Post-Training @ OpenAI</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--lecun-purple), var(--accent-magenta));">🧠</div>
+                    <h3 class="card-title">System 1 + System 2 融合</h3>
+                    <div class="card-content">
+                        <p>借鉴 Daniel Kahneman 的双系统理论：</p>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li><strong>System 1</strong>：快速直觉响应（"Hi" → 即时回复）</li>
+                            <li><strong>System 2</strong>：深度推理（复杂问题 → 思考链 + 工具调用）</li>
+                        </ul>
+                        <p style="margin-top: 1rem;">模型自主决定思考深度，实现<span class="hl-key">认知资源的动态分配</span>。</p>
+                    </div>
+                </div>
+
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--google-blue), var(--google-green));">📈</div>
+                    <h3 class="card-title">Eval 全面提升</h3>
+                    <div class="card-content">
+                        <p>推理能力的引入带来了全方位的能力提升：</p>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li><span class="hl-data">指令遵循</span>能力显著增强</li>
+                            <li>即使是看似简单的任务也能从"思考"中获益</li>
+                            <li>模型"回应前思考"成为默认行为模式</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--anthropic-green), var(--accent-cyan));">🔧</div>
+                    <h3 class="card-title">智能模型切换器</h3>
+                    <div class="card-content">
+                        <p>GPT-5.1 引入了 <span class="hl-key">Auto Switcher</span> 机制：</p>
+                        <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                            <li>根据查询复杂度在 Chat/Reasoning 模型间切换</li>
+                            <li>切换器本身也是一个模型</li>
+                            <li>平衡事实准确性、响应延迟、用户体验</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expert Commentary -->
+            <div class="expert-panel">
+                <div class="expert-card lecun reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar lecun">YL</div>
+                        <div>
+                            <div class="expert-name">Yann LeCun</div>
+                            <div class="expert-title">Chief AI Scientist, Meta</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"System 1/2 的融合是个有趣的工程方案，但这仍然是在 token 预测范式内的优化。真正的智能需要 World Model —— 对物理世界因果关系的内在理解，而非统计相关性的涌现。推理能力的'涌现'本质上是记忆检索的高级形式。"</p>
+                </div>
+
+                <div class="expert-card google reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar google">SB</div>
+                        <div>
+                            <div class="expert-name">Sergey Brin</div>
+                            <div class="expert-title">Co-founder, Google</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"800M 周活用户的模型切换器本质上是一个超大规模的路由系统。这让我想起早期 Google 的挑战 —— 如何用最少的计算资源给出最好的答案。但问题是：当用户不知道自己在和哪个模型对话时，信任如何建立？"</p>
+                </div>
+
+                <div class="expert-card anthropic reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar anthropic">DA</div>
+                        <div>
+                            <div class="expert-name">Dario Amodei</div>
+                            <div class="expert-title">CEO, Anthropic</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"'模型决定自己思考多少'这个表述值得审视。这实际上是将元认知能力交给了 RL 的 reward shaping。问题是：我们真的理解 reward config 的长期后果吗？Scaling 不能解决 Alignment 的根本问题。"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Personality System -->
+        <section class="section" id="personality">
+            <div class="section-header reveal">
+                <div class="section-number">02 / PERSONALITY ENGINEERING</div>
+                <h2 class="section-title">人格系统的解构与重建</h2>
+                <p class="section-lead">"Personality" 是一个被严重过载的术语。它不仅是响应风格，更是整个产品体验的总和 —— 从字体选择到响应延迟，从上下文窗口到速率限制。</p>
+            </div>
+
+            <div class="quote-hero reveal">
+                <p class="quote-text">"Personality is a bit of an <span class="hl-key">overloaded term</span>. For most users, it's the whole experience — the font, the latency, even whether we rate limit them. Part of my personality is the shoes I've chosen to wear today."</p>
+                <div class="quote-author">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--google-blue), var(--anthropic-green));">LR</div>
+                    <div class="author-info">
+                        <span class="author-name">Laurentia Ramen</span>
+                        <span class="author-role">Product Manager, Model Behavior @ OpenAI</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mind Map -->
+            <div class="mindmap-container reveal">
+                <h3 style="text-align: center; margin-bottom: 2rem; font-family: 'Space Grotesk', sans-serif;">GPT-5.1 人格系统架构</h3>
+                <div class="mindmap">
+                    <div class="mindmap-root">Personality (用户感知)</div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node reasoning">响应风格层</div>
+                            <div class="branch-items">
+                                <div class="branch-item">简洁 vs 详尽</div>
+                                <div class="branch-item">Emoji 使用频率</div>
+                                <div class="branch-item">语气正式度</div>
+                                <div class="branch-item">Nerd Mode / Country Mode</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node personality">产品体验层</div>
+                            <div class="branch-items">
+                                <div class="branch-item">字体与视觉设计</div>
+                                <div class="branch-item">响应延迟 (Latency)</div>
+                                <div class="branch-item">速率限制策略</div>
+                                <div class="branch-item">模型切换体验</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node memory">上下文层</div>
+                            <div class="branch-items">
+                                <div class="branch-item">Context Window 容量</div>
+                                <div class="branch-item">Memory 持久化</div>
+                                <div class="branch-item">Custom Instructions</div>
+                                <div class="branch-item">对话历史携带</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node safety">能力边界层</div>
+                            <div class="branch-items">
+                                <div class="branch-item">Safe Completions</div>
+                                <div class="branch-item">创意表达范围</div>
+                                <div class="branch-item">可控性边界</div>
+                                <div class="branch-item">Refusal 策略</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Collapsible Sections -->
+            <div class="collapsible reveal" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div>
+                        <div class="collapsible-title">🎯 GPT-5 的"冷淡"问题根因分析</div>
+                        <div class="collapsible-preview">用户反馈 → 系统诊断 → 修复策略</div>
+                    </div>
+                    <span class="collapsible-icon">+</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p style="margin-bottom: 1.5rem;">用户普遍反馈 GPT-5 感觉"直觉变弱"、"不够温暖"。深入调查后发现问题是多维度的：</p>
+                        
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>问题维度</th>
+                                    <th>症状</th>
+                                    <th>5.1 修复方案</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="hl-key">Context Window</span></td>
+                                    <td>模型"忘记"用户10轮前说的重要信息</td>
+                                    <td>增强上下文携带能力</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="hl-key">Auto Switcher</span></td>
+                                    <td>情感对话中突然切换到临床风格</td>
+                                    <td>优化切换时机与过渡平滑度</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="hl-key">Custom Instructions</span></td>
+                                    <td>个性化设置无法持续生效</td>
+                                    <td>强化指令持久化机制</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="hl-key">响应风格</span></td>
+                                    <td>模型固有行为过于机械</td>
+                                    <td>引入 Personality/Style 特性</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="expert-panel" style="margin-top: 2rem;">
+                            <div class="expert-card anthropic">
+                                <div class="expert-header">
+                                    <div class="expert-avatar anthropic">DA</div>
+                                    <div>
+                                        <div class="expert-name">Dario Amodei</div>
+                                        <div class="expert-title">CEO, Anthropic</div>
+                                    </div>
+                                </div>
+                                <p class="expert-quote">"这个案例很好地说明了为什么'温暖'不能只是表面的 style tuning。真正的问题在于模型对用户状态的持续追踪能力 —— 这是 context management 的工程问题，也是 alignment 的深层挑战：模型如何真正'理解'而不是'模拟'关心？"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="collapsible reveal" onclick="this.classList.toggle('open')">
+                <div class="collapsible-header">
+                    <div>
+                        <div class="collapsible-title">⚖️ 最大化自由 vs 最小化伤害的平衡艺术</div>
+                        <div class="collapsible-preview">Model Spec 哲学 → 可控性设计 → Safe Completions</div>
+                    </div>
+                    <span class="collapsible-icon">+</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <div class="quote-hero" style="margin-bottom: 2rem;">
+                            <p class="quote-text" style="font-size: 1.25rem;">"Part of the art here is figuring out how to <span class="hl-key">pull out quirks of the model</span> that can come across as personality <span class="hl-key">without breaking steerability</span> — which is what users ultimately want."</p>
+                        </div>
+
+                        <h4 style="margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">M-dash 案例：可控性的边界测试</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            如果团队试图训练模型"永远不使用 M-dash"，那么真正需要 M-dash 的用户就无法通过任何指令获得它。
+                            这就违背了 Model Spec 的核心原则：<span class="hl-key">用户应该能够做他们想做的任何事</span>。
+                        </p>
+
+                        <h4 style="margin-bottom: 1rem; font-family: 'Space Grotesk', sans-serif;">Safe Completions：新一代安全机制</h4>
+                        <p style="color: var(--text-secondary); margin-bottom: 1.5rem;">
+                            早期模型的策略是"一切都拒绝"。现在的 Safe Completions 机制会在触发安全边界时，
+                            <span class="hl-quote">仍然真诚地尝试解决用户的请求，只是不做真正有害的部分</span>。
+                        </p>
+
+                        <div class="glass-card" style="margin-top: 1.5rem; border-left: 4px solid var(--highlight-key);">
+                            <h4 style="margin-bottom: 1rem;">⚠️ 边缘案例：律师的性侵案件校对</h4>
+                            <p style="color: var(--text-secondary);">
+                                一位律师使用 ChatGPT 校对性侵案件文书，模型自动删除了所有涉及攻击描述的内容 —— 
+                                如果这份文件被提交，将严重损害当事人的案件。这说明<span class="hl-key">上下文理解</span>
+                                对于安全系统至关重要：同样的内容在不同语境下有完全不同的伦理含义。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Architecture -->
+        <section class="section" id="architecture">
+            <div class="section-header reveal">
+                <div class="section-number">03 / SYSTEM ARCHITECTURE</div>
+                <h2 class="section-title">模型系统架构解密</h2>
+                <p class="section-lead">"当我们说 5.1 的时候，人们以为是一组权重。实际上它是一个推理模型、一个轻量推理模型、一个 Auto Switcher（本身也是模型）、以及各种工具的复杂系统。"</p>
+            </div>
+
+            <div class="quote-hero reveal">
+                <p class="quote-text">"GPT-5.1 is not just one singular set of weights. It's a <span class="hl-key">system of models</span> — a reasoning model, a lighter reasoning model, an auto switcher which is also a model, and different tools backed by different models."</p>
+                <div class="quote-author">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--lecun-purple), var(--accent-cyan));">CK</div>
+                    <div class="author-info">
+                        <span class="author-name">Christina Kim</span>
+                        <span class="author-role">Research Lead, Post-Training @ OpenAI</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-cyan), var(--google-blue));">🔀</div>
+                    <h3 class="card-title">Multi-Model Orchestration</h3>
+                    <div class="card-content">
+                        <div class="timeline">
+                            <div class="timeline-item">
+                                <div class="timeline-title">用户输入</div>
+                                <div class="timeline-content">查询进入系统</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">Auto Switcher 评估</div>
+                                <div class="timeline-content">评估复杂度、用户偏好、历史模式</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">模型路由</div>
+                                <div class="timeline-content">Chat Model / Reasoning Model / Deep Research</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">工具调用决策</div>
+                                <div class="timeline-content">是否需要外部工具（搜索、代码执行等）</div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-title">响应生成与后处理</div>
+                                <div class="timeline-content">Style/Personality 应用、安全检查</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--anthropic-green), var(--accent-magenta));">🧪</div>
+                    <h3 class="card-title">User Signals Research</h3>
+                    <div class="card-content">
+                        <p style="margin-bottom: 1rem;">OpenAI 正在开发一种新的研究方向：<span class="hl-key">用户信号研究</span></p>
+                        <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <li>训练 Reward Models 来理解用户<span class="hl-data">意图</span></li>
+                            <li>在 RL 训练中引入生产环境的用户数据信号</li>
+                            <li>理解"用户想要什么"vs"用户说了什么"的差异</li>
+                            <li>基于对话历史、Memory、用户上下文进行推理</li>
+                        </ul>
+                        <p style="margin-top: 1rem; font-style: italic; color: var(--text-muted);">
+                            "EQ 的提升本质上依赖于更智能的模型 —— 因为它需要真正理解用户的意图和上下文。"
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="expert-panel">
+                <div class="expert-card lecun reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar lecun">YL</div>
+                        <div>
+                            <div class="expert-name">Yann LeCun</div>
+                            <div class="expert-title">Chief AI Scientist, Meta</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"'模型系统'的说法很诚实，但也暴露了当前架构的局限性。我们需要多个模型协作来完成人类大脑轻松完成的任务 —— 这说明我们还没有找到正确的计算原语。真正的突破需要的是 Joint Embedding Predictive Architecture，而不是更复杂的 token 预测器堆叠。"</p>
+                </div>
+
+                <div class="expert-card google reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar google">LP</div>
+                        <div>
+                            <div class="expert-name">Larry Page</div>
+                            <div class="expert-title">Co-founder, Google</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"这个架构让我想起早期 Google 的 Universal Search —— 将多个垂直搜索引擎的结果融合到一个界面。关键问题是：当系统变得如此复杂，你如何调试？当 Auto Switcher 做出错误决策，反馈信号如何传播回去？这是工程规模化的核心挑战。"</p>
+                </div>
+
+                <div class="expert-card anthropic reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar anthropic">DA</div>
+                        <div>
+                            <div class="expert-name">Dario Amodei</div>
+                            <div class="expert-title">CEO, Anthropic</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"User Signals Research 是一个有趣但危险的方向。用生产数据训练 reward model 意味着你在优化'用户喜欢什么'而不是'什么对用户好'。这正是社交媒体算法的陷阱。AI Safety 的核心问题之一就是如何避免 sycophancy（谄媚）—— 而这个方向可能会加剧这个问题。"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Future -->
+        <section class="section" id="future">
+            <div class="section-header reveal">
+                <div class="section-number">04 / FUTURE TRAJECTORY</div>
+                <h2 class="section-title">智能平民化的下一章</h2>
+                <p class="section-lead">"Intelligence too cheap to meter" —— 当智能变得廉价到无需计量，新的产品形态和使用场景将会涌现。</p>
+            </div>
+
+            <div class="quote-hero reveal">
+                <p class="quote-text">"There's no way that <span class="hl-key">one model personality</span> can service <span class="hl-data">800 million</span> weekly active users. You should be able to get the experience that you want with ChatGPT."</p>
+                <div class="quote-author">
+                    <div class="author-avatar" style="background: linear-gradient(135deg, var(--lecun-purple), var(--accent-cyan));">CK</div>
+                    <div class="author-info">
+                        <span class="author-name">Christina Kim</span>
+                        <span class="author-role">Research Lead, Post-Training @ OpenAI</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="content-grid">
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-gold), var(--google-yellow));">🔬</div>
+                    <h3 class="card-title">PhD 级专业响应</h3>
+                    <div class="card-content">
+                        <p style="margin-bottom: 1rem;">一个生化研究 PhD 的故事：</p>
+                        <blockquote style="border-left: 3px solid var(--accent-cyan); padding-left: 1rem; color: var(--text-secondary); margin-bottom: 1rem;">
+                            "最初模型给出的答案像是本科生水平。当我告诉它我是前沿研究员、在这个实验室使用这些工具研究这个领域 —— <span class="hl-key">模型提出了我们实验室两周前刚刚突破但还没发表的内容</span>。"
+                        </blockquote>
+                        <p style="color: var(--text-muted); font-style: italic;">
+                            Prompt Engineering 的精髓：模型的能力远超默认表现，关键在于如何解锁。
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--anthropic-green), var(--google-green));">🌱</div>
+                    <h3 class="card-title">自动化的自定义</h3>
+                    <div class="card-content">
+                        <p style="margin-bottom: 1rem;">未来方向：<span class="hl-key">推断而非配置</span></p>
+                        <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <li>模型通过 Memory 自动理解用户专业背景</li>
+                            <li>根据上下文自动调整响应深度和风格</li>
+                            <li>但用户始终保持控制权 —— 可以查看和修改推断结果</li>
+                        </ul>
+                        <p style="margin-top: 1rem; color: var(--text-muted);">
+                            "用户应该始终知道我们在推断什么、这如何影响模型行为，并且有工具来改变它。"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="glass-card reveal">
+                    <div class="card-icon" style="background: linear-gradient(135deg, var(--highlight-key), var(--accent-magenta));">🎨</div>
+                    <h3 class="card-title">创意表达的扩展</h3>
+                    <div class="card-content">
+                        <p style="margin-bottom: 1rem;">5.1 的一个"隐藏特性"：<span class="hl-key">表达范围的显著扩展</span></p>
+                        <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                            <li>可以写出极度精炼的内容，也可以写出极度简单的内容</li>
+                            <li>默认风格可能感觉差异不大</li>
+                            <li>但当你"推动它的极限"时，能力边界大幅扩展</li>
+                        </ul>
+                        <p style="margin-top: 1rem; color: var(--text-muted);">
+                            这是 Post-training 的艺术 —— 在主观领域没有标准答案时如何训练。
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Expert Panel -->
+            <div class="expert-panel" style="margin-top: 4rem;">
+                <div class="expert-card lecun reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar lecun">YL</div>
+                        <div>
+                            <div class="expert-name">Yann LeCun</div>
+                            <div class="expert-title">Chief AI Scientist, Meta</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"'Intelligence too cheap to meter' 是一个诱人但危险的愿景。真正的问题是：这种'智能'的本质是什么？如果它只是超大规模的模式匹配，那么'廉价'只会加速错误信息的传播。我们需要的是可靠的智能，而不是廉价的智能。"</p>
+                </div>
+
+                <div class="expert-card google reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar google">SB</div>
+                        <div>
+                            <div class="expert-name">Sergey Brin</div>
+                            <div class="expert-title">Co-founder, Google</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"PhD 案例展示了 AI 最令人兴奋的潜力 —— 成为专家的思维伙伴而不只是助手。但这也提出了一个问题：当 AI 能够预测尚未发表的研究成果，科学优先权、知识产权的概念将如何演变？这是我们需要提前思考的。"</p>
+                </div>
+
+                <div class="expert-card anthropic reveal">
+                    <div class="expert-header">
+                        <div class="expert-avatar anthropic">DA</div>
+                        <div>
+                            <div class="expert-name">Dario Amodei</div>
+                            <div class="expert-title">CEO, Anthropic</div>
+                        </div>
+                    </div>
+                    <p class="expert-quote">"'用户始终保持控制权'是正确的设计原则，但实现它比说起来难得多。当系统变得足够复杂，'控制'本身就变成了一种幻觉。真正的挑战是如何设计出既强大又可理解的系统 —— 这是 interpretability 研究的核心使命。"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Takeaways -->
+        <section class="section">
+            <div class="section-header reveal">
+                <div class="section-number">∞ / KEY INSIGHTS</div>
+                <h2 class="section-title">核心洞察提炼</h2>
+            </div>
+
+            <div class="content-grid">
+                <div class="glass-card reveal" style="border-top: 3px solid var(--lecun-purple);">
+                    <div class="card-title" style="color: var(--lecun-purple);">🧠 架构层</div>
+                    <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>所有模型首次全部具备推理能力</li>
+                        <li>System 1/2 融合实现认知资源动态分配</li>
+                        <li>GPT-5.1 是模型系统，不是单一模型</li>
+                        <li>Auto Switcher 本身也是一个模型</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card reveal" style="border-top: 3px solid var(--google-blue);">
+                    <div class="card-title" style="color: var(--google-blue);">🎯 产品层</div>
+                    <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>Personality = 整体产品体验（字体、延迟、限制...）</li>
+                        <li>Custom Instructions 持久化能力增强</li>
+                        <li>Memory 成为个性化的核心基础设施</li>
+                        <li>800M 用户需要无限种个性化体验</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card reveal" style="border-top: 3px solid var(--anthropic-green);">
+                    <div class="card-title" style="color: var(--anthropic-green);">⚖️ 安全层</div>
+                    <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>最大化自由 vs 最小化伤害的平衡</li>
+                        <li>Safe Completions 取代简单 Refusal</li>
+                        <li>上下文理解对安全决策至关重要</li>
+                        <li>可控性是用户自由的核心</li>
+                    </ul>
+                </div>
+
+                <div class="glass-card reveal" style="border-top: 3px solid var(--accent-gold);">
+                    <div class="card-title" style="color: var(--accent-gold);">🔮 趋势层</div>
+                    <ul style="padding-left: 1.5rem; color: var(--text-secondary);">
+                        <li>推断优于配置：自动理解用户需求</li>
+                        <li>更智能的模型 = 更好的 EQ</li>
+                        <li>创意表达范围显著扩展</li>
+                        <li>新形态产品将随 scaling 涌现</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p class="footer-text">
+            基于 OpenAI Podcast Ep. 11 深度解析 | 
+            <span style="color: var(--lecun-purple);">LeCun</span> · 
+            <span style="color: var(--google-blue);">Google</span> · 
+            <span style="color: var(--anthropic-green);">Anthropic</span> 
+            视角评述
+        </p>
+        <p class="footer-text" style="margin-top: 0.5rem; opacity: 0.5;">
+            Generated with Claude | 2025
+        </p>
+    </footer>
+
+    <script>
+        // Scroll Reveal Animation
+        const revealElements = document.querySelectorAll('.reveal');
+        
+        const revealOnScroll = () => {
+            revealElements.forEach(el => {
+                const elementTop = el.getBoundingClientRect().top;
+                const windowHeight = window.innerHeight;
+                
+                if (elementTop < windowHeight - 100) {
+                    el.classList.add('visible');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', revealOnScroll);
+        window.addEventListener('load', revealOnScroll);
+
+        // Navigation Active State
+        const navItems = document.querySelectorAll('.nav-item');
+        const sections = document.querySelectorAll('.section[id]');
+
+        const updateNav = () => {
+            const scrollPos = window.scrollY + 200;
+
+            sections.forEach(section => {
+                if (scrollPos >= section.offsetTop && scrollPos < section.offsetTop + section.offsetHeight) {
+                    navItems.forEach(item => item.classList.remove('active'));
+                    const activeNav = document.querySelector(`.nav-item[href="#${section.id}"]`);
+                    if (activeNav) activeNav.classList.add('active');
+                }
+            });
+        };
+
+        window.addEventListener('scroll', updateNav);
+
+        // Smooth scroll for navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = item.getAttribute('href');
+                const target = document.querySelector(targetId);
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
