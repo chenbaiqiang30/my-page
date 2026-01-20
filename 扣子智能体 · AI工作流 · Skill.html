@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>扣子2.0概念深度解析 | AI智能体·工作流·Skill全景图</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --glass: rgba(255,255,255,0.08);
+            --glass-border: rgba(255,255,255,0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+        
+        [data-theme="light"] {
+            --dark: #f8fafc;
+            --light: #1e1b4b;
+            --glass: rgba(0,0,0,0.05);
+            --glass-border: rgba(0,0,0,0.1);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: var(--dark);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: 
+                radial-gradient(ellipse at 20% 20%, rgba(99,102,241,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 80%, rgba(236,72,153,0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 50%, rgba(6,182,212,0.08) 0%, transparent 60%),
+                var(--dark);
+        }
+        
+        .floating-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.4;
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        
+        .orb-1 { width: 400px; height: 400px; background: var(--gradient-1); top: -100px; left: -100px; }
+        .orb-2 { width: 300px; height: 300px; background: var(--gradient-2); top: 50%; right: -50px; animation-delay: -5s; }
+        .orb-3 { width: 350px; height: 350px; background: var(--gradient-3); bottom: -100px; left: 30%; animation-delay: -10s; }
+        
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(20px, -30px) rotate(5deg); }
+            50% { transform: translate(-10px, 20px) rotate(-5deg); }
+            75% { transform: translate(30px, 10px) rotate(3deg); }
+        }
+        
+        /* 头部 */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 1rem 2rem;
+            background: rgba(30,27,75,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        [data-theme="light"] .header {
+            background: rgba(248,250,252,0.9);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 13px;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle::after {
+            content: '🌙';
+            position: absolute;
+            left: 3px;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        [data-theme="light"] .theme-toggle::after {
+            content: '☀️';
+            left: calc(100% - 23px);
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        /* Hero区域 */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--gradient-1);
+            border-radius: 50px;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(99,102,241,0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(99,102,241,0); }
+        }
+        
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 800;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+        
+        .hero h1 .gradient-text {
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .hero-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        /* 核心洞察卡片 */
+        .insight-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-2);
+        }
+        
+        .insight-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .insight-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-2);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+        }
+        
+        .insight-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .insight-quote {
+            font-size: 1.5rem;
+            font-weight: 600;
+            line-height: 1.6;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(236,72,153,0.1) 100%);
+            border-radius: 16px;
+            border-left: 4px solid var(--secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .insight-quote .highlight-red { color: #f87171; font-weight: 700; }
+        .insight-quote .highlight-blue { color: #60a5fa; font-weight: 700; }
+        .insight-quote .highlight-green { color: #34d399; font-weight: 700; }
+        .insight-quote .highlight-yellow { color: #fbbf24; font-weight: 700; }
+        .insight-quote .highlight-purple { color: #a78bfa; font-weight: 700; }
+        
+        .insight-author {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .author-avatar {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .author-info h4 {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .author-info span {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        /* 思维导图 */
+        .mindmap-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .section-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-3);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+        }
+        
+        .mindmap {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            overflow-x: auto;
+        }
+        
+        .mindmap-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+            min-width: 900px;
+        }
+        
+        .mindmap-root {
+            background: var(--gradient-1);
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            font-size: 1.25rem;
+            font-weight: 700;
+            box-shadow: 0 10px 40px rgba(99,102,241,0.3);
+            position: relative;
+        }
+        
+        .mindmap-root::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            width: 2px;
+            height: 30px;
+            background: var(--primary);
+        }
+        
+        .mindmap-level {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+            position: relative;
+        }
+        
+        .mindmap-level::before {
+            content: '';
+            position: absolute;
+            top: -15px;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary), transparent);
+        }
+        
+        .mindmap-node {
+            background: var(--glass);
+            border: 2px solid;
+            padding: 1rem 1.5rem;
+            border-radius: 16px;
+            text-align: center;
+            min-width: 160px;
+            position: relative;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .mindmap-node:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .mindmap-node::before {
+            content: '';
+            position: absolute;
+            top: -17px;
+            left: 50%;
+            width: 2px;
+            height: 15px;
+            background: var(--primary);
+        }
+        
+        .node-l1 { border-color: var(--primary); background: rgba(99,102,241,0.15); }
+        .node-l2 { border-color: var(--secondary); background: rgba(236,72,153,0.15); }
+        .node-l3 { border-color: var(--accent); background: rgba(6,182,212,0.15); }
+        .node-l4 { border-color: var(--success); background: rgba(16,185,129,0.15); }
+        
+        .node-title {
+            font-weight: 700;
+            font-size: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .node-desc {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+        
+        /* 逻辑图 */
+        .logic-diagram {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .logic-flow {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            padding: 2rem 0;
+        }
+        
+        .logic-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .logic-box {
+            padding: 1.5rem 2rem;
+            border-radius: 16px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 140px;
+            position: relative;
+        }
+        
+        .logic-box.l1 { background: var(--gradient-1); }
+        .logic-box.l2 { background: var(--gradient-2); }
+        .logic-box.l3 { background: var(--gradient-3); }
+        .logic-box.l4 { background: var(--gradient-4); color: #1e293b; }
+        
+        .logic-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            padding: 0.25rem 0.75rem;
+            background: var(--glass);
+            border-radius: 20px;
+        }
+        
+        .logic-arrow {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        /* 技能层级金字塔 */
+        .pyramid-section {
+            margin-bottom: 3rem;
+        }
+        
+        .pyramid {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+        }
+        
+        .pyramid-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .pyramid-level {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            padding: 1.5rem 2rem;
+            border-radius: 12px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .pyramid-level:hover {
+            transform: scale(1.02);
+        }
+        
+        .pyramid-level.l4 { width: 40%; background: linear-gradient(135deg, #10b981 0%, #34d399 100%); }
+        .pyramid-level.l3 { width: 55%; background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%); }
+        .pyramid-level.l2 { width: 70%; background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); color: #1e293b; }
+        .pyramid-level.l1 { width: 85%; background: linear-gradient(135deg, #ef4444 0%, #f87171 100%); }
+        
+        .pyramid-rank {
+            font-size: 1.5rem;
+            font-weight: 800;
+            min-width: 60px;
+        }
+        
+        .pyramid-info {
+            flex: 1;
+        }
+        
+        .pyramid-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .pyramid-desc {
+            font-size: 0.875rem;
+            opacity: 0.9;
+        }
+        
+        .pyramid-value {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.25rem;
+        }
+        
+        .value-bar {
+            width: 100px;
+            height: 8px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .value-bar-fill {
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            border-radius: 4px;
+            transition: width 1s ease;
+        }
+        
+        .value-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        /* 金句卡片 */
+        .quotes-section {
+            margin-bottom: 3rem;
+        }
+        
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .quote-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            font-size: 8rem;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+        
+        .quote-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quote-text .em-red { color: #f87171; font-weight: 700; }
+        .quote-text .em-blue { color: #60a5fa; font-weight: 700; }
+        .quote-text .em-green { color: #34d399; font-weight: 700; }
+        .quote-text .em-yellow { color: #fbbf24; font-weight: 700; }
+        .quote-text .em-purple { color: #a78bfa; font-weight: 700; }
+        .quote-text .em-pink { color: #f472b6; font-weight: 700; }
+        
+        .quote-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .quote-author {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+        
+        .quote-tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .tag-insight { background: rgba(99,102,241,0.2); color: #818cf8; }
+        .tag-strategy { background: rgba(16,185,129,0.2); color: #34d399; }
+        .tag-warning { background: rgba(245,158,11,0.2); color: #fbbf24; }
+        .tag-method { background: rgba(236,72,153,0.2); color: #f472b6; }
+        
+        /* 决策树 */
+        .decision-tree {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .decision-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .decision-node {
+            padding: 1.5rem 2.5rem;
+            border-radius: 16px;
+            text-align: center;
+            font-weight: 600;
+            position: relative;
+        }
+        
+        .decision-question {
+            background: var(--gradient-1);
+            max-width: 400px;
+        }
+        
+        .decision-branches {
+            display: flex;
+            gap: 3rem;
+            position: relative;
+        }
+        
+        .decision-branches::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: var(--primary);
+        }
+        
+        .decision-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .branch-label {
+            padding: 0.5rem 1rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            font-size: 0.875rem;
+            position: relative;
+        }
+        
+        .branch-label::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            width: 2px;
+            height: 20px;
+            background: var(--primary);
+        }
+        
+        .decision-answer {
+            padding: 1.5rem;
+            border-radius: 16px;
+            min-width: 200px;
+        }
+        
+        .answer-workflow { background: rgba(16,185,129,0.2); border: 2px solid var(--success); }
+        .answer-skill { background: rgba(236,72,153,0.2); border: 2px solid var(--secondary); }
+        
+        /* 案例卡片 */
+        .cases-section {
+            margin-bottom: 3rem;
+        }
+        
+        .cases-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .case-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .case-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .case-header {
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            cursor: pointer;
+        }
+        
+        .case-icon {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+        
+        .case-icon.tech { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
+        .case-icon.edu { background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%); }
+        .case-icon.write { background: linear-gradient(135deg, #ec4899 0%, #f472b6 100%); }
+        .case-icon.research { background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%); }
+        
+        .case-title-area {
+            flex: 1;
+        }
+        
+        .case-title {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .case-author {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .case-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--glass);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s;
+        }
+        
+        .case-card.active .case-toggle {
+            transform: rotate(180deg);
+        }
+        
+        .case-body {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .case-card.active .case-body {
+            max-height: 500px;
+            padding: 0 1.5rem 1.5rem;
+        }
+        
+        .case-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .case-feature {
+            padding: 0.375rem 0.75rem;
+            background: rgba(99,102,241,0.15);
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--primary-light);
+        }
+        
+        .case-insight {
+            padding: 1rem;
+            background: rgba(16,185,129,0.1);
+            border-radius: 12px;
+            border-left: 3px solid var(--success);
+        }
+        
+        .case-insight-label {
+            font-size: 0.75rem;
+            color: var(--success);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .case-insight-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* 专家点评 */
+        .expert-section {
+            margin-bottom: 3rem;
+        }
+        
+        .expert-panel {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+        }
+        
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .expert-avatar {
+            width: 80px;
+            height: 80px;
+            background: var(--gradient-1);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+        }
+        
+        .expert-info h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .expert-info p {
+            color: var(--text-secondary);
+        }
+        
+        .expert-badge {
+            padding: 0.375rem 1rem;
+            background: var(--gradient-2);
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .expert-content h4 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: var(--primary-light);
+        }
+        
+        .expert-points {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .expert-point {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(99,102,241,0.08);
+            border-radius: 12px;
+        }
+        
+        .point-number {
+            width: 32px;
+            height: 32px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .point-content {
+            flex: 1;
+        }
+        
+        .point-title {
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+        }
+        
+        .point-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* 行动清单 */
+        .action-section {
+            margin-bottom: 3rem;
+        }
+        
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .action-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 4px;
+            height: 100%;
+        }
+        
+        .action-card.beginner::before { background: var(--success); }
+        .action-card.intermediate::before { background: var(--warning); }
+        .action-card.advanced::before { background: var(--danger); }
+        
+        .action-level {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        .action-card.beginner .action-level { background: rgba(16,185,129,0.2); color: #34d399; }
+        .action-card.intermediate .action-level { background: rgba(245,158,11,0.2); color: #fbbf24; }
+        .action-card.advanced .action-level { background: rgba(239,68,68,0.2); color: #f87171; }
+        
+        .action-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+        }
+        
+        .action-steps {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .action-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            font-size: 0.9rem;
+        }
+        
+        .step-check {
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--primary);
+            border-radius: 4px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .step-check.checked {
+            background: var(--primary);
+        }
+        
+        .step-check.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+        }
+        
+        /* 对比表格 */
+        .comparison-section {
+            margin-bottom: 3rem;
+        }
+        
+        .comparison-table {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+        
+        .comparison-header {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(4, 1fr);
+            background: rgba(99,102,241,0.15);
+        }
+        
+        .comparison-header > div {
+            padding: 1.25rem;
+            font-weight: 700;
+            text-align: center;
+            border-right: 1px solid var(--glass-border);
+        }
+        
+        .comparison-header > div:last-child {
+            border-right: none;
+        }
+        
+        .comparison-row {
+            display: grid;
+            grid-template-columns: 1.5fr repeat(4, 1fr);
+            border-top: 1px solid var(--glass-border);
+        }
+        
+        .comparison-row > div {
+            padding: 1rem 1.25rem;
+            text-align: center;
+            border-right: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .comparison-row > div:first-child {
+            justify-content: flex-start;
+            font-weight: 600;
+        }
+        
+        .comparison-row > div:last-child {
+            border-right: none;
+        }
+        
+        .rating {
+            display: flex;
+            gap: 2px;
+        }
+        
+        .rating-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--glass-border);
+        }
+        
+        .rating-dot.filled { background: var(--primary); }
+        
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 2rem;
+        }
+        
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .footer-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-copyright {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .hero {
+                padding: 2rem 1rem;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .mindmap-container {
+                min-width: auto;
+            }
+            
+            .mindmap-level {
+                flex-direction: column;
+            }
+            
+            .logic-flow {
+                flex-direction: column;
+            }
+            
+            .logic-arrow {
+                transform: rotate(90deg);
+            }
+            
+            .pyramid-level {
+                width: 100% !important;
+            }
+            
+            .decision-branches {
+                flex-direction: column;
+                gap: 1.5rem;
+            }
+            
+            .decision-branches::before {
+                display: none;
+            }
+            
+            .comparison-header,
+            .comparison-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .comparison-header > div:first-child,
+            .comparison-row > div:first-child {
+                background: rgba(99,102,241,0.1);
+            }
+        }
+        
+        /* 打印样式 */
+        @media print {
+            .bg-animation,
+            .floating-orb,
+            .header,
+            .theme-toggle {
+                display: none !important;
+            }
+            
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .mindmap,
+            .logic-diagram,
+            .pyramid,
+            .decision-tree,
+            .quote-card,
+            .case-card,
+            .expert-panel,
+            .action-card,
+            .comparison-table {
+                background: #f8f9fa;
+                border: 1px solid #dee2e6;
+                box-shadow: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    <div class="floating-orb orb-1"></div>
+    <div class="floating-orb orb-2"></div>
+    <div class="floating-orb orb-3"></div>
+    
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🔮 Coze 2.0 深度解析</div>
+            <div class="theme-toggle" onclick="toggleTheme()"></div>
+        </div>
+    </header>
+    
+    <main class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <div class="hero-badge">🔥 WaytoAGI 共学直播精华</div>
+            <h1>扣子智能体 · AI工作流 · <span class="gradient-text">Skill</span></h1>
+            <h1>概念<span class="gradient-text">全景解析</span></h1>
+            <p class="hero-subtitle">从概念迷雾到实战落地，一份让你彻底搞懂Coze 2.0的深度指南</p>
+            <div class="hero-meta">
+                <span>📅 2026年1月20日</span>
+                <span>👨‍🏫 罗文 + 二师兄</span>
+                <span>⏱️ 约2.5小时精华提炼</span>
+                <span>👥 180+实时参与</span>
+            </div>
+        </section>
+        
+        <!-- 核心洞察 -->
+        <section class="insight-card">
+            <div class="insight-header">
+                <div class="insight-icon">💡</div>
+                <div class="insight-title">罗文核心论断</div>
+            </div>
+            <div class="insight-quote">
+                "Skill的本质是<span class="highlight-red">封装的提示词</span> + <span class="highlight-blue">简化的工作流</span>。它<span class="highlight-green">降低了使用门槛</span>，但<span class="highlight-yellow">没有提升能力上限</span>。对于熟悉工作流的人来说，本质没有变化——变的只是<span class="highlight-purple">让小白更容易上手</span>。"
+            </div>
+            <div class="insight-author">
+                <div class="author-avatar">👨‍💻</div>
+                <div class="author-info">
+                    <h4>罗文</h4>
+                    <span>扣子开发者 · 企业AI培训师</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 元认知思维导图 -->
+        <section class="mindmap-section">
+            <div class="section-header">
+                <div class="section-icon">🧠</div>
+                <h2 class="section-title">概念层级元认知图</h2>
+            </div>
+            <div class="mindmap">
+                <div class="mindmap-container">
+                    <div class="mindmap-root">🤖 AI智能体生态</div>
+                    <div class="mindmap-level">
+                        <div class="mindmap-node node-l1">
+                            <div class="node-title">AI智能体</div>
+                            <div class="node-desc">战略级决策框架</div>
+                        </div>
+                        <div class="mindmap-node node-l1">
+                            <div class="node-title">扣子智能体</div>
+                            <div class="node-desc">平台化快速构建</div>
+                        </div>
+                        <div class="mindmap-node node-l1">
+                            <div class="node-title">AI工作流</div>
+                            <div class="node-desc">自动化流程引擎</div>
+                        </div>
+                        <div class="mindmap-node node-l1">
+                            <div class="node-title">Skill技能</div>
+                            <div class="node-desc">模块化能力单元</div>
+                        </div>
+                    </div>
+                    <div class="mindmap-level" style="margin-top: 2rem;">
+                        <div class="mindmap-node node-l2">
+                            <div class="node-title">指令型</div>
+                            <div class="node-desc">L1 纯提示词</div>
+                        </div>
+                        <div class="mindmap-node node-l2">
+                            <div class="node-title">资源型</div>
+                            <div class="node-desc">L2 带知识库</div>
+                        </div>
+                        <div class="mindmap-node node-l3">
+                            <div class="node-title">工具型</div>
+                            <div class="node-desc">L3 集成插件</div>
+                        </div>
+                        <div class="mindmap-node node-l4">
+                            <div class="node-title">MCP型</div>
+                            <div class="node-desc">L4 协议接入</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 抽象层级逻辑图 -->
+        <section class="logic-diagram">
+            <div class="section-header">
+                <div class="section-icon">🔗</div>
+                <h2 class="section-title">抽象层级递进关系</h2>
+            </div>
+            <div class="logic-flow">
+                <div class="logic-item">
+                    <div class="logic-box l4">Skill</div>
+                    <div class="logic-label">功能层</div>
+                </div>
+                <span class="logic-arrow">→</span>
+                <div class="logic-item">
+                    <div class="logic-box l3">工作流</div>
+                    <div class="logic-label">流程层</div>
+                </div>
+                <span class="logic-arrow">→</span>
+                <div class="logic-item">
+                    <div class="logic-box l2">扣子智能体</div>
+                    <div class="logic-label">平台层</div>
+                </div>
+                <span class="logic-arrow">→</span>
+                <div class="logic-item">
+                    <div class="logic-box l1">AI智能体</div>
+                    <div class="logic-label">战略层</div>
+                </div>
+            </div>
+            <p style="text-align: center; color: var(--text-secondary); margin-top: 1.5rem; font-size: 0.9rem;">
+                📌 核心认知：<strong style="color: var(--primary-light)">Skill是工作流的构成单元，工作流是智能体的核心引擎</strong>
+            </p>
+        </section>
+        
+        <!-- 技能层级金字塔 -->
+        <section class="pyramid-section">
+            <div class="section-header">
+                <div class="section-icon">🏆</div>
+                <h2 class="section-title">Skill商业价值金字塔</h2>
+            </div>
+            <div class="pyramid">
+                <div class="pyramid-container">
+                    <div class="pyramid-level l4">
+                        <div class="pyramid-rank">L4</div>
+                        <div class="pyramid-info">
+                            <div class="pyramid-title">MCP协议型</div>
+                            <div class="pyramid-desc">接入外部插件，如抖音文案提取、API调用</div>
+                        </div>
+                        <div class="pyramid-value">
+                            <div class="value-bar"><div class="value-bar-fill" style="width: 100%"></div></div>
+                            <div class="value-label">💰 高变现</div>
+                        </div>
+                    </div>
+                    <div class="pyramid-level l3">
+                        <div class="pyramid-rank">L3</div>
+                        <div class="pyramid-info">
+                            <div class="pyramid-title">工具集成型</div>
+                            <div class="pyramid-desc">封装运算逻辑，可执行复杂任务</div>
+                        </div>
+                        <div class="pyramid-value">
+                            <div class="value-bar"><div class="value-bar-fill" style="width: 75%"></div></div>
+                            <div class="value-label">💵 中高</div>
+                        </div>
+                    </div>
+                    <div class="pyramid-level l2">
+                        <div class="pyramid-rank">L2</div>
+                        <div class="pyramid-info">
+                            <div class="pyramid-title">资源增强型</div>
+                            <div class="pyramid-desc">附带知识库/参考资料(reference)</div>
+                        </div>
+                        <div class="pyramid-value">
+                            <div class="value-bar"><div class="value-bar-fill" style="width: 40%"></div></div>
+                            <div class="value-label">💵 有限</div>
+                        </div>
+                    </div>
+                    <div class="pyramid-level l1">
+                        <div class="pyramid-rank">L1</div>
+                        <div class="pyramid-info">
+                            <div class="pyramid-title">纯指令型</div>
+                            <div class="pyramid-desc">本质是系统提示词封装</div>
+                        </div>
+                        <div class="pyramid-value">
+                            <div class="value-bar"><div class="value-bar-fill" style="width: 15%"></div></div>
+                            <div class="value-label">🚫 难变现</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="text-align: center; color: var(--text-secondary); margin-top: 2rem; font-size: 0.9rem;">
+                    ⚡ 罗文洞察：<strong style="color: #f87171">"纯指令型人人能写，只有L3/L4才有收费机会"</strong>
+                </p>
+            </div>
+        </section>
+        
+        <!-- 金句集锦 -->
+        <section class="quotes-section">
+            <div class="section-header">
+                <div class="section-icon">✨</div>
+                <h2 class="section-title">金句精选 · 字字珠玑</h2>
+            </div>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "价格<span class="em-red">降两个零</span>，市场<span class="em-green">扩大300倍</span>。以前ToB一个月做3个企业，现在ToC可以服务<span class="em-blue">300万个人</span>。"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 罗文</span>
+                        <span class="quote-tag tag-strategy">商业策略</span>
+                    </div>
+                </div>
+                
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "用<span class="em-purple">PRD格式</span>描述需求，可以让技能质量<span class="em-green">提升90%以上</span>。这是我最推荐的写技能方法。"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 罗文</span>
+                        <span class="quote-tag tag-method">方法论</span>
+                    </div>
+                </div>
+                
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "不管是提示词、工作流、MCP还是技能，<span class="em-yellow">本质都是业务流程</span>。怎么做？还是得靠<span class="em-red">调优和稳定</span>。"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 罗文</span>
+                        <span class="quote-tag tag-insight">本质洞察</span>
+                    </div>
+                </div>
+                
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "Skill相当于封装了一个<span class="em-pink">思维链(CoT)</span>。每次都会按约定流程执行，<span class="em-blue">框架不会偏离</span>。"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 二师兄</span>
+                        <span class="quote-tag tag-insight">技术本质</span>
+                    </div>
+                </div>
+                
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "AI时代<span class="em-red">最重要的是注意力</span>。知道<span class="em-green">什么该学</span>、<span class="em-yellow">什么不该学</span>，找到<span class="em-purple">本质</span>很关键。"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 罗文</span>
+                        <span class="quote-tag tag-warning">认知警示</span>
+                    </div>
+                </div>
+                
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "工作流属于<span class="em-blue">开发思维</span>，技能属于<span class="em-pink">业务思维和产品思维</span>。定位不同，用法不同。"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 罗文</span>
+                        <span class="quote-tag tag-insight">思维框架</span>
+                    </div>
+                </div>
+                
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "最好的学习是<span class="em-green">让AI帮你做课</span>，做完课你的知识链路也通了。<span class="em-yellow">学不如做</span>！"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 罗文</span>
+                        <span class="quote-tag tag-method">学习方法</span>
+                    </div>
+                </div>
+                
+                <div class="quote-card">
+                    <div class="quote-text">
+                        "扣子的定位是<span class="em-purple">职场人的第一AI应用</span>，面向<span class="em-blue">知识工作者</span>，解决<span class="em-red">重复性工作</span>。"
+                    </div>
+                    <div class="quote-footer">
+                        <span class="quote-author">— 罗文</span>
+                        <span class="quote-tag tag-strategy">平台定位</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 决策树 -->
+        <section class="decision-tree">
+            <div class="section-header">
+                <div class="section-icon">🌲</div>
+                <h2 class="section-title">选型决策树：工作流 vs Skill</h2>
+            </div>
+            <div class="decision-container">
+                <div class="decision-node decision-question">
+                    🤔 你的需求是什么？
+                </div>
+                <div class="decision-branches">
+                    <div class="decision-branch">
+                        <div class="branch-label">需要稳定产出 / 复杂逻辑</div>
+                        <div class="decision-node decision-answer answer-workflow">
+                            ✅ 选择<strong>工作流</strong><br>
+                            <small>可调优、可复用、更稳定</small>
+                        </div>
+                    </div>
+                    <div class="decision-branch">
+                        <div class="branch-label">快速验证 / 简单任务</div>
+                        <div class="decision-node decision-answer answer-skill">
+                            ✅ 选择<strong>Skill</strong><br>
+                            <small>门槛低、一句话生成</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div style="margin-top: 2rem; padding: 1.5rem; background: rgba(245,158,11,0.1); border-radius: 12px; border-left: 4px solid var(--warning);">
+                <strong style="color: var(--warning);">⚠️ 罗文建议：</strong>
+                <span style="color: var(--text-secondary)">如果你是开发者，追求稳定，还是建议用拖拉拽工作流。Skill更适合C端小白快速上手。</span>
+            </div>
+        </section>
+        
+        <!-- 实战案例 -->
+        <section class="cases-section">
+            <div class="section-header">
+                <div class="section-icon">🎯</div>
+                <h2 class="section-title">二师兄实战案例拆解</h2>
+            </div>
+            <div class="cases-grid">
+                <div class="case-card" onclick="toggleCase(this)">
+                    <div class="case-header">
+                        <div class="case-icon tech">🖨️</div>
+                        <div class="case-title-area">
+                            <div class="case-title">3D打印调参大师</div>
+                            <div class="case-author">解决个人爱好痛点</div>
+                        </div>
+                        <div class="case-toggle">▼</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-features">
+                            <span class="case-feature">视觉识别</span>
+                            <span class="case-feature">参数诊断</span>
+                            <span class="case-feature">知识库检索</span>
+                            <span class="case-feature">调参建议</span>
+                        </div>
+                        <div class="case-insight">
+                            <div class="case-insight-label">💡 关键设计</div>
+                            <div class="case-insight-text">用reference存储拓竹官方材料参数、切片软件配置；脚本实现图片分析（层纹、翘边、拉丝识别）</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="case-card" onclick="toggleCase(this)">
+                    <div class="case-header">
+                        <div class="case-icon edu">📐</div>
+                        <div class="case-title-area">
+                            <div class="case-title">中考数学辅导</div>
+                            <div class="case-author">可视化数形结合</div>
+                        </div>
+                        <div class="case-toggle">▼</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-features">
+                            <span class="case-feature">题目拆解</span>
+                            <span class="case-feature">思路分析</span>
+                            <span class="case-feature">Python可视化</span>
+                            <span class="case-feature">步骤演示</span>
+                        </div>
+                        <div class="case-insight">
+                            <div class="case-insight-label">💡 亮点发现</div>
+                            <div class="case-insight-text">豆包模型在中考数学题正确率极高，几乎与标准答案一致。关键是生成可视化演示器帮助孩子理解。</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="case-card" onclick="toggleCase(this)">
+                    <div class="case-header">
+                        <div class="case-icon write">✍️</div>
+                        <div class="case-title-area">
+                            <div class="case-title">中考作文提分器</div>
+                            <div class="case-author">从三类提到二类</div>
+                        </div>
+                        <div class="case-toggle">▼</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-features">
+                            <span class="case-feature">题目解析</span>
+                            <span class="case-feature">立意分析</span>
+                            <span class="case-feature">素材挖掘</span>
+                            <span class="case-feature">四格漫画</span>
+                            <span class="case-feature">转场金句</span>
+                        </div>
+                        <div class="case-insight">
+                            <div class="case-insight-label">💡 交互设计</div>
+                            <div class="case-insight-text">分步输出，先解析→选角度→生成漫画→提供过渡句。用视觉驱动激发孩子灵感，而非直接给答案。</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="case-card" onclick="toggleCase(this)">
+                    <div class="case-header">
+                        <div class="case-icon research">📄</div>
+                        <div class="case-title-area">
+                            <div class="case-title">外文文献解读器</div>
+                            <div class="case-author">学术研究助手</div>
+                        </div>
+                        <div class="case-toggle">▼</div>
+                    </div>
+                    <div class="case-body">
+                        <div class="case-features">
+                            <span class="case-feature">arXiv搜索</span>
+                            <span class="case-feature">PDF OCR</span>
+                            <span class="case-feature">结构化解读</span>
+                            <span class="case-feature">模型复现</span>
+                        </div>
+                        <div class="case-insight">
+                            <div class="case-insight-label">💡 高级用法</div>
+                            <div class="case-insight-text">脚本调用arXiv API下载论文，提取数学模型和代码，用Python/HTML演示复现。比手工整理快10倍。</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 专家点评 -->
+        <section class="expert-section">
+            <div class="section-header">
+                <div class="section-icon">🎓</div>
+                <h2 class="section-title">扣子编程专家深度点评</h2>
+            </div>
+            <div class="expert-panel">
+                <div class="expert-header">
+                    <div class="expert-avatar">🤖</div>
+                    <div class="expert-info">
+                        <h3>Claude · AI架构视角</h3>
+                        <p>基于本次直播内容的技术解读</p>
+                    </div>
+                    <span class="expert-badge">专家分析</span>
+                </div>
+                <div class="expert-content">
+                    <h4>🔍 五个关键认知纠偏</h4>
+                    <div class="expert-points">
+                        <div class="expert-point">
+                            <div class="point-number">1</div>
+                            <div class="point-content">
+                                <div class="point-title">Skill不是革命，是演化</div>
+                                <div class="point-desc">从Claude MCP到扣子Skill，本质是<strong style="color:#f87171">标准化封装</strong>。它解决的是调用稳定性问题，而非能力上限问题。对于已经会搭工作流的开发者，Skill只是另一种包装形式。</div>
+                            </div>
+                        </div>
+                        <div class="expert-point">
+                            <div class="point-number">2</div>
+                            <div class="point-content">
+                                <div class="point-title">"技能商店"的真正价值是渠道</div>
+                                <div class="point-desc">罗文点透了：个人开发者缺的不是技术，是<strong style="color:#34d399">获客渠道</strong>。技能商店让你从"找3个B端客户"变成"服务300万C端用户"，本质是平台红利期的流量分发。</div>
+                            </div>
+                        </div>
+                        <div class="expert-point">
+                            <div class="point-number">3</div>
+                            <div class="point-content">
+                                <div class="point-title">PRD写Skill是被低估的方法论</div>
+                                <div class="point-desc">用产品需求文档格式描述Skill需求，等于给AI提供了<strong style="color:#60a5fa">结构化约束</strong>。这和prompt engineering中的"角色+任务+约束+输出格式"是同一套方法论的企业级应用。</div>
+                            </div>
+                        </div>
+                        <div class="expert-point">
+                            <div class="point-number">4</div>
+                            <div class="point-content">
+                                <div class="point-title">Reference就是RAG的低代码实现</div>
+                                <div class="point-desc">二师兄案例中的reference用法，本质是<strong style="color:#a78bfa">检索增强生成(RAG)</strong>的可视化封装。对于不会写代码的用户，这大幅降低了知识库接入门槛。</div>
+                            </div>
+                        </div>
+                        <div class="expert-point">
+                            <div class="point-number">5</div>
+                            <div class="point-content">
+                                <div class="point-title">长期计划是Agent的雏形</div>
+                                <div class="point-desc">扣子的"长期计划"功能实际上是<strong style="color:#fbbf24">任务分解(Task Decomposition)</strong>的实现，这是构建Agent的关键能力。它让AI从"一问一答"进化到"规划-执行-迭代"。</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 行动清单 -->
+        <section class="action-section">
+            <div class="section-header">
+                <div class="section-icon">🚀</div>
+                <h2 class="section-title">分级行动指南</h2>
+            </div>
+            <div class="action-grid">
+                <div class="action-card beginner">
+                    <span class="action-level">🌱 入门级</span>
+                    <h3 class="action-title">小白快速上手</h3>
+                    <div class="action-steps">
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>注册扣子账号，充值团队版（100+/月）</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>安装3个热门Skill，体验使用流程</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>用自然语言描述，创建第一个简单Skill</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>阅读扣子官方文档中的技能说明</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-card intermediate">
+                    <span class="action-level">🌿 进阶级</span>
+                    <h3 class="action-title">开发者进阶</h3>
+                    <div class="action-steps">
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>用PRD格式重写你的Skill描述</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>从skill.new等网站下载并研究优质Skill</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>创建带reference知识库的L2技能</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>对比Skill和工作流实现同一功能的差异</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="action-card advanced">
+                    <span class="action-level">🌳 高阶级</span>
+                    <h3 class="action-title">商业化变现</h3>
+                    <div class="action-steps">
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>开发L3/L4级工具集成型Skill</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>在技能商店定价上架，测试市场反馈</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>结合工作流构建复杂业务自动化方案</span>
+                        </div>
+                        <div class="action-step">
+                            <div class="step-check" onclick="toggleCheck(this)"></div>
+                            <span>探索企业级Skill+工作流混合架构</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 对比表格 -->
+        <section class="comparison-section">
+            <div class="section-header">
+                <div class="section-icon">📊</div>
+                <h2 class="section-title">四大概念六维对比</h2>
+            </div>
+            <div class="comparison-table">
+                <div class="comparison-header">
+                    <div>对比维度</div>
+                    <div>AI智能体</div>
+                    <div>扣子智能体</div>
+                    <div>工作流</div>
+                    <div>Skill</div>
+                </div>
+                <div class="comparison-row">
+                    <div>🎯 功能定位</div>
+                    <div>战略决策</div>
+                    <div>平台构建</div>
+                    <div>流程编排</div>
+                    <div>能力模块</div>
+                </div>
+                <div class="comparison-row">
+                    <div>📈 复杂度</div>
+                    <div><div class="rating"><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot filled"></span></div></div>
+                    <div><div class="rating"><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot"></span><span class="rating-dot"></span></div></div>
+                    <div><div class="rating"><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot"></span></div></div>
+                    <div><div class="rating"><span class="rating-dot filled"></span><span class="rating-dot filled"></span><span class="rating-dot"></span><span class="rating-dot"></span><span class="rating-dot"></span></div></div>
+                </div>
+                <div class="comparison-row">
+                    <div>🎓 上手难度</div>
+                    <div>专家级</div>
+                    <div>中等</div>
+                    <div>需学习</div>
+                    <div>零门槛</div>
+                </div>
+                <div class="comparison-row">
+                    <div>🔧 可调优性</div>
+                    <div>高</div>
+                    <div>中</div>
+                    <div>高</div>
+                    <div>低</div>
+                </div>
+                <div class="comparison-row">
+                    <div>⚡ 稳定性</div>
+                    <div>依赖实现</div>
+                    <div>平台保障</div>
+                    <div>可控</div>
+                    <div>待验证</div>
+                </div>
+                <div class="comparison-row">
+                    <div>💰 商业场景</div>
+                    <div>企业级</div>
+                    <div>B端/C端</div>
+                    <div>B端为主</div>
+                    <div>C端优先</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 资源链接 -->
+        <section style="margin-bottom: 3rem;">
+            <div class="section-header">
+                <div class="section-icon">🔗</div>
+                <h2 class="section-title">延伸资源</h2>
+            </div>
+            <div class="quotes-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                <div class="quote-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🌐</div>
+                    <div class="quote-text" style="font-size: 1rem;">
+                        <strong>skill.new</strong><br>
+                        <span style="color: var(--text-secondary)">全球Skill资源库</span>
+                    </div>
+                </div>
+                <div class="quote-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📚</div>
+                    <div class="quote-text" style="font-size: 1rem;">
+                        <strong>扣子官方文档</strong><br>
+                        <span style="color: var(--text-secondary)">技能开发指南</span>
+                    </div>
+                </div>
+                <div class="quote-card" style="text-align: center;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+                    <div class="quote-text" style="font-size: 1rem;">
+                        <strong>WaytoAGI社区</strong><br>
+                        <span style="color: var(--text-secondary)">每晚8点共学直播</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+    
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="#">扣子官网</a>
+            <a href="#">WaytoAGI</a>
+            <a href="#">技能商店</a>
+            <a href="#">开发文档</a>
+        </div>
+        <p class="footer-copyright">
+            本页面基于2026年1月20日WaytoAGI共学直播内容整理 · 由Claude深度分析生成
+        </p>
+    </footer>
+    
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', currentTheme === 'light' ? 'dark' : 'light');
+            localStorage.setItem('theme', body.getAttribute('data-theme'));
+        }
+        
+        // 加载保存的主题
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            document.body.setAttribute('data-theme', savedTheme);
+        }
+        
+        // 案例卡片切换
+        function toggleCase(card) {
+            card.classList.toggle('active');
+        }
+        
+        // 复选框切换
+        function toggleCheck(el) {
+            el.classList.toggle('checked');
+        }
+        
+        // 滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+        
+        document.querySelectorAll('.quote-card, .case-card, .action-card, .pyramid-level').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(20px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+        
+        // 价值条动画
+        setTimeout(() => {
+            document.querySelectorAll('.value-bar-fill').forEach(bar => {
+                bar.style.width = bar.style.width;
+            });
+        }, 500);
+    </script>
+</body>
+</html>
