@@ -1,0 +1,1352 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI驱动的PM面试实战指南 | 产品经理必读</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --text: #1e293b;
+            --text-light: #64748b;
+            --bg: #f8fafc;
+            --card-bg: rgba(255,255,255,0.7);
+            --glass: rgba(255,255,255,0.25);
+        }
+        
+        .dark {
+            --text: #f1f5f9;
+            --text-light: #94a3b8;
+            --bg: #0f172a;
+            --card-bg: rgba(30,41,59,0.7);
+            --glass: rgba(30,41,59,0.5);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+        
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 150%;
+            height: 150%;
+            background: linear-gradient(
+                45deg,
+                rgba(99,102,241,0.1) 0%,
+                rgba(236,72,153,0.1) 25%,
+                rgba(6,182,212,0.1) 50%,
+                rgba(16,185,129,0.1) 75%,
+                rgba(99,102,241,0.1) 100%
+            );
+            animation: gradientMove 20s ease infinite;
+        }
+        
+        @keyframes gradientMove {
+            0%, 100% { transform: translate(-10%, -10%) rotate(0deg); }
+            50% { transform: translate(-20%, -20%) rotate(180deg); }
+        }
+        
+        /* 顶部导航 */
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            z-index: 1000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+        
+        .theme-toggle {
+            background: var(--card-bg);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.05);
+        }
+        
+        /* 主容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 6rem 1.5rem 3rem;
+        }
+        
+        /* 英雄区域 */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 2rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            animation: pulse 2s ease infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+        
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--text), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-light);
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+        
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        /* 金句卡片 */
+        .quote-banner {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 2rem;
+            border-radius: 1.5rem;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .quote-banner::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            opacity: 0.2;
+            font-family: Georgia, serif;
+            color: white;
+        }
+        
+        .quote-text {
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quote-author {
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        /* 思维导图 */
+        .mindmap-section {
+            margin-bottom: 3rem;
+        }
+        
+        .section-title {
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 12px;
+            font-size: 1.25rem;
+        }
+        
+        .mindmap {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            overflow-x: auto;
+        }
+        
+        .mindmap-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 800px;
+        }
+        
+        .mindmap-root {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 10px 40px rgba(99,102,241,0.3);
+        }
+        
+        .mindmap-connector {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--primary), var(--accent));
+        }
+        
+        .mindmap-branches {
+            display: flex;
+            gap: 1rem;
+            position: relative;
+        }
+        
+        .mindmap-branches::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent), var(--secondary));
+        }
+        
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .branch-connector {
+            width: 2px;
+            height: 20px;
+            background: var(--primary);
+        }
+        
+        .branch-node {
+            padding: 0.875rem 1.25rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
+            min-width: 140px;
+            transition: transform 0.3s ease;
+        }
+        
+        .branch-node:hover {
+            transform: scale(1.05);
+        }
+        
+        .branch-node.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: white; }
+        .branch-node.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); color: white; }
+        .branch-node.cyan { background: linear-gradient(135deg, #06b6d4, #22d3ee); color: white; }
+        .branch-node.green { background: linear-gradient(135deg, #10b981, #34d399); color: white; }
+        .branch-node.pink { background: linear-gradient(135deg, #ec4899, #f472b6); color: white; }
+        
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            width: 100%;
+        }
+        
+        .branch-item {
+            background: var(--card-bg);
+            padding: 0.625rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.85rem;
+            border-left: 3px solid var(--primary);
+            transition: all 0.3s ease;
+        }
+        
+        .branch-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--secondary);
+        }
+        
+        /* 内容卡片 */
+        .content-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            border-radius: 1.5rem;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .card-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .badge-core { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; }
+        .badge-tip { background: linear-gradient(135deg, var(--success), #34d399); color: white; }
+        .badge-warning { background: linear-gradient(135deg, var(--warning), #fbbf24); color: white; }
+        .badge-expert { background: linear-gradient(135deg, var(--secondary), #f472b6); color: white; }
+        
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+            color: var(--primary);
+        }
+        
+        .card-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        
+        .card-content.expanded {
+            max-height: 3000px;
+        }
+        
+        .card-preview {
+            color: var(--text-light);
+            font-size: 0.95rem;
+            padding: 0.75rem;
+            background: rgba(99,102,241,0.05);
+            border-radius: 0.75rem;
+            border-left: 3px solid var(--primary);
+        }
+        
+        /* 高亮文本 */
+        .highlight-red {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .highlight-blue {
+            color: var(--accent);
+            font-weight: 600;
+        }
+        
+        .highlight-green {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .highlight-purple {
+            color: var(--primary);
+            font-weight: 600;
+        }
+        
+        .highlight-pink {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+        
+        .highlight-orange {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(236,72,153,0.1), rgba(99,102,241,0.1));
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+            border-left: 4px solid var(--secondary);
+            position: relative;
+        }
+        
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .expert-info h4 {
+            font-weight: 700;
+            color: var(--text);
+        }
+        
+        .expert-info span {
+            font-size: 0.875rem;
+            color: var(--text-light);
+        }
+        
+        .expert-text {
+            font-style: italic;
+            color: var(--text);
+            line-height: 1.9;
+        }
+        
+        /* 流程图 */
+        .flow-section {
+            margin: 3rem 0;
+        }
+        
+        .flow-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 150px;
+        }
+        
+        .flow-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.25rem;
+            color: white;
+            margin-bottom: 0.75rem;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+        }
+        
+        .flow-step:nth-child(1) .flow-number { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .flow-step:nth-child(3) .flow-number { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .flow-step:nth-child(5) .flow-number { background: linear-gradient(135deg, #06b6d4, #22d3ee); }
+        .flow-step:nth-child(7) .flow-number { background: linear-gradient(135deg, #10b981, #34d399); }
+        .flow-step:nth-child(9) .flow-number { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+        .flow-step:nth-child(11) .flow-number { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        
+        .flow-label {
+            text-align: center;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--primary);
+            animation: arrowPulse 1.5s ease infinite;
+        }
+        
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+        
+        /* 列表样式 */
+        .styled-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .styled-list li {
+            padding: 0.75rem 0;
+            padding-left: 2rem;
+            position: relative;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .styled-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        /* 对比表格 */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        
+        .comparison-card {
+            background: var(--card-bg);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+        
+        .comparison-card.recommended {
+            border-color: var(--success);
+            box-shadow: 0 0 30px rgba(16,185,129,0.2);
+        }
+        
+        .comparison-card h4 {
+            font-size: 1.125rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .comparison-card.coach h4 { color: var(--secondary); }
+        .comparison-card.peer h4 { color: var(--warning); }
+        .comparison-card.ai h4 { color: var(--success); }
+        
+        /* 金句集合 */
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        
+        .quote-card {
+            background: linear-gradient(135deg, var(--card-bg), rgba(99,102,241,0.1));
+            padding: 1.5rem;
+            border-radius: 1rem;
+            position: relative;
+            border-left: 4px solid var(--primary);
+        }
+        
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            font-size: 4rem;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            color: var(--primary);
+        }
+        
+        .quote-card p {
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            position: relative;
+            z-index: 1;
+        }
+        
+        .quote-card .source {
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+        
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-light);
+            border-top: 1px solid rgba(0,0,0,0.05);
+            margin-top: 3rem;
+        }
+        
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-stats { gap: 1.5rem; }
+            .stat-value { font-size: 2rem; }
+            .container { padding: 5rem 1rem 2rem; }
+            .mindmap { padding: 1rem; }
+            .mindmap-tree { min-width: 600px; }
+            .flow-container { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+        
+        /* 打印优化 */
+        @media print {
+            .top-bar, .theme-toggle { display: none; }
+            .bg-animation { display: none; }
+            .content-card { break-inside: avoid; }
+            .card-content { max-height: none !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <nav class="top-bar">
+        <div class="logo">🎯 PM面试AI指南</div>
+        <div class="nav-actions">
+            <button class="theme-toggle" onclick="toggleTheme()">🌓 切换主题</button>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- 英雄区域 -->
+        <header class="hero">
+            <div class="hero-badge">🔥 2024最新实战指南</div>
+            <h1>AI驱动的PM面试准备</h1>
+            <p class="hero-subtitle">从Product Sense到Analytical Thinking，掌握大厂面试的底层逻辑与AI辅助练习法</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-value">35</div>
+                    <div class="stat-label">分钟面试时间</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">6</div>
+                    <div class="stat-label">核心步骤</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">3×2</div>
+                    <div class="stat-label">黄金法则</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value">∞</div>
+                    <div class="stat-label">AI练习次数</div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- 核心金句 -->
+        <div class="quote-banner">
+            <p class="quote-text">练习的目的不是获得Offer，而是找到真正适合你的位置。<br>AI能帮你练内容，但交付感需要你自己修炼。</p>
+            <p class="quote-author">—— Ben Erez, 前Meta产品经理</p>
+        </div>
+        
+        <!-- 思维导图 -->
+        <section class="mindmap-section">
+            <h2 class="section-title">
+                <span class="section-icon">🧠</span>
+                Product Sense面试核心框架
+            </h2>
+            <div class="mindmap">
+                <div class="mindmap-tree">
+                    <div class="mindmap-root">🎯 Product Sense面试</div>
+                    <div class="mindmap-connector"></div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node purple">1️⃣ 产品动机</div>
+                            <div class="branch-items">
+                                <div class="branch-item">明确产品存在的意义</div>
+                                <div class="branch-item">设定占位使命陈述</div>
+                                <div class="branch-item">解释公司为何关心</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node blue">2️⃣ 用户细分</div>
+                            <div class="branch-items">
+                                <div class="branch-item">识别生态系统参与者</div>
+                                <div class="branch-item">3个细分群体</div>
+                                <div class="branch-item">Reach + 未服务度评分</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node cyan">3️⃣ 痛点挖掘</div>
+                            <div class="branch-items">
+                                <div class="branch-item">设定用户画像</div>
+                                <div class="branch-item">描绘用户旅程</div>
+                                <div class="branch-item">频率×严重度评分</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node green">4️⃣ 方案设计</div>
+                            <div class="branch-items">
+                                <div class="branch-item">头脑风暴3个方案</div>
+                                <div class="branch-item">Impact×Effort评估</div>
+                                <div class="branch-item">选择最优方案</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node pink">5️⃣ MVP描述</div>
+                            <div class="branch-items">
+                                <div class="branch-item">核心功能说明</div>
+                                <div class="branch-item">发布策略</div>
+                                <div class="branch-item">风险与缓解措施</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 专家评论：Lewis C. Lin -->
+        <div class="expert-comment">
+            <div class="expert-header">
+                <div class="expert-avatar">L</div>
+                <div class="expert-info">
+                    <h4>Lewis C. Lin 林杰</h4>
+                    <span>《Decode and Conquer》作者 | PM面试培训行业先驱</span>
+                </div>
+            </div>
+            <p class="expert-text">
+                "Ben的方法论与我在《Decode and Conquer》中提出的CIRCLES框架™有着异曲同工之妙，但他更进一步地将<span class="highlight-purple">结构化思维</span>与<span class="highlight-pink">AI辅助练习</span>结合起来。这正是我一直倡导的：<span class="highlight-red">面试准备不是背答案，而是建立系统性的思考肌肉</span>。他提出的'3×2法则'——3个选项用2个维度评分——简洁有力，易于在高压面试中执行。我特别认同他关于AI使用的伦理立场：<span class="highlight-blue">AI是你的陪练，不是你的替身</span>。在我的问题银行中有2500+真实面试题，我很高兴看到有人教会求职者如何系统性地利用这些资源。"
+            </p>
+        </div>
+        
+        <!-- Product Sense完整流程 -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>🔄</span>
+                    Product Sense面试完整流程图
+                    <span class="card-badge badge-core">核心方法论</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">面试35分钟，每个环节2-3分钟，时间管理是通过的关键...</div>
+            <div class="card-content">
+                <div class="flow-section">
+                    <div class="flow-container">
+                        <div class="flow-step">
+                            <div class="flow-number">1</div>
+                            <div class="flow-label">陈述假设<br><small>~1分钟</small></div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number">2</div>
+                            <div class="flow-label">阐述计划<br><small>~1分钟</small></div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number">3</div>
+                            <div class="flow-label">产品动机<br><small>~2分钟</small></div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number">4</div>
+                            <div class="flow-label">用户细分<br><small>~5分钟</small></div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number">5</div>
+                            <div class="flow-label">痛点分析<br><small>~5分钟</small></div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number">6</div>
+                            <div class="flow-label">方案设计<br><small>~5分钟</small></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 1.5rem 0 1rem; color: var(--primary);">⏱️ 时间分配黄金比例</h4>
+                <ul class="styled-list">
+                    <li><span class="highlight-purple">思考时间</span>：每个环节前1-2分钟安静思考是正常的</li>
+                    <li><span class="highlight-blue">产品动机</span>：2分钟说清楚产品为什么存在、公司为什么关心</li>
+                    <li><span class="highlight-cyan">用户细分</span>：5分钟内给出3个细分群体并用Reach+未服务度评分</li>
+                    <li><span class="highlight-green">痛点分析</span>：设定Persona，走一遍用户旅程，用频率×严重度评分</li>
+                    <li><span class="highlight-orange">方案设计</span>：3个方案用Impact×Effort评估，选择高影响低努力的</li>
+                    <li><span class="highlight-pink">MVP描述</span>：如有时间，描述V1版本的核心功能和发布策略</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- 三种练习方式对比 -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>⚖️</span>
+                    三种练习方式深度对比
+                    <span class="card-badge badge-tip">选择指南</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">教练、同伴、AI各有优劣，聪明的求职者会组合使用...</div>
+            <div class="card-content">
+                <div class="comparison-grid">
+                    <div class="comparison-card coach">
+                        <h4>👨‍🏫 专业教练</h4>
+                        <ul class="styled-list">
+                            <li><span class="highlight-green">优势</span>：个性化反馈、校准过的评估标准</li>
+                            <li><span class="highlight-red">劣势</span>：价格昂贵、时间有限</li>
+                            <li><span class="highlight-blue">成本</span>：$100-300/小时</li>
+                            <li><span class="highlight-purple">适合</span>：最后冲刺阶段、关键问题诊断</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card peer">
+                        <h4>👥 同伴练习</h4>
+                        <ul class="styled-list">
+                            <li><span class="highlight-green">优势</span>：免费、可以大量练习</li>
+                            <li><span class="highlight-red">劣势</span>：<span class="highlight-orange">假阳性</span>（本该失败却被告知通过）和<span class="highlight-orange">假阴性</span>（本该通过却被打击信心）</li>
+                            <li><span class="highlight-blue">成本</span>：免费</li>
+                            <li><span class="highlight-purple">适合</span>：练习交付感和语言表达</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card ai recommended">
+                        <h4>🤖 AI Co-pilot <span style="background: var(--success); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.7rem;">推荐</span></h4>
+                        <ul class="styled-list">
+                            <li><span class="highlight-green">优势</span>：无限次数、用优质材料训练后反馈校准</li>
+                            <li><span class="highlight-red">劣势</span>：专注内容而非交付、可能有幻觉</li>
+                            <li><span class="highlight-blue">成本</span>：~$20/月（Claude/ChatGPT会员）</li>
+                            <li><span class="highlight-purple">适合</span>：大量刷题、建立结构化思维</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <div class="expert-avatar">L</div>
+                        <div class="expert-info">
+                            <h4>Lewis C. Lin 林杰</h4>
+                            <span>专家点评</span>
+                        </div>
+                    </div>
+                    <p class="expert-text">
+                        "假阳性和假阴性的概念非常精准。我见过太多求职者在同伴mock中自我感觉良好，却在真实面试中碰壁。<span class="highlight-red">校准的反馈比大量的练习更重要</span>。AI Co-pilot的价值在于它可以被'训练'成一个校准过的评估者——前提是你喂给它正确的材料。这正是我开放问题银行的初衷：让系统性训练成为可能。"
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- AI Co-pilot使用工作流 -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>🔧</span>
+                    AI Co-pilot最佳实践工作流
+                    <span class="card-badge badge-core">必读</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">AI可以扮演候选人、面试官、教练三种角色...</div>
+            <div class="card-content">
+                <h4 style="margin-bottom: 1rem; color: var(--primary);">🎭 AI的三种角色</h4>
+                
+                <div class="comparison-grid">
+                    <div class="comparison-card" style="border-color: var(--primary);">
+                        <h4 style="color: var(--primary);">🧑‍💼 AI扮演候选人</h4>
+                        <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.95rem;">你先独立完成问题，然后让AI回答同一问题，对比差异</p>
+                        <ul class="styled-list">
+                            <li>找到你遗漏的角度</li>
+                            <li>学习更好的表述方式</li>
+                            <li>追问AI的决策逻辑</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--accent);">
+                        <h4 style="color: var(--accent);">👔 AI扮演面试官</h4>
+                        <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.95rem;">AI提问，你回答，模拟真实面试对话</p>
+                        <ul class="styled-list">
+                            <li>练习口头表达</li>
+                            <li>适应被追问的节奏</li>
+                            <li>可配合语音转文字工具</li>
+                        </ul>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--secondary);">
+                        <h4 style="color: var(--secondary);">📝 AI扮演教练</h4>
+                        <p style="margin-bottom: 1rem; color: var(--text-light); font-size: 0.95rem;">你提交填好的模板，AI给出详细反馈</p>
+                        <ul class="styled-list">
+                            <li>获得结构化评分</li>
+                            <li>识别薄弱环节</li>
+                            <li>24/7无限次反馈</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 2rem 0 1rem; color: var(--success);">✅ 推荐工作流（AI扮演候选人）</h4>
+                <div class="flow-section">
+                    <div class="flow-container">
+                        <div class="flow-step">
+                            <div class="flow-number" style="background: linear-gradient(135deg, #8b5cf6, #a78bfa);">1</div>
+                            <div class="flow-label">从问题库<br>选择问题</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">2</div>
+                            <div class="flow-label">独立完成<br>模板填写</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number" style="background: linear-gradient(135deg, #06b6d4, #22d3ee);">3</div>
+                            <div class="flow-label">让AI回答<br>同一问题</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number" style="background: linear-gradient(135deg, #10b981, #34d399);">4</div>
+                            <div class="flow-label">对比差异<br>追问理由</div>
+                        </div>
+                        <span class="flow-arrow">→</span>
+                        <div class="flow-step">
+                            <div class="flow-number" style="background: linear-gradient(135deg, #ec4899, #f472b6);">5</div>
+                            <div class="flow-label">内化学习<br>重复练习</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Analytical Thinking框架 -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>📊</span>
+                    Analytical Thinking面试框架
+                    <span class="card-badge badge-core">核心方法论</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">衡量成功、设定目标、定义指标——数据驱动决策的面试考察...</div>
+            <div class="card-content">
+                <div class="mindmap">
+                    <div class="mindmap-tree">
+                        <div class="mindmap-root">📊 Analytical Thinking面试</div>
+                        <div class="mindmap-connector"></div>
+                        <div class="mindmap-branches">
+                            <div class="mindmap-branch">
+                                <div class="branch-connector"></div>
+                                <div class="branch-node purple">产品理解</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">产品存在的理由</div>
+                                    <div class="branch-item">解决什么问题</div>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-connector"></div>
+                                <div class="branch-node blue">生态系统</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">参与者定义</div>
+                                    <div class="branch-item">参与价值</div>
+                                    <div class="branch-item">关键行为</div>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-connector"></div>
+                                <div class="branch-node cyan">健康指标</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">行为人数</div>
+                                    <div class="branch-item">行为频率</div>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-connector"></div>
+                                <div class="branch-node green">北极星指标</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">驱动最大价值</div>
+                                    <div class="branch-item">反指标防护</div>
+                                </div>
+                            </div>
+                            <div class="mindmap-branch">
+                                <div class="branch-connector"></div>
+                                <div class="branch-node pink">权衡决策</div>
+                                <div class="branch-items">
+                                    <div class="branch-item">广度vs深度</div>
+                                    <div class="branch-item">结构化评估</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <h4 style="margin: 1.5rem 0 1rem; color: var(--accent);">🎯 典型问题示例</h4>
+                <ul class="styled-list">
+                    <li><span class="highlight-blue">Measure success for Spotify</span> — 如何衡量Spotify的成功？</li>
+                    <li><span class="highlight-green">Set a goal for Reels</span> — 为Instagram Reels设定目标</li>
+                    <li><span class="highlight-purple">Define success for DoorDash</span> — 定义DoorDash的成功指标</li>
+                </ul>
+            </div>
+        </section>
+        
+        <!-- 为什么不要在真实面试中使用AI -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>⚠️</span>
+                    为什么不要在真实面试中使用AI
+                    <span class="card-badge badge-warning">重要警告</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">AI是陪练，不是替身。在真实面试中使用AI有四大风险...</div>
+            <div class="card-content">
+                <div class="comparison-grid">
+                    <div class="comparison-card" style="border-color: var(--danger);">
+                        <h4 style="color: var(--danger);">❌ 不道德</h4>
+                        <p>这是一种作弊行为。你可能逃过一时，但你需要与此共存。</p>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--warning);">
+                        <h4 style="color: var(--warning);">🎭 不真实</h4>
+                        <p>照搬AI的回答会显得不自然，损害你与面试官建立真实连接的机会。</p>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--secondary);">
+                        <h4 style="color: var(--secondary);">🤯 会幻觉</h4>
+                        <p>AI可能生成无法辩护的愚蠢答案。当面试官追问时，你会陷入困境。</p>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--primary);">
+                        <h4 style="color: var(--primary);">⏳ 不可持续</h4>
+                        <p>公司迟早会开发出检测AI使用的方法。这不是长久之计。</p>
+                    </div>
+                </div>
+                
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <div class="expert-avatar">L</div>
+                        <div class="expert-info">
+                            <h4>Lewis C. Lin 林杰</h4>
+                            <span>专家观点</span>
+                        </div>
+                    </div>
+                    <p class="expert-text">
+                        "我完全同意Ben的立场。<span class="highlight-red">面试的目的不是获得offer，而是找到匹配</span>。如果你通过作弊进入一家公司，你会在日常工作中暴露真实水平，最终对双方都是损失。更重要的是，Product Sense面试考察的是你的思维方式——这是你作为PM的核心资产。<span class="highlight-purple">如果你的思维方式是由AI生成的，你的PM生涯也将如此依赖AI</span>。这不是成长，是依赖。"
+                    </p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 金句集合 -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>💎</span>
+                    核心金句集锦
+                    <span class="card-badge badge-expert">精华提炼</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">面试智慧浓缩，每一句都值得反复品味...</div>
+            <div class="card-content expanded">
+                <div class="quotes-grid">
+                    <div class="quote-card">
+                        <p>"<span class="highlight-red">练习的目的不是获得Offer，而是找到真正适合你的位置。</span>"</p>
+                        <span class="source">— 关于求职心态</span>
+                    </div>
+                    <div class="quote-card">
+                        <p>"<span class="highlight-blue">AI能帮你练内容，但交付感需要你自己修炼。</span>"</p>
+                        <span class="source">— 关于AI的局限</span>
+                    </div>
+                    <div class="quote-card">
+                        <p>"<span class="highlight-purple">最好的面试是面试官几乎不用说话，因为候选人给了他们需要的一切。</span>"</p>
+                        <span class="source">— 关于面试节奏</span>
+                    </div>
+                    <div class="quote-card">
+                        <p>"<span class="highlight-green">校准的反馈比大量的练习更重要。</span>"</p>
+                        <span class="source">— 关于练习质量</span>
+                    </div>
+                    <div class="quote-card">
+                        <p>"<span class="highlight-orange">假阳性让你盲目自信，假阴性让你失去信心——两者都是危险的。</span>"</p>
+                        <span class="source">— 关于同伴练习的风险</span>
+                    </div>
+                    <div class="quote-card">
+                        <p>"<span class="highlight-pink">内化结构比记忆答案更重要，因为你需要在高压下实时应用它。</span>"</p>
+                        <span class="source">— 关于学习方法</span>
+                    </div>
+                    <div class="quote-card">
+                        <p>"<span class="highlight-cyan">不要追求MECE中的CE（穷尽），追求ME（互斥）和有意义的覆盖就够了。</span>"</p>
+                        <span class="source">— 关于用户细分</span>
+                    </div>
+                    <div class="quote-card">
+                        <p>"<span class="highlight-red">如果你真的搞砸了某个维度，AI会给出1.5或2分——它不会无脑夸你。</span>"</p>
+                        <span class="source">— 关于AI反馈的校准</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 实战演示案例 -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>🎬</span>
+                    实战演示：Meta志愿服务产品
+                    <span class="card-badge badge-tip">案例解析</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">真实Meta面试题：设计一个志愿服务产品——看AI如何结构化回答...</div>
+            <div class="card-content">
+                <p style="margin-bottom: 1.5rem; padding: 1rem; background: rgba(99,102,241,0.1); border-radius: 0.75rem;">
+                    <strong>🎯 面试题（Meta四天前真实考题）：</strong><br>
+                    "你是Meta的产品经理，如何设计一个志愿服务产品？"
+                </p>
+                
+                <h4 style="color: var(--purple); margin-bottom: 1rem;">📋 AI结构化回答示例</h4>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5 style="color: var(--primary); margin-bottom: 0.5rem;">1️⃣ 假设声明</h5>
+                    <ul class="styled-list">
+                        <li>聚焦<span class="highlight-blue">美国市场</span>，后续可全球扩展</li>
+                        <li>在<span class="highlight-purple">Meta现有生态系统</span>内构建</li>
+                        <li>目标用户是<span class="highlight-green">个人志愿者</span>而非组织</li>
+                    </ul>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5 style="color: var(--accent); margin-bottom: 0.5rem;">2️⃣ 产品动机</h5>
+                    <p><strong>占位使命陈述：</strong><em>"让发现志愿机会像联系朋友一样简单"</em></p>
+                    <ul class="styled-list">
+                        <li>志愿服务发现和协调目前是<span class="highlight-red">碎片化</span>的</li>
+                        <li>Meta的<span class="highlight-blue">社交图谱</span>提供独特优势</li>
+                        <li>与Meta"<span class="highlight-purple">构建社区</span>"的使命高度一致</li>
+                    </ul>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5 style="color: var(--success); margin-bottom: 0.5rem;">3️⃣ 用户细分（选取"忙碌专业人士"）</h5>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem;">
+                        <tr style="background: rgba(99,102,241,0.1);">
+                            <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid var(--primary);">细分群体</th>
+                            <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--primary);">Reach</th>
+                            <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--primary);">未服务度</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05);">时间灵活的常规志愿者</td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);">中</td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);">低（已被传统平台服务）</td>
+                        </tr>
+                        <tr style="background: rgba(16,185,129,0.1);">
+                            <td style="padding: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong>忙碌专业人士</strong> ✓</td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong>高</strong></td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong>高</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem;">热心公益的首次志愿者</td>
+                            <td style="padding: 0.75rem; text-align: center;">中</td>
+                            <td style="padding: 0.75rem; text-align: center;">中</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div style="margin-bottom: 1.5rem;">
+                    <h5 style="color: var(--warning); margin-bottom: 0.5rem;">4️⃣ 痛点分析（Persona: Sarah, 32岁，周工作50小时）</h5>
+                    <table style="width: 100%; border-collapse: collapse; margin-top: 0.5rem;">
+                        <tr style="background: rgba(99,102,241,0.1);">
+                            <th style="padding: 0.75rem; text-align: left; border-bottom: 2px solid var(--primary);">痛点</th>
+                            <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--primary);">频率</th>
+                            <th style="padding: 0.75rem; text-align: center; border-bottom: 2px solid var(--primary);">严重度</th>
+                        </tr>
+                        <tr style="background: rgba(239,68,68,0.1);">
+                            <td style="padding: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong>时间匹配摩擦</strong> ✓</td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong>高</strong></td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);"><strong>高</strong></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem; border-bottom: 1px solid rgba(0,0,0,0.05);">临时冲突取消</td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);">中</td>
+                            <td style="padding: 0.75rem; text-align: center; border-bottom: 1px solid rgba(0,0,0,0.05);">中</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 0.75rem;">看不到影响力反馈</td>
+                            <td style="padding: 0.75rem; text-align: center;">中</td>
+                            <td style="padding: 0.75rem; text-align: center;">低</td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div>
+                    <h5 style="color: var(--secondary); margin-bottom: 0.5rem;">5️⃣ 解决方案：微志愿市场</h5>
+                    <p style="margin-bottom: 0.75rem;">将传统志愿活动拆解为<span class="highlight-pink">碎片化任务</span>，可远程或线下完成，基于技能匹配，与日历集成。</p>
+                    <ul class="styled-list">
+                        <li><span class="highlight-blue">核心功能</span>：发现Feed、时间分块、轻量注册、应用内消息、影响追踪</li>
+                        <li><span class="highlight-green">发布策略</span>：在2-3个有强非营利合作的都市区试点</li>
+                        <li><span class="highlight-orange">风险</span>：组织采用率、质量一致性</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 资源推荐 -->
+        <section class="content-card">
+            <div class="card-header" onclick="toggleCard(this)">
+                <h3 class="card-title">
+                    <span>📚</span>
+                    推荐资源与工具
+                    <span class="card-badge badge-tip">工具箱</span>
+                </h3>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="card-preview">问题库、模板、AI工具——你需要的一切都在这里...</div>
+            <div class="card-content">
+                <div class="comparison-grid">
+                    <div class="comparison-card" style="border-color: var(--primary);">
+                        <h4 style="color: var(--primary);">📝 Lewis Lin问题库</h4>
+                        <p>2500+真实面试题，包含Meta、Google等大厂最新考题，持续更新</p>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--accent);">
+                        <h4 style="color: var(--accent);">🤖 Claude Projects</h4>
+                        <p>用指令+文件训练的AI Co-pilot，比通用ChatGPT更精准</p>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--success);">
+                        <h4 style="color: var(--success);">🎙️ Super Whisper</h4>
+                        <p>语音转文字工具，让你可以"对话式"与AI练习</p>
+                    </div>
+                    <div class="comparison-card" style="border-color: var(--secondary);">
+                        <h4 style="color: var(--secondary);">📖 Lenny's Newsletter</h4>
+                        <p>Ben的深度文章发布地，20+页的Product Sense完整指南</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 底部 -->
+        <footer class="footer">
+            <div class="footer-logo">🎯 PM面试AI指南</div>
+            <p>基于Ben Erez的两场Lightning Lesson整理</p>
+            <p style="margin-top: 0.5rem; font-size: 0.85rem;">专家评论：Lewis C. Lin（模拟观点，基于其公开著作与方法论）</p>
+            <p style="margin-top: 1rem; font-size: 0.8rem; opacity: 0.7;">© 2024 | 仅供学习参考</p>
+        </footer>
+    </div>
+    
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+        }
+        
+        // 卡片展开/折叠
+        function toggleCard(header) {
+            const content = header.nextElementSibling.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            const preview = header.nextElementSibling;
+            
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.style.transform = 'rotate(0deg)';
+                preview.style.display = 'block';
+            } else {
+                content.classList.add('expanded');
+                icon.style.transform = 'rotate(180deg)';
+                preview.style.display = 'none';
+            }
+        }
+        
+        // 初始化：展开金句集合
+        document.addEventListener('DOMContentLoaded', function() {
+            const quotesCard = document.querySelectorAll('.content-card')[5];
+            if (quotesCard) {
+                const preview = quotesCard.querySelector('.card-preview');
+                if (preview) preview.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

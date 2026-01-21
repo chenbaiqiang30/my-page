@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PM面试终极指南 | 分析思维 × 产品感</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --accent: #14b8a6;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --danger: #ef4444;
+            --dark: #1e1b4b;
+            --glass: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.2);
+            --text-primary: #1f2937;
+            --text-secondary: #6b7280;
+            --bg-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #ec4899 100%);
+        }
+
+        .dark-mode {
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --glass: rgba(0, 0, 0, 0.3);
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 头部导航 */
+        .header {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px 40px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fff 0%, #f0abfc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 10px 20px;
+            cursor: pointer;
+            color: white;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* 英雄区域 */
+        .hero {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 60px 50px;
+            margin-bottom: 40px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+            position: relative;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.15);
+            border-radius: 15px;
+            padding: 20px 30px;
+            min-width: 150px;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #fbbf24;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* 金句横幅 */
+        .quote-banner {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-banner::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 120px;
+            color: rgba(255,255,255,0.1);
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: 1.4rem;
+            color: #fde68a;
+            font-weight: 600;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            color: rgba(255,255,255,0.7);
+            margin-top: 15px;
+            font-size: 1rem;
+        }
+
+        /* 双栏布局 */
+        .dual-columns {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 900px) {
+            .dual-columns {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 玻璃卡片 */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 35px;
+            transition: all 0.4s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .card-icon.purple { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .card-icon.pink { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .card-icon.blue { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .card-icon.green { background: linear-gradient(135deg, #10b981, #34d399); }
+        .card-icon.orange { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+
+        .card-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .card-subtitle {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.7);
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 8px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, #8b5cf6, #ec4899, #f59e0b);
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -26px;
+            top: 25px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: white;
+            border: 3px solid var(--primary);
+        }
+
+        .timeline-time {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .timeline-desc {
+            color: rgba(255,255,255,0.8);
+            font-size: 0.95rem;
+        }
+
+        /* 高亮标签 */
+        .highlight {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.9em;
+        }
+
+        .highlight.red { background: rgba(239, 68, 68, 0.3); color: #fca5a5; }
+        .highlight.blue { background: rgba(59, 130, 246, 0.3); color: #93c5fd; }
+        .highlight.green { background: rgba(16, 185, 129, 0.3); color: #6ee7b7; }
+        .highlight.yellow { background: rgba(245, 158, 11, 0.3); color: #fcd34d; }
+        .highlight.purple { background: rgba(139, 92, 246, 0.3); color: #c4b5fd; }
+        .highlight.pink { background: rgba(236, 72, 153, 0.3); color: #f9a8d4; }
+
+        /* 专家评论 */
+        .expert-comment {
+            background: linear-gradient(135deg, rgba(30, 27, 75, 0.9), rgba(49, 46, 129, 0.9));
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            border-left: 4px solid #fbbf24;
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1e1b4b;
+        }
+
+        .expert-info h4 {
+            color: #fbbf24;
+            font-size: 1.1rem;
+        }
+
+        .expert-info span {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        .expert-content {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.05rem;
+            line-height: 1.9;
+        }
+
+        .expert-content strong {
+            color: #fbbf24;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 25px;
+            padding: 40px;
+            margin: 40px 0;
+            overflow-x: auto;
+        }
+
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 400px;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            width: 140px;
+            height: 140px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            font-weight: 700;
+            font-size: 1rem;
+            position: relative;
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+            z-index: 10;
+        }
+
+        .mindmap-branches {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+        }
+
+        .branch {
+            position: absolute;
+            display: flex;
+            align-items: center;
+        }
+
+        .branch-line {
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            position: absolute;
+        }
+
+        .branch-node {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 15px 20px;
+            min-width: 160px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            background: rgba(255,255,255,0.25);
+            transform: scale(1.05);
+        }
+
+        .branch-node h5 {
+            color: white;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .branch-node p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.8rem;
+        }
+
+        /* CSS版思维导图 - 水平布局 */
+        .css-mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 0;
+            padding: 20px 0;
+        }
+
+        .map-left, .map-right {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 20px;
+        }
+
+        .map-left {
+            align-items: flex-end;
+        }
+
+        .map-right {
+            align-items: flex-start;
+        }
+
+        .map-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .map-left .map-item {
+            flex-direction: row-reverse;
+        }
+
+        .map-node {
+            background: linear-gradient(135deg, rgba(255,255,255,0.15), rgba(255,255,255,0.05));
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 12px 18px;
+            min-width: 140px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .map-node:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(255,255,255,0.25), rgba(255,255,255,0.1));
+        }
+
+        .map-node.purple { border-color: #a78bfa; }
+        .map-node.pink { border-color: #f472b6; }
+        .map-node.blue { border-color: #60a5fa; }
+        .map-node.green { border-color: #34d399; }
+        .map-node.orange { border-color: #fbbf24; }
+
+        .map-node h5 {
+            color: white;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .map-node p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.75rem;
+            margin-top: 4px;
+        }
+
+        .map-line {
+            width: 40px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        }
+
+        .map-center-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+        }
+
+        .map-center {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.95rem;
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.4);
+            padding: 15px;
+        }
+
+        /* 可折叠面板 */
+        .accordion {
+            margin: 30px 0;
+        }
+
+        .accordion-item {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 20px 25px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .accordion-title h3 {
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .accordion-title .emoji {
+            font-size: 1.5rem;
+        }
+
+        .accordion-preview {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.85rem;
+            max-width: 400px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .accordion-icon {
+            color: white;
+            font-size: 1.2rem;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 2000px;
+        }
+
+        .accordion-body {
+            padding: 0 25px 25px;
+            color: rgba(255,255,255,0.9);
+        }
+
+        /* 干货列表 */
+        .insight-list {
+            list-style: none;
+        }
+
+        .insight-list li {
+            padding: 15px 20px;
+            background: rgba(255,255,255,0.08);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .insight-list li:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateX(5px);
+        }
+
+        .insight-icon {
+            font-size: 1.2rem;
+            min-width: 30px;
+        }
+
+        .insight-text {
+            color: rgba(255,255,255,0.9);
+        }
+
+        .insight-text strong {
+            color: #fbbf24;
+        }
+
+        /* 对比表格 */
+        .compare-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 20px 0;
+        }
+
+        .compare-table th {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 15px 20px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .compare-table th:first-child {
+            border-radius: 12px 0 0 0;
+        }
+
+        .compare-table th:last-child {
+            border-radius: 0 12px 0 0;
+        }
+
+        .compare-table td {
+            background: rgba(255,255,255,0.08);
+            padding: 15px 20px;
+            color: rgba(255,255,255,0.9);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .compare-table tr:last-child td:first-child {
+            border-radius: 0 0 0 12px;
+        }
+
+        .compare-table tr:last-child td:last-child {
+            border-radius: 0 0 12px 0;
+        }
+
+        .compare-table tr:hover td {
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* 金句卡片 */
+        .golden-quotes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .quote-card {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1));
+            border: 1px solid rgba(251, 191, 36, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+        }
+
+        .quote-card::before {
+            content: '💡';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 1.5rem;
+        }
+
+        .quote-card p {
+            color: #fde68a;
+            font-size: 1rem;
+            font-weight: 500;
+            line-height: 1.7;
+        }
+
+        .quote-card .quote-source {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.85rem;
+            margin-top: 10px;
+        }
+
+        /* 步骤流程 */
+        .step-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin: 30px 0;
+        }
+
+        .step-item {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            position: relative;
+        }
+
+        .step-item:not(:last-child)::after {
+            content: '→';
+            position: absolute;
+            right: -15px;
+            top: 25px;
+            color: rgba(255,255,255,0.4);
+            font-size: 1.5rem;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .step-number.s1 { background: linear-gradient(135deg, #8b5cf6, #a78bfa); }
+        .step-number.s2 { background: linear-gradient(135deg, #3b82f6, #60a5fa); }
+        .step-number.s3 { background: linear-gradient(135deg, #ec4899, #f472b6); }
+        .step-number.s4 { background: linear-gradient(135deg, #10b981, #34d399); }
+        .step-number.s5 { background: linear-gradient(135deg, #f59e0b, #fbbf24); }
+
+        .step-title {
+            color: white;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .step-desc {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.8rem;
+        }
+
+        /* 元认知区块 */
+        .metacognition {
+            background: linear-gradient(135deg, rgba(20, 184, 166, 0.2), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(20, 184, 166, 0.3);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+
+        .metacognition h4 {
+            color: #5eead4;
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .meta-item {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .meta-item h5 {
+            color: #99f6e4;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+
+        .meta-item p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.85rem;
+        }
+
+        /* 底部 */
+        .footer {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px 40px;
+            margin-top: 40px;
+            text-align: center;
+        }
+
+        .footer-text {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 15px;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.6);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #fbbf24;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-subtitle { font-size: 1rem; }
+            .header { padding: 15px 20px; flex-direction: column; gap: 15px; }
+            .glass-card { padding: 25px; }
+            .step-item:not(:last-child)::after { display: none; }
+            .css-mindmap { flex-direction: column; align-items: center; }
+            .map-left, .map-right { flex-direction: row; flex-wrap: wrap; justify-content: center; }
+            .map-line { width: 2px; height: 20px; }
+        }
+
+        /* 滚动条美化 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header fade-in">
+            <div class="logo">
+                🎯 PM面试终极指南
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" onclick="toggleTheme()">🌙 深色模式</button>
+            </div>
+        </header>
+
+        <!-- 英雄区 -->
+        <section class="hero fade-in delay-1">
+            <h1>🚀 大厂PM面试破解密码</h1>
+            <p class="hero-subtitle">分析思维 × 产品感 | 双维度全攻略 | Meta/Google/Stripe通用框架</p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">35</div>
+                    <div class="stat-label">分钟黄金时间</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">核心评估维度</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">实战面试经验</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心金句 -->
+        <div class="quote-banner fade-in delay-2">
+            <p class="quote-text">练习量与成功率直接正相关——没有任何捷径可以替代真正的实战演练。这是我辅导数百位PM候选人后得出的最重要结论。</p>
+            <p class="quote-author">—— 原Meta PM面试官 Ben</p>
+        </div>
+
+        <!-- Lewis C. Lin 专家评论 -->
+        <div class="expert-comment fade-in delay-3">
+            <div class="expert-header">
+                <div class="expert-avatar">林</div>
+                <div class="expert-info">
+                    <h4>Lewis C. Lin（林杰）</h4>
+                    <span>《Decode and Conquer》作者 · PM面试培训领域权威专家</span>
+                </div>
+            </div>
+            <div class="expert-content">
+                <p>Ben的框架与我在《Decode and Conquer》中提出的CIRCLES方法™有异曲同工之妙。他强调的<strong>"先声明假设再开始"</strong>和<strong>"每个环节都要check-in"</strong>非常精准地捕捉到了大厂面试官的期望。</p>
+                <br>
+                <p>特别值得注意的是他对<strong>北极星指标</strong>和<strong>防护指标</strong>的阐述——这恰恰是很多候选人容易忽略的。一个优秀的PM不仅要知道追求什么（北极星），更要知道什么不能牺牲（防护指标）。这种<strong>辩证思维</strong>正是面试官在寻找的信号。</p>
+                <br>
+                <p>我的建议是：<strong>把这套框架内化成肌肉记忆</strong>，然后用Lewis Lin's Question Bank刷至少20道题。框架是骨架，练习是血肉，两者缺一不可。</p>
+            </div>
+        </div>
+
+        <!-- 双栏：两种面试类型 -->
+        <div class="dual-columns">
+            <!-- 分析思维 -->
+            <div class="glass-card fade-in delay-2">
+                <div class="card-header">
+                    <div class="card-icon purple">📊</div>
+                    <div>
+                        <div class="card-title">分析思维面试</div>
+                        <div class="card-subtitle">Analytical Thinking</div>
+                    </div>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-time">5分钟</span>
+                        <div class="timeline-title">产品理由 Product Rationale</div>
+                        <div class="timeline-desc">产品功能、生命周期阶段、盈利模式、竞争优势、<span class="highlight yellow">使命陈述</span></div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">15分钟</span>
+                        <div class="timeline-title">影响衡量 Measuring Impact</div>
+                        <div class="timeline-desc"><span class="highlight blue">生态系统玩家</span>→价值主张→关键活动→健康指标</div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">5分钟</span>
+                        <div class="timeline-title">目标设定 Setting Goals</div>
+                        <div class="timeline-desc"><span class="highlight green">北极星指标</span>→防护指标→团队可执行目标</div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">10分钟</span>
+                        <div class="timeline-title">权衡取舍 Tradeoffs</div>
+                        <div class="timeline-desc">找共同目标→优缺点分析→回归使命→<span class="highlight pink">改变立场的条件</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 产品感 -->
+            <div class="glass-card fade-in delay-3">
+                <div class="card-header">
+                    <div class="card-icon pink">💡</div>
+                    <div>
+                        <div class="card-title">产品感面试</div>
+                        <div class="card-subtitle">Product Sense</div>
+                    </div>
+                </div>
+                
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <span class="timeline-time">3分钟</span>
+                        <div class="timeline-title">产品动机 Product Motivation</div>
+                        <div class="timeline-desc">产品/体验概述、与公司使命关联、<span class="highlight yellow">占位使命陈述</span></div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">10分钟</span>
+                        <div class="timeline-title">目标受众 Target Audience</div>
+                        <div class="timeline-desc">生态系统玩家→<span class="highlight blue">动机型细分</span>→评分优先级→用户画像</div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">10分钟</span>
+                        <div class="timeline-title">问题识别 Problem Identification</div>
+                        <div class="timeline-desc">用户旅程图→各阶段痛点→<span class="highlight red">严重性×频率</span>评分</div>
+                    </div>
+                    <div class="timeline-item">
+                        <span class="timeline-time">12分钟</span>
+                        <div class="timeline-title">解决方案 Solution Development</div>
+                        <div class="timeline-desc">创意发散→<span class="highlight green">影响力×可行性</span>评估→MVP/V1描述</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 元认知思维图 -->
+        <div class="mindmap-container fade-in">
+            <h3 class="mindmap-title">🧠 元认知框架：面试中的思维层次</h3>
+            <div class="css-mindmap">
+                <div class="map-left">
+                    <div class="map-item">
+                        <div class="map-node purple">
+                            <h5>📋 声明假设</h5>
+                            <p>收窄范围，建立共识</p>
+                        </div>
+                        <div class="map-line"></div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-node blue">
+                            <h5>⏸️ 暂停思考</h5>
+                            <p>1-2分钟，结构化</p>
+                        </div>
+                        <div class="map-line"></div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-node green">
+                            <h5>✅ 实时检查</h5>
+                            <p>每段结束确认理解</p>
+                        </div>
+                        <div class="map-line"></div>
+                    </div>
+                </div>
+                
+                <div class="map-center-col">
+                    <div class="map-center">
+                        PM面试<br>元认知
+                    </div>
+                </div>
+                
+                <div class="map-right">
+                    <div class="map-item">
+                        <div class="map-line"></div>
+                        <div class="map-node orange">
+                            <h5>🎯 信号意识</h5>
+                            <p>每秒都在被评估</p>
+                        </div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-line"></div>
+                        <div class="map-node pink">
+                            <h5>🔄 灵活回撤</h5>
+                            <p>发现错误立即修正</p>
+                        </div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-line"></div>
+                        <div class="map-node purple">
+                            <h5>♟️ 棋局思维</h5>
+                            <p>每步影响后续空间</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心干货 - 可折叠面板 -->
+        <div class="accordion">
+            <div class="accordion-item active">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="emoji">🎬</span>
+                        <h3>开场白模板（直接背诵）</h3>
+                    </div>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <div class="quote-card" style="margin-top: 15px;">
+                            <p>"我想先梳理一下产品的<span class="highlight yellow">背景与存在理由</span>，包括它在生命周期中的位置、主要竞争对手、公司的独特优势、以及盈利模式。然后我会设定一个<span class="highlight yellow">占位使命陈述</span>。"</p>
+                        </div>
+                        <div class="quote-card">
+                            <p>"接下来，我想识别产品的<span class="highlight blue">关键利益相关者和生态系统玩家</span>，以及他们参与这个生态系统的主要动机，定义能够表明动机被满足的关键行为，并将这些转化为<span class="highlight blue">生态系统健康指标</span>。"</p>
+                        </div>
+                        <div class="quote-card">
+                            <p>"有了生态系统健康指标后，我会尝试确定一个反映整体价值创造的<span class="highlight green">北极星指标</span>，并通过批判性分析来定义1-2个<span class="highlight green">防护指标</span>，确保我们在可持续增长。"</p>
+                        </div>
+                        <div class="quote-card">
+                            <p>"最后，我会从北极星指标反推，确定一个团队可以在<span class="highlight pink">3-6个月内专注</span>的小目标集。在任何时候，我都很乐意讨论权衡问题。这样的计划听起来可以吗？"</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="emoji">🎯</span>
+                        <h3>北极星指标 vs 防护指标</h3>
+                    </div>
+                    <span class="accordion-preview">北极星向上增长时，防护指标确保不会牺牲什么...</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <table class="compare-table">
+                            <tr>
+                                <th>产品</th>
+                                <th>北极星指标 ⭐</th>
+                                <th>防护指标 🛡️</th>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight purple">DoorDash</span></td>
+                                <td>每周成功配送订单数</td>
+                                <td>配送员满意度、餐厅评分</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight blue">Uber</span></td>
+                                <td>每周成功行程数</td>
+                                <td>司机留存率、安全事件率</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight green">Airbnb</span></td>
+                                <td>每月预订住宿数</td>
+                                <td>房东响应率、取消率</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight pink">Instagram Reels</span></td>
+                                <td>每周总观看时长</td>
+                                <td>视频完播率、创作者留存</td>
+                            </tr>
+                            <tr>
+                                <td><span class="highlight orange">SMS产品</span></td>
+                                <td>每日发送消息数</td>
+                                <td>垃圾举报率、退订率</td>
+                            </tr>
+                        </table>
+                        
+                        <div class="expert-comment" style="margin-top: 20px;">
+                            <div class="expert-header">
+                                <div class="expert-avatar">林</div>
+                                <div class="expert-info">
+                                    <h4>Lewis C. Lin 点评</h4>
+                                    <span>防护指标的艺术</span>
+                                </div>
+                            </div>
+                            <div class="expert-content">
+                                <p>防护指标的精髓在于<strong>"保持在健康范围内"</strong>而非简单的"不下降"。优秀的候选人会说："当北极星增长时，我们希望X指标保持在Y%以上"，而不是泛泛而谈"不能伤害用户体验"。<strong>量化你的防护边界</strong>，这才是高级PM的思维方式。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="emoji">⚖️</span>
+                        <h3>权衡问题处理框架</h3>
+                    </div>
+                    <span class="accordion-preview">把苹果和橙子变成苹果和苹果的比较...</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <div class="step-flow">
+                            <div class="step-item">
+                                <div class="step-number s1">1</div>
+                                <div class="step-title">复述问题</div>
+                                <div class="step-desc">用自己的话确认理解</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number s2">2</div>
+                                <div class="step-title">找共同目标</div>
+                                <div class="step-desc">两个选项都指向什么？</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number s3">3</div>
+                                <div class="step-title">列优缺点</div>
+                                <div class="step-desc">暂停1分钟结构化思考</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number s4">4</div>
+                                <div class="step-title">提炼本质</div>
+                                <div class="step-desc">广度vs深度？增长vs留存？</div>
+                            </div>
+                            <div class="step-item">
+                                <div class="step-number s5">5</div>
+                                <div class="step-title">回归使命</div>
+                                <div class="step-desc">+说明改变立场的条件</div>
+                            </div>
+                        </div>
+
+                        <div class="metacognition" style="margin-top: 25px;">
+                            <h4>🧠 实战案例：Reels vs Stories 放在顶部？</h4>
+                            <div class="meta-grid">
+                                <div class="meta-item">
+                                    <h5>Reels顶部 👆</h5>
+                                    <p>✅ 加速TikTok竞争<br>✅ 更高互动/视频广告收益<br>❌ 削弱社交连接核心</p>
+                                </div>
+                                <div class="meta-item">
+                                    <h5>Stories顶部 👆</h5>
+                                    <p>✅ 保持核心社交差异化<br>✅ 保护高粘性功能<br>❌ Reels增长较慢</p>
+                                </div>
+                                <div class="meta-item">
+                                    <h5>我的选择 ✨</h5>
+                                    <p><span class="highlight green">保持Stories</span> - Instagram的核心是真实社交连接，不是娱乐平台</p>
+                                </div>
+                                <div class="meta-item">
+                                    <h5>改变条件 🔄</h5>
+                                    <p>如果Stories互动持续下降，或用户偏好大幅转向娱乐消费</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="emoji">🚫</span>
+                        <h3>致命错误清单（必须避免）</h3>
+                    </div>
+                    <span class="accordion-preview">开口就说、不暂停思考、分享屏幕...</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <ul class="insight-list">
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>开口就说</strong> —— 不声明假设、不说明计划就直接开始，面试官无法跟上你的思路</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>边想边说</strong> —— "Word vomit"式思考让你显得混乱且浪费时间，宁可沉默1分钟</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>分享屏幕</strong> —— 技术问题+实时改错别字=浪费宝贵时间，除非面试官坚持要求</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>卖弄领域知识</strong> —— 他们要看你的思维过程，不是你对某产品的背景知识</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>自相矛盾</strong> —— 前面说A重要，后面选了B，又说不出为什么改变</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>混淆面试类型</strong> —— 在分析思维面试里讲产品解决方案=牛头不对马嘴</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>需求≠问题</strong> —— "用户需要好看的花"不是问题，"不知道哪种花适合我的公寓"才是</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">💀</span>
+                                <span class="insight-text"><strong>纯人口统计细分</strong> —— 只按年龄/性别分群太肤浅，要结合动机、行为、预算等</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <span class="emoji">💎</span>
+                        <h3>高分技巧（面试官内部视角）</h3>
+                    </div>
+                    <span class="accordion-preview">Nudge是帮助不是陷阱、面试官希望你成功...</span>
+                    <span class="accordion-icon">▼</span>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-body">
+                        <ul class="insight-list">
+                            <li>
+                                <span class="insight-icon">✨</span>
+                                <span class="insight-text"><strong>Nudge是友军</strong> —— 面试官追问是在帮你展示信号，不是要trap你，顺着他们的方向走</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">✨</span>
+                                <span class="insight-text"><strong>面试官希望你成功</strong> —— 好候选人=轻松面试，他们不想为难你</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">✨</span>
+                                <span class="insight-text"><strong>批判你自己的指标</strong> —— 主动说出北极星指标的缺陷，然后用防护指标补救，展示辩证思维</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">✨</span>
+                                <span class="insight-text"><strong>"什么情况下我会改变立场"</strong> —— 权衡问题的必杀技，展示你不是死板的决策者</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">✨</span>
+                                <span class="insight-text"><strong>棋局思维</strong> —— 选细分决定了问题空间，选问题决定了方案空间，每一步都在收窄后续可能性</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">✨</span>
+                                <span class="insight-text"><strong>可以回撤</strong> —— 发现走错了，直接说"我想回去调整一下细分"，诚实比硬撑强100倍</span>
+                            </li>
+                            <li>
+                                <span class="insight-icon">✨</span>
+                                <span class="insight-text"><strong>3×2原则</strong> —— 3个选项 × 2个评分维度 = 6格矩阵，多了太耗时，少了不够广</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 逻辑思维图 -->
+        <div class="mindmap-container fade-in">
+            <h3 class="mindmap-title">🔗 PM面试逻辑链路图</h3>
+            <div class="css-mindmap">
+                <div class="map-left">
+                    <div class="map-item">
+                        <div class="map-node green">
+                            <h5>📊 分析思维</h5>
+                            <p>如何衡量成功？</p>
+                        </div>
+                        <div class="map-line"></div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-node blue">
+                            <h5>🎯 生态系统</h5>
+                            <p>谁参与？为何参与？</p>
+                        </div>
+                        <div class="map-line"></div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-node purple">
+                            <h5>⭐ 北极星</h5>
+                            <p>整体价值创造</p>
+                        </div>
+                        <div class="map-line"></div>
+                    </div>
+                </div>
+                
+                <div class="map-center-col">
+                    <div class="map-center">
+                        PM<br>面试<br>核心
+                    </div>
+                </div>
+                
+                <div class="map-right">
+                    <div class="map-item">
+                        <div class="map-line"></div>
+                        <div class="map-node pink">
+                            <h5>💡 产品感</h5>
+                            <p>为谁解决什么问题？</p>
+                        </div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-line"></div>
+                        <div class="map-node orange">
+                            <h5>👤 用户画像</h5>
+                            <p>具体、可感、有生命</p>
+                        </div>
+                    </div>
+                    <div class="map-item">
+                        <div class="map-line"></div>
+                        <div class="map-node green">
+                            <h5>🛠️ 解决方案</h5>
+                            <p>创意 × 可行性</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 金句集锦 -->
+        <div class="glass-card fade-in">
+            <div class="card-header">
+                <div class="card-icon orange">💡</div>
+                <div>
+                    <div class="card-title">金句精选</div>
+                    <div class="card-subtitle">面试中可以直接使用的表达</div>
+                </div>
+            </div>
+            
+            <div class="golden-quotes">
+                <div class="quote-card">
+                    <p>"让我花一两分钟整理一下思路。"</p>
+                    <div class="quote-source">— 暂停思考时</div>
+                </div>
+                <div class="quote-card">
+                    <p>"这样的计划听起来可以吗？"</p>
+                    <div class="quote-source">— 声明框架后</div>
+                </div>
+                <div class="quote-card">
+                    <p>"这个指标的潜在缺陷是..."</p>
+                    <div class="quote-source">— 批判北极星时</div>
+                </div>
+                <div class="quote-card">
+                    <p>"如果看到X情况，我会重新考虑这个决定。"</p>
+                    <div class="quote-source">— 权衡问题收尾</div>
+                </div>
+                <div class="quote-card">
+                    <p>"我想回去调整一下之前的..."</p>
+                    <div class="quote-source">— 需要回撤时</div>
+                </div>
+                <div class="quote-card">
+                    <p>"这是否符合您对这部分的预期？"</p>
+                    <div class="quote-source">— 每段结束check-in</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 专家总结 -->
+        <div class="expert-comment fade-in" style="margin-top: 40px;">
+            <div class="expert-header">
+                <div class="expert-avatar">林</div>
+                <div class="expert-info">
+                    <h4>Lewis C. Lin 总结寄语</h4>
+                    <span>给所有PM候选人的最后建议</span>
+                </div>
+            </div>
+            <div class="expert-content">
+                <p>经过多年培训数千名PM候选人，我发现成功者有一个共同特质：<strong>他们把面试当成产品来打磨</strong>。</p>
+                <br>
+                <p>框架只是起点。真正的高手会在每次练习后复盘："这个细分够具体吗？那个指标有没有更好的选择？我的权衡逻辑站得住脚吗？"</p>
+                <br>
+                <p><strong>三条核心建议：</strong></p>
+                <p>1️⃣ <span class="highlight yellow">用Lewis Lin's Question Bank刷至少20道真题</span>——框架内化需要大量重复</p>
+                <p>2️⃣ <span class="highlight blue">找人模拟面试并录音回听</span>——你会发现自己说了多少"嗯"和重复词</p>
+                <p>3️⃣ <span class="highlight green">面试前一周每天30分钟口述练习</span>——让表达像呼吸一样自然</p>
+                <br>
+                <p>记住：<strong>没有任何框架可以替代练习，但没有框架的练习是低效的</strong>。先学好这套框架，然后疯狂练习。祝你面试顺利！🚀</p>
+            </div>
+        </div>
+
+        <!-- 资源链接 -->
+        <div class="glass-card fade-in" style="margin-top: 40px;">
+            <div class="card-header">
+                <div class="card-icon blue">📚</div>
+                <div>
+                    <div class="card-title">延伸资源</div>
+                    <div class="card-subtitle">继续精进你的PM面试技能</div>
+                </div>
+            </div>
+            
+            <ul class="insight-list">
+                <li>
+                    <span class="insight-icon">📖</span>
+                    <span class="insight-text"><strong>Lewis Lin's Question Bank</strong> —— 业界最全的真实PM面试题库，每周更新来自Meta/Google等的新题</span>
+                </li>
+                <li>
+                    <span class="insight-icon">🎥</span>
+                    <span class="insight-text"><strong>Meta官方面试指南视频</strong> —— 非密码保护的公开资源，包含PM之间的模拟面试片段</span>
+                </li>
+                <li>
+                    <span class="insight-icon">🤖</span>
+                    <span class="insight-text"><strong>Claude Projects练习助手</strong> —— 用AI训练面试回答，可以扮演面试官也可以给你的回答评分</span>
+                </li>
+                <li>
+                    <span class="insight-icon">📊</span>
+                    <span class="insight-text"><strong>Product HQ北极星指标库</strong> —— 各行业产品的北极星与防护指标参考案例</span>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 底部 -->
+        <footer class="footer fade-in">
+            <p class="footer-text">
+                基于原创内容整理 | 框架来源：前Meta PM面试官 Ben
+                <br>
+                专家评论视角：Lewis C. Lin（林杰）《Decode and Conquer》作者
+            </p>
+            <div class="footer-links">
+                <a href="#">🎯 开始练习</a>
+                <a href="#">📚 更多资源</a>
+                <a href="#">💬 反馈建议</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const btn = document.querySelector('.theme-toggle');
+            if (document.body.classList.contains('dark-mode')) {
+                btn.textContent = '☀️ 浅色模式';
+            } else {
+                btn.textContent = '🌙 深色模式';
+            }
+        }
+
+        // 手风琴切换
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const wasActive = item.classList.contains('active');
+            
+            // 可选：关闭其他面板
+            // document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('active'));
+            
+            if (wasActive) {
+                item.classList.remove('active');
+            } else {
+                item.classList.add('active');
+            }
+        }
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.glass-card, .expert-comment, .mindmap-container, .accordion-item').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // 页面加载完成后显示第一个手风琴
+        document.addEventListener('DOMContentLoaded', () => {
+            const firstAccordion = document.querySelector('.accordion-item');
+            if (firstAccordion) {
+                firstAccordion.classList.add('active');
+            }
+        });
+    </script>
+</body>
+</html>
