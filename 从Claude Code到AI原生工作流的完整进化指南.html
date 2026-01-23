@@ -1,0 +1,1398 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skills爆改训练营 · 从Claude Code到AI原生工作流</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --highlight-key: #f43f5e;
+            --highlight-data: #38bdf8;
+            --highlight-quote: #4ade80;
+            --highlight-gold: #fbbf24;
+            --highlight-purple: #a78bfa;
+            --highlight-orange: #fb923c;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 50%, #a5b4fc 100%);
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 头部区域 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #f43f5e, #8b5cf6, #06b6d4, #4ade80, #fbbf24);
+            animation: shimmer 3s ease-in-out infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.9em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-size: 2.8em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #f1f5f9, #a78bfa, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 25px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(139, 92, 246, 0.1);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.95em;
+        }
+        .meta-item span:first-child { font-size: 1.2em; }
+        
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            border: none;
+            color: white;
+        }
+
+        /* 核心洞察卡片 */
+        .insight-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 35px;
+        }
+        .insight-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        .insight-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, transparent 60%, rgba(139, 92, 246, 0.05));
+            pointer-events: none;
+        }
+        .insight-card:nth-child(1) { animation-delay: 0.1s; }
+        .insight-card:nth-child(2) { animation-delay: 0.2s; }
+        .insight-card:nth-child(3) { animation-delay: 0.3s; }
+        .insight-card:nth-child(4) { animation-delay: 0.4s; }
+        .insight-icon {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+        .insight-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--highlight-purple);
+        }
+        .insight-value {
+            font-size: 2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--highlight-data), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* 元认知图（思维导图） */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 40px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 30px 20px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #06b6d4);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 700;
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+            animation: float 3s ease-in-out infinite;
+            text-align: center;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 35px;
+            width: 100%;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.4s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch:nth-child(4) { animation-delay: 0.8s; }
+        .branch-node {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+            border: 2px solid var(--accent);
+            padding: 18px 28px;
+            border-radius: 22px;
+            font-size: 1.2em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: var(--highlight-purple);
+        }
+        .branch-node:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
+        }
+        .sub-node {
+            background: rgba(139, 92, 246, 0.08);
+            padding: 14px 22px;
+            border-radius: 14px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .sub-node:hover {
+            transform: translateX(8px);
+            background: rgba(139, 92, 246, 0.15);
+        }
+        .sub-node.red { border-color: var(--highlight-key); }
+        .sub-node.blue { border-color: var(--highlight-data); }
+        .sub-node.green { border-color: var(--highlight-quote); }
+        .sub-node.gold { border-color: var(--highlight-gold); }
+        .sub-node.purple { border-color: var(--highlight-purple); }
+
+        /* 逻辑流程图 */
+        .logic-flow {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 40px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+        }
+        .flow-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--highlight-gold), var(--highlight-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .flow-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+        }
+        .flow-step {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.15), rgba(251, 146, 60, 0.15));
+            border: 2px solid var(--highlight-gold);
+            padding: 20px 30px;
+            border-radius: 18px;
+            text-align: center;
+            min-width: 160px;
+            transition: all 0.3s ease;
+        }
+        .flow-step:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(251, 191, 36, 0.3);
+        }
+        .flow-step-num {
+            font-size: 2em;
+            font-weight: 800;
+            color: var(--highlight-gold);
+        }
+        .flow-step-text {
+            font-size: 1em;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .flow-arrow {
+            font-size: 2em;
+            color: var(--highlight-gold);
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 1; transform: translateX(0); }
+            50% { opacity: 0.5; transform: translateX(5px); }
+        }
+
+        /* 金句卡片 */
+        .quotes-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 40px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+        }
+        .quotes-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--highlight-key), var(--highlight-orange));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        .quote-card {
+            background: linear-gradient(135deg, rgba(244, 63, 94, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 20px;
+            padding: 30px;
+            border-left: 5px solid var(--highlight-key);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 35px rgba(244, 63, 94, 0.2);
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4em;
+            color: var(--highlight-key);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+        }
+        .quote-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            line-height: 1.7;
+            padding-left: 20px;
+            color: var(--text-primary);
+        }
+        .quote-author {
+            margin-top: 15px;
+            padding-left: 20px;
+            color: var(--highlight-purple);
+            font-weight: 600;
+        }
+
+        /* 干货板块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-title-text {
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .collapse-icon {
+            font-size: 1.4em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 100px;
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+        }
+        .section-content {
+            max-height: 8000px;
+            transition: max-height 0.5s ease;
+            overflow: hidden;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+        }
+
+        /* 语义高亮 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(244, 63, 94, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(56, 189, 248, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(74, 222, 128, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-gold {
+            color: var(--highlight-gold);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(251, 191, 36, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-purple {
+            color: var(--highlight-purple);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(167, 139, 250, 0.15);
+            border-radius: 6px;
+        }
+
+        /* 专家点评 */
+        .expert-comment {
+            margin-top: 35px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(6, 182, 212, 0.12));
+            border-left: 5px solid var(--accent);
+            border-radius: 20px;
+            position: relative;
+        }
+        .expert-comment::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .expert-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+        }
+        .expert-name {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.1em;
+        }
+        .expert-role {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        .expert-text {
+            line-height: 1.9;
+            color: var(--text-primary);
+        }
+
+        /* 干货清单 */
+        .tips-list {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 20px;
+            background: rgba(139, 92, 246, 0.08);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+        .tip-item:hover {
+            background: rgba(139, 92, 246, 0.15);
+            transform: translateX(8px);
+        }
+        .tip-icon {
+            flex-shrink: 0;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent-pink));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        .tip-content h4 {
+            font-size: 1.1em;
+            font-weight: 700;
+            color: var(--highlight-purple);
+            margin-bottom: 8px;
+        }
+        .tip-content p {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* 代码块 */
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'SF Mono', 'Fira Code', monospace;
+            font-size: 0.95em;
+            overflow-x: auto;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+        }
+        .code-block code {
+            color: var(--highlight-data);
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header { padding: 30px 20px; }
+            h1 { font-size: 1.8em; }
+            .mindmap-branches { grid-template-columns: 1fr; }
+            .quotes-grid { grid-template-columns: 1fr; }
+            .flow-container { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+        }
+
+        /* 嘉宾卡片 */
+        .guests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .guest-card {
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            transition: all 0.3s ease;
+        }
+        .guest-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.2);
+        }
+        .guest-emoji {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .guest-name {
+            font-weight: 700;
+            color: var(--highlight-purple);
+            margin-bottom: 5px;
+        }
+        .guest-role {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+
+        /* 工具卡片 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+        .tool-card {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1), rgba(139, 92, 246, 0.1));
+            border-radius: 20px;
+            padding: 25px;
+            border: 1px solid rgba(6, 182, 212, 0.2);
+            transition: all 0.3s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(6, 182, 212, 0.2);
+        }
+        .tool-name {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--accent-cyan);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tool-desc {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-badge">🔥 WaytoAGI 共学直播</div>
+            <h1>Skills爆改训练营</h1>
+            <p class="subtitle">从Claude Code到AI原生工作流的完整进化指南</p>
+            
+            <div class="meta-info">
+                <div class="meta-item"><span>📅</span> 2026年1月21日</div>
+                <div class="meta-item"><span>⏱️</span> 约100分钟精华</div>
+                <div class="meta-item"><span>👥</span> 7个群同步直播</div>
+                <div class="meta-item"><span>🎯</span> 4000+人参与</div>
+            </div>
+
+            <div class="guests-grid">
+                <div class="guest-card">
+                    <div class="guest-emoji">🍊</div>
+                    <div class="guest-name">橘子</div>
+                    <div class="guest-role">Listenhub CEO</div>
+                </div>
+                <div class="guest-card">
+                    <div class="guest-emoji">🌳</div>
+                    <div class="guest-name">向阳乔木</div>
+                    <div class="guest-role">Skills高级玩家</div>
+                </div>
+                <div class="guest-card">
+                    <div class="guest-emoji">🎵</div>
+                    <div class="guest-name">Max</div>
+                    <div class="guest-role">Listenhub CMO</div>
+                </div>
+                <div class="guest-card">
+                    <div class="guest-emoji">🌈</div>
+                    <div class="guest-name">AJ</div>
+                    <div class="guest-role">主持人 / 产品经理</div>
+                </div>
+            </div>
+
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">📑 展开/折叠全部</button>
+                <button class="btn" onclick="scrollToMindmap()">🧠 查看思维导图</button>
+                <button class="btn" onclick="scrollToQuotes()">💎 精选金句</button>
+            </div>
+        </header>
+
+        <!-- 核心数据 -->
+        <div class="insight-grid">
+            <div class="insight-card">
+                <div class="insight-icon">⚡</div>
+                <div class="insight-title">效率提升</div>
+                <div class="insight-value">10倍+</div>
+                <p style="margin-top:10px;color:var(--text-secondary)">30秒完成10分钟的工作</p>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon">💰</div>
+                <div class="insight-title">橘子教程返利</div>
+                <div class="insight-value">3万+</div>
+                <p style="margin-top:10px;color:var(--text-secondary)">250万曝光带来的智谱API返利</p>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon">⭐</div>
+                <div class="insight-title">GitHub Star</div>
+                <div class="insight-value">500+</div>
+                <p style="margin-top:10px;color:var(--text-secondary)">Claude Code启动器开源项目</p>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon">📰</div>
+                <div class="insight-title">Newsletter源</div>
+                <div class="insight-value">40+</div>
+                <p style="margin-top:10px;color:var(--text-secondary)">向阳乔木的自动采集系统</p>
+            </div>
+        </div>
+
+        <!-- 元认知图 -->
+        <div class="mindmap-container" id="mindmap">
+            <h2 class="mindmap-title">🧠 元认知图：AI原生工作流的知识架构</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">Skills = AI时代的SOP</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">🛠️ Claude Code基础</div>
+                        <div class="sub-node blue">安装：NPM + Node.js环境</div>
+                        <div class="sub-node green">启动：终端输入 Claude 回车</div>
+                        <div class="sub-node purple">核心：文件夹 = 上下文</div>
+                        <div class="sub-node gold">多窗口：Command/Ctrl + N</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">📝 Claude.MD的威力</div>
+                        <div class="sub-node red">身份：介绍你是谁、做什么</div>
+                        <div class="sub-node blue">记忆：Memory.MD持久化</div>
+                        <div class="sub-node green">规则：让AI自己写规则</div>
+                        <div class="sub-node purple">复用：SOP标准化流程</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🚀 Skills本质</div>
+                        <div class="sub-node gold">文本文件：记录可复用流程</div>
+                        <div class="sub-node red">调用方式：@ 或 / 触发</div>
+                        <div class="sub-node blue">组合威力：多Skill串联</div>
+                        <div class="sub-node green">超越MCP：更易用更普适</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🎯 实战场景</div>
+                        <div class="sub-node purple">写作：文风克隆+自动配图</div>
+                        <div class="sub-node gold">视频：TTS+字幕+时间轴</div>
+                        <div class="sub-node red">发布：一键Twitter/小红书</div>
+                        <div class="sub-node blue">财务：拆工资条等自动化</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 逻辑思维图：向阳乔木的自动化流程 -->
+        <div class="logic-flow">
+            <h2 class="flow-title">⚙️ 逻辑流程图：一句话到内容发布的全自动化</h2>
+            <div class="flow-container">
+                <div class="flow-step">
+                    <div class="flow-step-num">1</div>
+                    <div class="flow-step-text">输入指令</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">
+                    <div class="flow-step-num">2</div>
+                    <div class="flow-step-text">Z-Library<br>下载电子书</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">
+                    <div class="flow-step-num">3</div>
+                    <div class="flow-step-text">转换为<br>Markdown</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">
+                    <div class="flow-step-num">4</div>
+                    <div class="flow-step-text">AI深度<br>解读内容</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">
+                    <div class="flow-step-num">5</div>
+                    <div class="flow-step-text">调用风格<br>写作Skill</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">
+                    <div class="flow-step-num">6</div>
+                    <div class="flow-step-text">即梦AI<br>自动配图</div>
+                </div>
+                <span class="flow-arrow">→</span>
+                <div class="flow-step">
+                    <div class="flow-step-num">7</div>
+                    <div class="flow-step-text">发布到<br>Twitter</div>
+                </div>
+            </div>
+            <p style="text-align:center;margin-top:30px;color:var(--text-secondary);font-style:italic;">
+                "你把日常里边的正常动作都拆解成一个个的小的元素，然后把它拼接起来，那就是变成了一个完整的工作流"
+            </p>
+        </div>
+
+        <!-- 金句板块 -->
+        <div class="quotes-section" id="quotes">
+            <h2 class="quotes-title">💎 直播金句精选</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p class="quote-text">一定要用好这种老板的思维，把这个AI牛马<span class="highlight-key">多线程</span>地用起来。</p>
+                    <p class="quote-author">—— 橘子</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">Skills就是<span class="highlight-gold">SOP</span>，你有一个很好流程，那你就用就好了，你没有必要再思考。</p>
+                    <p class="quote-author">—— 橘子</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">Claude code的核心理念是把<span class="highlight-data">文件夹</span>作为你的上下文。</p>
+                    <p class="quote-author">—— 橘子</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">MCP已经是<span class="highlight-key">明日黄花</span>，Skills是接下来半年到一年最火的东西。</p>
+                    <p class="quote-author">—— 橘子</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">这个东西零基础，它比<span class="highlight-quote">Office还要简单</span>，比你学Photoshop都简单。</p>
+                    <p class="quote-author">—— 橘子</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">任何一个<span class="highlight-purple">提示词</span>都可以变成一个Skill。</p>
+                    <p class="quote-author">—— 向阳乔木</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">大家不要刻意说一定要找出来AI味，更在意内容对自己<span class="highlight-gold">有没有价值</span>。</p>
+                    <p class="quote-author">—— 向阳乔木</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">这是<span class="highlight-data">价值连城</span>的Skills，可以直接商业化的。</p>
+                    <p class="quote-author">—— 橘子 评向阳演示</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 干货板块1：Claude Code安装 -->
+        <section class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <h2 class="section-title">
+                    <span>🔧</span>
+                    <span class="section-title-text">Claude Code 安装全攻略</span>
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">橘子详解：从零到一搭建你的AI编程助手环境...</div>
+            <div class="section-content">
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <div class="tip-icon">1️⃣</div>
+                        <div class="tip-content">
+                            <h4>环境准备</h4>
+                            <p>安装 <span class="highlight-data">Node.js</span> 最新版（必需），Windows用户需额外配置。科学环境是安装的前提条件。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">2️⃣</div>
+                        <div class="tip-content">
+                            <h4>NPM安装命令</h4>
+                            <div class="code-block"><code>npm install -g @anthropic-ai/claude-code</code></div>
+                            <p>确保开启科学环境后执行，安装完成后输入 <span class="highlight-purple">claude --version</span> 验证。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">3️⃣</div>
+                        <div class="tip-content">
+                            <h4>API配置方案</h4>
+                            <p>推荐国产模型：<span class="highlight-gold">GLM 4.7</span>（智谱）、<span class="highlight-gold">MINIMAX 2.1</span>、<span class="highlight-gold">Kimi K2</span>。智谱有官方配置器，新手优惠约40元/月。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">4️⃣</div>
+                        <div class="tip-content">
+                            <h4>橘子的启动器</h4>
+                            <p>开源在GitHub（500+ Star），一键启动，自动开启危险模式（免确认），非程序员也能用。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🧠</div>
+                        <div>
+                            <div class="expert-name">达里奥·阿莫迪 视角</div>
+                            <div class="expert-role">Anthropic CEO</div>
+                        </div>
+                    </div>
+                    <div class="expert-text">
+                        <p>Claude Code代表了我们对<span class="highlight-key">AI民主化</span>的愿景——让非技术背景的人也能驾驭强大的编程能力。橘子团队将其与国产模型结合的做法非常聪明，这种<span class="highlight-purple">本地化适配</span>正是AI工具普及的关键。</p>
+                        <p style="margin-top:15px;">有趣的是，当用户说"这比Office还简单"时，这恰恰验证了我们的设计哲学：<span class="highlight-gold">复杂性应该由AI承担，而非用户</span>。Skills的兴起也印证了一个趋势——未来的软件交互将从"学习使用"转向"描述需求"。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货板块2：Claude.MD核心 -->
+        <section class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <h2 class="section-title">
+                    <span>📄</span>
+                    <span class="section-title-text">Claude.MD：让AI拥有记忆</span>
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">你的AI助手个性化配置文件的正确打开方式...</div>
+            <div class="section-content">
+                <p style="margin-bottom:25px;">Claude.MD是Claude Code<span class="highlight-key">自动读取的配置文件</span>，每次启动都会加载，相当于给AI一个持久化的"人设"。</p>
+                
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-name">📝 自我介绍</div>
+                        <div class="tool-desc">告诉AI你是谁、擅长什么、不会写代码等背景信息，AI会据此调整沟通方式。</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">💾 记忆系统</div>
+                        <div class="tool-desc">创建Memory.MD文件，让AI每次完成任务后自动记录，形成工作日志。</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🎨 工作流模板</div>
+                        <div class="tool-desc">定义输入→输出流程，如"MD文件→HTML→长图"的PPT制作链路。</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🔄 自我进化</div>
+                        <div class="tool-desc">最强之处：让AI自己总结规则写入Claude.MD，实现自我迭代优化。</div>
+                    </div>
+                </div>
+
+                <div class="code-block">
+                    <code># 示例：橘子的BP制作Claude.MD<br><br>源文件：BP.md（商业计划书Markdown）<br>叙事逻辑：问题→方案→市场→团队→融资<br>产出文件：BP.html<br>配色方案：紫色渐变 #8b5cf6 → #ec4899<br>后处理：调用 capture_long_image.py 生成长图</code>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <div class="expert-avatar">💡</div>
+                        <div>
+                            <div class="expert-name">丹妮拉·阿莫迪 视角</div>
+                            <div class="expert-role">Anthropic 联合创始人</div>
+                        </div>
+                    </div>
+                    <div class="expert-text">
+                        <p>Claude.MD的设计体现了我们对<span class="highlight-purple">"人机共生"</span>的思考。传统软件需要用户适应系统，而这里是系统主动学习用户。橘子说的"让AI自己给自己写规则"，本质上是<span class="highlight-gold">元学习</span>的实践应用。</p>
+                        <p style="margin-top:15px;">这让我想起一个原则：<span class="highlight-key">最好的工具是隐形的</span>。当Claude.MD配置完善后，用户甚至不需要知道它的存在，AI已经"懂"你了。这才是真正的智能助手该有的样子。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货板块3：Skills实战 -->
+        <section class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <h2 class="section-title">
+                    <span>🚀</span>
+                    <span class="section-title-text">Skills实战：向阳乔木的自动化帝国</span>
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从一句话到完整内容发布的震撼演示...</div>
+            <div class="section-content">
+                <p style="margin-bottom:25px;">向阳乔木现场演示了<span class="highlight-key">多个Skills串联</span>的强大威力，一句话指令可以触发完整的内容生产流水线。</p>
+
+                <h3 style="color:var(--highlight-purple);margin:30px 0 20px;font-size:1.3em;">📚 电子书解读发布全流程</h3>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <div class="tip-icon">📥</div>
+                        <div class="tip-content">
+                            <h4>Z-Library下载Skill</h4>
+                            <p>输入书名，自动从Z-Library搜索并下载最佳版本的电子书（EPUB格式）。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">🔄</div>
+                        <div class="tip-content">
+                            <h4>Markdown转换Skill</h4>
+                            <p>使用微软出品的转换工具，将EPUB转为AI友好的Markdown格式。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">✍️</div>
+                        <div class="tip-content">
+                            <h4>风格写作Skill</h4>
+                            <p>调用个人写作风格提示词，将书籍内容转化为独特风格的解读文章。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">🎨</div>
+                        <div class="tip-content">
+                            <h4>智能配图Skill</h4>
+                            <p>AI分析文章语义，自动决定为哪些段落配图，调用即梦AI生成风格统一的配图。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">📤</div>
+                        <div class="tip-content">
+                            <h4>自动发布Skill</h4>
+                            <p>唤起浏览器，自动填充标题、内容、图片，一键发布到Twitter或小红书。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color:var(--highlight-gold);margin:40px 0 20px;font-size:1.3em;">🎬 一句话生成视频（Listenhub API）</h3>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <div class="tip-icon">🎤</div>
+                        <div class="tip-content">
+                            <h4>克隆声音TTS</h4>
+                            <p>Listenhub独家优势：TTS输出<span class="highlight-data">自带字幕和时间轴</span>，是做精准视频的关键。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">📝</div>
+                        <div class="tip-content">
+                            <h4>文字动画（Manim）</h4>
+                            <p>使用Manim库将文本转为动态字幕，渐进出现、合理排布。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">🖼️</div>
+                        <div class="tip-content">
+                            <h4>语义配图</h4>
+                            <p>黑色简洁意象风格最适合视频，AI根据段落内容自动生成配图。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h3 style="color:var(--highlight-quote);margin:40px 0 20px;font-size:1.3em;">📰 40+ Newsletter自动采集系统</h3>
+                <p>向阳乔木的素材来源秘密：daily_topic_selector Skill每天自动爬取40+海外顶级Newsletter，翻译标题，写入Markdown索引。<span class="highlight-purple">打开Obsidian就是当天的精选素材库。</span></p>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🔮</div>
+                        <div>
+                            <div class="expert-name">达里奥·阿莫迪 视角</div>
+                            <div class="expert-role">Anthropic CEO</div>
+                        </div>
+                    </div>
+                    <div class="expert-text">
+                        <p>向阳乔木的演示完美诠释了<span class="highlight-key">AI Agent的未来形态</span>——不是单一能力的堆砌，而是<span class="highlight-gold">能力的编排与组合</span>。每个Skill都是一个原子能力，组合起来就是一条生产线。</p>
+                        <p style="margin-top:15px;">特别值得注意的是他提到"AI自己规划任务路线"——这正是我们在Claude中着力发展的<span class="highlight-purple">规划能力</span>。当AI能够分解复杂任务、自主调度资源时，人类的角色从"执行者"升级为"设计师"。</p>
+                        <p style="margin-top:15px;">橘子说这些"价值连城"绝非夸张。在注意力经济时代，<span class="highlight-data">自动化内容生产</span>能力就是印钞机。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货板块4：Listenhub生态 -->
+        <section class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <h2 class="section-title">
+                    <span>🎧</span>
+                    <span class="section-title-text">Listenhub：AI影音创作的瑞士军刀</span>
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从播客到PPT，橘子团队的多模态产品矩阵...</div>
+            <div class="section-content">
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-name">🎙️ 智能播客</div>
+                        <div class="tool-desc">输入任何文本、链接、YouTube视频，自动生成高质量播客内容。</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🎬 解说视频</div>
+                        <div class="tool-desc">类似B站科普视频风格，自动生成配图精美的解说视频，支持竖屏。</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">📊 AI PPT</div>
+                        <div class="tool-desc">生成设计感十足的演示文稿，图片精美，秒杀传统模板。编辑功能即将上线。</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🎨 Lab Banana</div>
+                        <div class="tool-desc">Listenhub的生图平台，可通过API调用，支持Skills集成。</div>
+                    </div>
+                </div>
+
+                <h3 style="color:var(--highlight-data);margin:30px 0 20px;font-size:1.3em;">🔑 API核心优势</h3>
+                <p><span class="highlight-key">TTS带字幕时间轴</span>——这是Listenhub区别于所有竞品的杀手级特性。没有精确的时间轴，就无法做出节拍精准的视频，这就是为什么向阳乔木"必须用Listenhub"。</p>
+
+                <div class="code-block">
+                    <code># Listenhub Skills安装命令（在Claude Code中执行）<br><br>在VSCode的Skills.search中搜索"Listenhub"<br>复制安装命令到Claude Code执行即可<br><br># 需要Listenhub Pro会员才能使用API</code>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🌟</div>
+                        <div>
+                            <div class="expert-name">丹妮拉·阿莫迪 视角</div>
+                            <div class="expert-role">Anthropic 联合创始人</div>
+                        </div>
+                    </div>
+                    <div class="expert-text">
+                        <p>Listenhub团队展现了<span class="highlight-purple">AI-Native创业</span>的正确姿势：不是简单包装大模型API，而是在特定垂直场景做到极致。"TTS带时间轴"这个细节看似微小，却是<span class="highlight-gold">完整解决方案</span>与玩具的分水岭。</p>
+                        <p style="margin-top:15px;">橘子提到团队的"松弛感"很有意思。在AI时代，最大的风险不是被新工具颠覆，而是<span class="highlight-key">抗拒学习新范式</span>。Listenhub团队全员使用Claude Code，这种组织级的AI原生文化，才是他们的真正护城河。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货板块5：关键认知升级 -->
+        <section class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <h2 class="section-title">
+                    <span>🧭</span>
+                    <span class="section-title-text">认知升级：从MCP到Skills的范式迁移</span>
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">为什么说Skills是接下来最火的东西...</div>
+            <div class="section-content">
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:30px;">
+                    <div style="background:rgba(244,63,94,0.1);padding:25px;border-radius:16px;border:2px solid var(--highlight-key);">
+                        <h4 style="color:var(--highlight-key);margin-bottom:15px;font-size:1.2em;">❌ MCP的问题</h4>
+                        <ul style="list-style:none;color:var(--text-secondary);">
+                            <li style="margin-bottom:10px;">• 名字技术感强，普通人难理解</li>
+                            <li style="margin-bottom:10px;">• 配置复杂，需要技术背景</li>
+                            <li style="margin-bottom:10px;">• 生态分散，学习成本高</li>
+                            <li>• 已是"明日黄花"</li>
+                        </ul>
+                    </div>
+                    <div style="background:rgba(74,222,128,0.1);padding:25px;border-radius:16px;border:2px solid var(--highlight-quote);">
+                        <h4 style="color:var(--highlight-quote);margin-bottom:15px;font-size:1.2em;">✅ Skills的优势</h4>
+                        <ul style="list-style:none;color:var(--text-secondary);">
+                            <li style="margin-bottom:10px;">• "技能"概念人人都懂</li>
+                            <li style="margin-bottom:10px;">• 本质就是文本文件</li>
+                            <li style="margin-bottom:10px;">• 任何提示词都能变Skill</li>
+                            <li>• 未来半年到一年最火</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <h3 style="color:var(--highlight-purple);margin:30px 0 20px;font-size:1.3em;">💡 核心认知</h3>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <div class="tip-icon">🎯</div>
+                        <div class="tip-content">
+                            <h4>Skills = SOP</h4>
+                            <p>你有一个很好的流程，就没必要让AI每次重新思考。Skills是可复用的最佳实践。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">🔗</div>
+                        <div class="tip-content">
+                            <h4>组合的威力</h4>
+                            <p>单个Skill是原子能力，多个Skill组合是工作流，工作流组合是自动化帝国。</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">🧠</div>
+                        <div class="tip-content">
+                            <h4>老板思维</h4>
+                            <p>多窗口并行让AI牛马干活，你只负责想规则和做决策。等待时嗑瓜子、看短剧。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🚀</div>
+                        <div>
+                            <div class="expert-name">Anthropic 联合视角</div>
+                            <div class="expert-role">达里奥 & 丹妮拉</div>
+                        </div>
+                    </div>
+                    <div class="expert-text">
+                        <p><strong>达里奥：</strong>Skills的兴起印证了一个重要趋势——<span class="highlight-key">AI工具的去技术化</span>。当我们说要让AI"民主化"时，不仅指让更多人用上AI，更指让更多人能<span class="highlight-gold">定制</span>AI。Skills就是这种定制能力的具象化。</p>
+                        <p style="margin-top:15px;"><strong>丹妮拉：</strong>我特别认同"老板思维"这个说法。人类与AI的最佳协作模式不是人类做简单任务、AI做复杂任务，而是<span class="highlight-purple">人类做决策、AI做执行</span>。Skills让这种分工变得清晰且可操作。</p>
+                        <p style="margin-top:15px;"><strong>达里奥：</strong>最后想说的是，这场直播本身就是AI时代<span class="highlight-data">知识传播</span>的范例——开源、共享、实战导向。这种社区文化，才是推动AI真正普惠的力量。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 资源汇总 -->
+        <section class="section" id="section6">
+            <div class="section-header" onclick="toggleSection('section6')">
+                <h2 class="section-title">
+                    <span>📦</span>
+                    <span class="section-title-text">资源汇总 & 作业</span>
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">直播提到的所有链接和下一步行动...</div>
+            <div class="section-content">
+                <h3 style="color:var(--highlight-data);margin-bottom:20px;font-size:1.3em;">🔗 核心链接</h3>
+                <div class="tools-grid">
+                    <div class="tool-card">
+                        <div class="tool-name">🍊 橘子的Claude Code教程</div>
+                        <div class="tool-desc">Twitter @orange_ai 或公众号"有机大橘子"，250万曝光的安装指南</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🚀 Claude Code启动器</div>
+                        <div class="tool-desc">GitHub开源项目，500+ Star，一键启动Claude Code</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🌳 向阳乔木福利站</div>
+                        <div class="tool-desc">福利.乔木.AI —— 提示词包、Skills分享、Newsletter采集Skill</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🎧 Listenhub官网</div>
+                        <div class="tool-desc">注册账号获取API Key，Pro会员可使用API能力</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">🛠️ Superpower Skill</div>
+                        <div class="tool-desc">向阳乔木推荐的万能Skill，包含脑暴、前端设计等多种能力</div>
+                    </div>
+                    <div class="tool-card">
+                        <div class="tool-name">📝 Frontend Design Skill</div>
+                        <div class="tool-desc">去除AI味的前端设计Skill，让网页不再千篇一律</div>
+                    </div>
+                </div>
+
+                <h3 style="color:var(--highlight-gold);margin:40px 0 20px;font-size:1.3em;">✅ 今日作业</h3>
+                <div class="tips-list">
+                    <div class="tip-item">
+                        <div class="tip-icon">1</div>
+                        <div class="tip-content">
+                            <h4>安装Claude Code</h4>
+                            <p>按照橘子教程完成安装，验证 <code>claude --version</code> 输出</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">2</div>
+                        <div class="tip-content">
+                            <h4>注册Listenhub</h4>
+                            <p>准备好API Key，明天直播会发放Pro账号体验码</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">3</div>
+                        <div class="tip-content">
+                            <h4>安装你的第一个Skill</h4>
+                            <p>尝试安装Listenhub Skill或Frontend Design Skill</p>
+                        </div>
+                    </div>
+                    <div class="tip-item">
+                        <div class="tip-icon">4</div>
+                        <div class="tip-content">
+                            <h4>（进阶）创建你的提示词Skill</h4>
+                            <p>从向阳乔木的福利站获取提示词包，挑一个转化为你的Skill</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-top:40px;padding:30px;background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(6,182,212,0.15));border-radius:20px;text-align:center;">
+                    <p style="font-size:1.3em;font-weight:700;color:var(--highlight-purple);margin-bottom:15px;">🎉 明天预告</p>
+                    <p style="color:var(--text-secondary);line-height:1.8;">Max手把手教Skills实操 + 归藏老师独家PPT动效Skill<br>传说中Max会在直播结尾表演《老司机带带我》🎤</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer style="text-align:center;padding:40px 20px;color:var(--text-secondary);">
+            <p style="margin-bottom:10px;">📝 内容整理自 WaytoAGI 共学直播 | Skills爆改训练营 Day 1</p>
+            <p style="font-size:0.9em;">由 Claude 基于 video-transcript-to-premium-html 技能生成</p>
+        </footer>
+    </div>
+
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        function scrollToMindmap() {
+            document.getElementById('mindmap').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function scrollToQuotes() {
+            document.getElementById('quotes').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 添加滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.insight-card, .branch, .quote-card').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

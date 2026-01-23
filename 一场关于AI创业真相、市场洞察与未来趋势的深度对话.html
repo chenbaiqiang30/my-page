@@ -1,0 +1,1574 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI知声圆桌会 · 2026年AI创业深度洞察</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0aec0;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #ffd93d;
+            --highlight-action: #95e1d3;
+            --highlight-warning: #ff9f43;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #667eea;
+            --accent2: #764ba2;
+            --gold: #f7d794;
+            --cyan: #00d9ff;
+            --pink: #ff6b9d;
+            --green: #00e676;
+            --orange: #ff9100;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 动态背景粒子 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(102, 126, 234, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        /* 头部区域 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--highlight-key), var(--cyan), var(--green), var(--gold), var(--pink));
+            background-size: 300% 100%;
+            animation: gradientFlow 3s ease infinite;
+        }
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 25px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-size: clamp(2em, 5vw, 3.2em);
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--cyan) 0%, var(--pink) 50%, var(--gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+        .header-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+            color: var(--text-secondary);
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: rgba(102, 126, 234, 0.1);
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+        
+        /* 核心金句区域 */
+        .golden-quotes {
+            background: linear-gradient(135deg, rgba(247, 215, 148, 0.15), rgba(255, 107, 107, 0.1));
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(247, 215, 148, 0.3);
+            border-radius: 32px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        .golden-quotes h2 {
+            font-size: 1.8em;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--gold);
+        }
+        .quote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .quote-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 5em;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            color: var(--gold);
+        }
+        .quote-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+            border-color: var(--accent);
+        }
+        .quote-text {
+            font-size: 1.15em;
+            font-weight: 500;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+        .quote-author {
+            margin-top: 20px;
+            font-size: 0.9em;
+            color: var(--cyan);
+            font-weight: 600;
+        }
+        
+        /* 思维导图区域 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px 30px;
+            margin-bottom: 40px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 20px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--accent2), var(--pink));
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 800;
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            text-align: center;
+            position: relative;
+        }
+        .center-node::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 35px;
+            width: 100%;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.1s; }
+        .branch:nth-child(2) { animation-delay: 0.2s; }
+        .branch:nth-child(3) { animation-delay: 0.3s; }
+        .branch:nth-child(4) { animation-delay: 0.4s; }
+        .branch:nth-child(5) { animation-delay: 0.5s; }
+        .branch:nth-child(6) { animation-delay: 0.6s; }
+        .branch-node {
+            background: linear-gradient(135deg, var(--glass-bg), rgba(102, 126, 234, 0.2));
+            border: 2px solid;
+            padding: 18px 28px;
+            border-radius: 24px;
+            font-size: 1.15em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            position: relative;
+        }
+        .branch-node.color-1 { border-color: var(--highlight-key); color: var(--highlight-key); }
+        .branch-node.color-2 { border-color: var(--cyan); color: var(--cyan); }
+        .branch-node.color-3 { border-color: var(--gold); color: var(--gold); }
+        .branch-node.color-4 { border-color: var(--green); color: var(--green); }
+        .branch-node.color-5 { border-color: var(--pink); color: var(--pink); }
+        .branch-node.color-6 { border-color: var(--orange); color: var(--orange); }
+        .branch-node:hover {
+            transform: translateY(-8px) scale(1.05);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+        }
+        .sub-node {
+            background: rgba(102, 126, 234, 0.08);
+            padding: 14px 22px;
+            border-radius: 16px;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .sub-node:hover {
+            background: rgba(102, 126, 234, 0.15);
+            transform: translateX(8px);
+        }
+        .sub-node.color-1 { border-color: var(--highlight-key); }
+        .sub-node.color-2 { border-color: var(--cyan); }
+        .sub-node.color-3 { border-color: var(--gold); }
+        .sub-node.color-4 { border-color: var(--green); }
+        .sub-node.color-5 { border-color: var(--pink); }
+        .sub-node.color-6 { border-color: var(--orange); }
+        
+        /* 元认知图 */
+        .metacognition-map {
+            background: linear-gradient(135deg, rgba(0, 217, 255, 0.1), rgba(102, 126, 234, 0.1));
+            backdrop-filter: blur(30px);
+            border: 1px solid rgba(0, 217, 255, 0.3);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        .metacognition-map h2 {
+            font-size: 1.8em;
+            margin-bottom: 40px;
+            text-align: center;
+            color: var(--cyan);
+        }
+        .meta-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .meta-node {
+            background: var(--glass-bg);
+            border: 2px solid var(--cyan);
+            border-radius: 20px;
+            padding: 25px 30px;
+            text-align: center;
+            min-width: 180px;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+        .meta-node:hover {
+            transform: scale(1.08);
+            box-shadow: 0 15px 40px rgba(0, 217, 255, 0.3);
+        }
+        .meta-node-title {
+            font-size: 1.2em;
+            font-weight: 700;
+            color: var(--cyan);
+            margin-bottom: 10px;
+        }
+        .meta-node-desc {
+            font-size: 0.9em;
+            color: var(--text-secondary);
+        }
+        .meta-arrow {
+            font-size: 2em;
+            color: var(--cyan);
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+        
+        /* 干货数据看板 */
+        .data-dashboard {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        .data-dashboard h2 {
+            font-size: 1.8em;
+            margin-bottom: 40px;
+            text-align: center;
+            background: linear-gradient(135deg, var(--green), var(--cyan));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        .data-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .data-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--cyan), var(--pink));
+        }
+        .data-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 50px rgba(102, 126, 234, 0.25);
+        }
+        .data-value {
+            font-size: 2.8em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--cyan), var(--pink));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+        .data-label {
+            font-size: 1em;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .data-trend {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 15px;
+            font-size: 0.9em;
+            padding: 5px 12px;
+            border-radius: 20px;
+            background: rgba(0, 230, 118, 0.15);
+            color: var(--green);
+        }
+        .data-trend.down {
+            background: rgba(255, 107, 107, 0.15);
+            color: var(--highlight-key);
+        }
+        
+        /* 专家评论区域 */
+        .experts-section {
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+        .experts-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--gold), var(--orange));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .experts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+        .expert-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 35px;
+            position: relative;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+        .expert-card.sam::before { background: linear-gradient(90deg, #4285f4, #34a853); }
+        .expert-card.yao::before { background: linear-gradient(90deg, #8e44ad, #3498db); }
+        .expert-card.jack::before { background: linear-gradient(90deg, #ff6600, #ffcc00); }
+        .expert-card.richard::before { background: linear-gradient(90deg, #c41e3a, #ff4444); }
+        
+        .expert-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 25px 60px rgba(102, 126, 234, 0.3);
+        }
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+        .expert-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        .expert-card.sam .expert-avatar { background: linear-gradient(135deg, #4285f4, #34a853); }
+        .expert-card.yao .expert-avatar { background: linear-gradient(135deg, #8e44ad, #3498db); }
+        .expert-card.jack .expert-avatar { background: linear-gradient(135deg, #ff6600, #ffcc00); }
+        .expert-card.richard .expert-avatar { background: linear-gradient(135deg, #c41e3a, #ff4444); }
+        
+        .expert-info h3 {
+            font-size: 1.3em;
+            margin-bottom: 5px;
+        }
+        .expert-info span {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+        }
+        .expert-content {
+            font-size: 1.05em;
+            line-height: 1.9;
+            color: var(--text-primary);
+        }
+        .expert-content p {
+            margin-bottom: 15px;
+        }
+        .expert-highlight {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        
+        /* 内容板块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 45px;
+            margin-bottom: 35px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.6s ease;
+            transition: all 0.4s ease;
+        }
+        .section:hover {
+            box-shadow: 0 15px 50px rgba(102, 126, 234, 0.2);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+        .section.s1 .section-icon { background: linear-gradient(135deg, var(--highlight-key), var(--pink)); }
+        .section.s2 .section-icon { background: linear-gradient(135deg, var(--cyan), var(--accent)); }
+        .section.s3 .section-icon { background: linear-gradient(135deg, var(--gold), var(--orange)); }
+        .section.s4 .section-icon { background: linear-gradient(135deg, var(--green), var(--cyan)); }
+        .section.s5 .section-icon { background: linear-gradient(135deg, var(--accent), var(--accent2)); }
+        .section.s6 .section-icon { background: linear-gradient(135deg, var(--pink), var(--highlight-key)); }
+        
+        .collapse-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(102, 126, 234, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+            transition: all 0.4s ease;
+            color: var(--accent);
+        }
+        .section.collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            padding: 15px 20px;
+            background: rgba(102, 126, 234, 0.05);
+            border-radius: 12px;
+            margin-top: 15px;
+        }
+        .section.collapsed .section-preview {
+            max-height: 200px;
+            opacity: 1;
+        }
+        .section-content {
+            max-height: 8000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        .section.collapsed .section-content {
+            max-height: 0;
+        }
+        
+        /* 内容样式 */
+        .content-block {
+            margin-bottom: 30px;
+        }
+        .content-block h4 {
+            font-size: 1.2em;
+            margin-bottom: 15px;
+            color: var(--cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .content-block p {
+            margin-bottom: 15px;
+            color: var(--text-primary);
+        }
+        .content-block ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        .content-block li {
+            padding: 12px 0 12px 30px;
+            position: relative;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+        }
+        .content-block li::before {
+            content: '▸';
+            position: absolute;
+            left: 0;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        /* 语义高亮 */
+        .hl-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 6px;
+        }
+        .hl-data {
+            color: var(--cyan);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(78, 205, 196, 0.15);
+            border-radius: 6px;
+        }
+        .hl-quote {
+            color: var(--gold);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(255, 217, 61, 0.15);
+            border-radius: 6px;
+        }
+        .hl-action {
+            color: var(--green);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(0, 230, 118, 0.15);
+            border-radius: 6px;
+        }
+        .hl-warning {
+            color: var(--orange);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(255, 145, 0, 0.15);
+            border-radius: 6px;
+        }
+        .hl-pink {
+            color: var(--pink);
+            font-weight: 600;
+        }
+        
+        /* 要点卡片 */
+        .point-card {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-left: 4px solid var(--accent);
+            border-radius: 0 16px 16px 0;
+            padding: 25px;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+        .point-card:hover {
+            transform: translateX(8px);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+        }
+        .point-card.warning {
+            border-color: var(--highlight-key);
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(255, 107, 107, 0.05));
+        }
+        .point-card.success {
+            border-color: var(--green);
+            background: linear-gradient(135deg, rgba(0, 230, 118, 0.1), rgba(0, 230, 118, 0.05));
+        }
+        .point-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.3);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            border: none;
+        }
+        
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.6em;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.15) rotate(15deg);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 50px rgba(102, 126, 234, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 60px rgba(102, 126, 234, 0.5); }
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header, .section, .mindmap-container, .data-dashboard, .golden-quotes, .metacognition-map {
+                padding: 25px;
+                border-radius: 24px;
+            }
+            h1 { font-size: 1.8em; }
+            .mindmap-branches { grid-template-columns: 1fr; }
+            .experts-grid { grid-template-columns: 1fr; }
+            .meta-flow { flex-direction: column; }
+            .meta-arrow { transform: rotate(90deg); }
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景粒子 -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 0.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 3.5s;"></div>
+    </div>
+
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="header-badge">
+                <span>🔥</span>
+                <span>2026年AI创业深度洞察</span>
+            </div>
+            <h1>AI知声圆桌会</h1>
+            <p style="font-size: 1.2em; color: var(--text-secondary); max-width: 800px;">
+                从探索者到实践者，从个人创作到商业落地——一场关于AI创业真相、市场洞察与未来趋势的深度对话
+            </p>
+            <div class="header-meta">
+                <div class="meta-item">📅 2026年1月23日</div>
+                <div class="meta-item">⏱️ 约2.5小时</div>
+                <div class="meta-item">👥 AI创业者圆桌分享</div>
+                <div class="meta-item">📍 线上直播</div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">
+                    <span>📋</span> 展开/收起全部
+                </button>
+                <button class="btn" onclick="scrollToExperts()">
+                    <span>💡</span> 查看专家点评
+                </button>
+                <button class="btn" onclick="scrollToData()">
+                    <span>📊</span> 干货数据
+                </button>
+            </div>
+        </div>
+
+        <!-- 核心金句 -->
+        <div class="golden-quotes">
+            <h2>✨ 核心金句</h2>
+            <div class="quote-grid">
+                <div class="quote-card">
+                    <div class="quote-text">
+                        别让<span class="hl-key">"听过"</span>成为你的天花板。<br>
+                        信息过载时代，<span class="hl-action">动手实践</span>才是唯一出路。
+                    </div>
+                    <div class="quote-author">—— 关于知行合一</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">
+                        <span class="hl-warning">商业需求 ≠ 个人创作</span><br>
+                        你的艺术作品再好，甲方不买单也是白搭。
+                    </div>
+                    <div class="quote-author">—— 关于商业落地</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">
+                        不要追模型，要<span class="hl-data">追市场</span>。<br>
+                        大厂一迭代，很多搭建都废了。
+                    </div>
+                    <div class="quote-author">—— 关于技术选型</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">
+                        AI短剧<span class="hl-key">看似蓝海，实则红海</span>。<br>
+                        头部公司月产能已达两三百部。
+                    </div>
+                    <div class="quote-author">—— 关于短剧市场</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">
+                        <span class="hl-quote">OPC不是一个人战斗</span>，<br>
+                        而是2-3人的超级小团队。
+                    </div>
+                    <div class="quote-author">—— 关于超级个体</div>
+                </div>
+                <div class="quote-card">
+                    <div class="quote-text">
+                        2026年是<span class="hl-action">智能体元年</span>。<br>
+                        金融、审计、内容创作已在落地。
+                    </div>
+                    <div class="quote-author">—— 关于Agent时代</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 思维导图 -->
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">🧠 核心洞察思维导图</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">2026 AI创业生存指南</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node color-1">💡 认知升级</div>
+                        <div class="sub-node color-1">以赛代练：比赛是最好的学习方式</div>
+                        <div class="sub-node color-1">知行合一：从"知道"到"做到"</div>
+                        <div class="sub-node color-1">别追模型，追市场需求</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node color-2">🤖 2026趋势</div>
+                        <div class="sub-node color-2">智能体(Agent)元年到来</div>
+                        <div class="sub-node color-2">金融审计Agent已落地</div>
+                        <div class="sub-node color-2">大资本入场加速洗牌</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node color-3">💰 商业真相</div>
+                        <div class="sub-node color-3">短剧价格跌至几百/分钟</div>
+                        <div class="sub-node color-3">宣传片从4-5万降至1-3万</div>
+                        <div class="sub-node color-3">批量剧 vs 精品剧两条路</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node color-4">👥 OPC策略</div>
+                        <div class="sub-node color-4">组建2-3人超级小团队</div>
+                        <div class="sub-node color-4">短期：接单+孵化资源</div>
+                        <div class="sub-node color-4">长期：OPC联盟互导资源</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node color-5">📈 机会窗口</div>
+                        <div class="sub-node color-5">精品短剧窗口期约半年</div>
+                        <div class="sub-node color-5">AI人才二三线城市空白</div>
+                        <div class="sub-node color-5">抖音AIGC板块刚启动</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node color-6">⚠️ 避坑指南</div>
+                        <div class="sub-node color-6">警惕"几十元/分钟"骗局</div>
+                        <div class="sub-node color-6">谨慎辨别卖课内容质量</div>
+                        <div class="sub-node color-6">单靠AI创业很难成功</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 元认知图 -->
+        <div class="metacognition-map">
+            <h2>🔄 AI创业者进化路径（元认知图）</h2>
+            <div class="meta-flow">
+                <div class="meta-node">
+                    <div class="meta-node-title">🌱 探索者</div>
+                    <div class="meta-node-desc">兴趣驱动<br>学习AI工具</div>
+                </div>
+                <div class="meta-arrow">→</div>
+                <div class="meta-node">
+                    <div class="meta-node-title">🔧 实践者</div>
+                    <div class="meta-node-desc">成立工作室<br>承接商单</div>
+                </div>
+                <div class="meta-arrow">→</div>
+                <div class="meta-node">
+                    <div class="meta-node-title">📢 分享者</div>
+                    <div class="meta-node-desc">进校授课<br>企业培训</div>
+                </div>
+                <div class="meta-arrow">→</div>
+                <div class="meta-node">
+                    <div class="meta-node-title">🏆 引领者</div>
+                    <div class="meta-node-desc">获奖背书<br>行业影响</div>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px; padding: 25px; background: rgba(0, 217, 255, 0.1); border-radius: 16px;">
+                <p style="font-size: 1.1em; color: var(--cyan); margin-bottom: 10px;">
+                    <strong>🔑 关键洞察</strong>
+                </p>
+                <p>每一阶段都需要<span class="hl-action">正反馈</span>支撑持续努力。<br>
+                无论是金钱、荣誉还是情绪价值，找到你的正反馈驱动力。</p>
+            </div>
+        </div>
+
+        <!-- 干货数据看板 -->
+        <div class="data-dashboard" id="data-section">
+            <h2>📊 市场干货数据一览</h2>
+            <div class="data-grid">
+                <div class="data-card">
+                    <div class="data-value">2年</div>
+                    <div class="data-label">国内AI真正发展时间</div>
+                    <div class="data-trend">📈 仍处初生期</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">几百元</div>
+                    <div class="data-label">2D漫剧一手报价/分钟</div>
+                    <div class="data-trend down">⬇️ 持续走低</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">3-8K</div>
+                    <div class="data-label">3D/真人AI剧报价/分钟</div>
+                    <div class="data-trend">💎 精品路线</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">1-3万</div>
+                    <div class="data-label">AI宣传片当前报价/分钟</div>
+                    <div class="data-trend down">⬇️ 去年4-5万</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">200-300部</div>
+                    <div class="data-label">头部公司短剧月产能</div>
+                    <div class="data-trend">🏭 工业化生产</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">40-50个</div>
+                    <div class="data-label">海外真人剧分镜数/分钟</div>
+                    <div class="data-trend">⚡ 1.2秒切镜</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">百万级</div>
+                    <div class="data-label">国央企智能体订单规模</div>
+                    <div class="data-trend">🚀 大单涌现</div>
+                </div>
+                <div class="data-card">
+                    <div class="data-value">40-80万</div>
+                    <div class="data-label">传统100集真人短剧成本</div>
+                    <div class="data-trend">📊 AI需更低</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 专家点评 -->
+        <div class="experts-section" id="experts-section">
+            <h2 class="experts-title">🎯 大咖视角：四位顶级专家如何看</h2>
+            <div class="experts-grid">
+                <div class="expert-card sam">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🚀</div>
+                        <div class="expert-info">
+                            <h3>山姆·奥特曼</h3>
+                            <span>OpenAI CEO</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        <p>这份分享揭示了一个全球性现象：<span class="hl-key">AI落地的真正瓶颈不是技术，而是商业模式</span>。</p>
+                        <p>我完全认同"不追模型，追市场"的观点。在OpenAI，我们每天都在迭代，但真正成功的合作伙伴是那些<span class="hl-action">专注于解决具体问题</span>的人，而不是追逐最新功能的人。</p>
+                        <p>2026年Agent元年的判断非常准确。<span class="hl-data">金融和审计领域的落地案例</span>证明了AI正在从"Demo级应用"走向"生产级部署"。这才是真正的转折点。</p>
+                        <div class="expert-highlight">💡 核心洞见：商业落地能力 > 技术追逐</div>
+                    </div>
+                </div>
+                
+                <div class="expert-card yao">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🧬</div>
+                        <div class="expert-info">
+                            <h3>姚期智</h3>
+                            <span>图灵奖得主 · 清华大学教授</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        <p>从学术角度看，这份分享中关于<span class="hl-quote">"知行合一"</span>的强调非常重要。在我的教学生涯中，最优秀的学生往往不是理论最好的，而是<span class="hl-action">最善于将知识转化为实践</span>的。</p>
+                        <p>Agent技术的爆发印证了我多年的预判：<span class="hl-key">真正的智能不是单一模型的能力，而是系统性的任务执行能力</span>。金融审计Agent的落地，本质上是将复杂推理能力系统化。</p>
+                        <p>但我要提醒的是，AI人才的培养不能只追求技能，更要培养<span class="hl-data">系统性思维和伦理意识</span>。</p>
+                        <div class="expert-highlight">🎓 核心洞见：实践能力 + 系统性思维 = 核心竞争力</div>
+                    </div>
+                </div>
+                
+                <div class="expert-card jack">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🌏</div>
+                        <div class="expert-info">
+                            <h3>马云</h3>
+                            <span>阿里巴巴创始人</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        <p>这让我想起二十多年前电商刚起步的时候。当时大家也在问：<span class="hl-quote">"电商能赚钱吗？"</span>现在AI行业面临同样的问题。</p>
+                        <p>我非常认同<span class="hl-key">OPC联盟</span>的概念。当年的淘宝生态，本质上就是千千万万个"超级个体"组成的联盟。未来AI也会是这样——<span class="hl-action">小而美的团队通过协作产生巨大价值</span>。</p>
+                        <p>但我要补充的是：<span class="hl-warning">不要只看眼前的价格战</span>。市场价格下跌是好事，它会淘汰投机者，留下真正有价值的玩家。坚持做精品，春天一定会来。</p>
+                        <div class="expert-highlight">🌱 核心洞见：寒冬是筛选真正创业者的最好时机</div>
+                    </div>
+                </div>
+                
+                <div class="expert-card richard">
+                    <div class="expert-header">
+                        <div class="expert-avatar">⚔️</div>
+                        <div class="expert-info">
+                            <h3>刘强东</h3>
+                            <span>京东集团创始人</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        <p>这份分享最打动我的是<span class="hl-key">对"牛马活"的清醒认知</span>。太多人被"AI暴富神话"冲昏头脑，却不知道背后的辛苦和风险。</p>
+                        <p>我特别赞同<span class="hl-action">"尽快入市场"</span>的建议。在京东，我们有句话叫"快就是生命"。越等市场越内卷，价格越低，机会越少。<span class="hl-data">现在每犹豫一天，未来就要多付出十倍的努力</span>。</p>
+                        <p>关于精品路线，我的建议是：<span class="hl-warning">要有传统行业的敬畏心</span>。AI是工具，不是魔法。真正的竞争力是镜头语言、剪辑逻辑、用户洞察——这些传统技能永远不会过时。</p>
+                        <div class="expert-highlight">⚡ 核心洞见：快速入场 + 传统技能功底 = 持久竞争力</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 详细内容板块 -->
+        <div class="section s1" id="section-1">
+            <div class="section-header" onclick="toggleSection('section-1')">
+                <div class="section-title">
+                    <div class="section-icon">🎯</div>
+                    <span>一、AI创业方法论：从探索到落地</span>
+                </div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                以赛代练、知行合一、追市场不追模型——三大核心方法论助你建立正确认知
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>📌 方法论一：以赛代练</h4>
+                    <div class="point-card success">
+                        <div class="point-title">🏆 为什么要参加比赛？</div>
+                        <ul>
+                            <li><span class="hl-action">快速验证学习成果</span>：光学没有用，比赛能检验你是否真的掌握了技能</li>
+                            <li><span class="hl-data">结识靠谱队友</span>：比赛是认识志同道合小伙伴的最佳场所</li>
+                            <li><span class="hl-quote">链接商业资源</span>：获奖后很可能被甲方看到，直接获得商单机会</li>
+                            <li><span class="hl-key">发现个人短板</span>：做到一半发现完不成？这就是组队的信号</li>
+                        </ul>
+                    </div>
+                    <p>案例：分享者通过上影营AI电影马拉松大赛获得最佳叙事奖，由陈思诚导演颁奖，这个正反馈直接推动了工作室的成立。</p>
+                </div>
+                
+                <div class="content-block">
+                    <h4>📌 方法论二：知行合一——从知道到做到</h4>
+                    <div class="point-card warning">
+                        <div class="point-title">⚠️ 信息过载时代的陷阱</div>
+                        <p>典型行为模式：看完内容 → 点个收藏 → 几天后忘记 → 什么都没学会</p>
+                        <p><span class="hl-key">核心问题</span>：把"听过"当作"学会"，把"收藏"当作"掌握"</p>
+                    </div>
+                    <div class="point-card success">
+                        <div class="point-title">✅ 正确的学习路径</div>
+                        <ul>
+                            <li><span class="hl-action">筛选信息</span>：只关注与你未来方向相关的内容</li>
+                            <li><span class="hl-action">立即实践</span>：学完就动手，不是看完就结束</li>
+                            <li><span class="hl-action">持续输出</span>：写测评、做作品、参加比赛</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="content-block">
+                    <h4>📌 方法论三：别追模型，要追市场</h4>
+                    <p>血泪教训：早期花大量时间学习ComfyUI搭建工作流，但随着即梦、可灵等平台能力提升，<span class="hl-warning">很多搭建直接作废</span>。</p>
+                    <div class="point-card">
+                        <div class="point-title">💡 正确思维方式</div>
+                        <p>不要问"这个模型能做什么"，而要问<span class="hl-key">"市场需要什么，我能用AI解决吗"</span></p>
+                        <p>记住：<span class="hl-data">大厂一迭代，很多搭建都废了</span></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section s2" id="section-2">
+            <div class="section-header" onclick="toggleSection('section-2')">
+                <div class="section-title">
+                    <div class="section-icon">🤖</div>
+                    <span>二、2026年：智能体(Agent)元年</span>
+                </div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                金融分析、AI审计、内容创作——三大领域智能体已经落地，效率革命正在发生
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>🏦 案例一：金融分析智能体</h4>
+                    <ul>
+                        <li><span class="hl-data">落地时间</span>：2024年11月开始商用</li>
+                        <li><span class="hl-key">开发方</span>：上海某高校人工智能部</li>
+                        <li><span class="hl-action">应用场景</span>：为权威金融机构生成日常分析研报</li>
+                        <li><span class="hl-quote">核心价值</span>：能获取最前沿的产研数据，与专家建议结合迭代</li>
+                    </ul>
+                </div>
+                
+                <div class="content-block">
+                    <h4>📋 案例二：AI审计智能体</h4>
+                    <div class="point-card success">
+                        <div class="point-title">🔍 真实落地效果</div>
+                        <ul>
+                            <li>国内已有<span class="hl-data">2-3家</span>公司在做AI审计智能体</li>
+                            <li>功能：<span class="hl-action">倒查公司一年账目</span>，发现隐性问题</li>
+                            <li>实际成果：查出报销凭证不准确、虚报等问题</li>
+                            <li>类似应用：国内AI查贪官新闻也是同一逻辑</li>
+                        </ul>
+                    </div>
+                    <p><span class="hl-key">关键洞察</span>：审计工作繁琐、耗人力，Agent提效后发现问题再派人核查，效率提升巨大。</p>
+                </div>
+                
+                <div class="content-block">
+                    <h4>🎬 案例三：内容创作智能体</h4>
+                    <ul>
+                        <li>国内头部广告公司已开发<span class="hl-action">一键生成宣传片</span>的智能体</li>
+                        <li>已服务<span class="hl-data">500强外企品牌</span></li>
+                        <li>对个人创作者的冲击：初学者1个月学习的水平，可能还不如智能体自动生成</li>
+                    </ul>
+                </div>
+                
+                <div class="point-card warning">
+                    <div class="point-title">⚠️ Agent时代的残酷真相</div>
+                    <p>智能体带来<span class="hl-key">效率革命</span>：Agent可以不停工作，人类不行；Agent已能达到普通就业者水准。</p>
+                    <p><span class="hl-warning">金融行业有钱 + AI切痛点 + 大幅提效 = 巨大商业机会</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section s3" id="section-3">
+            <div class="section-header" onclick="toggleSection('section-3')">
+                <div class="section-title">
+                    <div class="section-icon">🎬</div>
+                    <span>三、AI短剧：看似蓝海，实则红海</span>
+                </div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                价格真相、产能现状、精品vs批量——深度拆解AI短剧市场的残酷现实
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>💰 价格体系真相</h4>
+                    <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                        <tr style="background: rgba(102, 126, 234, 0.1);">
+                            <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--accent);">类型</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--accent);">一手报价/分钟</th>
+                            <th style="padding: 15px; text-align: left; border-bottom: 2px solid var(--accent);">备注</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);">2D漫剧</td>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);"><span class="hl-data">几百~1000元</span></td>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);">大多数创作者能达到的水准</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);">3D动画/真人AI剧</td>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);"><span class="hl-data">3000~8000元</span></td>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);">需要传统影视功底</td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);">AI宣传片(当前)</td>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);"><span class="hl-warning">1~3万元</span></td>
+                            <td style="padding: 15px; border-bottom: 1px solid var(--glass-border);">去年4-5万，已跌一半</td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="content-block">
+                    <h4>⚠️ 成本避坑指南</h4>
+                    <div class="point-card warning">
+                        <div class="point-title">🚨 警惕"一分钟几十块"的骗局</div>
+                        <ul>
+                            <li><span class="hl-key">算力成本</span>：精品剧至少100-200元/分钟（API一秒约1块钱）</li>
+                            <li><span class="hl-warning">几十元/分钟</span>：算力成本都回不来，纯赔钱</li>
+                            <li><span class="hl-data">抽卡成本</span>：不可能一次出图就成功，多次迭代是常态</li>
+                            <li><span class="hl-key">甲方修改</span>：被甲方折磨死的情况很常见</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>📊 市场竞争格局</h4>
+                    <ul>
+                        <li>头部公司（千人规模）：月产能<span class="hl-data">200-300部</span>，使用智能体批量生产</li>
+                        <li>中型公司：月产能<span class="hl-data">10-20部</span>（100集/部）</li>
+                        <li>抖音漫剧平台：月总量约<span class="hl-data">4000-5000部</span></li>
+                        <li>真人短剧分镜要求：<span class="hl-key">40-50个/分钟</span>（约1.2秒切一次镜）</li>
+                    </ul>
+                </div>
+
+                <div class="content-block">
+                    <h4>🛤️ 两条路线的选择</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div class="point-card">
+                            <div class="point-title" style="color: var(--orange);">路线A：批量低价</div>
+                            <ul>
+                                <li>依托智能体快速生成</li>
+                                <li>价格：几百元/分钟</li>
+                                <li>对镜头语言要求不高</li>
+                                <li>竞争激烈，沦为"牛马"风险</li>
+                            </ul>
+                        </div>
+                        <div class="point-card success">
+                            <div class="point-title" style="color: var(--green);">路线B：精品高端</div>
+                            <ul>
+                                <li>价格最高可达8000元/分钟</li>
+                                <li>需要传统影视功底</li>
+                                <li>市场要求会越来越高</li>
+                                <li>为未来AI大电影做准备</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <p style="margin-top: 20px;"><span class="hl-action">建议</span>：走精品路线，通过短剧提升技能，为26年下半年可能到来的AI大电影机会做准备。<span class="hl-data">窗口期约半年</span>。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section s4" id="section-4">
+            <div class="section-header" onclick="toggleSection('section-4')">
+                <div class="section-title">
+                    <div class="section-icon">👥</div>
+                    <span>四、OPC超级个体：正确的打开方式</span>
+                </div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                OPC不是一个人战斗，而是2-3人的超级小团队——短期接单、长期联盟的发展路径
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>🤔 什么是真正的OPC？</h4>
+                    <div class="point-card warning">
+                        <div class="point-title">⚠️ 常见误解</div>
+                        <p>OPC ≠ 一人公司 ≠ 单打独斗</p>
+                        <p><span class="hl-key">真相</span>：一个人精力有限，比如做单时有人要谈商务，根本顾不过来</p>
+                    </div>
+                    <div class="point-card success">
+                        <div class="point-title">✅ 正确理解</div>
+                        <p>OPC = <span class="hl-action">AI加持的小团体</span>（2-3人）= AI + 个体户的升级版</p>
+                        <p>核心：用AI扩展个人能力边界，但仍需团队协作</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>📈 OPC发展三阶段</h4>
+                    <div style="display: grid; gap: 20px;">
+                        <div class="point-card">
+                            <div class="point-title" style="color: var(--cyan);">📍 短期策略</div>
+                            <ul>
+                                <li>组建<span class="hl-data">2-3人</span>的超级小团队</li>
+                                <li>利用AI技能争取<span class="hl-action">孵化园区资源</span>（优惠租金/免费场地）</li>
+                                <li>抓住甲方接受度提升的窗口，<span class="hl-key">快速接单</span></li>
+                                <li>申请政府<span class="hl-quote">创业补贴</span>（苏州、深圳、上海等地有政策）</li>
+                            </ul>
+                        </div>
+                        <div class="point-card">
+                            <div class="point-title" style="color: var(--gold);">📍 长期策略</div>
+                            <ul>
+                                <li>与其他OPC团队组建<span class="hl-action">OPC联盟</span></li>
+                                <li>互相导资源、互相给单、互相成长</li>
+                                <li>形成生态化的协作网络</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>🔗 获取商单的三条路径</h4>
+                    <ul>
+                        <li><span class="hl-data">比赛获奖</span>：获奖后容易被甲方关注并主动联系</li>
+                        <li><span class="hl-data">原行业积累</span>：原有行业的客户资源可直接转化</li>
+                        <li><span class="hl-data">自媒体账号</span>：作品爆了 → 粉丝涨了 → 甲方找来了（小红书、抖音）</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><span class="hl-warning">关键提醒</span>：越等市场价格越低，竞争越激烈。<span class="hl-key">不要再犹豫，尽快入场！</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section s5" id="section-5">
+            <div class="section-header" onclick="toggleSection('section-5')">
+                <div class="section-title">
+                    <div class="section-icon">📱</div>
+                    <span>五、抖音AIGC：2026年真需求爆发</span>
+                </div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                抖音AIGC板块正式接入，商家预算已到位——这才是"真需求"的开始
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>🔥 为什么说2026年才是"真需求"？</h4>
+                    <div class="point-card success">
+                        <div class="point-title">💡 真需求 vs 假需求</div>
+                        <ul>
+                            <li><span class="hl-warning">假需求</span>：某AI软件发布了，某模型又更新了——这是技术热点</li>
+                            <li><span class="hl-action">真需求</span>：抖音平台有计划，商家要给钱投放——这是市场需求</li>
+                        </ul>
+                        <p style="margin-top: 15px;"><span class="hl-key">核心变化</span>：2026年，AIGC板块正式接入抖音电商和本地生活业务，商家年框预算已签好</p>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>📊 抖音AIGC达人生态现状</h4>
+                    <ul>
+                        <li>平台已对AI达人进行<span class="hl-data">分类管理</span>（AI漫剧、AI影视、AI特效等）</li>
+                        <li>粉丝量<span class="hl-action">1万到100万</span>在甲方眼里差别不大，关键看内容质量</li>
+                        <li>商家更看重<span class="hl-key">播放量和爆款率</span>，而非粉丝数</li>
+                        <li>AIGC试错成本低、产出快，商家愿意尝试</li>
+                    </ul>
+                </div>
+
+                <div class="content-block">
+                    <h4>💰 变现机会与路径</h4>
+                    <div class="point-card">
+                        <div class="point-title">📌 具体操作建议</div>
+                        <ul>
+                            <li><span class="hl-action">开通星图账号</span>：这是被商家看到的前提</li>
+                            <li><span class="hl-action">追热点创作</span>：抖音每月热点已提前1个月公布，商家预算已充值</li>
+                            <li><span class="hl-action">挂商品链接</span>：500元开橱窗（现可0元），内容爆了就有佣金</li>
+                            <li><span class="hl-action">服务商家</span>：如母婴品牌需要产品展示视频，AI创作者可批量服务</li>
+                        </ul>
+                    </div>
+                    <p style="margin-top: 15px;"><span class="hl-quote">信息差洞察</span>：商家眼里，你用10分钟AI生成的视频，如果爆了，价值等同于传统达人300元稿费+佣金的作品。</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="section s6" id="section-6">
+            <div class="section-header" onclick="toggleSection('section-6')">
+                <div class="section-title">
+                    <div class="section-icon">🎯</div>
+                    <span>六、行动清单：现在就开始做</span>
+                </div>
+                <div class="collapse-icon">▼</div>
+            </div>
+            <div class="section-preview">
+                从认知到行动的具体执行步骤——别让"听过"成为你的天花板
+            </div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>✅ 立即行动清单</h4>
+                    <div style="display: grid; gap: 15px;">
+                        <div class="point-card success">
+                            <div class="point-title">1️⃣ 开通抖音星图账号</div>
+                            <p>这是被商家和平台看到的前提，哪怕只有1万粉丝也要开</p>
+                        </div>
+                        <div class="point-card success">
+                            <div class="point-title">2️⃣ 参加至少1个AI比赛</div>
+                            <p>以赛代练，验证技能，结识队友，获取曝光机会</p>
+                        </div>
+                        <div class="point-card success">
+                            <div class="point-title">3️⃣ 确定自己的方向</div>
+                            <p>Agent方向？视频方向？设计方向？选定后专注深耕</p>
+                        </div>
+                        <div class="point-card success">
+                            <div class="point-title">4️⃣ 找到2-3个互补队友</div>
+                            <p>组建OPC小团队，互补技能，分担压力</p>
+                        </div>
+                        <div class="point-card success">
+                            <div class="point-title">5️⃣ 每周输出1个作品</div>
+                            <p>停止收藏，开始创作，在实践中进步</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>🚫 避免踩的坑</h4>
+                    <ul>
+                        <li>❌ 追逐每一个新模型、新工具（<span class="hl-warning">大厂一迭代全废</span>）</li>
+                        <li>❌ 相信"一分钟几十块"的短剧报价（<span class="hl-warning">算力成本都不够</span>）</li>
+                        <li>❌ 以为OPC就是一个人干所有事（<span class="hl-warning">精力根本不够</span>）</li>
+                        <li>❌ 无限犹豫等待最佳时机（<span class="hl-warning">市场价格只会越来越低</span>）</li>
+                        <li>❌ 只做个人艺术创作不考虑商业需求（<span class="hl-warning">甲方不会买单</span>）</li>
+                    </ul>
+                </div>
+
+                <div class="point-card" style="background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(236, 72, 153, 0.2)); border-color: var(--pink); margin-top: 30px;">
+                    <div class="point-title" style="color: var(--pink); font-size: 1.3em;">🌟 终极建议</div>
+                    <p style="font-size: 1.1em; line-height: 2;">
+                        AI时代的赢家不是技术最强的人，而是<span class="hl-action">最快将技术转化为商业价值</span>的人。<br><br>
+                        <span class="hl-key">现在就开始</span>——开账号、参比赛、找队友、接小单。<br><br>
+                        半年后回头看，你会感谢今天的自己。
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 页脚 -->
+        <div style="text-align: center; padding: 40px; color: var(--text-secondary); font-size: 0.9em;">
+            <p>📝 内容整理自AI知声圆桌会 · 2026年1月23日</p>
+            <p style="margin-top: 10px;">本文档由Claude AI辅助生成，核心观点来自分享嘉宾@大狐、@周忘川等</p>
+            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 20px; flex-wrap: wrap;">
+                <span style="padding: 8px 16px; background: rgba(102, 126, 234, 0.1); border-radius: 20px;">🤖 AI创业</span>
+                <span style="padding: 8px 16px; background: rgba(0, 217, 255, 0.1); border-radius: 20px;">🎬 AI短剧</span>
+                <span style="padding: 8px 16px; background: rgba(0, 230, 118, 0.1); border-radius: 20px;">🤝 OPC超级个体</span>
+                <span style="padding: 8px 16px; background: rgba(255, 217, 61, 0.1); border-radius: 20px;">🚀 Agent智能体</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+        
+        // 展开/收起全部
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+        
+        // 切换单个板块
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+        
+        // 滚动到专家评论
+        function scrollToExperts() {
+            document.getElementById('experts-section').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 滚动到数据看板
+        function scrollToData() {
+            document.getElementById('data-section').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 入场动画
+        document.addEventListener('DOMContentLoaded', function() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.section, .expert-card, .data-card, .quote-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

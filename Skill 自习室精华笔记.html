@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skill自习室 · 手把手教学精华笔记</title>
+    <style>
+        :root {
+            --bg-gradient-1: #0f0c29;
+            --bg-gradient-2: #302b63;
+            --bg-gradient-3: #24243e;
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --accent-orange: #ff6b35;
+            --accent-blue: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-pink: #ec4899;
+            --accent-yellow: #fbbf24;
+            --accent-red: #ef4444;
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="light"] {
+            --bg-gradient-1: #f8fafc;
+            --bg-gradient-2: #e2e8f0;
+            --bg-gradient-3: #f1f5f9;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            --text-primary: #1e293b;
+            --text-secondary: rgba(30, 41, 59, 0.7);
+            --card-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1), var(--bg-gradient-2), var(--bg-gradient-3));
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            transition: all 0.3s ease;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before,
+        .bg-animation::after {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.3;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-animation::before {
+            background: var(--accent-purple);
+            top: -200px;
+            left: -200px;
+        }
+
+        .bg-animation::after {
+            background: var(--accent-blue);
+            bottom: -200px;
+            right: -200px;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(100px, 100px) scale(1.1); }
+        }
+
+        /* 容器 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 头部 */
+        .header {
+            text-align: center;
+            padding: 60px 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-orange), var(--accent-purple), var(--accent-blue));
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 24px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(168, 85, 247, 0); }
+        }
+
+        .header h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+
+        .header-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .meta-item i {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border-radius: 6px;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 8px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.05);
+            box-shadow: var(--card-shadow);
+        }
+
+        /* 导航 */
+        .nav-pills {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 40px;
+            padding: 16px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+        }
+
+        .nav-pill {
+            padding: 10px 20px;
+            border-radius: 12px;
+            background: transparent;
+            border: 1px solid var(--glass-border);
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-pill:hover, .nav-pill.active {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            border-color: transparent;
+            transform: translateY(-2px);
+        }
+
+        /* 金句轮播 */
+        .quotes-carousel {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(168, 85, 247, 0.2));
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 40px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+
+        .quotes-carousel::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 30px;
+            font-size: 120px;
+            font-family: Georgia, serif;
+            color: var(--accent-orange);
+            opacity: 0.3;
+            line-height: 1;
+        }
+
+        .quote-slide {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .quote-slide.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .quote-text {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+            line-height: 1.6;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            color: var(--accent-orange);
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .quote-nav {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 24px;
+        }
+
+        .quote-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quote-dot.active {
+            background: var(--accent-orange);
+            transform: scale(1.2);
+        }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 16px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+
+        .stat-card:nth-child(1) .stat-icon { background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink)); }
+        .stat-card:nth-child(2) .stat-icon { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); }
+        .stat-card:nth-child(3) .stat-icon { background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); }
+        .stat-card:nth-child(4) .stat-icon { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            margin-bottom: 40px;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .section-title-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 800px;
+        }
+
+        .mindmap-root {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+            color: white;
+            padding: 20px 40px;
+            border-radius: 16px;
+            font-weight: 700;
+            font-size: 1.2rem;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.3);
+            position: relative;
+        }
+
+        .mindmap-root::after {
+            content: '';
+            position: absolute;
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 3px;
+            height: 30px;
+            background: var(--accent-purple);
+        }
+
+        .mindmap-branches {
+            display: flex;
+            gap: 20px;
+            margin-top: 30px;
+            position: relative;
+        }
+
+        .mindmap-branches::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple), var(--accent-pink));
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 180px;
+        }
+
+        .branch-connector {
+            width: 3px;
+            height: 30px;
+            background: var(--accent-purple);
+        }
+
+        .branch-node {
+            background: var(--glass-bg);
+            border: 2px solid;
+            padding: 16px 24px;
+            border-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .branch-node:hover {
+            transform: scale(1.05);
+            box-shadow: var(--card-shadow);
+        }
+
+        .mindmap-branch:nth-child(1) .branch-node { border-color: var(--accent-orange); color: var(--accent-orange); }
+        .mindmap-branch:nth-child(2) .branch-node { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .mindmap-branch:nth-child(3) .branch-node { border-color: var(--accent-green); color: var(--accent-green); }
+        .mindmap-branch:nth-child(4) .branch-node { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+        .branch-children {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .branch-child {
+            background: var(--glass-bg);
+            padding: 10px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .branch-child:hover {
+            background: var(--glass-border);
+            color: var(--text-primary);
+        }
+
+        /* 逻辑流程图 */
+        .logic-flow {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 40px;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 40px;
+        }
+
+        .flow-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            max-width: 150px;
+        }
+
+        .flow-step-number {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: white;
+            margin-bottom: 12px;
+            position: relative;
+        }
+
+        .flow-step:nth-child(1) .flow-step-number { background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink)); }
+        .flow-step:nth-child(3) .flow-step-number { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); }
+        .flow-step:nth-child(5) .flow-step-number { background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); }
+        .flow-step:nth-child(7) .flow-step-number { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); }
+        .flow-step:nth-child(9) .flow-step-number { background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange)); }
+
+        .flow-step-text {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+
+        .flow-arrow {
+            font-size: 24px;
+            color: var(--accent-purple);
+            animation: arrowPulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 0.5; transform: translateX(0); }
+            50% { opacity: 1; transform: translateX(5px); }
+        }
+
+        /* 内容卡片 */
+        .content-section {
+            margin-bottom: 30px;
+        }
+
+        .content-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            box-shadow: var(--card-shadow);
+        }
+
+        .card-header {
+            padding: 24px 30px;
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(0, 212, 255, 0.1));
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .card-header:hover {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(0, 212, 255, 0.2));
+        }
+
+        .card-header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        .card-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: var(--glass-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .card-toggle svg {
+            transition: transform 0.3s ease;
+        }
+
+        .content-card.expanded .card-toggle svg {
+            transform: rotate(180deg);
+        }
+
+        .card-body {
+            padding: 30px;
+            display: none;
+        }
+
+        .content-card.expanded .card-body {
+            display: block;
+            animation: slideDown 0.3s ease;
+        }
+
+        @keyframes slideDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 内容样式 */
+        .highlight {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .hl-red {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(236, 72, 153, 0.2));
+            color: var(--accent-red);
+        }
+
+        .hl-blue {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(168, 85, 247, 0.2));
+            color: var(--accent-blue);
+        }
+
+        .hl-green {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(0, 212, 255, 0.2));
+            color: var(--accent-green);
+        }
+
+        .hl-purple {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(236, 72, 153, 0.2));
+            color: var(--accent-purple);
+        }
+
+        .hl-orange {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(251, 191, 36, 0.2));
+            color: var(--accent-orange);
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(0, 212, 255, 0.1));
+            border-left: 4px solid var(--accent-green);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .tip-box-title {
+            font-weight: 700;
+            color: var(--accent-green);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(251, 191, 36, 0.1), rgba(239, 68, 68, 0.1));
+            border-left: 4px solid var(--accent-yellow);
+            padding: 20px;
+            border-radius: 0 12px 12px 0;
+            margin: 20px 0;
+        }
+
+        .warning-box-title {
+            font-weight: 700;
+            color: var(--accent-yellow);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            font-family: 'SF Mono', Monaco, Consolas, monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 16px 0;
+            border: 1px solid var(--glass-border);
+        }
+
+        .code-path {
+            color: var(--accent-blue);
+        }
+
+        .code-command {
+            color: var(--accent-green);
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            background: var(--glass-bg);
+            border-radius: 16px;
+            padding: 24px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .feature-item:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 12px;
+        }
+
+        .feature-title {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* 专家评论 */
+        .expert-section {
+            margin-bottom: 40px;
+        }
+
+        .expert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .expert-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            padding: 30px;
+            border: 1px solid var(--glass-border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .expert-card.dario::before {
+            background: linear-gradient(90deg, #ff6b35, #a855f7);
+        }
+
+        .expert-card.zhang::before {
+            background: linear-gradient(90deg, #00d4ff, #10b981);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .expert-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .expert-card.dario .expert-avatar {
+            background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));
+        }
+
+        .expert-card.zhang .expert-avatar {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));
+        }
+
+        .expert-info h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .expert-info p {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .expert-quote {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .expert-quote::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            border-radius: 2px;
+        }
+
+        .expert-card.dario .expert-quote::before {
+            background: linear-gradient(180deg, var(--accent-orange), var(--accent-purple));
+        }
+
+        .expert-card.zhang .expert-quote::before {
+            background: linear-gradient(180deg, var(--accent-blue), var(--accent-green));
+        }
+
+        .expert-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .expert-tag {
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .expert-card.dario .expert-tag {
+            background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(168, 85, 247, 0.2));
+            color: var(--accent-orange);
+        }
+
+        .expert-card.zhang .expert-tag {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(16, 185, 129, 0.2));
+            color: var(--accent-blue);
+        }
+
+        /* 干货清单 */
+        .takeaway-section {
+            margin-bottom: 40px;
+        }
+
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .takeaway-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 24px;
+            border: 1px solid var(--glass-border);
+            display: flex;
+            gap: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .takeaway-card:hover {
+            transform: translateX(5px);
+            box-shadow: var(--card-shadow);
+        }
+
+        .takeaway-number {
+            min-width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: white;
+        }
+
+        .takeaway-card:nth-child(1) .takeaway-number { background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink)); }
+        .takeaway-card:nth-child(2) .takeaway-number { background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); }
+        .takeaway-card:nth-child(3) .takeaway-number { background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); }
+        .takeaway-card:nth-child(4) .takeaway-number { background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); }
+        .takeaway-card:nth-child(5) .takeaway-number { background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange)); }
+        .takeaway-card:nth-child(6) .takeaway-number { background: linear-gradient(135deg, var(--accent-red), var(--accent-purple)); }
+
+        .takeaway-content h4 {
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+
+        .takeaway-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border-radius: 24px;
+            border: 1px solid var(--glass-border);
+            margin-top: 40px;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        .footer-link {
+            color: var(--accent-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-link:hover {
+            text-decoration: underline;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px 16px;
+            }
+
+            .header {
+                padding: 40px 24px;
+            }
+
+            .nav-pills {
+                position: relative;
+                top: 0;
+            }
+
+            .mindmap {
+                min-width: 100%;
+            }
+
+            .mindmap-branches {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .mindmap-branches::before {
+                display: none;
+            }
+
+            .flow-container {
+                flex-direction: column;
+            }
+
+            .flow-arrow {
+                transform: rotate(90deg);
+            }
+
+            .expert-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+        <span id="theme-text">深色模式</span>
+    </button>
+
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-badge">
+                <span>🎓</span>
+                <span>Way to AGI 训练营 · 第四期</span>
+            </div>
+            <h1>Skill 自习室精华笔记</h1>
+            <p class="header-subtitle">从零到一掌握 Claude Code Skills —— AI 编程的"厨房操作指南"</p>
+            <div class="header-meta">
+                <div class="meta-item">
+                    <i>📅</i>
+                    <span>2026年1月23日</span>
+                </div>
+                <div class="meta-item">
+                    <i>⏱️</i>
+                    <span>约100分钟</span>
+                </div>
+                <div class="meta-item">
+                    <i>👨‍🏫</i>
+                    <span>507 & AI奶爸</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- 金句轮播 -->
+        <div class="quotes-carousel">
+            <div class="quote-slide active">
+                <p class="quote-text">Skill 就是 AI 的工具说明书——AI 不是不能解决问题，而是它每次中断后都会"失忆"，Skill 让它永远记得该怎么做。</p>
+                <p class="quote-author">—— 507</p>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">你不用自己手搓一个 Skill，你在用中学就行。先用，遇到问题再问 AI，比你自己写快10倍。</p>
+                <p class="quote-author">—— 507</p>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">一定要相信你的 AI 可能比你更懂——格式有没有问题？你问它比你自己排查快得多。</p>
+                <p class="quote-author">—— 507</p>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">提示词还是很关键的，给 AI 一个专业的 Prompt，输出的东西就会专业很多。</p>
+                <p class="quote-author">—— AI奶爸</p>
+            </div>
+            <div class="quote-slide">
+                <p class="quote-text">在动手之前，先跟 AI 讨论方案——你不说"先想想怎么写"，它就直接动手了，结果可能不是你要的。</p>
+                <p class="quote-author">—— AI奶爸</p>
+            </div>
+            <div class="quote-nav">
+                <span class="quote-dot active" onclick="showQuote(0)"></span>
+                <span class="quote-dot" onclick="showQuote(1)"></span>
+                <span class="quote-dot" onclick="showQuote(2)"></span>
+                <span class="quote-dot" onclick="showQuote(3)"></span>
+                <span class="quote-dot" onclick="showQuote(4)"></span>
+            </div>
+        </div>
+
+        <!-- 导航 -->
+        <nav class="nav-pills">
+            <button class="nav-pill active" onclick="scrollToSection('overview')">📌 核心概念</button>
+            <button class="nav-pill" onclick="scrollToSection('install')">⚙️ 安装配置</button>
+            <button class="nav-pill" onclick="scrollToSection('create')">🔨 创建实战</button>
+            <button class="nav-pill" onclick="scrollToSection('advanced')">🚀 进阶案例</button>
+            <button class="nav-pill" onclick="scrollToSection('pitfalls')">⚠️ 避坑指南</button>
+            <button class="nav-pill" onclick="scrollToSection('expert')">💡 专家点评</button>
+        </nav>
+
+        <!-- 统计卡片 -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon">🧩</div>
+                <div class="stat-value">2</div>
+                <div class="stat-label">核心概念</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">📂</div>
+                <div class="stat-value">2</div>
+                <div class="stat-label">安装路径</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">⚡</div>
+                <div class="stat-value">8</div>
+                <div class="stat-label">实操步骤</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon">🎯</div>
+                <div class="stat-value">5</div>
+                <div class="stat-label">常见坑点</div>
+            </div>
+        </div>
+
+        <!-- 元认知思维导图 -->
+        <section class="mindmap-section" id="mindmap">
+            <h2 class="section-title">
+                <span class="section-title-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));">🧠</span>
+                元认知思维导图
+            </h2>
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-root">🎯 Skill 完全掌握</div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">🤔 是什么</div>
+                            <div class="branch-children">
+                                <div class="branch-child">AI的工具说明书</div>
+                                <div class="branch-child">封装好的提示词流程</div>
+                                <div class="branch-child">可复用的工作指南</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">📍 放哪里</div>
+                            <div class="branch-children">
+                                <div class="branch-child">全局: ~/.claude/skills</div>
+                                <div class="branch-child">项目: .claude/skills</div>
+                                <div class="branch-child">项目级优先于全局</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">🔧 怎么用</div>
+                            <div class="branch-children">
+                                <div class="branch-child">/命令名 斜杠触发</div>
+                                <div class="branch-child">自然语言触发</div>
+                                <div class="branch-child">关键词自动匹配</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-connector"></div>
+                            <div class="branch-node">✨ 怎么写</div>
+                            <div class="branch-children">
+                                <div class="branch-child">SKILL.md 文档</div>
+                                <div class="branch-child">name + 触发条件</div>
+                                <div class="branch-child">让AI帮你生成</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑流程图 -->
+        <section class="mindmap-section">
+            <h2 class="section-title">
+                <span class="section-title-icon" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));">📊</span>
+                Skill 工作流程图
+            </h2>
+            <div class="logic-flow">
+                <div class="flow-container">
+                    <div class="flow-step">
+                        <div class="flow-step-number">1</div>
+                        <div class="flow-step-text">找到/创建<br>Skill文件</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">2</div>
+                        <div class="flow-step-text">放入正确<br>目录位置</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">3</div>
+                        <div class="flow-step-text">AI加载<br>元数据</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">4</div>
+                        <div class="flow-step-text">触发关键词<br>或命令</div>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-step">
+                        <div class="flow-step-number">5</div>
+                        <div class="flow-step-text">执行任务<br>输出结果</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心概念 -->
+        <section class="content-section" id="overview">
+            <div class="content-card expanded">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-header-left">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink));">💡</div>
+                        <div>
+                            <div class="card-title">Skill 到底是什么？</div>
+                            <div class="card-subtitle">理解本质，事半功倍</div>
+                        </div>
+                    </div>
+                    <div class="card-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <p><span class="highlight hl-purple">核心定义</span>：Skill 是 <span class="highlight hl-orange">AI 的工具说明书</span>，把重复的提示词流程封装起来，一键调用。</p>
+                    
+                    <div class="tip-box">
+                        <div class="tip-box-title">💡 经典比喻</div>
+                        <p>AI 就像一个<span class="highlight hl-red">每次中断聊天就会失忆的大厨</span>。没有 Skill，你每次都要告诉它"这是盐，那是鸡精，你把它们加在一起会很好吃"。有了 Skill，它看完"厨房操作指南"就知道怎么做了。</p>
+                    </div>
+
+                    <h4 style="margin-top: 20px; color: var(--accent-blue);">📌 什么时候该用 Skill？</h4>
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">🔁</div>
+                            <div class="feature-title">重复性工作</div>
+                            <div class="feature-desc">每次都要跟 AI 说同样的流程</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📝</div>
+                            <div class="feature-title">长提示词场景</div>
+                            <div class="feature-desc">需要一长串提示词才能让 AI 明白</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🎯</div>
+                            <div class="feature-title">标准化输出</div>
+                            <div class="feature-desc">每次都希望 AI 按固定格式输出</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🚀</div>
+                            <div class="feature-title">项目启动引导</div>
+                            <div class="feature-desc">不知道从哪入手，让 AI 系统性提问</div>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-box-title">⚠️ 什么时候不需要 Skill？</div>
+                        <p>如果你的工作是<span class="highlight hl-orange">创意型、定制化</span>的（如每幅画要求都不同），Skill 帮助有限——它擅长"标准化流程"，不擅长"千人千面"。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 安装配置 -->
+        <section class="content-section" id="install">
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-header-left">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple));">⚙️</div>
+                        <div>
+                            <div class="card-title">安装与配置</div>
+                            <div class="card-subtitle">全局 vs 项目级 · 三种安装方式</div>
+                        </div>
+                    </div>
+                    <div class="card-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 style="color: var(--accent-purple); margin-bottom: 16px;">📂 两种安装位置</h4>
+                    
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">🌐</div>
+                            <div class="feature-title">全局 Skill</div>
+                            <div class="feature-desc">
+                                <code class="code-block" style="display: block; margin-top: 8px;">
+                                    <span class="code-path">~/.claude/skills/</span>
+                                </code>
+                                所有项目都能用，但会增加上下文占用
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📁</div>
+                            <div class="feature-title">项目级 Skill</div>
+                            <div class="feature-desc">
+                                <code class="code-block" style="display: block; margin-top: 8px;">
+                                    <span class="code-path">项目根目录/.claude/skills/</span>
+                                </code>
+                                只在当前项目生效，推荐优先使用
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <div class="tip-box-title">🎯 507 的建议</div>
+                        <p><span class="highlight hl-green">原则上优先项目文件夹</span>。全局 Skill 多了（如50+个），会增加上下文占用。写作 Skill 放在写作项目里，敲代码时就不用加载它。</p>
+                    </div>
+
+                    <h4 style="color: var(--accent-blue); margin-top: 30px; margin-bottom: 16px;">🔧 三种安装方式</h4>
+
+                    <div style="display: flex; flex-direction: column; gap: 16px;">
+                        <div style="background: var(--glass-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border);">
+                            <h5 style="color: var(--accent-orange); margin-bottom: 8px;">方式一：让 AI 帮你装（最简单）</h5>
+                            <code class="code-block">
+                                <span class="code-command">当前目录是一个技能，麻烦请你帮我安装到全局技能</span>
+                            </code>
+                            <p style="font-size: 14px; color: var(--text-secondary); margin-top: 8px;">AI 会自动识别标准格式并完成安装</p>
+                        </div>
+
+                        <div style="background: var(--glass-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border);">
+                            <h5 style="color: var(--accent-purple); margin-bottom: 8px;">方式二：直接拖放文件夹</h5>
+                            <p style="font-size: 14px; color: var(--text-secondary);">下载 Skill → 解压 → 拖到 <code class="code-path">~/.claude/skills/</code></p>
+                        </div>
+
+                        <div style="background: var(--glass-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border);">
+                            <h5 style="color: var(--accent-green); margin-bottom: 8px;">方式三：从 GitHub 直接安装</h5>
+                            <code class="code-block">
+                                <span class="code-command">请帮我安装这个 Skill：</span><span class="code-path">[GitHub链接]</span>
+                            </code>
+                        </div>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-box-title">⚠️ 优先级规则</div>
+                        <p>当<span class="highlight hl-red">项目级和全局</span>都有同名 Skill 时，<span class="highlight hl-orange">项目级优先</span>。除非你明确指定用全局的那个。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 创建实战 -->
+        <section class="content-section" id="create">
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-header-left">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));">🔨</div>
+                        <div>
+                            <div class="card-title">创建你的第一个 Skill</div>
+                            <div class="card-subtitle">文件结构 · 关键字段 · 实用模板</div>
+                        </div>
+                    </div>
+                    <div class="card-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 style="color: var(--accent-green); margin-bottom: 16px;">📄 最简结构</h4>
+                    <p>一个 Skill 只需要<span class="highlight hl-blue">一个文件夹 + 一个 SKILL.md</span>：</p>
+                    
+                    <code class="code-block">
+my-skill/
+└── <span class="code-path">SKILL.md</span>  ← 这就是全部
+                    </code>
+
+                    <h4 style="color: var(--accent-purple); margin-top: 30px; margin-bottom: 16px;">📝 SKILL.md 的两部分</h4>
+
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">🏷️</div>
+                            <div class="feature-title">上半部分：元数据</div>
+                            <div class="feature-desc">
+                                <code class="code-block" style="margin-top: 8px;">
+---
+name: <span class="code-command">code-comment</span>
+description: <span class="code-path">帮我分析代码，产品想法...</span>
+---
+                                </code>
+                                定义名字和触发关键词
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📋</div>
+                            <div class="feature-title">下半部分：执行指令</div>
+                            <div class="feature-desc">
+                                告诉 AI 具体怎么做：
+                                <br>• 工作流程说明
+                                <br>• 输出格式要求
+                                <br>• 参考话术模板
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <div class="tip-box-title">🚀 快速上手</div>
+                        <p>不用自己写！用官方的 <code class="code-command">/skill-creator</code> 命令，告诉 AI 你想要什么功能，它帮你生成完整的 Skill。</p>
+                    </div>
+
+                    <h4 style="color: var(--accent-orange); margin-top: 30px; margin-bottom: 16px;">🎁 即用模板示例</h4>
+
+                    <div style="background: var(--glass-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border); margin-bottom: 16px;">
+                        <h5 style="color: var(--accent-blue); margin-bottom: 12px;">代码注释 Skill（小白必备）</h5>
+                        <code class="code-block">
+---
+name: <span class="code-command">code-comment-cn</span>
+description: <span class="code-path">帮我给代码添加中文注释，代码注释</span>
+---
+
+# 代码注释助手
+
+## 任务
+为用户提供的代码添加详细的中文注释
+
+## 要求
+- 每个函数说明用途
+- 关键逻辑加注释
+- 变量命名解释
+- 根据用户水平调整专业度
+                        </code>
+                    </div>
+
+                    <div style="background: var(--glass-bg); border-radius: 12px; padding: 20px; border: 1px solid var(--glass-border);">
+                        <h5 style="color: var(--accent-pink); margin-bottom: 12px;">小红书标题优化 Skill</h5>
+                        <code class="code-block">
+---
+name: <span class="code-command">xhs-title</span>
+description: <span class="code-path">小红书标题，爆款标题优化</span>
+---
+
+# 小红书标题优化
+
+## 规则
+- 添加emoji增加吸引力
+- 使用数字提升点击率
+- 制造悬念/痛点
+- 控制在20字以内
+                        </code>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 进阶案例 -->
+        <section class="content-section" id="advanced">
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-header-left">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));">🚀</div>
+                        <div>
+                            <div class="card-title">进阶实战：从爬取到封装</div>
+                            <div class="card-subtitle">AI奶爸演示 · OpenAI Prompt 库 Skill 化</div>
+                        </div>
+                    </div>
+                    <div class="card-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <h4 style="color: var(--accent-purple); margin-bottom: 16px;">🎯 案例目标</h4>
+                    <p>把 <span class="highlight hl-blue">OpenAI 的 300+ 提示词库</span>做成 Skill，按角色分类，支持智能推荐。</p>
+
+                    <h4 style="color: var(--accent-orange); margin-top: 30px; margin-bottom: 16px;">📋 完整流程</h4>
+
+                    <div style="display: flex; flex-direction: column; gap: 12px;">
+                        <div style="display: flex; align-items: flex-start; gap: 16px; background: var(--glass-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                            <div style="min-width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-orange), var(--accent-pink)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">1</div>
+                            <div>
+                                <strong style="color: var(--accent-orange);">需求分析 + 数据获取</strong>
+                                <p style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">让 AI 学习 OpenAI 官网结构，爬取不同角色的提示词</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 16px; background: var(--glass-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                            <div style="min-width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">2</div>
+                            <div>
+                                <strong style="color: var(--accent-blue);">架构设计讨论</strong>
+                                <p style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">
+                                    <span class="highlight hl-red">关键技巧</span>：告诉 AI "先想想怎么写，经过我同意之后再动手"
+                                </p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 16px; background: var(--glass-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                            <div style="min-width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">3</div>
+                            <div>
+                                <strong style="color: var(--accent-green);">选择方案 C</strong>
+                                <p style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">10 个角色 Skill + 1 个主入口 + 共享数据层，方便后续扩展</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 16px; background: var(--glass-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                            <div style="min-width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">4</div>
+                            <div>
+                                <strong style="color: var(--accent-purple);">让 AI 自检</strong>
+                                <p style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">生成后让 AI 检查格式是否符合官方规范，确保质量</p>
+                            </div>
+                        </div>
+
+                        <div style="display: flex; align-items: flex-start; gap: 16px; background: var(--glass-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                            <div style="min-width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange)); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700;">5</div>
+                            <div>
+                                <strong style="color: var(--accent-yellow);">清理 + 开源</strong>
+                                <p style="font-size: 14px; color: var(--text-secondary); margin-top: 4px;">删除中间过程文件，上传 GitHub</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <div class="tip-box-title">🔥 AI奶爸的核心心法</div>
+                        <ul style="margin-left: 20px; color: var(--text-secondary);">
+                            <li>遇到不确定的，<span class="highlight hl-purple">先问 AI，让它给方案</span></li>
+                            <li>复杂任务<span class="highlight hl-blue">分阶段</span>：爬取 → 设计 → 创建 → 自检 → 清理</li>
+                            <li>全程用<span class="highlight hl-green">自然语言对话</span>，不用手写代码</li>
+                        </ul>
+                    </div>
+
+                    <h4 style="color: var(--accent-blue); margin-top: 30px; margin-bottom: 16px;">📊 最终成果</h4>
+                    <div class="stats-grid" style="margin-top: 16px;">
+                        <div class="stat-card">
+                            <div class="stat-value">11</div>
+                            <div class="stat-label">Skills（1主+10角色）</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">201</div>
+                            <div class="stat-label">提示词总数</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">✓</div>
+                            <div class="stat-label">智能角色推荐</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">✓</div>
+                            <div class="stat-label">中英双语支持</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 避坑指南 -->
+        <section class="content-section" id="pitfalls">
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-header-left">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-yellow), var(--accent-orange));">⚠️</div>
+                        <div>
+                            <div class="card-title">5 大常见坑点</div>
+                            <div class="card-subtitle">507 亲身踩坑总结</div>
+                        </div>
+                    </div>
+                    <div class="card-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="warning-box">
+                            <div class="warning-box-title">❌ 坑点 1：描述写太泛</div>
+                            <p><strong>错误：</strong><code>description: 代码审查工具</code></p>
+                            <p><strong>后果：</strong>所有代码审查都会触发，或者有多个同类 Skill 时 AI 分不清</p>
+                            <p><strong style="color: var(--accent-green);">正确：</strong><code>description: 审查代码安全性、可读性、最佳实践</code></p>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-box-title">❌ 坑点 2：路径写错</div>
+                            <p>尤其是<span class="highlight hl-red">企业级路径</span>忘记转义、<span class="highlight hl-red">Windows 和 Mac 路径混用</span></p>
+                            <p><strong style="color: var(--accent-green);">建议：</strong>能让 AI 自动处理的，就别手动写</p>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-box-title">❌ 坑点 3：项目级放全局位置</div>
+                            <p>在项目 A 创建的 Skill，去项目 B 发现用不了——因为是项目级的</p>
+                            <p><strong style="color: var(--accent-green);">口诀：</strong>想通用放全局，想省上下文放项目</p>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-box-title">❌ 坑点 4：全局 Skill 太多</div>
+                            <p>50+ 个全局 Skill，每次对话都会加载元数据，上下文占用飙升</p>
+                            <p><strong style="color: var(--accent-green);">建议：</strong>分类整理，不常用的移到项目级</p>
+                        </div>
+
+                        <div class="warning-box">
+                            <div class="warning-box-title">❌ 坑点 5：中文命名</div>
+                            <p><code>name</code> 字段最好用<span class="highlight hl-blue">英文</span>，中文可能导致触发命令不稳定</p>
+                        </div>
+                    </div>
+
+                    <div class="tip-box" style="margin-top: 20px;">
+                        <div class="tip-box-title">🔧 Skill 不工作？自检清单</div>
+                        <ol style="margin-left: 20px; color: var(--text-secondary);">
+                            <li>路径是否正确？（全局 vs 项目级）</li>
+                            <li>SKILL.md 格式是否正确？（<code>---</code>分隔符）</li>
+                            <li>描述关键词是否精准？</li>
+                            <li>直接问 AI：<code>这个技能用不了，帮我排查一下</code></li>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家点评 -->
+        <section class="expert-section" id="expert">
+            <h2 class="section-title">
+                <span class="section-title-icon" style="background: linear-gradient(135deg, var(--accent-orange), var(--accent-purple));">💡</span>
+                专家视角
+            </h2>
+            <div class="expert-grid">
+                <div class="expert-card dario">
+                    <div class="expert-header">
+                        <div class="expert-avatar">DA</div>
+                        <div class="expert-info">
+                            <h3>Dario Amodei</h3>
+                            <p>Anthropic CEO · Claude 创始人</p>
+                        </div>
+                    </div>
+                    <div class="expert-quote">
+                        <p>这场教学完美诠释了我们设计 Claude Skills 的初衷——<strong style="color: var(--accent-orange);">降低 AI 使用门槛，让非技术用户也能构建复杂工作流</strong>。</p>
+                        <br>
+                        <p>507 提到的"失忆大厨"比喻非常精准。Skills 本质上是<strong style="color: var(--accent-purple);">持久化的上下文</strong>，解决了 LLM 无状态的核心痛点。</p>
+                        <br>
+                        <p>AI奶爸的进阶案例展示了 Skills 的真正威力——用自然语言完成从数据爬取到架构设计的全流程。这正是我们追求的 <strong style="color: var(--accent-pink);">"AI 作为协作者而非工具"</strong> 的愿景。</p>
+                    </div>
+                    <div class="expert-tags">
+                        <span class="expert-tag">持久化上下文</span>
+                        <span class="expert-tag">降低门槛</span>
+                        <span class="expert-tag">人机协作</span>
+                    </div>
+                </div>
+
+                <div class="expert-card zhang">
+                    <div class="expert-header">
+                        <div class="expert-avatar">张</div>
+                        <div class="expert-info">
+                            <h3>张鹏</h3>
+                            <p>智谱 AI CEO</p>
+                        </div>
+                    </div>
+                    <div class="expert-quote">
+                        <p>这个教程对中国 AI 开发者社区极具价值。507 和 AI奶爸都强调了一个关键点：<strong style="color: var(--accent-blue);">先用再学，在实践中迭代</strong>。</p>
+                        <br>
+                        <p>我特别认同"项目级优先"的建议——这体现了<strong style="color: var(--accent-green);">上下文管理的工程思维</strong>。全局污染是大型 AI 项目的常见陷阱。</p>
+                        <br>
+                        <p>GLM-4 同样支持类似的技能扩展机制。我们看到，无论底层模型如何，<strong style="color: var(--accent-blue);">标准化的 Skill 协议正在成为行业共识</strong>。这对整个生态都是好事。</p>
+                    </div>
+                    <div class="expert-tags">
+                        <span class="expert-tag">实践优先</span>
+                        <span class="expert-tag">工程思维</span>
+                        <span class="expert-tag">生态共识</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货清单 -->
+        <section class="takeaway-section">
+            <h2 class="section-title">
+                <span class="section-title-icon" style="background: linear-gradient(135deg, var(--accent-green), var(--accent-blue));">📦</span>
+                核心干货清单
+            </h2>
+            <div class="takeaway-grid">
+                <div class="takeaway-card">
+                    <div class="takeaway-number">1</div>
+                    <div class="takeaway-content">
+                        <h4>Skill 是"工具说明书"</h4>
+                        <p>封装重复提示词，让 AI 不再"失忆"</p>
+                    </div>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-number">2</div>
+                    <div class="takeaway-content">
+                        <h4>两个安装位置</h4>
+                        <p>全局 ~/.claude/skills · 项目 .claude/skills</p>
+                    </div>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-number">3</div>
+                    <div class="takeaway-content">
+                        <h4>优先项目级</h4>
+                        <p>减少上下文占用，按需加载</p>
+                    </div>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-number">4</div>
+                    <div class="takeaway-content">
+                        <h4>让 AI 帮你做</h4>
+                        <p>安装、创建、排错都可以用自然语言</p>
+                    </div>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-number">5</div>
+                    <div class="takeaway-content">
+                        <h4>先讨论再动手</h4>
+                        <p>"先想想怎么写，经过我同意后再做"</p>
+                    </div>
+                </div>
+                <div class="takeaway-card">
+                    <div class="takeaway-number">6</div>
+                    <div class="takeaway-content">
+                        <h4>复杂任务分阶段</h4>
+                        <p>爬取 → 设计 → 创建 → 自检 → 清理</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 资源链接 -->
+        <section class="content-section">
+            <div class="content-card expanded">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-header-left">
+                        <div class="card-icon" style="background: linear-gradient(135deg, var(--accent-blue), var(--accent-green));">🔗</div>
+                        <div>
+                            <div class="card-title">资源汇总</div>
+                            <div class="card-subtitle">Skills 市场 · 工具推荐 · 开源项目</div>
+                        </div>
+                    </div>
+                    <div class="card-toggle">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M6 9l6 6 6-6"/>
+                        </svg>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="feature-grid">
+                        <div class="feature-item">
+                            <div class="feature-icon">🏪</div>
+                            <div class="feature-title">Skills 技能市场</div>
+                            <div class="feature-desc">中文友好，搜索安装一站式</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📖</div>
+                            <div class="feature-title">Zread</div>
+                            <div class="feature-desc">GitHub 仓库中文理解神器</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📚</div>
+                            <div class="feature-title">Z-Library Skill</div>
+                            <div class="feature-desc">AI奶爸出品，1100+ Star</div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🎯</div>
+                            <div class="feature-title">OpenAI Prompt Skill</div>
+                            <div class="feature-desc">201 个专业提示词，角色分类</div>
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <div class="tip-box-title">💡 选 Skill 的标准</div>
+                        <p>优先选择 <span class="highlight hl-green">GitHub 高星项目</span>（至少 10+ Star），用户多意味着问题少。官方 Skill 仓库（anthropics）目前有 18 个技能。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p class="footer-text">
+                📝 整理自 Way to AGI 训练营第四期 Skill 自习室<br>
+                👨‍🏫 讲师：507 & AI奶爸<br>
+                🎨 由 Claude 生成 · <span id="current-date"></span>
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const body = document.body;
+            const icon = document.getElementById('theme-icon');
+            const text = document.getElementById('theme-text');
+            
+            if (body.getAttribute('data-theme') === 'light') {
+                body.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+                text.textContent = '深色模式';
+            } else {
+                body.setAttribute('data-theme', 'light');
+                icon.textContent = '☀️';
+                text.textContent = '浅色模式';
+            }
+        }
+
+        // 卡片展开/折叠
+        function toggleCard(header) {
+            const card = header.closest('.content-card');
+            card.classList.toggle('expanded');
+        }
+
+        // 导航滚动
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            
+            // 更新导航状态
+            document.querySelectorAll('.nav-pill').forEach(pill => pill.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // 金句轮播
+        let currentQuote = 0;
+        const quotes = document.querySelectorAll('.quote-slide');
+        const dots = document.querySelectorAll('.quote-dot');
+
+        function showQuote(index) {
+            quotes.forEach(q => q.classList.remove('active'));
+            dots.forEach(d => d.classList.remove('active'));
+            quotes[index].classList.add('active');
+            dots[index].classList.add('active');
+            currentQuote = index;
+        }
+
+        // 自动轮播
+        setInterval(() => {
+            currentQuote = (currentQuote + 1) % quotes.length;
+            showQuote(currentQuote);
+        }, 5000);
+
+        // 日期
+        document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN');
+
+        // 导航高亮
+        const sections = ['overview', 'install', 'create', 'advanced', 'pitfalls', 'expert'];
+        const navPills = document.querySelectorAll('.nav-pill');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(id => {
+                const section = document.getElementById(id);
+                if (section) {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= 200) {
+                        current = id;
+                    }
+                }
+            });
+
+            navPills.forEach((pill, index) => {
+                pill.classList.remove('active');
+                if (sections[index] === current) {
+                    pill.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>
