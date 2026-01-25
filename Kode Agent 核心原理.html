@@ -1,0 +1,1726 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 Kode Agent 深度解析 | 开源版Claude Code核心原理</title>
+    <style>
+        :root {
+            --bg-gradient-1: #0a0a1a;
+            --bg-gradient-2: #1a1a3a;
+            --bg-gradient-3: #0d1b2a;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --accent-red: #ff6b6b;
+            --accent-blue: #4ecdc4;
+            --accent-purple: #a855f7;
+            --accent-orange: #f59e0b;
+            --accent-green: #10b981;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --gold: #ffd700;
+            --shadow-glow: 0 0 40px rgba(78, 205, 196, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, var(--bg-gradient-1) 0%, var(--bg-gradient-2) 50%, var(--bg-gradient-3) 100%);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 动态背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at 20% 20%, rgba(168, 85, 247, 0.1) 0%, transparent 50%),
+                        radial-gradient(ellipse at 80% 80%, rgba(78, 205, 196, 0.08) 0%, transparent 50%),
+                        radial-gradient(ellipse at 50% 50%, rgba(255, 107, 107, 0.05) 0%, transparent 60%);
+            animation: bgMove 30s ease-in-out infinite;
+        }
+
+        @keyframes bgMove {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(-5%, -5%); }
+            50% { transform: translate(-10%, 5%); }
+            75% { transform: translate(5%, -10%); }
+        }
+
+        /* 浮动粒子 */
+        .particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.3; }
+            50% { transform: translateY(-100px) rotate(180deg); opacity: 0.8; }
+        }
+
+        /* 头部 */
+        .header {
+            padding: 60px 20px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-blue), transparent);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(168, 85, 247, 0); }
+        }
+
+        h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-blue) 50%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            text-shadow: 0 0 60px rgba(78, 205, 196, 0.3);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 元信息 */
+        .meta-info {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+            padding: 20px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            backdrop-filter: blur(10px);
+            font-size: 0.9rem;
+        }
+
+        .meta-item .icon {
+            font-size: 1.2rem;
+        }
+
+        /* 容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* 核心金句区 */
+        .golden-quotes {
+            margin-bottom: 60px;
+        }
+
+        .golden-quotes h2 {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: var(--gold);
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .quote-card {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1) 0%, rgba(255, 215, 0, 0.02) 100%);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.1);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 6rem;
+            color: rgba(255, 215, 0, 0.1);
+            font-family: Georgia, serif;
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: var(--gold);
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            margin-bottom: 60px;
+        }
+
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            color: var(--accent-cyan);
+        }
+
+        .mindmap-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            min-width: 900px;
+        }
+
+        .mm-root {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            color: white;
+            padding: 20px 40px;
+            border-radius: 50px;
+            font-weight: 700;
+            font-size: 1.3rem;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4);
+            position: relative;
+        }
+
+        .mm-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin-left: 60px;
+            position: relative;
+        }
+
+        .mm-branches::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-purple), var(--accent-blue), var(--accent-green));
+            border-radius: 2px;
+        }
+
+        .mm-branch {
+            display: flex;
+            align-items: flex-start;
+            gap: 20px;
+            position: relative;
+        }
+
+        .mm-branch::before {
+            content: '';
+            position: absolute;
+            left: -30px;
+            top: 20px;
+            width: 30px;
+            height: 3px;
+            background: var(--accent-blue);
+        }
+
+        .mm-node {
+            background: var(--glass-bg);
+            border: 2px solid;
+            padding: 15px 25px;
+            border-radius: 12px;
+            min-width: 180px;
+        }
+
+        .mm-node.purple { border-color: var(--accent-purple); }
+        .mm-node.blue { border-color: var(--accent-blue); }
+        .mm-node.green { border-color: var(--accent-green); }
+        .mm-node.orange { border-color: var(--accent-orange); }
+        .mm-node.pink { border-color: var(--accent-pink); }
+
+        .mm-node-title {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+        }
+
+        .mm-node.purple .mm-node-title { color: var(--accent-purple); }
+        .mm-node.blue .mm-node-title { color: var(--accent-blue); }
+        .mm-node.green .mm-node-title { color: var(--accent-green); }
+        .mm-node.orange .mm-node-title { color: var(--accent-orange); }
+        .mm-node.pink .mm-node-title { color: var(--accent-pink); }
+
+        .mm-node-items {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .mm-node-items li {
+            margin: 5px 0;
+            padding-left: 15px;
+            position: relative;
+        }
+
+        .mm-node-items li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+        }
+
+        /* 逻辑架构图 */
+        .architecture-section {
+            margin-bottom: 60px;
+        }
+
+        .arch-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            color: var(--accent-green);
+        }
+
+        .arch-container {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            backdrop-filter: blur(20px);
+        }
+
+        .arch-formula {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 40px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .arch-box {
+            padding: 20px 35px;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .arch-box:hover {
+            transform: scale(1.05);
+        }
+
+        .arch-box.tui {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.2), rgba(168, 85, 247, 0.05));
+            border: 2px solid var(--accent-purple);
+            color: var(--accent-purple);
+        }
+
+        .arch-box.agent {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.2), rgba(78, 205, 196, 0.05));
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+        }
+
+        .arch-box.sandbox {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+            border: 2px solid var(--accent-green);
+            color: var(--accent-green);
+        }
+
+        .arch-box.fs {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05));
+            border: 2px solid var(--accent-orange);
+            color: var(--accent-orange);
+        }
+
+        .arch-plus {
+            color: var(--text-secondary);
+            font-size: 2rem;
+        }
+
+        .arch-equals {
+            color: var(--gold);
+            font-size: 2rem;
+        }
+
+        .arch-result {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            padding: 25px 50px;
+            border-radius: 20px;
+            color: white;
+            font-size: 1.8rem;
+            box-shadow: 0 15px 50px rgba(168, 85, 247, 0.3);
+        }
+
+        .arch-desc {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .arch-desc-item {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border-left: 3px solid;
+        }
+
+        .arch-desc-item.purple { border-color: var(--accent-purple); }
+        .arch-desc-item.blue { border-color: var(--accent-blue); }
+        .arch-desc-item.green { border-color: var(--accent-green); }
+        .arch-desc-item.orange { border-color: var(--accent-orange); }
+
+        .arch-desc-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .arch-desc-item.purple .arch-desc-title { color: var(--accent-purple); }
+        .arch-desc-item.blue .arch-desc-title { color: var(--accent-blue); }
+        .arch-desc-item.green .arch-desc-title { color: var(--accent-green); }
+        .arch-desc-item.orange .arch-desc-title { color: var(--accent-orange); }
+
+        .arch-desc-text {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* 专家评论 */
+        .expert-section {
+            margin-bottom: 60px;
+        }
+
+        .expert-title {
+            text-align: center;
+            font-size: 1.8rem;
+            margin-bottom: 40px;
+            color: var(--accent-pink);
+        }
+
+        .expert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        .expert-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            backdrop-filter: blur(20px);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .expert-card.boris::before { background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue)); }
+        .expert-card.tristan::before { background: linear-gradient(90deg, var(--accent-blue), var(--accent-cyan)); }
+        .expert-card.mike::before { background: linear-gradient(90deg, var(--accent-green), var(--accent-blue)); }
+        .expert-card.daniela::before { background: linear-gradient(90deg, var(--accent-pink), var(--accent-purple)); }
+
+        .expert-card:hover {
+            transform: translateY(-8px);
+            box-shadow: var(--shadow-glow);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .expert-card.boris .expert-avatar { background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue)); }
+        .expert-card.tristan .expert-avatar { background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan)); }
+        .expert-card.mike .expert-avatar { background: linear-gradient(135deg, var(--accent-green), var(--accent-blue)); }
+        .expert-card.daniela .expert-avatar { background: linear-gradient(135deg, var(--accent-pink), var(--accent-purple)); }
+
+        .expert-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 3px;
+        }
+
+        .expert-info .role {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .expert-comment {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .expert-highlight {
+            display: inline;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-weight: 500;
+        }
+
+        .expert-card.boris .expert-highlight { background: rgba(168, 85, 247, 0.2); color: var(--accent-purple); }
+        .expert-card.tristan .expert-highlight { background: rgba(78, 205, 196, 0.2); color: var(--accent-blue); }
+        .expert-card.mike .expert-highlight { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .expert-card.daniela .expert-highlight { background: rgba(236, 72, 153, 0.2); color: var(--accent-pink); }
+
+        /* 内容板块 */
+        .content-section {
+            margin-bottom: 40px;
+        }
+
+        .section-card {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(20px);
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .section-card:hover {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .section-header {
+            padding: 25px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .section-header:hover {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .section-title-group {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .section-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+
+        .section-card:nth-child(1) .section-icon { background: linear-gradient(135deg, var(--accent-purple), rgba(168, 85, 247, 0.3)); }
+        .section-card:nth-child(2) .section-icon { background: linear-gradient(135deg, var(--accent-blue), rgba(78, 205, 196, 0.3)); }
+        .section-card:nth-child(3) .section-icon { background: linear-gradient(135deg, var(--accent-green), rgba(16, 185, 129, 0.3)); }
+        .section-card:nth-child(4) .section-icon { background: linear-gradient(135deg, var(--accent-orange), rgba(245, 158, 11, 0.3)); }
+        .section-card:nth-child(5) .section-icon { background: linear-gradient(135deg, var(--accent-pink), rgba(236, 72, 153, 0.3)); }
+        .section-card:nth-child(6) .section-icon { background: linear-gradient(135deg, var(--accent-cyan), rgba(6, 182, 212, 0.3)); }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .section-preview {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+
+        .section-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .section-card.expanded .section-toggle {
+            transform: rotate(180deg);
+        }
+
+        .section-content {
+            padding: 0 30px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .section-card.expanded .section-content {
+            padding: 30px;
+            max-height: 2000px;
+        }
+
+        /* 内容样式 */
+        .content-block {
+            margin-bottom: 25px;
+        }
+
+        .content-block:last-child {
+            margin-bottom: 0;
+        }
+
+        .content-subtitle {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            padding-left: 15px;
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .content-text {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .highlight-red {
+            color: var(--accent-red);
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: var(--accent-blue);
+            font-weight: 500;
+        }
+
+        .highlight-green {
+            color: var(--accent-green);
+            font-weight: 500;
+        }
+
+        .highlight-purple {
+            color: var(--accent-purple);
+            font-weight: 500;
+        }
+
+        .highlight-orange {
+            color: var(--accent-orange);
+            font-weight: 500;
+        }
+
+        .highlight-gold {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* 代码块 */
+        .code-block {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+            font-family: 'Monaco', 'Menlo', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+        }
+
+        .code-block code {
+            color: var(--accent-cyan);
+        }
+
+        /* 术语解释 */
+        .term-box {
+            background: rgba(168, 85, 247, 0.08);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .term-title {
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+
+        .term-pro, .term-simple {
+            margin-bottom: 12px;
+            padding: 12px 15px;
+            border-radius: 8px;
+        }
+
+        .term-pro {
+            background: rgba(78, 205, 196, 0.1);
+            border-left: 3px solid var(--accent-blue);
+        }
+
+        .term-simple {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 3px solid var(--accent-orange);
+        }
+
+        .term-label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .term-pro .term-label { color: var(--accent-blue); }
+        .term-simple .term-label { color: var(--accent-orange); }
+
+        .term-content {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        /* 列表样式 */
+        .feature-list {
+            list-style: none;
+        }
+
+        .feature-list li {
+            padding: 12px 0;
+            padding-left: 30px;
+            position: relative;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .feature-list li:last-child {
+            border-bottom: none;
+        }
+
+        .feature-list li::before {
+            content: '✦';
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+        }
+
+        /* 版本演进 */
+        .version-timeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            padding: 30px 0;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .version-timeline::before {
+            content: '';
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-purple), var(--accent-blue), var(--accent-green), var(--accent-orange));
+            border-radius: 2px;
+        }
+
+        .version-item {
+            text-align: center;
+            position: relative;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .version-dot {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .version-item:nth-child(1) .version-dot { background: var(--accent-purple); box-shadow: 0 0 20px var(--accent-purple); }
+        .version-item:nth-child(2) .version-dot { background: var(--accent-blue); box-shadow: 0 0 20px var(--accent-blue); }
+        .version-item:nth-child(3) .version-dot { background: var(--accent-cyan); box-shadow: 0 0 20px var(--accent-cyan); }
+        .version-item:nth-child(4) .version-dot { background: var(--accent-green); box-shadow: 0 0 20px var(--accent-green); }
+        .version-item:nth-child(5) .version-dot { background: var(--accent-orange); box-shadow: 0 0 20px var(--accent-orange); }
+
+        .version-name {
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+        }
+
+        .version-item:nth-child(1) .version-name { color: var(--accent-purple); }
+        .version-item:nth-child(2) .version-name { color: var(--accent-blue); }
+        .version-item:nth-child(3) .version-name { color: var(--accent-cyan); }
+        .version-item:nth-child(4) .version-name { color: var(--accent-green); }
+        .version-item:nth-child(5) .version-name { color: var(--accent-orange); }
+
+        .version-desc {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            max-width: 120px;
+            margin: 0 auto;
+        }
+
+        /* 对比表格 */
+        .compare-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        .compare-table th,
+        .compare-table td {
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+
+        .compare-table th {
+            background: rgba(168, 85, 247, 0.1);
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        .compare-table td {
+            color: var(--text-secondary);
+        }
+
+        .compare-table tr:hover td {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        /* 干货卡片 */
+        .insight-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.02) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .insight-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+            color: var(--accent-green);
+            margin-bottom: 15px;
+        }
+
+        .insight-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 推荐配置 */
+        .recommend-box {
+            background: linear-gradient(135deg, rgba(6, 182, 212, 0.1) 0%, rgba(6, 182, 212, 0.02) 100%);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+        }
+
+        .recommend-title {
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 15px;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 60px 20px;
+            border-top: 1px solid var(--glass-border);
+            margin-top: 60px;
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .footer-link {
+            color: var(--accent-blue);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-link:hover {
+            color: var(--accent-purple);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .arch-formula {
+                flex-direction: column;
+            }
+
+            .arch-plus, .arch-equals {
+                transform: rotate(90deg);
+            }
+
+            .mindmap {
+                min-width: auto;
+                flex-direction: column;
+            }
+
+            .mm-branches {
+                margin-left: 30px;
+                margin-top: 30px;
+            }
+
+            .version-timeline {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .version-timeline::before {
+                display: none;
+            }
+
+            .version-item {
+                text-align: left;
+                padding-left: 40px;
+                margin-bottom: 20px;
+            }
+
+            .version-dot {
+                position: absolute;
+                left: 0;
+                top: 5px;
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body {
+                background: white;
+                color: #333;
+            }
+
+            .bg-animation, .particle {
+                display: none;
+            }
+
+            .section-content {
+                max-height: none !important;
+                padding: 30px !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- 浮动粒子 -->
+    <div class="particle" style="width: 6px; height: 6px; background: var(--accent-purple); top: 20%; left: 10%; animation-delay: 0s;"></div>
+    <div class="particle" style="width: 4px; height: 4px; background: var(--accent-blue); top: 40%; left: 85%; animation-delay: 3s;"></div>
+    <div class="particle" style="width: 8px; height: 8px; background: var(--accent-green); top: 60%; left: 15%; animation-delay: 6s;"></div>
+    <div class="particle" style="width: 5px; height: 5px; background: var(--accent-orange); top: 80%; left: 90%; animation-delay: 9s;"></div>
+
+    <!-- 头部 -->
+    <header class="header">
+        <div class="badge">🔥 WaytoAGI 技术深度解析</div>
+        <h1>Kode Agent 核心原理</h1>
+        <p class="subtitle">手把手带你穿透 Claude Code 的本质，从16行代码到完整Agent架构</p>
+        
+        <div class="meta-info">
+            <div class="meta-item">
+                <span class="icon">👨‍💻</span>
+                <span>来新璐 · ShareAI Lab创始人</span>
+            </div>
+            <div class="meta-item">
+                <span class="icon">📅</span>
+                <span>2026年1月25日</span>
+            </div>
+            <div class="meta-item">
+                <span class="icon">⏱️</span>
+                <span>约2.5小时精华</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 核心金句 -->
+        <section class="golden-quotes">
+            <h2>💎 核心金句</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p class="quote-text">Claude Code 真的没有秘密，它本质上就是 TUI + Agent Core + Sandbox</p>
+                    <p class="quote-source">— 关于架构本质</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">16行代码就能实现一个 Claude Code 的核心循环，Bash is all you need</p>
+                    <p class="quote-source">— 关于极简实现</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">Skill 本质上是一种类似于 LoRA 一样的可以分发复制的知识权重</p>
+                    <p class="quote-source">— 关于Skill系统</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">模型是厨师，Agent环境是厨房 —— 厨师再厉害也需要刀具、菜品和操作空间</p>
+                    <p class="quote-source">— 关于角色定位</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">不要做通用Agent，做你一亩三分地上的垂直Agent</p>
+                    <p class="quote-source">— 关于创业方向</p>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">穿过表象看本质 —— Interface不重要，核心机制才重要</p>
+                    <p class="quote-source">— 关于技术认知</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 元认知图 -->
+        <section class="mindmap-section">
+            <h2 class="mindmap-title">🧠 元认知图：Kode Agent 知识体系</h2>
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div style="display: flex; align-items: center;">
+                        <div class="mm-root">Kode Agent<br>核心原理</div>
+                        <div class="mm-branches">
+                            <div class="mm-branch">
+                                <div class="mm-node purple">
+                                    <div class="mm-node-title">🏗️ 架构三要素</div>
+                                    <ul class="mm-node-items">
+                                        <li>TUI (终端界面)</li>
+                                        <li>Agent Core (核心循环)</li>
+                                        <li>Sandbox (安全沙箱)</li>
+                                        <li>FS Tools (文件工具)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mm-branch">
+                                <div class="mm-node blue">
+                                    <div class="mm-node-title">🔄 版本演进</div>
+                                    <ul class="mm-node-items">
+                                        <li>V0: 单Bash工具 (16行)</li>
+                                        <li>V1: 四工具扩展</li>
+                                        <li>V2: 任务Planning</li>
+                                        <li>V3: SubAgent机制</li>
+                                        <li>V4: Skill系统 (700行)</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mm-branch">
+                                <div class="mm-node green">
+                                    <div class="mm-node-title">⚡ 核心能力</div>
+                                    <ul class="mm-node-items">
+                                        <li>文件读写能力</li>
+                                        <li>命令执行能力</li>
+                                        <li>子代理委托</li>
+                                        <li>Skill按需加载</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mm-branch">
+                                <div class="mm-node orange">
+                                    <div class="mm-node-title">🎯 应用场景</div>
+                                    <ul class="mm-node-items">
+                                        <li>代码开发辅助</li>
+                                        <li>桌面文件整理</li>
+                                        <li>自动化任务</li>
+                                        <li>垂直领域Agent</li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="mm-branch">
+                                <div class="mm-node pink">
+                                    <div class="mm-node-title">💡 商业洞察</div>
+                                    <ul class="mm-node-items">
+                                        <li>开源替代策略</li>
+                                        <li>国产模型适配</li>
+                                        <li>ToB交付方案</li>
+                                        <li>垂直Agent创业</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑架构图 -->
+        <section class="architecture-section">
+            <h2 class="arch-title">🔧 核心架构公式</h2>
+            <div class="arch-container">
+                <div class="arch-formula">
+                    <div class="arch-box tui">TUI<br><small>终端界面</small></div>
+                    <span class="arch-plus">+</span>
+                    <div class="arch-box agent">Agent Core<br><small>核心循环</small></div>
+                    <span class="arch-plus">+</span>
+                    <div class="arch-box sandbox">Sandbox<br><small>安全沙箱</small></div>
+                    <span class="arch-plus">+</span>
+                    <div class="arch-box fs">FS Tools<br><small>文件工具</small></div>
+                    <span class="arch-equals">=</span>
+                    <div class="arch-result">Claude Code</div>
+                </div>
+
+                <div class="arch-desc">
+                    <div class="arch-desc-item purple">
+                        <div class="arch-desc-title">TUI (Terminal UI)</div>
+                        <div class="arch-desc-text">终端中的用户界面，使用 Ink 库实现 React 语法渲染。负责交互体验、命令输入、状态展示等。这是"皮肤"层。</div>
+                    </div>
+                    <div class="arch-desc-item blue">
+                        <div class="arch-desc-title">Agent Core</div>
+                        <div class="arch-desc-text">核心 while 循环，负责接收指令、调用工具、返回结果的闭环。最小实现仅需16行代码，是"大脑"层。</div>
+                    </div>
+                    <div class="arch-desc-item green">
+                        <div class="arch-desc-title">Sandbox</div>
+                        <div class="arch-desc-text">安全沙箱机制，拦截危险操作、限制网络请求、保护系统安全。可选但生产环境必需，是"防护"层。</div>
+                    </div>
+                    <div class="arch-desc-item orange">
+                        <div class="arch-desc-title">FS Tools</div>
+                        <div class="arch-desc-text">文件系统工具集，包括 read/write/list/grep 等。可以抽象为虚拟文件系统对接数据库，是"手脚"层。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <section class="expert-section">
+            <h2 class="expert-title">🎤 Anthropic专家视角</h2>
+            <div class="expert-grid">
+                <div class="expert-card boris">
+                    <div class="expert-header">
+                        <div class="expert-avatar">BC</div>
+                        <div class="expert-info">
+                            <h3>Boris Cherny</h3>
+                            <div class="role">Claude Code 之父/主管</div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        来新璐准确捕捉到了Claude Code的核心设计哲学：<span class="expert-highlight">简洁的核心循环 + 强大的工具生态</span>。他提到的「16行代码」确实是我们设计时追求的极简美学。但需要补充的是，真正的挑战在于<span class="expert-highlight">模型与工具的协同优化</span>——我们在Claude上做了大量针对tool use的微调，这才是性能差异的关键。Skill系统的LoRA类比非常精准，它本质上就是一种<span class="expert-highlight">可热插拔的知识注入机制</span>。
+                    </div>
+                </div>
+
+                <div class="expert-card tristan">
+                    <div class="expert-header">
+                        <div class="expert-avatar">TH</div>
+                        <div class="expert-info">
+                            <h3>Tristan Hume</h3>
+                            <div class="role">性能优化负责人</div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        演讲者提到的<span class="expert-highlight">TUI闪屏问题</span>确实是我们投入大量精力优化的领域。Ink库在Windows上的兼容性问题让团队头疼了很久。他说4000次commit中至少2000次与Windows适配相关——这个估计相当准确。我们的解决方案是<span class="expert-highlight">自研渲染管线</span>，而不是完全依赖Ink。关于Context Window管理，我们采用的是<span class="expert-highlight">70%阈值触发Summary</span>，而非等到满载，这是性能与体验的平衡点。
+                    </div>
+                </div>
+
+                <div class="expert-card mike">
+                    <div class="expert-header">
+                        <div class="expert-avatar">MK</div>
+                        <div class="expert-info">
+                            <h3>Mike Krieger</h3>
+                            <div class="role">产品负责人</div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        非常认同「<span class="expert-highlight">厨师与厨房</span>」的比喻——这正是我们产品定位的核心。Claude Code不是要替代开发者，而是提供一个<span class="expert-highlight">增强型协作环境</span>。演讲者提到的Cowork产品定位很有洞察力：同样的技术，换个名字就能服务完全不同的用户群体。这印证了我们「<span class="expert-highlight">技术普惠</span>」的产品理念——让非技术人员也能享受Agent能力。垂直Agent的建议非常中肯，我们也在思考如何降低开发门槛。
+                    </div>
+                </div>
+
+                <div class="expert-card daniela">
+                    <div class="expert-header">
+                        <div class="expert-avatar">DA</div>
+                        <div class="expert-info">
+                            <h3>Daniela Amodei</h3>
+                            <div class="role">总裁</div>
+                        </div>
+                    </div>
+                    <div class="expert-comment">
+                        从商业角度看，这次分享揭示了一个重要趋势：<span class="expert-highlight">Agent技术正在快速民主化</span>。当开源实现能达到商业产品80%的能力时，真正的竞争力在于<span class="expert-highlight">模型本身的智能水平</span>和<span class="expert-highlight">生态系统的完整性</span>。演讲者关于「国产模型够用」的判断值得关注——这意味着我们需要持续创新以保持领先。他建议做垂直Agent而非通用Agent，这与我们<span class="expert-highlight">平台化战略</span>高度吻合：我们做基础设施，生态伙伴做垂直应用。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 内容板块 -->
+        <section class="content-section">
+            
+            <!-- 板块1：核心架构 -->
+            <div class="section-card expanded">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title-group">
+                        <div class="section-icon">🏗️</div>
+                        <div>
+                            <div class="section-title">核心架构解析：从16行到700行</div>
+                            <div class="section-preview">理解Claude Code的本质只需要掌握一个公式</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="content-block">
+                        <h3 class="content-subtitle">最小化实现：16行代码的奥秘</h3>
+                        <p class="content-text">
+                            Claude Code 的核心可以压缩到 <span class="highlight-red">仅16行代码</span>，这个版本被称为 V0，核心思想是 <span class="highlight-gold">"Bash is all you need"</span>。
+                        </p>
+                        <div class="code-block">
+                            <code>// V0 核心循环伪代码<br>
+while (true) {<br>
+&nbsp;&nbsp;const input = await getInput();<br>
+&nbsp;&nbsp;const response = await model.chat(input, tools);<br>
+&nbsp;&nbsp;if (response.tool_call) {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;const result = await executeBash(response.tool_call);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;await model.chat(result);<br>
+&nbsp;&nbsp;}<br>
+}</code>
+                        </div>
+                        <p class="content-text">
+                            这16行代码虽然精简，但并非给人阅读的——它证明的是：<span class="highlight-blue">Agent的核心机制可以极度简化</span>。
+                        </p>
+                    </div>
+
+                    <div class="term-box">
+                        <div class="term-title">🔤 术语解释：Agent Core Loop</div>
+                        <div class="term-pro">
+                            <div class="term-label">专业版</div>
+                            <div class="term-content">Agent Core Loop 是一种基于 ReAct (Reasoning + Acting) 范式的状态机循环，通过 Observation → Thought → Action 的闭环实现自主任务执行。核心组件包括 LLM Router、Tool Executor、State Manager 和 Memory Buffer。</div>
+                        </div>
+                        <div class="term-simple">
+                            <div class="term-label">大白话版</div>
+                            <div class="term-content">想象你有个超级助手，你说一句话，它就开始干活：看看情况 → 想想怎么做 → 动手做 → 看结果 → 继续想... 就这样循环，直到把事办完。</div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h3 class="content-subtitle">版本演进路线图</h3>
+                        <div class="version-timeline">
+                            <div class="version-item">
+                                <div class="version-dot"></div>
+                                <div class="version-name">V0</div>
+                                <div class="version-desc">单Bash工具<br>16行代码</div>
+                            </div>
+                            <div class="version-item">
+                                <div class="version-dot"></div>
+                                <div class="version-name">V1</div>
+                                <div class="version-desc">四工具扩展<br>文件读写+存档</div>
+                            </div>
+                            <div class="version-item">
+                                <div class="version-dot"></div>
+                                <div class="version-name">V2</div>
+                                <div class="version-desc">任务Planning<br>Todo机制</div>
+                            </div>
+                            <div class="version-item">
+                                <div class="version-dot"></div>
+                                <div class="version-name">V3</div>
+                                <div class="version-desc">SubAgent<br>子代理机制</div>
+                            </div>
+                            <div class="version-item">
+                                <div class="version-dot"></div>
+                                <div class="version-name">V4</div>
+                                <div class="version-desc">Skill系统<br>~700行完整版</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">💡 核心洞察</div>
+                        <div class="insight-content">
+                            <strong>架构本质公式：</strong>Claude Code = TUI + Agent Core + Sandbox + FS Tools<br><br>
+                            <strong>分工逻辑：</strong><br>
+                            • TUI 负责「长相」—— 用户看到和操作的界面<br>
+                            • Agent Core 负责「大脑」—— 思考和决策的核心循环<br>
+                            • Sandbox 负责「防护」—— 安全边界和权限控制<br>
+                            • FS Tools 负责「手脚」—— 实际执行文件操作
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 板块2：Skill系统 -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title-group">
+                        <div class="section-icon">🎯</div>
+                        <div>
+                            <div class="section-title">Skill 系统深度剖析</div>
+                            <div class="section-preview">像LoRA一样可分发复制的知识权重</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="content-block">
+                        <h3 class="content-subtitle">Skill 的本质是什么？</h3>
+                        <p class="content-text">
+                            Skill 本质上是一种 <span class="highlight-purple">类似于 LoRA 的可分发知识权重</span>。每个 Skill 是一个文件夹，包含一个标准的 <span class="highlight-blue">SKILL.md</span> 文档。
+                        </p>
+                        <div class="code-block">
+                            <code>// Skill.md 文件结构<br>
+---<br>
+name: code-review<br>
+description: 用于代码审阅的专业知识<br>
+trigger: 当用户需要审查代码质量时<br>
+---<br>
+<br>
+# 代码审阅指南<br>
+[具体的审阅规则和最佳实践...]</code>
+                        </div>
+                    </div>
+
+                    <div class="term-box">
+                        <div class="term-title">🔤 术语解释：Skill System</div>
+                        <div class="term-pro">
+                            <div class="term-label">专业版</div>
+                            <div class="term-content">Skill System 是一种基于 YAML Front Matter + Markdown 的知识注入机制，通过声明式的 trigger 条件实现按需加载。类似于 LoRA (Low-Rank Adaptation)，它不修改基础模型参数，而是通过 prompt injection 的方式动态增强模型在特定领域的能力。</div>
+                        </div>
+                        <div class="term-simple">
+                            <div class="term-label">大白话版</div>
+                            <div class="term-content">就像给AI装不同的「技能卡」。需要写代码时加载编程卡，需要做表格时加载Excel卡。这些卡可以自己做，也可以从别人那里拷贝过来用，装上就能用，不用重新训练AI。</div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h3 class="content-subtitle">Skill 的按需加载机制</h3>
+                        <ul class="feature-list">
+                            <li><span class="highlight-green">自动触发</span>：系统根据用户意图自动判断是否需要加载某个 Skill</li>
+                            <li><span class="highlight-green">显式调用</span>：用户可以明确指定使用某个 Skill</li>
+                            <li><span class="highlight-green">组合使用</span>：多个 Skill 可以同时加载，形成能力叠加</li>
+                            <li><span class="highlight-green">热插拔</span>：无需重启即可新增或移除 Skill</li>
+                        </ul>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">💡 实战案例</div>
+                        <div class="insight-content">
+                            <strong>场景：</strong>让Agent审查代码库质量<br><br>
+                            <strong>未指定Skill时：</strong>直接说「审查这个代码库的质量」<br>
+                            → Agent 自动识别意图，主动加载 code-review Skill<br>
+                            → 加载 Skill 中的审阅规则和最佳实践<br>
+                            → 输出专业级的审阅报告<br><br>
+                            <span class="highlight-gold">关键点：Agent具备了「知道什么时候该用什么工具」的元认知能力</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 板块3：SubAgent机制 -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title-group">
+                        <div class="section-icon">🔀</div>
+                        <div>
+                            <div class="section-title">SubAgent 子代理机制</div>
+                            <div class="section-preview">分支思想实现复杂任务的分解与委托</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="content-block">
+                        <h3 class="content-subtitle">什么时候需要 SubAgent？</h3>
+                        <p class="content-text">
+                            当任务具有以下特征时，主 Agent 会自动拆分给 SubAgent：
+                        </p>
+                        <ul class="feature-list">
+                            <li>任务步骤多，需要 <span class="highlight-blue">独立完成</span> 的子任务</li>
+                            <li>任务之间 <span class="highlight-blue">相对独立</span>，可以并行执行</li>
+                            <li>需要不同的 <span class="highlight-blue">专业能力</span> 或 Skill 组合</li>
+                        </ul>
+                    </div>
+
+                    <div class="term-box">
+                        <div class="term-title">🔤 术语解释：SubAgent</div>
+                        <div class="term-pro">
+                            <div class="term-label">专业版</div>
+                            <div class="term-content">SubAgent 是一种基于 Task Decomposition 和 Hierarchical Delegation 的多智能体协作模式。主 Agent 作为 Orchestrator 负责任务分解和结果聚合，SubAgent 作为 Worker 执行具体子任务。通信通过结构化的 Message Passing 实现，支持同步/异步执行模式。</div>
+                        </div>
+                        <div class="term-simple">
+                            <div class="term-label">大白话版</div>
+                            <div class="term-content">就像公司里的老板和员工。老板（主Agent）收到一个大任务，自己判断「这活一个人干太慢」，就拆成几个小任务分给员工（SubAgent）去做。员工干完汇报给老板，老板再汇总成最终结果。</div>
+                        </div>
+                    </div>
+
+                    <div class="content-block">
+                        <h3 class="content-subtitle">实际运行效果</h3>
+                        <p class="content-text">
+                            在演示中，让 Agent 生成一个学习仓库的 MD 文档时：
+                        </p>
+                        <div class="code-block">
+                            <code>用户输入: "生成一个 MD 文档用于学习该仓库"<br>
+<br>
+主Agent: 判断任务复杂，创建 SubAgent<br>
+SubAgent: 运行 110 秒，调用 14 个工具<br>
+├── 遍历仓库结构<br>
+├── 读取关键文件<br>
+├── 分析代码逻辑<br>
+└── 生成结构化文档<br>
+<br>
+主Agent: 接收结果，输出最终文档</code>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">💡 设计哲学</div>
+                        <div class="insight-content">
+                            SubAgent 的核心是 <span class="highlight-gold">「分支思想」</span>：<br><br>
+                            • 主 Agent 像 Git 的 main 分支，负责整体协调<br>
+                            • SubAgent 像 feature 分支，独立完成子任务<br>
+                            • 任务完成后「合并」回主 Agent<br><br>
+                            这种设计让复杂任务的执行变得 <span class="highlight-blue">可控、可追踪、可并行</span>。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 板块4：模型比较 -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title-group">
+                        <div class="section-icon">⚡</div>
+                        <div>
+                            <div class="section-title">模型风格对比：Claude vs OpenAI</div>
+                            <div class="section-preview">Reason长思考 vs Sharp快执行的本质差异</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="content-block">
+                        <h3 class="content-subtitle">两种截然不同的工作风格</h3>
+                        <table class="compare-table">
+                            <thead>
+                                <tr>
+                                    <th>维度</th>
+                                    <th>Claude 系</th>
+                                    <th>OpenAI 系 (o1/o3)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="highlight-purple">思考模式</span></td>
+                                    <td>交错思维链：Action → Action → 偶尔 Reason</td>
+                                    <td>长思考链：Long Reason → Action</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-blue">执行速度</span></td>
+                                    <td>Sharp 快速，频繁交互</td>
+                                    <td>Slow 缓慢，一次到位</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-green">适合场景</span></td>
+                                    <td>日常办公、快速迭代、协作外包</td>
+                                    <td>算法实现、严谨计算、复杂推理</td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-orange">交互感受</span></td>
+                                    <td>像 Copilot 助手，需要频繁校正</td>
+                                    <td>像委托任务，等待结果</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="term-box">
+                        <div class="term-title">🔤 术语解释：交错思维链 (Interleaved CoT)</div>
+                        <div class="term-pro">
+                            <div class="term-label">专业版</div>
+                            <div class="term-content">Interleaved Chain-of-Thought 是一种混合推理模式，将 Reasoning 步骤与 Action 步骤交错执行，而非传统 CoT 的 Think-Then-Act 顺序模式。这种模式更适合需要实时反馈和迭代调整的任务，但在需要深度推理的任务上可能不如 Long-form CoT 严谨。</div>
+                        </div>
+                        <div class="term-simple">
+                            <div class="term-label">大白话版</div>
+                            <div class="term-content">Claude 的风格是「边做边想」：动手 → 动手 → 停下来想一想 → 继续动手。OpenAI 的风格是「想清楚再做」：想很久很久 → 一次性做完。就像装家具，有人边看说明书边装，有人先把说明书看完再动手。</div>
+                        </div>
+                    </div>
+
+                    <div class="recommend-box">
+                        <div class="recommend-title">🎯 推荐配置策略</div>
+                        <p class="content-text">
+                            <strong>算法/计算密集型任务：</strong>GPT-5.2 + S Pad 模式<br>
+                            → 严谨的长思考，适合代码细节实现<br><br>
+                            <strong>日常办公/快速迭代：</strong>Claude Sonnet/Opus<br>
+                            → 敏捷的交互式协作，适合文档整理、快速原型<br><br>
+                            <strong>成本敏感场景：</strong>国产模型 (智谱 GLM4.7 / DeepSeek)<br>
+                            → 性能够用，成本降低 30-50 倍
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 板块5：开源实践 -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title-group">
+                        <div class="section-icon">🛠️</div>
+                        <div>
+                            <div class="section-title">开源实践：Code Agent SDK</div>
+                            <div class="section-preview">生产级Agent开发的正确姿势</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="content-block">
+                        <h3 class="content-subtitle">为什么需要开源版？</h3>
+                        <ul class="feature-list">
+                            <li><span class="highlight-red">官方 Agent SDK 不开源</span>：只能安装 NPM 包，看不到核心代码</li>
+                            <li><span class="highlight-red">依赖 Claude Code 本地运行</span>：服务 500 用户需要开 500 个 Claude Code</li>
+                            <li><span class="highlight-red">数据不能出网</span>：企业数据不能往 Anthropic 服务器发</li>
+                            <li><span class="highlight-red">无法深度定制</span>：工具列表、Sandbox 策略都是固定的</li>
+                        </ul>
+                    </div>
+
+                    <div class="content-block">
+                        <h3 class="content-subtitle">Code Agent SDK 设计哲学</h3>
+                        <div class="code-block">
+                            <code>// SDK 使用示例<br>
+import { CodeAgent } from '@anthropic/code-agent-sdk'<br>
+<br>
+const agent = CodeAgent.create({<br>
+&nbsp;&nbsp;apiKey: '你的API密钥',<br>
+&nbsp;&nbsp;model: 'glm-4.7',  // 支持任意模型<br>
+&nbsp;&nbsp;baseUrl: '智谱的API地址'<br>
+})<br>
+<br>
+await agent.run('审查这个代码库')</code>
+                        </div>
+                    </div>
+
+                    <div class="term-box">
+                        <div class="term-title">🔤 术语解释：Virtual File System (VFS)</div>
+                        <div class="term-pro">
+                            <div class="term-label">专业版</div>
+                            <div class="term-content">VFS 是一种文件系统抽象层，将物理文件系统操作映射到自定义实现。在 Agent SDK 中，通过实现 VFS Interface（read/write/list/stat），可以将 Agent 的文件操作重定向到数据库、对象存储或其他后端，实现安全隔离和多租户支持。</div>
+                        </div>
+                        <div class="term-simple">
+                            <div class="term-label">大白话版</div>
+                            <div class="term-content">Agent 以为自己在操作真实的文件夹，其实操作的是你给它的「假文件夹」。这样它就只能访问你允许的东西，不会乱删你电脑上的重要文件，也可以把它的操作存到数据库里而不是真实硬盘。</div>
+                        </div>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">💡 规模化部署建议</div>
+                        <div class="insight-content">
+                            <strong>5000 用户以内：</strong>单体架构 + 有状态服务<br>
+                            → 直接使用 Code Agent SDK，无需微服务拆分<br><br>
+                            <strong>5000-50000 用户：</strong>微服务架构<br>
+                            → 拆分多个 Worker + 任务消息队列<br>
+                            → 每个 Worker 运行一个 SDK Runtime 实例<br><br>
+                            <strong>ToB 交付场景：</strong>通常几百人同时使用<br>
+                            → 单体架构完全够用，无需过度设计
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 板块6：商业洞察 -->
+            <div class="section-card">
+                <div class="section-header" onclick="toggleSection(this)">
+                    <div class="section-title-group">
+                        <div class="section-icon">💰</div>
+                        <div>
+                            <div class="section-title">商业洞察与创业建议</div>
+                            <div class="section-preview">做你一亩三分地上的垂直Agent</div>
+                        </div>
+                    </div>
+                    <div class="section-toggle">▼</div>
+                </div>
+                <div class="section-content">
+                    <div class="content-block">
+                        <h3 class="content-subtitle">为什么不要做通用 Agent？</h3>
+                        <p class="content-text">
+                            <span class="highlight-red">前有狼：</span>Claude Code、Code X、OpenCode、Cursor...<br>
+                            <span class="highlight-red">后有虎：</span>各大厂都在做、红杉给 Cursor 两个亿<br><br>
+                            <span class="highlight-gold">核心观点：</span>你做完以后打不过它们，又没有红杉给你两个亿，何必呢？
+                        </p>
+                    </div>
+
+                    <div class="content-block">
+                        <h3 class="content-subtitle">垂直 Agent 的机会在哪？</h3>
+                        <ul class="feature-list">
+                            <li><span class="highlight-green">会计财务</span>：特定场景的工作流 Agent</li>
+                            <li><span class="highlight-green">自媒体运营</span>：脚本封装、小红书养号</li>
+                            <li><span class="highlight-green">嵌入式开发</span>：目前没有做得好的</li>
+                            <li><span class="highlight-green">游戏开发</span>：Unity/Unreal 的 Agent 辅助</li>
+                            <li><span class="highlight-green">网络安全</span>：攻防自动化</li>
+                        </ul>
+                    </div>
+
+                    <div class="insight-card">
+                        <div class="insight-title">💡 Agent 大爆发的两个信号</div>
+                        <div class="insight-content">
+                            <strong>信号一：认知门槛降低</strong><br>
+                            很多人不明白 Claude Code 是怎么做出来的，只能干等或干吹。现在通过开源学习，人人都能理解和复制核心机制。<br><br>
+                            <strong>信号二：成本即将暴跌</strong><br>
+                            Claude API 一个月几千美金 → DeepSeek V4 开源后可能降 30 倍<br>
+                            几万块钱 → 几百块钱一个月<br><br>
+                            <span class="highlight-gold">结论：不是用来写代码的场景，国产模型够用了。日常办公、文档整理、数据库操作，都可以用几百块一个月的成本搞定。</span>
+                        </div>
+                    </div>
+
+                    <div class="recommend-box">
+                        <div class="recommend-title">🎯 Code vs N8N 定位</div>
+                        <p class="content-text">
+                            <strong>N8N 是什么：</strong>3年前 AI 发展水平下的 Workflow 自动化工具<br><br>
+                            <strong>Code 要做什么：</strong>Claude Code 时代的 N8N 替代品<br>
+                            → 帮你做一亩三分地上的垂直 Agent<br>
+                            → 不是替代 Claude Code，是替代 N8N<br><br>
+                            <span class="highlight-purple">关系：你基于 Code 来做你的垂直 Agent，Code 做基础设施</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p class="footer-text">
+            📝 基于 WaytoAGI 2026.01.25 直播内容整理 | 分享者：来新璐 · ShareAI Lab
+        </p>
+        <div class="footer-links">
+            <a href="https://github.com/anthropics/anthropic-cookbook" class="footer-link" target="_blank">Anthropic Cookbook</a>
+            <a href="https://github.com/anthropics/claude-code" class="footer-link" target="_blank">Claude Code</a>
+            <a href="#" class="footer-link">Learn Claude Code 仓库</a>
+        </div>
+    </footer>
+
+    <script>
+        // 板块折叠功能
+        function toggleSection(header) {
+            const card = header.parentElement;
+            card.classList.toggle('expanded');
+        }
+
+        // 默认展开第一个板块
+        document.addEventListener('DOMContentLoaded', function() {
+            // 第一个板块已经在HTML中设置了expanded类
+            
+            // 添加滚动动画
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.section-card, .expert-card, .quote-card').forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(20px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
+
+        // 打印适配
+        window.addEventListener('beforeprint', function() {
+            document.querySelectorAll('.section-card').forEach(card => {
+                card.classList.add('expanded');
+            });
+        });
+    </script>
+</body>
+</html>

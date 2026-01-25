@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 深度解剖 Claude Code | 从16行代码到AI新纪元</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-gradient: linear-gradient(135deg, #0a0a1a 0%, #1a0a2e 25%, #0a1a2e 50%, #1a0a1a 75%, #0a0a1a 100%);
+            --glass-bg: rgba(20, 20, 40, 0.85);
+            --glass-border: rgba(139, 92, 246, 0.3);
+            --text-primary: #f0f0ff;
+            --text-secondary: #a0a0c0;
+            --text-muted: #606080;
+            --highlight-key: #ff4757;
+            --highlight-data: #00d4ff;
+            --highlight-quote: #00ff88;
+            --highlight-gold: #ffd700;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #00d4ff;
+            --shadow-glow: 0 0 60px rgba(139, 92, 246, 0.3);
+            --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%' height='100%' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f8f9ff 0%, #e8e8ff 50%, #f0f0ff 100%);
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(139, 92, 246, 0.2);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a6e;
+            --text-muted: #8080a0;
+            --shadow-glow: 0 8px 40px rgba(139, 92, 246, 0.15);
+        }
+
+        body {
+            font-family: 'Noto Sans SC', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-gradient);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--noise);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* 动态背景粒子 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-purple);
+            border-radius: 50%;
+            animation: float 15s infinite ease-in-out;
+            opacity: 0.3;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.5; }
+            90% { opacity: 0.5; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* 超级头部 */
+        .hero {
+            position: relative;
+            padding: 80px 60px;
+            margin-bottom: 60px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, 
+                #ff4757 0%, 
+                #ff6b81 15%,
+                #ffd700 30%, 
+                #00ff88 45%, 
+                #00d4ff 60%, 
+                #8b5cf6 75%, 
+                #ec4899 90%,
+                #ff4757 100%
+            );
+            background-size: 200% 100%;
+            animation: gradient-flow 4s linear infinite;
+        }
+
+        @keyframes gradient-flow {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 200% 0%; }
+        }
+
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
+            animation: pulse-bg 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse-bg {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 28px;
+            background: linear-gradient(135deg, rgba(255, 71, 87, 0.2), rgba(236, 72, 153, 0.2));
+            border: 1px solid rgba(255, 71, 87, 0.3);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--highlight-key);
+            margin-bottom: 30px;
+            animation: badge-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes badge-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 71, 87, 0.2); }
+            50% { box-shadow: 0 0 40px rgba(255, 71, 87, 0.4); }
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title .gradient-text {
+            background: linear-gradient(135deg, #ff4757, #ff6b81, #ffd700, #00ff88, #00d4ff, #8b5cf6);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: text-gradient 8s ease infinite;
+        }
+
+        @keyframes text-gradient {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            max-width: 800px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px;
+            margin-top: 50px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.05));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.6s;
+        }
+
+        .stat-card:hover::before {
+            left: 100%;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+            border-color: var(--accent-purple);
+        }
+
+        .stat-number {
+            font-size: 2.8rem;
+            font-weight: 900;
+            font-family: 'JetBrains Mono', monospace;
+            background: linear-gradient(135deg, var(--highlight-data), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 核心金句区域 */
+        .golden-quotes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .quote-card {
+            background: linear-gradient(145deg, rgba(255, 215, 0, 0.08), rgba(255, 107, 129, 0.05));
+            border: 2px solid rgba(255, 215, 0, 0.3);
+            border-radius: 30px;
+            padding: 40px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 150px;
+            font-family: Georgia, serif;
+            color: rgba(255, 215, 0, 0.1);
+            line-height: 1;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-10px) rotate(-1deg);
+            box-shadow: 0 30px 80px rgba(255, 215, 0, 0.2);
+        }
+
+        .quote-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-source {
+            margin-top: 20px;
+            font-size: 0.9rem;
+            color: var(--highlight-gold);
+            font-weight: 700;
+        }
+
+        /* 思维导图 - 元认知图 */
+        .mindmap-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            padding: 60px;
+            margin-bottom: 60px;
+            box-shadow: var(--shadow-glow);
+            overflow: hidden;
+        }
+
+        .section-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.1));
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--accent-purple);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 50px;
+            max-width: 700px;
+        }
+
+        /* 树状思维导图 */
+        .mindmap-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 40px 0;
+        }
+
+        .tree-root {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            box-shadow: 0 10px 50px rgba(139, 92, 246, 0.4);
+            position: relative;
+            animation: root-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes root-pulse {
+            0%, 100% { box-shadow: 0 10px 50px rgba(139, 92, 246, 0.4); }
+            50% { box-shadow: 0 15px 70px rgba(139, 92, 246, 0.6); }
+        }
+
+        .tree-root::after {
+            content: '';
+            position: absolute;
+            bottom: -50px;
+            left: 50%;
+            width: 4px;
+            height: 50px;
+            background: linear-gradient(to bottom, var(--accent-purple), transparent);
+            transform: translateX(-50%);
+        }
+
+        .tree-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            width: 100%;
+            max-width: 1400px;
+        }
+
+        .tree-branch {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+
+        .tree-branch:nth-child(1) { animation-delay: 0.1s; }
+        .tree-branch:nth-child(2) { animation-delay: 0.2s; }
+        .tree-branch:nth-child(3) { animation-delay: 0.3s; }
+        .tree-branch:nth-child(4) { animation-delay: 0.4s; }
+        .tree-branch:nth-child(5) { animation-delay: 0.5s; }
+
+        .branch-header {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.1));
+            border: 2px solid var(--accent-purple);
+            border-radius: 25px;
+            padding: 20px 30px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.4s;
+            cursor: pointer;
+        }
+
+        .branch-header:hover {
+            transform: scale(1.05);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.3), rgba(236, 72, 153, 0.2));
+        }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding-left: 20px;
+            border-left: 3px solid rgba(139, 92, 246, 0.3);
+        }
+
+        .branch-item {
+            background: rgba(139, 92, 246, 0.05);
+            padding: 15px 20px;
+            border-radius: 15px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .branch-item::before {
+            content: '→';
+            position: absolute;
+            left: -28px;
+            color: var(--accent-purple);
+            font-weight: bold;
+        }
+
+        .branch-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateX(10px);
+        }
+
+        /* 逻辑流程图 */
+        .logic-flow {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding: 40px 0;
+        }
+
+        .flow-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            min-width: 180px;
+        }
+
+        .flow-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            transition: all 0.4s;
+        }
+
+        .flow-icon.purple {
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3);
+        }
+
+        .flow-icon.blue {
+            background: linear-gradient(135deg, var(--accent-blue), var(--accent-cyan));
+            box-shadow: 0 10px 40px rgba(59, 130, 246, 0.3);
+        }
+
+        .flow-icon.green {
+            background: linear-gradient(135deg, #10b981, #00ff88);
+            box-shadow: 0 10px 40px rgba(16, 185, 129, 0.3);
+        }
+
+        .flow-icon.gold {
+            background: linear-gradient(135deg, #ffd700, #ff8c00);
+            box-shadow: 0 10px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .flow-step:hover .flow-icon {
+            transform: scale(1.2) rotate(10deg);
+        }
+
+        .flow-label {
+            font-weight: 700;
+            text-align: center;
+        }
+
+        .flow-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            max-width: 150px;
+        }
+
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--accent-purple);
+            animation: arrow-pulse 1.5s ease-in-out infinite;
+        }
+
+        @keyframes arrow-pulse {
+            0%, 100% { transform: translateX(0); opacity: 0.5; }
+            50% { transform: translateX(10px); opacity: 1; }
+        }
+
+        /* 内容卡片 */
+        .content-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 40px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            box-shadow: var(--shadow-glow);
+            transition: all 0.5s;
+        }
+
+        .content-section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 80px rgba(139, 92, 246, 0.25);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 40px 50px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .section-header:hover {
+            background: rgba(139, 92, 246, 0.05);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+        }
+
+        .section-heading {
+            font-size: 1.6rem;
+            font-weight: 800;
+        }
+
+        .collapse-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(139, 92, 246, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            transition: all 0.3s;
+            color: var(--accent-purple);
+        }
+
+        .content-section.collapsed .collapse-btn {
+            transform: rotate(-90deg);
+        }
+
+        .section-preview {
+            padding: 0 50px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.5s;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .content-section.collapsed .section-preview {
+            max-height: 100px;
+            padding: 0 50px 30px;
+        }
+
+        .section-body {
+            padding: 0 50px 50px;
+            max-height: 5000px;
+            transition: all 0.5s;
+        }
+
+        .content-section.collapsed .section-body {
+            max-height: 0;
+            padding: 0 50px;
+            overflow: hidden;
+        }
+
+        /* 代码展示 */
+        .code-showcase {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .code-showcase::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40px;
+            background: linear-gradient(90deg, #ff4757, #ffd700, #00ff88);
+            opacity: 0.1;
+        }
+
+        .code-header {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .code-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        .code-dot.red { background: #ff5f56; }
+        .code-dot.yellow { background: #ffbd2e; }
+        .code-dot.green { background: #27ca3f; }
+
+        .code-content {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.8;
+            color: #e0e0ff;
+            white-space: pre-wrap;
+        }
+
+        .code-keyword { color: #ff79c6; }
+        .code-string { color: #f1fa8c; }
+        .code-comment { color: #6272a4; }
+        .code-number { color: #bd93f9; }
+        .code-function { color: #50fa7b; }
+
+        /* 专家评论 */
+        .expert-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin-top: 40px;
+        }
+
+        .expert-card {
+            background: linear-gradient(145deg, rgba(139, 92, 246, 0.08), rgba(236, 72, 153, 0.03));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 25px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.4s;
+        }
+
+        .expert-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.2);
+            border-color: var(--accent-purple);
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        .expert-avatar.lei { background: linear-gradient(135deg, #ff4757, #ff6b81); }
+        .expert-avatar.consumer { background: linear-gradient(135deg, #ffd700, #ff8c00); }
+        .expert-avatar.historian { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+        .expert-avatar.confucius { background: linear-gradient(135deg, #10b981, #00ff88); }
+        .expert-avatar.philosopher { background: linear-gradient(135deg, #3b82f6, #00d4ff); }
+        .expert-avatar.politician { background: linear-gradient(135deg, #ef4444, #f97316); }
+
+        .expert-name {
+            font-size: 1.1rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+
+        .expert-title {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 15px;
+        }
+
+        .expert-comment {
+            font-size: 0.95rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+        }
+
+        .expert-quote {
+            margin-top: 15px;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.1);
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 0 15px 15px 0;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        /* 干货清单 */
+        .takeaway-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+
+        .takeaway-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.08), rgba(59, 130, 246, 0.05));
+            border: 2px solid rgba(0, 212, 255, 0.2);
+            border-radius: 25px;
+            padding: 30px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .takeaway-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: linear-gradient(to bottom, var(--highlight-data), var(--accent-purple));
+        }
+
+        .takeaway-card:hover {
+            transform: translateX(10px);
+            box-shadow: 0 15px 50px rgba(0, 212, 255, 0.15);
+        }
+
+        .takeaway-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--highlight-data), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            opacity: 0.2;
+        }
+
+        .takeaway-title {
+            font-size: 1.2rem;
+            font-weight: 800;
+            margin-bottom: 12px;
+        }
+
+        .takeaway-content {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 高亮样式 */
+        .hl-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 10px;
+            background: rgba(255, 71, 87, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .hl-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 3px 10px;
+            background: rgba(0, 212, 255, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .hl-quote {
+            color: var(--highlight-quote);
+            font-weight: 600;
+            padding: 3px 10px;
+            background: rgba(0, 255, 136, 0.1);
+            border-radius: 8px;
+            display: inline-block;
+        }
+
+        .hl-gold {
+            color: var(--highlight-gold);
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+        }
+
+        /* 术语解释 */
+        .term-explain {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            position: relative;
+            cursor: help;
+        }
+
+        .term-word {
+            border-bottom: 2px dashed var(--accent-purple);
+        }
+
+        .term-tip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--glass-bg);
+            border: 1px solid var(--accent-purple);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .term-explain:hover .term-tip {
+            opacity: 1;
+            visibility: visible;
+            bottom: calc(100% + 10px);
+        }
+
+        /* 版本演进时间线 */
+        .version-timeline {
+            position: relative;
+            padding: 40px 0;
+        }
+
+        .version-timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-pink), var(--highlight-data));
+            transform: translateX(-50%);
+        }
+
+        .version-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-bottom: 50px;
+            position: relative;
+        }
+
+        .version-item:nth-child(odd) .version-content {
+            margin-right: calc(50% + 40px);
+            text-align: right;
+        }
+
+        .version-item:nth-child(even) .version-content {
+            margin-left: calc(50% + 40px);
+            text-align: left;
+        }
+
+        .version-dot {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 50%;
+            z-index: 2;
+            box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);
+        }
+
+        .version-content {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px 30px;
+            max-width: 400px;
+            transition: all 0.4s;
+        }
+
+        .version-content:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 50px rgba(139, 92, 246, 0.2);
+        }
+
+        .version-tag {
+            display: inline-block;
+            padding: 5px 15px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink));
+            border-radius: 100px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .version-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .version-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 40px;
+            right: 40px;
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.8rem;
+            z-index: 1000;
+            transition: all 0.4s;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { padding: 15px; }
+            .hero { padding: 40px 25px; border-radius: 25px; }
+            .hero-title { font-size: 2rem; }
+            .mindmap-section { padding: 30px 20px; border-radius: 25px; }
+            .section-header { padding: 25px 20px; }
+            .section-body { padding: 0 20px 30px; }
+            .version-timeline::before { left: 20px; }
+            .version-item:nth-child(odd) .version-content,
+            .version-item:nth-child(even) .version-content {
+                margin: 0 0 0 50px;
+                text-align: left;
+            }
+            .version-dot { left: 20px; }
+            .flow-arrow { display: none; }
+            .logic-flow { flex-direction: column; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 打印样式 */
+        @media print {
+            body { background: white; color: black; }
+            .theme-toggle, .particles { display: none; }
+            .content-section, .mindmap-section, .hero {
+                box-shadow: none;
+                border: 1px solid #ddd;
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态粒子背景 -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 1.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 4.5s;"></div>
+    </div>
+
+    <div class="container">
+        <!-- 超级头部 -->
+        <header class="hero">
+            <div class="hero-badge">
+                <span>🔥</span>
+                <span>2026年1月24日 深度技术分享</span>
+            </div>
+            <h1 class="hero-title">
+                <span class="gradient-text">深度解剖 Claude Code</span>
+                <br>从 16 行代码到 AI 新纪元
+            </h1>
+            <p class="hero-subtitle">
+                一场颠覆认知的技术布道——揭开Agent时代最强产品的神秘面纱，破除"复杂"迷信，
+                让每个人都能掌握构建自己AI军团的核心秘密
+            </p>
+            <div class="hero-stats">
+                <div class="stat-card">
+                    <div class="stat-number">16</div>
+                    <div class="stat-label">行核心代码</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">15K+</div>
+                    <div class="stat-label">GitHub Stars</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">渐进式版本</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">90%</div>
+                    <div class="stat-label">功能覆盖率</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 黄金金句区 -->
+        <section class="golden-quotes">
+            <div class="quote-card">
+                <p class="quote-text">
+                    "今天的AI从问答模型走向<span class="hl-gold">Agent模型</span>——
+                    它不再care回答你什么问题，只care怎么把事情<span class="hl-key">干好</span>。"
+                </p>
+                <div class="quote-source">—— 关于模型本质的洞察</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">
+                    "<span class="hl-gold">Bash is All You Need</span>——
+                    一个bash工具就是一个Linux世界的MCP，背后可调用<span class="hl-data">成千上万</span>的CLI工具。"
+                </p>
+                <div class="quote-source">—— 关于工具极简主义</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">
+                    "Skill就是<span class="hl-gold">Agent时代的LoRA</span>——
+                    人类第一次不用训练，只需写个文档，就能创建知识权重。"
+                </p>
+                <div class="quote-source">—— 关于知识外化革命</div>
+            </div>
+            <div class="quote-card">
+                <p class="quote-text">
+                    "模型是<span class="hl-gold">大厨</span>，代码是<span class="hl-quote">服务员</span>——
+                    厨师自己知道怎么做菜，我们只需要提供工具和食材。"
+                </p>
+                <div class="quote-source">—— 关于人机分工哲学</div>
+            </div>
+        </section>
+
+        <!-- 元认知思维导图 -->
+        <section class="mindmap-section">
+            <div class="section-badge">🧠 META COGNITION</div>
+            <h2 class="section-title">元认知地图：Claude Code的本质</h2>
+            <p class="section-desc">
+                从宏观视角俯瞰整个Agent架构的核心要素与运作逻辑——理解了这张图，
+                你就掌握了这个时代最强大的技术范式
+            </p>
+            
+            <div class="mindmap-tree">
+                <div class="tree-root">🤖 Claude Code 核心架构</div>
+                
+                <div class="tree-branches">
+                    <div class="tree-branch">
+                        <div class="branch-header">🧠 模型层 (大脑)</div>
+                        <div class="branch-items">
+                            <div class="branch-item">不是问答模型，是<strong>Agent模型</strong></div>
+                            <div class="branch-item">训练目标：把事情干好</div>
+                            <div class="branch-item">内化大量任务轨迹</div>
+                            <div class="branch-item">自主决策调用什么工具</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">🔧 工具层 (双手)</div>
+                        <div class="branch-items">
+                            <div class="branch-item">Bash = 元工具 (万能钥匙)</div>
+                            <div class="branch-item">Read/Write/Edit = 文件操作</div>
+                            <div class="branch-item">MCP = 能力扩展协议</div>
+                            <div class="branch-item">自定义工具 = 安全门控</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">📋 任务管理层</div>
+                        <div class="branch-items">
+                            <div class="branch-item">Todo → Task 演进</div>
+                            <div class="branch-item">跨Agent任务协作</div>
+                            <div class="branch-item">长程任务追踪</div>
+                            <div class="branch-item">模型变强后可削减</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">👥 子代理层 (分身术)</div>
+                        <div class="branch-items">
+                            <div class="branch-item">主进程 fork 子进程</div>
+                            <div class="branch-item">独立上下文窗口</div>
+                            <div class="branch-item">专注单一任务</div>
+                            <div class="branch-item">结果汇报后释放</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">📚 知识层 (武功秘籍)</div>
+                        <div class="branch-items">
+                            <div class="branch-item">Skill = 知识外化载体</div>
+                            <div class="branch-item">按需读取，节省上下文</div>
+                            <div class="branch-item">可传播、可复用</div>
+                            <div class="branch-item">专家知识 - 基座知识 = Skill</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑思维流程图 -->
+        <section class="mindmap-section">
+            <div class="section-badge">⚡ LOGIC FLOW</div>
+            <h2 class="section-title">Agent工作流逻辑图</h2>
+            <p class="section-desc">
+                Claude Code的核心运转机制——一个简洁优雅的循环，却蕴含着改变世界的力量
+            </p>
+            
+            <div class="logic-flow">
+                <div class="flow-step">
+                    <div class="flow-icon purple">📝</div>
+                    <div class="flow-label">用户任务</div>
+                    <div class="flow-desc">输入你想完成的事</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-icon blue">🧠</div>
+                    <div class="flow-label">模型思考</div>
+                    <div class="flow-desc">基于History做决策</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-icon green">🔧</div>
+                    <div class="flow-label">调用工具</div>
+                    <div class="flow-desc">执行bash/edit等</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-icon gold">📤</div>
+                    <div class="flow-label">返回结果</div>
+                    <div class="flow-desc">工具执行结果回传</div>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-icon purple">🔄</div>
+                    <div class="flow-label">继续/停止</div>
+                    <div class="flow-desc">无工具调用则停止</div>
+                </div>
+            </div>
+            
+            <div class="code-showcase">
+                <div class="code-header">
+                    <div class="code-dot red"></div>
+                    <div class="code-dot yellow"></div>
+                    <div class="code-dot green"></div>
+                </div>
+                <div class="code-content"><span class="code-comment"># 16行代码的核心逻辑（伪代码）</span>
+<span class="code-keyword">while</span> <span class="code-function">True</span>:
+    response = <span class="code-function">model.ask</span>(history)  <span class="code-comment"># 询问模型下一步</span>
+    
+    <span class="code-keyword">if</span> response.has_tool_call:
+        result = <span class="code-function">execute_tool</span>(response.tool)  <span class="code-comment"># 执行工具</span>
+        history.<span class="code-function">append</span>(result)  <span class="code-comment"># 结果加入历史</span>
+    <span class="code-keyword">else</span>:
+        <span class="code-function">print</span>(response.text)  <span class="code-comment"># 输出最终回复</span>
+        <span class="code-keyword">break</span>  <span class="code-comment"># 无工具调用 = 任务完成</span></div>
+            </div>
+        </section>
+
+        <!-- 核心概念解析 -->
+        <section class="content-section" id="section-core">
+            <div class="section-header" onclick="toggleSection('section-core')">
+                <div class="header-left">
+                    <div class="section-icon">💡</div>
+                    <h3 class="section-heading">核心概念：破除迷信</h3>
+                </div>
+                <div class="collapse-btn">▼</div>
+            </div>
+            <div class="section-preview">
+                Agent软件的实现其实非常简单，模型是厨师，代码只是服务员...
+            </div>
+            <div class="section-body">
+                <h4 style="font-size: 1.3rem; margin-bottom: 20px; color: var(--highlight-key);">🎯 第一个真相：模型已经换代了</h4>
+                <p style="margin-bottom: 25px; font-size: 1.05rem; line-height: 2;">
+                    从 <span class="hl-data">Claude 3.5</span> 开始，AI模型从传统的
+                    <span class="term-explain">
+                        <span class="term-word">QA模型</span>
+                        <span class="term-tip">💬 问答模型：训练目标是回答用户问题，讨好用户</span>
+                    </span>
+                    转向了
+                    <span class="term-explain">
+                        <span class="term-word">Agent模型</span>
+                        <span class="term-tip">🤖 代理模型：训练目标是把事情干好，完成任务</span>
+                    </span>。
+                    这不是小升级，而是<span class="hl-key">范式革命</span>！
+                </p>
+                
+                <p style="margin-bottom: 25px; font-size: 1.05rem; line-height: 2;">
+                    <strong>旧模型(ChatGPT/GPT4)：</strong>在回答风格上讨好用户，长度适中，先思考再回答<br>
+                    <strong>新模型(Claude 3.5+)：</strong>不care用户回答什么问题，只care能不能把事情干好
+                </p>
+
+                <div style="background: linear-gradient(135deg, rgba(255, 71, 87, 0.1), rgba(236, 72, 153, 0.05)); border-radius: 20px; padding: 30px; margin: 30px 0;">
+                    <p style="font-size: 1.2rem; font-weight: 700; margin-bottom: 15px;">🔥 分水岭对比</p>
+                    <p><span class="hl-quote">DeepSeek R1</span> = 问答模型 + 思考链 = 依然是问答模型</p>
+                    <p><span class="hl-key">Claude 3.5/4.0</span> = Agent模型 = 训练大量任务轨迹 + RL强化学习</p>
+                </div>
+
+                <h4 style="font-size: 1.3rem; margin: 40px 0 20px; color: var(--highlight-data);">🍳 第二个真相：厨师与服务员的关系</h4>
+                <p style="margin-bottom: 25px; font-size: 1.05rem; line-height: 2;">
+                    <span class="hl-gold">模型 = 大厨</span>，知道怎么做菜，掌握火候和步骤<br>
+                    <span class="hl-quote">代码 = 服务员</span>，提供工具、上菜、执行环境<br>
+                    <span class="hl-key">工具 = 刀叉锅铲</span>，大厨用来施展技艺的媒介
+                </p>
+
+                <p style="font-size: 1.1rem; line-height: 2; background: rgba(139, 92, 246, 0.1); padding: 25px; border-radius: 15px;">
+                    "我们从来没有在代码里写复杂的提示词，要求这一步干什么、下一步干什么——
+                    <span class="hl-key">模型自己知道怎么干</span>，我们只需要把工具给到它就行了。"
+                </p>
+            </div>
+        </section>
+
+        <!-- 版本演进 -->
+        <section class="content-section" id="section-versions">
+            <div class="section-header" onclick="toggleSection('section-versions')">
+                <div class="header-left">
+                    <div class="section-icon">🚀</div>
+                    <h3 class="section-heading">五步进化：从V0到V4</h3>
+                </div>
+                <div class="collapse-btn">▼</div>
+            </div>
+            <div class="section-preview">
+                从只有bash一个工具的最小版本，逐步演进到完整的Agent系统...
+            </div>
+            <div class="section-body">
+                <div class="version-timeline">
+                    <div class="version-item">
+                        <div class="version-dot"></div>
+                        <div class="version-content">
+                            <div class="version-tag">V0 · 极简版</div>
+                            <div class="version-title">🔨 Bash is All You Need</div>
+                            <div class="version-desc">
+                                只用<span class="hl-data">1个bash工具</span>，<span class="hl-data">16行代码</span>实现完整的Claude Code。
+                                Bash是元工具，背后可调用成千上万的CLI。
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="version-item">
+                        <div class="version-dot"></div>
+                        <div class="version-content">
+                            <div class="version-tag">V1 · 文件操作</div>
+                            <div class="version-title">📁 Read/Write/Edit工具</div>
+                            <div class="version-desc">
+                                将文件操作从bash中抽象出来，支持<span class="hl-key">编辑拦截</span>、
+                                <span class="hl-key">安全审查</span>、<span class="hl-key">版本存档</span>，
+                                实现类似Cursor的历史回跳功能。
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="version-item">
+                        <div class="version-dot"></div>
+                        <div class="version-content">
+                            <div class="version-tag">V2 · 任务管理</div>
+                            <div class="version-title">📋 Todo/Task系统</div>
+                            <div class="version-desc">
+                                引入任务状态管理(pending/doing/done)，
+                                让Agent保持工作连续性。随着模型增强，
+                                <span class="hl-quote">这个机制正在被弱化</span>。
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="version-item">
+                        <div class="version-dot"></div>
+                        <div class="version-content">
+                            <div class="version-tag">V3 · 分身术</div>
+                            <div class="version-title">👥 SubAgent子代理</div>
+                            <div class="version-desc">
+                                主进程fork子进程，委托独立任务。子代理拥有
+                                <span class="hl-data">干净的200K上下文</span>，
+                                干完即释放，保持主Agent头脑清爽。
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="version-item">
+                        <div class="version-dot"></div>
+                        <div class="version-content">
+                            <div class="version-tag">V4 · 知识外挂</div>
+                            <div class="version-title">📚 Skill技能系统</div>
+                            <div class="version-desc">
+                                知识外化革命！编辑一个Markdown文件就能创建"武功秘籍"，
+                                <span class="hl-gold">不用训练、可传播、可复用</span>——
+                                这是Agent时代的LoRA。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货清单 -->
+        <section class="content-section" id="section-takeaways">
+            <div class="section-header" onclick="toggleSection('section-takeaways')">
+                <div class="header-left">
+                    <div class="section-icon">💎</div>
+                    <h3 class="section-heading">硬核干货清单</h3>
+                </div>
+                <div class="collapse-btn">▼</div>
+            </div>
+            <div class="section-preview">
+                来自实战的真知灼见，每一条都价值千金...
+            </div>
+            <div class="section-body">
+                <div class="takeaway-grid">
+                    <div class="takeaway-card">
+                        <div class="takeaway-num">01</div>
+                        <div class="takeaway-title">模型差异的本质</div>
+                        <div class="takeaway-content">
+                            1万块的厨师和5万块的厨师都知道做菜，区别在于<span class="hl-key">火候掌握</span>和<span class="hl-key">细节处理</span>。
+                            国产模型能平替但有差距——追赶者可以蒸馏数据，但头部需要真金白银上RL。
+                        </div>
+                    </div>
+                    
+                    <div class="takeaway-card">
+                        <div class="takeaway-num">02</div>
+                        <div class="takeaway-content">
+                            <span class="hl-data">200美金/月</span>的Claude Code订阅，本质是Anthropic在
+                            <span class="hl-key">补贴用户帮它标数据</span>。
+                            去年补贴博士手写思维链，今年补贴用户在真实场景标注。
+                        </div>
+                        <div class="takeaway-title">订阅费的秘密</div>
+                    </div>
+                    
+                    <div class="takeaway-card">
+                        <div class="takeaway-num">03</div>
+                        <div class="takeaway-title">低成本追赶法</div>
+                        <div class="takeaway-content">
+                            花<span class="hl-data">几百万</span>从CC代理站买几百万条数据，
+                            用几百张卡对着Claude的轨迹蒸馏——
+                            再怎么笨，SWE-bench分数也不会低于<span class="hl-data">70分</span>。
+                        </div>
+                    </div>
+                    
+                    <div class="takeaway-card">
+                        <div class="takeaway-num">04</div>
+                        <div class="takeaway-title">MCP已经过时</div>
+                        <div class="takeaway-content">
+                            去年大家都在造MCP工具，现在已有<span class="hl-data">几万个</span>。
+                            但Bash is All You Need——<span class="hl-key">今年的主题是封装Skill</span>，
+                            别再造工具了。
+                        </div>
+                    </div>
+                    
+                    <div class="takeaway-card">
+                        <div class="takeaway-num">05</div>
+                        <div class="takeaway-title">Skill的终极宿命</div>
+                        <div class="takeaway-content">
+                            两年后<span class="hl-data">99%的Skill</span>会失去价值——
+                            因为通过API调用时，模型厂会提取Skill知识训练进下一代模型。
+                            <span class="hl-key">知识外化→内化</span>是动态循环。
+                        </div>
+                    </div>
+                    
+                    <div class="takeaway-card">
+                        <div class="takeaway-num">06</div>
+                        <div class="takeaway-title">2026年预言</div>
+                        <div class="takeaway-content">
+                            等DeepSeek V4发布，<span class="hl-data">便宜30倍</span>的成本驱动Claude级别Agent。
+                            各单位更新一体机，<span class="hl-gold">Agent将遍地开花</span>——
+                            这是普通人抓住红利的窗口期。
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <section class="content-section" id="section-experts">
+            <div class="section-header" onclick="toggleSection('section-experts')">
+                <div class="header-left">
+                    <div class="section-icon">🎭</div>
+                    <h3 class="section-heading">AI领袖视角：四方热评</h3>
+                </div>
+                <div class="collapse-btn">▼</div>
+            </div>
+            <div class="section-preview">
+                如果Anthropic、OpenAI、Google、DeepSeek的掌舵者听了这场分享...
+            </div>
+            <div class="section-body">
+                <div class="expert-panel">
+                    <div class="expert-card">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #d97706, #f59e0b);">🏛️</div>
+                        <div class="expert-name">Daniela Amodei</div>
+                        <div class="expert-title">Anthropic 联合创始人&总裁 · AI安全先驱</div>
+                        <div class="expert-comment">
+                            这位开发者对Claude Code的理解相当深刻。没错，我们的
+                            <span class="hl-data">200美金订阅</span>策略本质上是
+                            <span class="hl-key">与用户共同进化</span>——真实场景的反馈比任何实验室数据都珍贵。
+                        </div>
+                        <div class="expert-quote">
+                            "从V0到V4的渐进式设计完美体现了我们的理念：
+                            <span class="hl-gold">安全与能力可以共同增长</span>。
+                            SubAgent的隔离机制、Skill的可控注入，都是安全第一的设计。"
+                        </div>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #059669, #10b981);">🚀</div>
+                        <div class="expert-name">Sam Altman</div>
+                        <div class="expert-title">OpenAI CEO · AGI愿景推动者</div>
+                        <div class="expert-comment">
+                            有意思的分析。"问答模型 vs Agent模型"的区分抓住了关键——
+                            我们的GPT-5也在朝这个方向演进。不过，
+                            <span class="hl-key">16行代码的说法有点标题党</span>了😄
+                        </div>
+                        <div class="expert-quote">
+                            "真正的竞争不在代码行数，而在<span class="hl-gold">模型本身的智能密度</span>。
+                            Skill是个不错的过渡方案，但最终这些知识都会被内化到更强大的基座模型中。
+                            这就是为什么我们押注AGI。"
+                        </div>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #4285f4, #34a853);">🔍</div>
+                        <div class="expert-name">Larry Page</div>
+                        <div class="expert-title">Google 联合创始人 · 技术理想主义者</div>
+                        <div class="expert-comment">
+                            "Bash is All You Need"让我想起了Unix哲学——
+                            <span class="hl-quote">Do one thing and do it well</span>。
+                            简洁就是力量，这个原则在AI时代依然成立。
+                        </div>
+                        <div class="expert-quote">
+                            "不过我更关注<span class="hl-gold">信息的组织与连接</span>。
+                            Skill本质上是一种知识图谱的轻量化实现。
+                            当模型能够实时检索全球知识时，本地Skill的价值就会被重新定义。
+                            Gemini正在这条路上。"
+                        </div>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #2563eb, #7c3aed);">🐋</div>
+                        <div class="expert-name">梁文锋</div>
+                        <div class="expert-title">DeepSeek 创始人 · 高效AI探索者</div>
+                        <div class="expert-comment">
+                            这位讲者说得对——追赶者可以用<span class="hl-data">几百万成本</span>
+                            蒸馏出<span class="hl-data">SWE-bench 70+</span>的模型。
+                            但我们DeepSeek要做的不止于此，我们要<span class="hl-key">重新定义效率边界</span>。
+                        </div>
+                        <div class="expert-quote">
+                            "V4会让大家看到什么叫<span class="hl-gold">便宜30倍的Agent能力</span>。
+                            当成本不再是门槛，Agent就会像水电一样普及。
+                            中国开发者不该只是Claude Code的用户，而应该是Agent新范式的定义者。"
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 30px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.05)); border-radius: 20px; border-left: 4px solid var(--accent-purple);">
+                    <p style="font-size: 1.1rem; font-weight: 600; margin-bottom: 15px; color: var(--accent-purple);">💡 四方共识</p>
+                    <p style="color: var(--text-secondary); line-height: 1.9;">
+                        无论是安全优先的Anthropic、AGI导向的OpenAI、信息组织的Google，
+                        还是效率极致的DeepSeek——所有人都认同一点：
+                        <span class="hl-gold">2026年是Agent真正落地的元年</span>，
+                        而理解Claude Code的架构设计，就是抓住这波红利的入场券。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 行动指南 -->
+        <section class="content-section" id="section-action">
+            <div class="section-header" onclick="toggleSection('section-action')">
+                <div class="header-left">
+                    <div class="section-icon">🎯</div>
+                    <h3 class="section-heading">行动指南：如何抓住红利</h3>
+                </div>
+                <div class="collapse-btn">▼</div>
+            </div>
+            <div class="section-preview">
+                掌握了原理，接下来该怎么做？这是你的实操清单...
+            </div>
+            <div class="section-body">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 30px;">
+                    <div style="background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(16, 185, 129, 0.05)); border: 2px solid rgba(0, 255, 136, 0.3); border-radius: 25px; padding: 35px;">
+                        <h4 style="font-size: 1.3rem; color: var(--highlight-quote); margin-bottom: 20px;">✅ 立即行动</h4>
+                        <ul style="list-style: none; line-height: 2.2;">
+                            <li>📥 克隆 <code style="background: rgba(0,0,0,0.3); padding: 3px 10px; border-radius: 5px;">learn-claude-code</code> 仓库</li>
+                            <li>🔧 配置API Key，运行16行代码版本</li>
+                            <li>📖 让AI帮你读懂V0-V4的演进逻辑</li>
+                            <li>✍️ 为你的领域写第一个Skill</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 140, 0, 0.05)); border: 2px solid rgba(255, 215, 0, 0.3); border-radius: 25px; padding: 35px;">
+                        <h4 style="font-size: 1.3rem; color: var(--highlight-gold); margin-bottom: 20px;">🌟 深入探索</h4>
+                        <ul style="list-style: none; line-height: 2.2;">
+                            <li>🧠 理解SubAgent的分身术机制</li>
+                            <li>📚 收集优质Skill，建立个人知识库</li>
+                            <li>🔄 关注上下文压缩、多Agent协作</li>
+                            <li>⚡ 等待DeepSeek V4，布局低成本方案</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 40px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.1)); border-radius: 25px; text-align: center;">
+                    <p style="font-size: 1.5rem; font-weight: 800; margin-bottom: 15px;">
+                        🎯 核心行动纲领
+                    </p>
+                    <p style="font-size: 1.2rem; color: var(--text-secondary); line-height: 2;">
+                        "每个人都应该搭建自己业务版的Claude Code——<br>
+                        你应该逐渐成为<span class="hl-gold">监工者</span>和<span class="hl-gold">搭建者</span>，
+                        而不是执行者。"
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 资源链接 -->
+        <section style="background: var(--glass-bg); backdrop-filter: blur(30px); border: 1px solid var(--glass-border); border-radius: 40px; padding: 50px; text-align: center; box-shadow: var(--shadow-glow);">
+            <h3 style="font-size: 2rem; font-weight: 800; margin-bottom: 30px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                📚 相关资源
+            </h3>
+            <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 20px;">
+                <a href="#" style="display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; background: linear-gradient(135deg, var(--accent-purple), var(--accent-pink)); color: white; text-decoration: none; border-radius: 100px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <span>⭐</span> GitHub: learn-claude-code (15K+ Stars)
+                </a>
+                <a href="#" style="display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; background: linear-gradient(135deg, #3b82f6, #00d4ff); color: white; text-decoration: none; border-radius: 100px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <span>📦</span> GitHub: KODE (开源Claude Code实现)
+                </a>
+                <a href="#" style="display: inline-flex; align-items: center; gap: 10px; padding: 15px 30px; background: linear-gradient(135deg, #10b981, #00ff88); color: white; text-decoration: none; border-radius: 100px; font-weight: 600; transition: all 0.3s;" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+                    <span>🔍</span> Share Skill (Skill搜索引擎)
+                </a>
+            </div>
+            <p style="margin-top: 30px; color: var(--text-muted); font-size: 0.9rem;">
+                分享人：来新璐 @ ShareAI · WaytoAGI 晚8点共学
+            </p>
+        </section>
+    </div>
+
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '☀️';
+            }
+        }
+
+        function toggleSection(id) {
+            const section = document.getElementById(id);
+            section.classList.toggle('collapsed');
+        }
+
+        // 滚动动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.content-section, .mindmap-section, .quote-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.8s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(el);
+        });
+
+        // 粒子随机化
+        document.querySelectorAll('.particle').forEach(p => {
+            p.style.animationDuration = (10 + Math.random() * 10) + 's';
+            p.style.width = (2 + Math.random() * 4) + 'px';
+            p.style.height = p.style.width;
+        });
+    </script>
+</body>
+</html>

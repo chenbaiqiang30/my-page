@@ -1,0 +1,1800 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Coding 第四期 | 产品部署实战全攻略</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&family=Noto+Sans+SC:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-dark: #0a0a0f;
+            --bg-card: rgba(18, 18, 28, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0f0f5;
+            --text-secondary: #8b8b9e;
+            --text-muted: #5a5a6e;
+            --accent-purple: #a855f7;
+            --accent-pink: #ec4899;
+            --accent-blue: #3b82f6;
+            --accent-cyan: #06b6d4;
+            --accent-green: #10b981;
+            --accent-orange: #f97316;
+            --accent-red: #ef4444;
+            --accent-yellow: #eab308;
+            --gradient-1: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+            --gradient-2: linear-gradient(135deg, #3b82f6 0%, #06b6d4 100%);
+            --gradient-3: linear-gradient(135deg, #10b981 0%, #84cc16 100%);
+            --shadow-glow: 0 0 60px rgba(168, 85, 247, 0.15);
+            --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+        
+        [data-theme="light"] {
+            --bg-dark: #f8f9fc;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a5568;
+            --text-muted: #718096;
+            --shadow-glow: 0 0 60px rgba(168, 85, 247, 0.1);
+        }
+        
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+        
+        @keyframes slideInLeft {
+            from { opacity: 0; transform: translateX(-50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes slideInRight {
+            from { opacity: 0; transform: translateX(50px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+        
+        @keyframes scaleIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.4); }
+            50% { transform: scale(1.02); box-shadow: 0 0 30px 10px rgba(168, 85, 247, 0); }
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        
+        @keyframes rotateGlow {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        body {
+            font-family: 'Noto Sans SC', -apple-system, sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--noise);
+            pointer-events: none;
+            z-index: 1000;
+            opacity: 0.4;
+        }
+        
+        .bg-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -2;
+        }
+        
+        .bg-gradient-orbs {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            animation: float 15s ease-in-out infinite;
+        }
+        
+        .orb-1 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.15) 0%, transparent 70%);
+            top: -200px;
+            right: -200px;
+            animation-delay: 0s;
+        }
+        
+        .orb-2 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.12) 0%, transparent 70%);
+            bottom: -150px;
+            left: -150px;
+            animation-delay: -5s;
+        }
+        
+        .orb-3 {
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -10s;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 24px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 头部设计 */
+        .hero {
+            position: relative;
+            padding: 80px 60px;
+            margin-bottom: 60px;
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-1);
+        }
+        
+        .hero::after {
+            content: '';
+            position: absolute;
+            top: -100%;
+            right: -100%;
+            width: 400%;
+            height: 400%;
+            background: conic-gradient(from 0deg, transparent, rgba(168, 85, 247, 0.03), transparent 30%);
+            animation: rotateGlow 20s linear infinite;
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 100px;
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-bottom: 24px;
+            animation: scaleIn 0.6s ease 0.2s both;
+        }
+        
+        .hero-title {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #fff 0%, #a855f7 50%, #ec4899 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 4s linear infinite, slideInLeft 0.8s ease 0.3s both;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 32px;
+            animation: slideInLeft 0.8s ease 0.4s both;
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 40px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.8s ease 0.5s both;
+        }
+        
+        .stat-item {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        /* 控制栏 */
+        .controls {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 40px;
+            animation: fadeInUp 0.6s ease 0.6s both;
+        }
+        
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-family: 'Noto Sans SC', sans-serif;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--bg-card);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(168, 85, 247, 0.2);
+            border-color: var(--accent-purple);
+        }
+        
+        .btn-primary {
+            background: var(--gradient-1);
+            border: none;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.4);
+        }
+        
+        /* 思维导图 */
+        .mindmap-section {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 50px;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .mindmap-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.875rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-purple);
+            margin-bottom: 16px;
+        }
+        
+        .section-label::before {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: var(--gradient-1);
+        }
+        
+        .mindmap-title {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+        }
+        
+        /* 元认知图 */
+        .metacognition-map {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 60px;
+            position: relative;
+        }
+        
+        .metacognition-map::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 200px;
+            height: 200px;
+            transform: translate(-50%, -50%);
+            background: radial-gradient(circle, rgba(168, 85, 247, 0.1) 0%, transparent 70%);
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .meta-center {
+            grid-column: 2;
+            grid-row: 2;
+            z-index: 2;
+        }
+        
+        .meta-node {
+            background: var(--bg-card);
+            border: 2px solid transparent;
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            z-index: 1;
+        }
+        
+        .meta-node:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: var(--accent-purple);
+            box-shadow: 0 20px 60px rgba(168, 85, 247, 0.2);
+        }
+        
+        .meta-node.center-node {
+            background: var(--gradient-1);
+            padding: 32px;
+            animation: pulse 3s ease-in-out infinite;
+        }
+        
+        .meta-node.center-node .meta-icon {
+            font-size: 3rem;
+            margin-bottom: 12px;
+        }
+        
+        .meta-node.center-node .meta-title {
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .meta-icon {
+            font-size: 2.5rem;
+            margin-bottom: 12px;
+        }
+        
+        .meta-title {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .meta-desc {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+        
+        .meta-node[data-color="purple"] { border-color: rgba(168, 85, 247, 0.3); }
+        .meta-node[data-color="pink"] { border-color: rgba(236, 72, 153, 0.3); }
+        .meta-node[data-color="blue"] { border-color: rgba(59, 130, 246, 0.3); }
+        .meta-node[data-color="cyan"] { border-color: rgba(6, 182, 212, 0.3); }
+        .meta-node[data-color="green"] { border-color: rgba(16, 185, 129, 0.3); }
+        .meta-node[data-color="orange"] { border-color: rgba(249, 115, 22, 0.3); }
+        
+        /* 逻辑思维图 */
+        .logic-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            padding: 40px 0;
+        }
+        
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .flow-node {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px 32px;
+            min-width: 180px;
+            text-align: center;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .flow-node:hover {
+            transform: scale(1.05);
+            border-color: var(--accent-purple);
+            box-shadow: 0 10px 40px rgba(168, 85, 247, 0.15);
+        }
+        
+        .flow-node.primary {
+            background: var(--gradient-1);
+            border: none;
+        }
+        
+        .flow-node.primary .flow-text {
+            color: white;
+        }
+        
+        .flow-node.secondary {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(6, 182, 212, 0.1));
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+        
+        .flow-node.tertiary {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1), rgba(132, 204, 22, 0.1));
+            border-color: rgba(16, 185, 129, 0.3);
+        }
+        
+        .flow-step {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 700;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+        }
+        
+        .flow-text {
+            font-weight: 600;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .flow-arrow {
+            font-size: 2rem;
+            color: var(--accent-purple);
+            opacity: 0.5;
+        }
+        
+        .flow-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .flow-branch-line {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--accent-purple), transparent);
+        }
+        
+        /* 内容卡片 */
+        .content-section {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(20px);
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .content-section:hover {
+            border-color: rgba(168, 85, 247, 0.3);
+            box-shadow: var(--shadow-glow);
+        }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 32px 40px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .section-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 40px;
+            right: 40px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--glass-border), transparent);
+        }
+        
+        .section-header:hover {
+            background: rgba(168, 85, 247, 0.03);
+        }
+        
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .section-icon {
+            width: 56px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+            background: var(--gradient-1);
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+        }
+        
+        .section-title-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        
+        .section-title {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .section-meta {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        .collapse-icon {
+            font-size: 1.5rem;
+            color: var(--accent-purple);
+            transition: transform 0.3s ease;
+        }
+        
+        .collapsed .collapse-icon {
+            transform: rotate(-90deg);
+        }
+        
+        .section-preview {
+            padding: 0 40px;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+        
+        .collapsed .section-preview {
+            max-height: 100px;
+            padding: 20px 40px;
+        }
+        
+        .section-content {
+            max-height: 10000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            padding: 40px;
+        }
+        
+        .collapsed .section-content {
+            max-height: 0;
+            padding: 0 40px;
+        }
+        
+        /* 高亮标记 */
+        .hl-key {
+            color: var(--accent-red);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-red);
+        }
+        
+        .hl-data {
+            color: var(--accent-blue);
+            font-weight: 700;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 2px 8px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 6px;
+        }
+        
+        .hl-quote {
+            color: var(--accent-green);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+        }
+        
+        .hl-warn {
+            color: var(--accent-orange);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(249, 115, 22, 0.1);
+            border-radius: 6px;
+        }
+        
+        .hl-tip {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 6px;
+        }
+        
+        /* 金句卡片 */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.08), rgba(236, 72, 153, 0.05));
+            border-left: 4px solid var(--accent-purple);
+            border-radius: 0 20px 20px 0;
+            padding: 28px 32px;
+            margin: 24px 0;
+            position: relative;
+        }
+        
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4rem;
+            font-family: Georgia, serif;
+            color: var(--accent-purple);
+            opacity: 0.2;
+            line-height: 1;
+        }
+        
+        .quote-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            line-height: 1.6;
+            color: var(--text-primary);
+            padding-left: 20px;
+        }
+        
+        .quote-author {
+            margin-top: 12px;
+            font-size: 0.875rem;
+            color: var(--accent-purple);
+            padding-left: 20px;
+        }
+        
+        /* 干货列表 */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin: 32px 0;
+        }
+        
+        .insight-card {
+            background: rgba(168, 85, 247, 0.03);
+            border: 1px solid rgba(168, 85, 247, 0.15);
+            border-radius: 20px;
+            padding: 28px;
+            transition: all 0.3s ease;
+        }
+        
+        .insight-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-purple);
+            box-shadow: 0 15px 40px rgba(168, 85, 247, 0.15);
+        }
+        
+        .insight-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            background: var(--gradient-1);
+            border-radius: 14px;
+            margin-bottom: 16px;
+        }
+        
+        .insight-title {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-weight: 700;
+            font-size: 1.1rem;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .insight-desc {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        /* 成本表格 */
+        .cost-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 24px 0;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--glass-border);
+        }
+        
+        .cost-table th {
+            background: linear-gradient(135deg, rgba(168, 85, 247, 0.15), rgba(236, 72, 153, 0.1));
+            padding: 18px 24px;
+            text-align: left;
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--glass-border);
+        }
+        
+        .cost-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+            color: var(--text-secondary);
+        }
+        
+        .cost-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .cost-table tr:hover td {
+            background: rgba(168, 85, 247, 0.03);
+        }
+        
+        .cost-badge {
+            display: inline-flex;
+            padding: 6px 14px;
+            border-radius: 100px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .cost-badge.free {
+            background: rgba(16, 185, 129, 0.15);
+            color: var(--accent-green);
+        }
+        
+        .cost-badge.paid {
+            background: rgba(249, 115, 22, 0.15);
+            color: var(--accent-orange);
+        }
+        
+        .cost-badge.high {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--accent-red);
+        }
+        
+        /* 专家评论 */
+        .experts-section {
+            background: var(--bg-card);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin: 50px 0;
+            backdrop-filter: blur(20px);
+        }
+        
+        .experts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+        
+        .expert-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.05));
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 32px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+        
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+        
+        .expert-card[data-expert="sam"]::before { background: linear-gradient(90deg, #10b981, #84cc16); }
+        .expert-card[data-expert="jensen"]::before { background: linear-gradient(90deg, #76b900, #a3e635); }
+        .expert-card[data-expert="pony"]::before { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+        .expert-card[data-expert="jack"]::before { background: linear-gradient(90deg, #f97316, #eab308); }
+        
+        .expert-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+        }
+        
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        
+        .expert-avatar {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .expert-card[data-expert="sam"] .expert-avatar { background: linear-gradient(135deg, #10b981, #84cc16); }
+        .expert-card[data-expert="jensen"] .expert-avatar { background: linear-gradient(135deg, #76b900, #a3e635); }
+        .expert-card[data-expert="pony"] .expert-avatar { background: linear-gradient(135deg, #3b82f6, #06b6d4); }
+        .expert-card[data-expert="jack"] .expert-avatar { background: linear-gradient(135deg, #f97316, #eab308); }
+        
+        .expert-info h4 {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 4px;
+        }
+        
+        .expert-info span {
+            font-size: 0.875rem;
+            color: var(--text-muted);
+        }
+        
+        .expert-quote {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: 16px;
+            border-left: 2px solid var(--glass-border);
+        }
+        
+        .expert-quote strong {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .expert-tag {
+            display: inline-flex;
+            padding: 6px 14px;
+            background: rgba(168, 85, 247, 0.1);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--accent-purple);
+            margin-top: 16px;
+        }
+        
+        /* 流程步骤 */
+        .steps-timeline {
+            position: relative;
+            padding: 30px 0;
+        }
+        
+        .steps-timeline::before {
+            content: '';
+            position: absolute;
+            left: 28px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-purple), var(--accent-pink), var(--accent-blue));
+        }
+        
+        .step-item {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+            position: relative;
+        }
+        
+        .step-number {
+            width: 56px;
+            height: 56px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 8px 24px rgba(168, 85, 247, 0.3);
+        }
+        
+        .step-content {
+            flex: 1;
+            padding-top: 8px;
+        }
+        
+        .step-title {
+            font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        
+        .step-desc {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+        
+        .step-code {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 12px;
+            padding: 16px 20px;
+            margin-top: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            border: 1px solid rgba(6, 182, 212, 0.2);
+        }
+        
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--bg-card);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: 0 12px 40px rgba(168, 85, 247, 0.3);
+        }
+        
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--text-muted);
+        }
+        
+        .footer-brand {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container { padding: 20px 16px; }
+            .hero { padding: 40px 24px; }
+            .hero-title { font-size: 2rem; }
+            .metacognition-map { grid-template-columns: 1fr; }
+            .meta-center { grid-column: 1; grid-row: auto; }
+            .section-header { padding: 24px; }
+            .section-content { padding: 24px; }
+            .experts-grid { grid-template-columns: 1fr; }
+            .mindmap-section { padding: 30px 20px; }
+            .hero-stats { gap: 24px; }
+            .controls { flex-direction: column; }
+            .btn { width: 100%; justify-content: center; }
+        }
+        
+        /* 滚动条 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-dark); }
+        ::-webkit-scrollbar-thumb { 
+            background: var(--gradient-1); 
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-grid"></div>
+    <div class="bg-gradient-orbs">
+        <div class="orb orb-1"></div>
+        <div class="orb orb-2"></div>
+        <div class="orb orb-3"></div>
+    </div>
+    
+    <div class="container">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">
+                    <span>🚀</span>
+                    <span>WaytoAGI · 第四期训练营</span>
+                </div>
+                <h1 class="hero-title">产品部署实战全攻略</h1>
+                <p class="hero-subtitle">
+                    从成本核算到一键部署，揭秘独立开发者如何用最低成本把产品推向市场。
+                    GitHub + Vercel 黄金组合，让你的创意真正触达用户。
+                </p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">¥0</div>
+                        <div class="stat-label">最低部署成本</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">30min</div>
+                        <div class="stat-label">上手时间</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">∞</div>
+                        <div class="stat-label">创意可能</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <!-- Controls -->
+        <div class="controls">
+            <button class="btn btn-primary" onclick="toggleAll()">
+                <span>📑</span>
+                <span>展开/折叠全部</span>
+            </button>
+            <button class="btn" onclick="scrollToExperts()">
+                <span>💡</span>
+                <span>查看专家点评</span>
+            </button>
+            <button class="btn" onclick="scrollToMindmap()">
+                <span>🧠</span>
+                <span>知识图谱</span>
+            </button>
+        </div>
+        
+        <!-- 元认知图 -->
+        <section class="mindmap-section" id="mindmap">
+            <div class="section-label">
+                <span>元认知图谱</span>
+            </div>
+            <h2 class="mindmap-title">独立开发者的商业化认知框架</h2>
+            
+            <div class="metacognition-map">
+                <div class="meta-node" data-color="purple">
+                    <div class="meta-icon">💰</div>
+                    <div class="meta-title">成本意识</div>
+                    <div class="meta-desc">先算账，再开发<br>了解每个平台的隐性成本</div>
+                </div>
+                
+                <div class="meta-node" data-color="pink">
+                    <div class="meta-icon">🎯</div>
+                    <div class="meta-title">产品定位</div>
+                    <div class="meta-desc">本地工具 vs 云端服务<br>简单产品用简单方案</div>
+                </div>
+                
+                <div class="meta-node" data-color="blue">
+                    <div class="meta-icon">📊</div>
+                    <div class="meta-title">商业模式</div>
+                    <div class="meta-desc">流量变现 vs 产品收费<br>先验证再投入</div>
+                </div>
+                
+                <div class="meta-node center-node meta-center">
+                    <div class="meta-icon">🧠</div>
+                    <div class="meta-title">部署思维</div>
+                </div>
+                
+                <div class="meta-node" data-color="cyan">
+                    <div class="meta-icon">⚡</div>
+                    <div class="meta-title">效率优先</div>
+                    <div class="meta-desc">低代码平台省心<br>GitHub Desktop 记不住命令就别记</div>
+                </div>
+                
+                <div class="meta-node" data-color="green">
+                    <div class="meta-icon">🔄</div>
+                    <div class="meta-title">迭代能力</div>
+                    <div class="meta-desc">版本管理习惯<br>每次开发后及时 commit</div>
+                </div>
+                
+                <div class="meta-node" data-color="orange">
+                    <div class="meta-icon">🛡️</div>
+                    <div class="meta-title">风险控制</div>
+                    <div class="meta-desc">复杂度决定成本<br>跨域、服务器、备案都是坑</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 逻辑思维图 -->
+        <section class="mindmap-section">
+            <div class="section-label">
+                <span>逻辑思维图</span>
+            </div>
+            <h2 class="mindmap-title">产品上线决策流程</h2>
+            
+            <div class="logic-flow">
+                <div class="flow-row">
+                    <div class="flow-node primary">
+                        <div class="flow-step">Step 1</div>
+                        <div class="flow-text">明确产品类型</div>
+                    </div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-arrow">↓</div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-branch">
+                        <div class="flow-node secondary">
+                            <div class="flow-text">📱 本地应用</div>
+                        </div>
+                        <div class="flow-branch-line"></div>
+                        <div class="flow-node" style="font-size: 0.9rem;">
+                            <div class="flow-text">无云端需求<br>数据存本地</div>
+                        </div>
+                    </div>
+                    
+                    <div class="flow-node" style="background: transparent; border: none; min-width: auto;">
+                        <span style="font-size: 1.5rem; color: var(--text-muted);">或</span>
+                    </div>
+                    
+                    <div class="flow-branch">
+                        <div class="flow-node tertiary">
+                            <div class="flow-text">☁️ 云端服务</div>
+                        </div>
+                        <div class="flow-branch-line"></div>
+                        <div class="flow-node" style="font-size: 0.9rem;">
+                            <div class="flow-text">需要同步<br>多端访问</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-arrow">↓</div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-node primary">
+                        <div class="flow-step">Step 2</div>
+                        <div class="flow-text">计算基础成本</div>
+                    </div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-arrow">↓</div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-node secondary" style="margin-right: 20px;">
+                        <div class="flow-text">🍎 苹果生态<br><small>设备 + 开发者账号</small></div>
+                    </div>
+                    <div class="flow-node secondary" style="margin-right: 20px;">
+                        <div class="flow-text">🌐 Web 端<br><small>域名 + 服务器(可选)</small></div>
+                    </div>
+                    <div class="flow-node secondary">
+                        <div class="flow-text">💬 小程序<br><small>认证费 + 备案</small></div>
+                    </div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-arrow">↓</div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-node primary">
+                        <div class="flow-step">Step 3</div>
+                        <div class="flow-text">选择部署方案</div>
+                    </div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-arrow">↓</div>
+                </div>
+                
+                <div class="flow-row">
+                    <div class="flow-node tertiary">
+                        <div class="flow-text">✨ GitHub + Vercel<br><small>前端项目首选</small></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 核心金句 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection('quotes')">
+                <div class="section-header-left">
+                    <div class="section-icon">💎</div>
+                    <div class="section-title-group">
+                        <h3 class="section-title">核心金句</h3>
+                        <span class="section-meta">来自实战的智慧结晶</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">精选本期课程最具启发性的观点...</div>
+            <div class="section-content" id="quotes">
+                <div class="quote-card">
+                    <p class="quote-text">做商业化产品第一步是先算账，不是先写代码。</p>
+                    <p class="quote-author">—— 关于产品开发的第一原则</p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-blue);">
+                    <p class="quote-text">如果你不是设计师，你做的其实是一个抽卡游戏。所有的提示词只是增加你抽到好设计的概率。</p>
+                    <p class="quote-author" style="color: var(--accent-blue);">—— 关于 AI 辅助设计的本质</p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-green);">
+                    <p class="quote-text">低代码平台主打的就是省心。所有服务器运维的事情都是平台解决，你只管开发产品。</p>
+                    <p class="quote-author" style="color: var(--accent-green);">—— 关于技术选型的智慧</p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-orange);">
+                    <p class="quote-text">Git 命令记不住？那就别记。用 GitHub Desktop，点一下就能提交，懒人福音。</p>
+                    <p class="quote-author" style="color: var(--accent-orange);">—— 关于工具选择的务实态度</p>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-cyan);">
+                    <p class="quote-text">一旦涉及前后端和数据库，成本不是数倍递增，而是几何倍递增。</p>
+                    <p class="quote-author" style="color: var(--accent-cyan);">—— 关于复杂度的深刻认知</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 成本清单 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection('costs')">
+                <div class="section-header-left">
+                    <div class="section-icon">💸</div>
+                    <div class="section-title-group">
+                        <h3 class="section-title">产品发布成本全景图</h3>
+                        <span class="section-meta">开发前必须搞清楚的账</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从苹果到微信，各平台成本一览...</div>
+            <div class="section-content" id="costs">
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>平台</th>
+                            <th>必要成本</th>
+                            <th>隐性门槛</th>
+                            <th>成本等级</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--text-primary);">🍎 App Store</strong></td>
+                            <td>
+                                <span class="hl-data">99美金/年</span> 开发者账号<br>
+                                <span class="hl-data">¥2,800+</span> Mac 设备
+                            </td>
+                            <td>必须有苹果设备才能开发</td>
+                            <td><span class="cost-badge high">高</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--text-primary);">🤖 Google Play</strong></td>
+                            <td><span class="hl-data">5美金</span> 一次性</td>
+                            <td>首次审核约7天</td>
+                            <td><span class="cost-badge free">低</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--text-primary);">💬 微信小程序</strong></td>
+                            <td><span class="hl-data">¥300</span> 认证费</td>
+                            <td>需要企业或个体户资质备案</td>
+                            <td><span class="cost-badge paid">中</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--text-primary);">🌐 Web 端 (Vercel)</strong></td>
+                            <td><span class="hl-data">¥0</span> 小项目免费</td>
+                            <td>国内访问可能受限</td>
+                            <td><span class="cost-badge free">免费</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--text-primary);">📱 安卓各商店</strong></td>
+                            <td>大多免费</td>
+                            <td>需逐个上架华为、小米、OPPO等<br>鸿蒙需单独开发</td>
+                            <td><span class="cost-badge paid">繁琐</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">⚠️</div>
+                        <div class="insight-title">苹果税</div>
+                        <div class="insight-desc">App Store 内购抽成 <span class="hl-key">30%</span>，这意味着用户付费100元，你只能拿到70元。</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">🔒</div>
+                        <div class="insight-title">域名备案</div>
+                        <div class="insight-desc">国内商业化必须备案，需要 <span class="hl-warn">个体户或企业资质</span>。淘宝有专门的备案服务。</div>
+                    </div>
+                    <div class="insight-card">
+                        <div class="insight-icon">💡</div>
+                        <div class="insight-title">省钱妙招</div>
+                        <div class="insight-desc">用 <span class="hl-tip">飞书</span> 做数据同步，成本转嫁给平台。用 <span class="hl-tip">Vercel</span> 白嫖前端部署。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 部署实战 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection('deploy')">
+                <div class="section-header-left">
+                    <div class="section-icon">🚀</div>
+                    <div class="section-title-group">
+                        <h3 class="section-title">GitHub + Vercel 部署实战</h3>
+                        <span class="section-meta">30分钟搞定产品上线</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">最简单的前端项目部署方案...</div>
+            <div class="section-content" id="deploy">
+                <div class="steps-timeline">
+                    <div class="step-item">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4 class="step-title">本地代码验证</h4>
+                            <p class="step-desc">确保项目在本地能正常运行，并完成打包构建。</p>
+                            <div class="step-code">
+                                npm run dev &nbsp;&nbsp;&nbsp;# 启动开发服务器<br>
+                                npm run build &nbsp;# 构建生产包，生成 dist 目录
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4 class="step-title">推送到 GitHub</h4>
+                            <p class="step-desc">使用 <span class="hl-tip">GitHub Desktop</span> 可视化操作，告别命令行恐惧。</p>
+                            <div class="step-code">
+                                # 或者命令行方式<br>
+                                git add .<br>
+                                git commit -m "v1.0 初始版本"<br>
+                                git push origin main
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4 class="step-title">Vercel 部署</h4>
+                            <p class="step-desc">用 GitHub 账号注册 Vercel，自动绑定仓库。点击 Import 导入项目。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <h4 class="step-title">配置项目根目录</h4>
+                            <p class="step-desc">如果代码不在仓库根目录，需要在 Root Directory 中指定正确路径。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <h4 class="step-title">自动化部署</h4>
+                            <p class="step-desc"><span class="hl-quote">GitHub 提交后，Vercel 会自动检测并重新部署</span>，这是这套组合最省心的地方。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quote-card" style="border-left-color: var(--accent-green); margin-top: 30px;">
+                    <p class="quote-text">只要 GitHub 提交了修改，Vercel 自动就会把你提交的修改拉过来部署。你只管写代码，部署的事交给自动化。</p>
+                    <p class="quote-author" style="color: var(--accent-green);">—— 这就是现代前端开发的幸福</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 产品类型决策 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection('products')">
+                <div class="section-header-left">
+                    <div class="section-icon">🎯</div>
+                    <div class="section-title-group">
+                        <h3 class="section-title">产品类型 × 技术选型</h3>
+                        <span class="section-meta">复杂度决定成本</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">不同产品类型的技术方案对比...</div>
+            <div class="section-content" id="products">
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">📱</div>
+                        <div class="insight-title">本地工具类</div>
+                        <div class="insight-desc">
+                            <strong>特征：</strong>数据存本地，不需要云端同步<br><br>
+                            <strong>案例：</strong>小猫补光灯、本地去水印、滤镜工具<br><br>
+                            <strong>成本：</strong><span class="hl-quote">仅需开发者账号</span>，服务器成本为零
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">☁️</div>
+                        <div class="insight-title">云端同步类</div>
+                        <div class="insight-desc">
+                            <strong>特征：</strong>多设备数据同步，需要服务器<br><br>
+                            <strong>案例：</strong>iCloud 照片同步、笔记应用<br><br>
+                            <strong>成本：</strong><span class="hl-warn">服务器 + 存储 + 带宽</span>，几何倍增
+                        </div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">👥</div>
+                        <div class="insight-title">社交平台类</div>
+                        <div class="insight-desc">
+                            <strong>特征：</strong>用户互动、内容审核、推荐系统<br><br>
+                            <strong>案例：</strong>即刻、微博<br><br>
+                            <strong>成本：</strong><span class="hl-key">最高复杂度</span>，还需防攻击
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="quote-card" style="margin-top: 30px; border-left-color: var(--accent-orange);">
+                    <p class="quote-text">我为什么做飞书提示词而不做云端提示词？原因很简单——我不想担任何成本。用飞书的话，成本是转嫁给飞书的，不是转嫁给我。</p>
+                    <p class="quote-author" style="color: var(--accent-orange);">—— 借力打力的产品思维</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 专家点评 -->
+        <section class="experts-section" id="experts">
+            <div class="section-label">
+                <span>科技领袖视角</span>
+            </div>
+            <h2 class="mindmap-title">如果他们来点评这堂课...</h2>
+            
+            <div class="experts-grid">
+                <div class="expert-card" data-expert="sam">
+                    <div class="expert-header">
+                        <div class="expert-avatar">S</div>
+                        <div class="expert-info">
+                            <h4>Sam Altman</h4>
+                            <span>OpenAI CEO</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote">
+                        这堂课揭示了一个关键认知：<strong>AI 时代的创业门槛正在被重新定义</strong>。当部署成本趋近于零，真正的护城河变成了产品洞察和用户理解。"先算账再开发"这个建议太重要了——在 AI 能快速生成代码的时代，<strong>时间成本比金钱成本更值得计算</strong>。
+                    </p>
+                    <span class="expert-tag">🎯 产品洞察</span>
+                </div>
+                
+                <div class="expert-card" data-expert="jensen">
+                    <div class="expert-header">
+                        <div class="expert-avatar">J</div>
+                        <div class="expert-info">
+                            <h4>Jensen Huang</h4>
+                            <span>NVIDIA CEO</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote">
+                        有意思的是，课程提到"本地应用不需要服务器"——这恰恰是边缘计算的价值所在。<strong>未来越来越多的 AI 能力会下沉到设备端</strong>。独立开发者应该关注：当手机 NPU 算力足够强，很多需要云端的功能都可以本地化。<strong>谁掌握了端侧 AI，谁就掌握了低成本高毛利的秘密</strong>。
+                    </p>
+                    <span class="expert-tag">⚡ 算力趋势</span>
+                </div>
+                
+                <div class="expert-card" data-expert="pony">
+                    <div class="expert-header">
+                        <div class="expert-avatar">马</div>
+                        <div class="expert-info">
+                            <h4>马化腾</h4>
+                            <span>腾讯 CEO</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote">
+                        课程提到安卓上架需要逐个应用商店分发，这确实是国内开发者的痛点。<strong>微信小程序当初设计的初衷之一，就是解决碎片化分发问题</strong>。不过300元认证费和备案要求，本质上是在筛选认真做事的开发者。<strong>生态的健康需要一定门槛</strong>。
+                    </p>
+                    <span class="expert-tag">🌐 生态思维</span>
+                </div>
+                
+                <div class="expert-card" data-expert="jack">
+                    <div class="expert-header">
+                        <div class="expert-avatar">马</div>
+                        <div class="expert-info">
+                            <h4>马云</h4>
+                            <span>阿里巴巴创始人</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote">
+                        "流量变现 vs 产品收费"这个思考框架很务实。小猫补光灯的案例说明一个道理：<strong>免费产品+流量思维，往往比直接收费更能建立影响力</strong>。但年轻人要想清楚——你是想赚眼前的钱，还是想建立长期的个人品牌？<strong>很多时候，不着急赚钱的人反而赚到了大钱</strong>。
+                    </p>
+                    <span class="expert-tag">💰 商业哲学</span>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 实战干货 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection('tips')">
+                <div class="section-header-left">
+                    <div class="section-icon">🔧</div>
+                    <div class="section-title-group">
+                        <h3 class="section-title">实战避坑指南</h3>
+                        <span class="section-meta">从踩坑中提炼的经验</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">血泪教训总结...</div>
+            <div class="section-content" id="tips">
+                <div class="insights-grid">
+                    <div class="insight-card">
+                        <div class="insight-icon">🔥</div>
+                        <div class="insight-title">跨域问题 (CORS)</div>
+                        <div class="insight-desc">本地开发用 <span class="hl-data">127.0.0.1</span>，上线后每个服务域名都不同。<span class="hl-key">必须修改所有 API 地址</span>，否则前后端连不上。</div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">📁</div>
+                        <div class="insight-title">服务器目录</div>
+                        <div class="insight-desc">服务器有<span class="hl-tip">主空间</span>和<span class="hl-tip">硬盘空间</span>之分。文件存错位置会触发预警，严重时直接崩溃。</div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🎯</div>
+                        <div class="insight-title">Root Directory</div>
+                        <div class="insight-desc">Vercel 部署时，如果代码不在仓库根目录，必须在设置中指定正确的 <span class="hl-warn">Root Directory</span>。</div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🔐</div>
+                        <div class="insight-title">代码隐私</div>
+                        <div class="insight-desc">GitHub 建仓库时可选 <span class="hl-tip">Private</span>。商业项目务必设为私有，防止代码泄露。</div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🐳</div>
+                        <div class="insight-title">Docker 容器</div>
+                        <div class="insight-desc">公司多人共用服务器时，一般要求用 Docker 部署。<span class="hl-quote">个人服务器可以直接部署，更简单</span>。</div>
+                    </div>
+                    
+                    <div class="insight-card">
+                        <div class="insight-icon">🔄</div>
+                        <div class="insight-title">版本管理习惯</div>
+                        <div class="insight-desc">每开发一个功能就 commit 一次。<span class="hl-key">写着写着代码乱了想回退，没版本管理就只能哭</span>。</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 工具推荐 -->
+        <section class="content-section">
+            <div class="section-header" onclick="toggleSection('tools')">
+                <div class="section-header-left">
+                    <div class="section-icon">🛠️</div>
+                    <div class="section-title-group">
+                        <h3 class="section-title">推荐工具清单</h3>
+                        <span class="section-meta">独立开发者的武器库</span>
+                    </div>
+                </div>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">高效开发必备工具...</div>
+            <div class="section-content" id="tools">
+                <table class="cost-table">
+                    <thead>
+                        <tr>
+                            <th>工具</th>
+                            <th>用途</th>
+                            <th>推荐理由</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong style="color: var(--accent-purple);">GitHub Desktop</strong></td>
+                            <td>代码版本管理</td>
+                            <td><span class="hl-quote">可视化操作，不用记命令</span>，懒人福音</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-blue);">Vercel</strong></td>
+                            <td>前端项目部署</td>
+                            <td><span class="hl-tip">小项目免费</span>，自动化部署，与 GitHub 无缝衔接</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-green);">秒搭 / Enter</strong></td>
+                            <td>低代码开发平台</td>
+                            <td>打包帮你搞定域名、服务器、备案，<span class="hl-quote">省心</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-cyan);">Superbase</strong></td>
+                            <td>数据库服务</td>
+                            <td>免费额度够用，超出可多开账户白嫖</td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-orange);">AI Studio (Google)</strong></td>
+                            <td>快速原型开发</td>
+                            <td>上传设计图直接生成代码，<span class="hl-tip">前端设计神器</span></td>
+                        </tr>
+                        <tr>
+                            <td><strong style="color: var(--accent-pink);">Pinterest</strong></td>
+                            <td>设计灵感参考</td>
+                            <td>找好看的 UI 截图，让 AI 复刻</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-brand">WaytoAGI</div>
+            <p>Vibe Coding 实战训练营 · 第四期</p>
+            <p style="margin-top: 8px; font-size: 0.875rem;">2026.01.24 · 产品部署实战</p>
+        </footer>
+    </div>
+    
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+    
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '☀️';
+            }
+        }
+        
+        // 折叠/展开所有
+        function toggleAll() {
+            const sections = document.querySelectorAll('.content-section');
+            const anyExpanded = Array.from(sections).some(s => !s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (anyExpanded) {
+                    s.classList.add('collapsed');
+                } else {
+                    s.classList.remove('collapsed');
+                }
+            });
+        }
+        
+        // 折叠/展开单个
+        function toggleSection(id) {
+            const section = document.getElementById(id).closest('.content-section');
+            section.classList.toggle('collapsed');
+        }
+        
+        // 滚动到专家区
+        function scrollToExperts() {
+            document.getElementById('experts').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 滚动到思维导图
+        function scrollToMindmap() {
+            document.getElementById('mindmap').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 入场动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.content-section, .mindmap-section, .experts-section').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+        
+        // 元认知节点悬浮效果
+        document.querySelectorAll('.meta-node:not(.center-node)').forEach((node, index) => {
+            node.style.animationDelay = `${index * 0.1}s`;
+        });
+    </script>
+</body>
+</html>
