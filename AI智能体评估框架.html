@@ -1,0 +1,2074 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI智能体评估框架：从理论到实践</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a24;
+            --text-primary: #f0f0f5;
+            --text-secondary: #a0a0b0;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #22c55e;
+            --accent-orange: #f97316;
+            --accent-pink: #ec4899;
+            --accent-yellow: #eab308;
+            --gradient-1: linear-gradient(135deg, #00d4ff, #a855f7);
+            --gradient-2: linear-gradient(135deg, #22c55e, #00d4ff);
+            --gradient-3: linear-gradient(135deg, #f97316, #ec4899);
+        }
+
+        .light-mode {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* 大白话解释样式 */
+        .plain-explain {
+            color: var(--accent-yellow);
+            font-size: 0.85em;
+            font-weight: normal;
+            opacity: 0.9;
+        }
+
+        .term-box {
+            display: inline-block;
+            background: rgba(168, 85, 247, 0.15);
+            border: 1px dashed var(--accent-purple);
+            border-radius: 6px;
+            padding: 0.1rem 0.5rem;
+            margin: 0.1rem 0;
+        }
+
+        .term-box .term {
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .term-box .explain {
+            color: var(--accent-yellow);
+            font-size: 0.9em;
+        }
+
+        /* 顶部导航 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .light-mode .nav-bar {
+            background: rgba(248, 250, 252, 0.9);
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .nav-logo {
+            font-size: 1.2rem;
+            font-weight: 700;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg-card);
+            color: var(--text-primary);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 英雄区域 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 6rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 30%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 70%, rgba(168, 85, 247, 0.1) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-2%, -2%) rotate(180deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: var(--gradient-1);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(0, 212, 255, 0); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, #00d4ff 50%, #a855f7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .light-mode .hero h1 {
+            background: linear-gradient(135deg, #1e293b 0%, #0066cc 50%, #7c3aed 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            margin-bottom: 3rem;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 章节样式 */
+        .section {
+            padding: 5rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.3rem 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid var(--accent-cyan);
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 金句卡片 */
+        .quote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .quote-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .quote-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 30px 60px rgba(0, 212, 255, 0.15);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 8rem;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+            color: var(--accent-cyan);
+        }
+
+        .quote-text {
+            font-size: 1.2rem;
+            font-weight: 500;
+            line-height: 1.7;
+            position: relative;
+            z-index: 1;
+            margin-bottom: 1.5rem;
+        }
+
+        .quote-source {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .quote-source::before {
+            content: '';
+            width: 30px;
+            height: 2px;
+            background: var(--gradient-1);
+        }
+
+        /* 核心概念网格 */
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .concept-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+
+        .concept-card:hover {
+            border-color: var(--accent-cyan);
+            transform: translateY(-5px);
+        }
+
+        .concept-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .concept-card:nth-child(1) .concept-icon { background: rgba(0, 212, 255, 0.2); }
+        .concept-card:nth-child(2) .concept-icon { background: rgba(168, 85, 247, 0.2); }
+        .concept-card:nth-child(3) .concept-icon { background: rgba(34, 197, 94, 0.2); }
+        .concept-card:nth-child(4) .concept-icon { background: rgba(249, 115, 22, 0.2); }
+        .concept-card:nth-child(5) .concept-icon { background: rgba(236, 72, 153, 0.2); }
+        .concept-card:nth-child(6) .concept-icon { background: rgba(234, 179, 8, 0.2); }
+
+        .concept-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .concept-en {
+            font-size: 0.8rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+        }
+
+        .concept-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .concept-plain {
+            margin-top: 0.8rem;
+            padding: 0.8rem;
+            background: rgba(234, 179, 8, 0.1);
+            border-left: 3px solid var(--accent-yellow);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.85rem;
+            color: var(--accent-yellow);
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+            overflow: hidden;
+        }
+
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .mindmap-svg {
+            width: 100%;
+            height: 500px;
+        }
+
+        /* 评估框架可视化 */
+        .framework-visual {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        @media (max-width: 900px) {
+            .framework-visual {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .framework-column {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .framework-column-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .framework-column-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .col-code .framework-column-icon { background: var(--gradient-2); }
+        .col-model .framework-column-icon { background: var(--gradient-1); }
+        .col-human .framework-column-icon { background: var(--gradient-3); }
+
+        .framework-column-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+        }
+
+        .framework-column-subtitle {
+            font-size: 0.8rem;
+            color: var(--accent-yellow);
+            margin-top: 0.3rem;
+        }
+
+        .framework-list {
+            list-style: none;
+        }
+
+        .framework-list li {
+            padding: 0.8rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.8rem;
+        }
+
+        .framework-list li:last-child {
+            border-bottom: none;
+        }
+
+        .list-bullet {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-top: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .col-code .list-bullet { background: var(--accent-green); }
+        .col-model .list-bullet { background: var(--accent-cyan); }
+        .col-human .list-bullet { background: var(--accent-orange); }
+
+        .list-explain {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--accent-yellow);
+            margin-top: 0.3rem;
+        }
+
+        .pros-cons {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 12px;
+        }
+
+        .light-mode .pros-cons {
+            background: rgba(0,0,0,0.05);
+        }
+
+        .pro-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: rgba(34, 197, 94, 0.2);
+            color: var(--accent-green);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .con-tag {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            background: rgba(249, 115, 22, 0.2);
+            color: var(--accent-orange);
+            border-radius: 4px;
+            font-size: 0.75rem;
+            margin-right: 0.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        /* 专家评论区 */
+        .expert-section {
+            background: var(--bg-secondary);
+            padding: 5rem 0;
+        }
+
+        .expert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+        }
+
+        .expert-card {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .expert-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(0, 212, 255, 0.1);
+        }
+
+        .expert-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .expert-card:nth-child(1)::after { background: var(--gradient-1); }
+        .expert-card:nth-child(2)::after { background: var(--gradient-2); }
+        .expert-card:nth-child(3)::after { background: var(--gradient-3); }
+        .expert-card:nth-child(4)::after { background: linear-gradient(135deg, #eab308, #22c55e); }
+
+        .expert-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .expert-card:nth-child(1) .expert-avatar { background: rgba(0, 212, 255, 0.2); }
+        .expert-card:nth-child(2) .expert-avatar { background: rgba(168, 85, 247, 0.2); }
+        .expert-card:nth-child(3) .expert-avatar { background: rgba(34, 197, 94, 0.2); }
+        .expert-card:nth-child(4) .expert-avatar { background: rgba(234, 179, 8, 0.2); }
+
+        .expert-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .expert-title {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+        }
+
+        .expert-quote {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-style: italic;
+        }
+
+        .expert-highlight {
+            color: var(--text-primary);
+            font-weight: 600;
+            font-style: normal;
+        }
+
+        /* 干货清单 */
+        .insight-list {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+        }
+
+        .insight-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 1.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            align-items: flex-start;
+        }
+
+        .insight-item:last-child {
+            border-bottom: none;
+        }
+
+        .insight-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .insight-content h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--accent-cyan);
+        }
+
+        .insight-content p {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 元认知图 */
+        .meta-cognition {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+        }
+
+        .meta-title {
+            text-align: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .meta-title span {
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+
+        @media (max-width: 900px) {
+            .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .meta-column {
+            text-align: center;
+        }
+
+        .meta-column-title {
+            font-size: 1rem;
+            color: var(--accent-purple);
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .meta-item {
+            background: rgba(168, 85, 247, 0.1);
+            border: 1px solid rgba(168, 85, 247, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            font-size: 0.9rem;
+        }
+
+        .meta-arrow {
+            font-size: 2rem;
+            color: var(--accent-purple);
+            margin: 1rem 0;
+        }
+
+        /* 流程图 */
+        .process-flow {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin: 3rem 0;
+            padding: 2rem;
+            background: var(--bg-card);
+            border-radius: 24px;
+        }
+
+        .process-step {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+            position: relative;
+        }
+
+        .process-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin: 0 auto 1rem;
+            background: var(--gradient-1);
+        }
+
+        .process-label {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .process-connector {
+            width: 40px;
+            height: 2px;
+            background: var(--gradient-1);
+            flex-shrink: 0;
+        }
+
+        @media (max-width: 768px) {
+            .process-connector {
+                display: none;
+            }
+        }
+
+        /* 交互式标签页 */
+        .tabs-container {
+            margin: 3rem 0;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            background: var(--bg-card);
+            color: var(--text-secondary);
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+        }
+
+        .tab-btn:hover {
+            color: var(--text-primary);
+        }
+
+        .tab-btn.active {
+            background: var(--gradient-1);
+            color: #fff;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* 可折叠面板 */
+        .accordion {
+            margin: 2rem 0;
+        }
+
+        .accordion-item {
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .accordion-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255,255,255,0.02);
+        }
+
+        .accordion-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .accordion-icon {
+            width: 35px;
+            height: 35px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .accordion-item:nth-child(1) .accordion-icon { background: rgba(0, 212, 255, 0.2); }
+        .accordion-item:nth-child(2) .accordion-icon { background: rgba(168, 85, 247, 0.2); }
+        .accordion-item:nth-child(3) .accordion-icon { background: rgba(34, 197, 94, 0.2); }
+        .accordion-item:nth-child(4) .accordion-icon { background: rgba(249, 115, 22, 0.2); }
+
+        .accordion-arrow {
+            transition: transform 0.3s;
+        }
+
+        .accordion-item.open .accordion-arrow {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .accordion-item.open .accordion-content {
+            max-height: 1000px;
+        }
+
+        .accordion-body {
+            padding: 0 2rem 2rem;
+            color: var(--text-secondary);
+        }
+
+        /* 指标对比 */
+        .metrics-compare {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .metrics-compare {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .metric-card h3 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-card:nth-child(1) h3 { color: var(--accent-cyan); }
+        .metric-card:nth-child(2) h3 { color: var(--accent-purple); }
+
+        .metric-card p {
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+        }
+
+        .metric-plain {
+            background: rgba(234, 179, 8, 0.1);
+            border: 1px dashed var(--accent-yellow);
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+            color: var(--accent-yellow);
+        }
+
+        .metric-visual {
+            height: 120px;
+            position: relative;
+            margin: 1.5rem 0;
+        }
+
+        .metric-bar {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            border-radius: 8px 8px 0 0;
+            transition: height 1s ease;
+        }
+
+        .metric-card:nth-child(1) .metric-bar { background: var(--gradient-2); }
+        .metric-card:nth-child(2) .metric-bar { background: var(--gradient-1); }
+
+        .metric-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 3rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: var(--gradient-1);
+        }
+
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+        }
+
+        .timeline-dot {
+            position: absolute;
+            left: -33px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 3px solid var(--accent-cyan);
+        }
+
+        .timeline-content {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .timeline-step {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 总结卡片 */
+        .summary-card {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1), rgba(168, 85, 247, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+            text-align: center;
+        }
+
+        .summary-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .summary-text {
+            font-size: 1.1rem;
+            line-height: 2;
+            color: var(--text-secondary);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .summary-text strong {
+            color: var(--accent-cyan);
+        }
+
+        /* 页脚 */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            border: none;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+            z-index: 999;
+        }
+
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.4);
+        }
+
+        /* 高亮文本 */
+        .hl-cyan { color: var(--accent-cyan); font-weight: 600; }
+        .hl-purple { color: var(--accent-purple); font-weight: 600; }
+        .hl-green { color: var(--accent-green); font-weight: 600; }
+        .hl-orange { color: var(--accent-orange); font-weight: 600; }
+        .hl-pink { color: var(--accent-pink); font-weight: 600; }
+        .hl-yellow { color: var(--accent-yellow); font-weight: 600; }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero-stats {
+                gap: 1.5rem;
+            }
+            
+            .section {
+                padding: 3rem 0;
+            }
+            
+            .mindmap-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-logo">🤖 AI Agent Evals</div>
+        <div class="nav-actions">
+            <button class="theme-toggle" onclick="toggleTheme()" title="切换主题">🌙</button>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <header class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">🔬 Anthropic 官方指南</div>
+            <h1>AI智能体评估框架<br>从理论到实践</h1>
+            <p class="hero-subtitle">
+                没有评估体系的AI开发，就像蒙眼开车——你永远不知道下一个转弯会撞上什么。本文深度解析如何构建可靠的Agent评估系统。
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">评估器类型</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">智能体类型</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">核心步骤</div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- 金句板块 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">💎 核心洞见</span>
+                <h2 class="section-title">文章精华金句</h2>
+                <p class="section-desc">来自Anthropic多年实战经验的深刻总结</p>
+            </div>
+            
+            <div class="quote-grid">
+                <div class="quote-card">
+                    <p class="quote-text">
+                        <span class="hl-cyan">好的评估让团队更有信心地发布AI智能体。</span>没有评估，你很容易陷入被动循环——只有在生产环境<span class="plain-explain">（就是用户真正在用的线上系统）</span>才发现问题，而修复一个故障又会引发另一个。
+                    </p>
+                    <div class="quote-source">关于评估的核心价值</div>
+                </div>
+                
+                <div class="quote-card">
+                    <p class="quote-text">
+                        使智能体有用的能力——<span class="hl-purple">自主性、智能性、灵活性</span>——也正是让它们更难评估的原因。<span class="plain-explain">（越聪明的AI越难考，因为它可能用你想不到的方式解题）</span>
+                    </p>
+                    <div class="quote-source">智能体评估的悖论</div>
+                </div>
+                
+                <div class="quote-card">
+                    <p class="quote-text">
+                        <span class="hl-green">评估驱动开发</span><span class="plain-explain">（先写考题再开发功能）</span>：在智能体能够实现功能之前，就构建评估来定义计划中的能力，然后迭代直到智能体表现良好。
+                    </p>
+                    <div class="quote-source">最佳实践方法论</div>
+                </div>
+                
+                <div class="quote-card">
+                    <p class="quote-text">
+                        团队常常延迟构建评估，因为他们认为需要数百个测试用例<span class="plain-explain">（考题）</span>。实际上，<span class="hl-orange">20-50个来自真实失败的简单任务就是一个很好的开始。</span>
+                    </p>
+                    <div class="quote-source">启动评估的正确姿势</div>
+                </div>
+                
+                <div class="quote-card">
+                    <p class="quote-text">
+                        有一种常见的本能是检查智能体是否按照特定步骤执行。我们发现这种方法过于僵化。<span class="hl-pink">评估智能体产出了什么，而非它走过的路径。</span><span class="plain-explain">（只看结果对不对，别管它怎么做到的）</span>
+                    </p>
+                    <div class="quote-source">评估器设计哲学</div>
+                </div>
+                
+                <div class="quote-card">
+                    <p class="quote-text">
+                        就像安全工程中的<span class="hl-yellow">瑞士奶酪模型</span><span class="plain-explain">（每层防护都有漏洞，但多层叠加后漏洞就对不齐了）</span>——没有单一的评估层能捕获所有问题。多种方法组合，一层漏掉的失败会被另一层捕获。
+                    </p>
+                    <div class="quote-source">多层防御思想</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心概念 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">📚 基础概念</span>
+                <h2 class="section-title">评估体系核心术语</h2>
+                <p class="section-desc">理解这些概念是构建评估系统的基础（每个都有大白话解释）</p>
+            </div>
+            
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <div class="concept-icon">📋</div>
+                    <h3 class="concept-title">任务 Task</h3>
+                    <div class="concept-en">也叫 Problem 或 Test Case</div>
+                    <p class="concept-desc">单个测试，包含定义好的输入和成功标准</p>
+                    <div class="concept-plain">🗣️ 大白话：就是给AI出的一道考题，比如"帮我写一段代码把图片变成灰色"</div>
+                </div>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">🔄</div>
+                    <h3 class="concept-title">试验 Trial</h3>
+                    <div class="concept-en">一次尝试</div>
+                    <p class="concept-desc">对任务的一次尝试。由于模型输出每次运行都会变化，需要多次试验产生一致结果</p>
+                    <div class="concept-plain">🗣️ 大白话：让AI做同一道题做很多遍，因为AI每次答案可能不一样，多试几次才知道它到底行不行</div>
+                </div>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">⚖️</div>
+                    <h3 class="concept-title">评估器 Grader</h3>
+                    <div class="concept-en">打分器</div>
+                    <p class="concept-desc">对智能体性能某个方面进行评分的逻辑。一个任务可以有多个评估器</p>
+                    <div class="concept-plain">🗣️ 大白话：就是"阅卷老师"，负责给AI的答案打分，判断对不对、好不好</div>
+                </div>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">📝</div>
+                    <h3 class="concept-title">轨迹 Transcript</h3>
+                    <div class="concept-en">也叫 Trace 或 Trajectory</div>
+                    <p class="concept-desc">一次试验的完整记录：输出、工具调用、推理、中间结果及所有交互</p>
+                    <div class="concept-plain">🗣️ 大白话：AI做题的"草稿纸"，记录了它每一步都干了啥，怎么想的，用了什么工具</div>
+                </div>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">🎯</div>
+                    <h3 class="concept-title">结果 Outcome</h3>
+                    <div class="concept-en">最终状态</div>
+                    <p class="concept-desc">试验结束时环境的最终状态。比如订票智能体说"已预订"，但结果是数据库中是否真的存在预订</p>
+                    <div class="concept-plain">🗣️ 大白话：AI说它完成了不算数，得看实际效果——它说帮你订了机票，得真的查到订单才行</div>
+                </div>
+                
+                <div class="concept-card">
+                    <div class="concept-icon">🏗️</div>
+                    <h3 class="concept-title">评估框架 Harness</h3>
+                    <div class="concept-en">Evaluation Harness</div>
+                    <p class="concept-desc">端到端运行评估的基础设施：提供指令和工具，并发运行任务，记录步骤，评分输出，聚合结果</p>
+                    <div class="concept-plain">🗣️ 大白话：自动化的"考场系统"，能同时让很多AI做题、自动批改、统计分数</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">🧠 思维导图</span>
+                <h2 class="section-title">评估体系全景图</h2>
+            </div>
+            
+            <div class="mindmap-container">
+                <svg class="mindmap-svg" viewBox="0 0 1000 500">
+                    <!-- 中心节点 -->
+                    <defs>
+                        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#00d4ff;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#a855f7;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#00d4ff;stop-opacity:1" />
+                        </linearGradient>
+                        <linearGradient id="grad3" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:#f97316;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ec4899;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    
+                    <!-- 连接线 -->
+                    <path d="M500,250 Q350,150 200,100" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.5"/>
+                    <path d="M500,250 Q350,350 200,400" stroke="url(#grad2)" stroke-width="2" fill="none" opacity="0.5"/>
+                    <path d="M500,250 Q650,150 800,100" stroke="url(#grad3)" stroke-width="2" fill="none" opacity="0.5"/>
+                    <path d="M500,250 Q650,350 800,400" stroke="url(#grad1)" stroke-width="2" fill="none" opacity="0.5"/>
+                    
+                    <!-- 中心 -->
+                    <circle cx="500" cy="250" r="60" fill="url(#grad1)" opacity="0.9"/>
+                    <text x="500" y="245" text-anchor="middle" fill="white" font-size="14" font-weight="bold">AI智能体</text>
+                    <text x="500" y="265" text-anchor="middle" fill="white" font-size="14" font-weight="bold">评估框架</text>
+                    
+                    <!-- 左上：评估器类型 -->
+                    <rect x="120" y="60" width="160" height="80" rx="12" fill="#1a1a24" stroke="#00d4ff" stroke-width="2"/>
+                    <text x="200" y="90" text-anchor="middle" fill="#00d4ff" font-size="13" font-weight="bold">评估器类型</text>
+                    <text x="200" y="108" text-anchor="middle" fill="#eab308" font-size="10">（给AI打分的工具）</text>
+                    <text x="200" y="128" text-anchor="middle" fill="#a0a0b0" font-size="11">代码 | 模型 | 人工</text>
+                    
+                    <!-- 左下：智能体类型 -->
+                    <rect x="120" y="360" width="160" height="80" rx="12" fill="#1a1a24" stroke="#22c55e" stroke-width="2"/>
+                    <text x="200" y="390" text-anchor="middle" fill="#22c55e" font-size="13" font-weight="bold">智能体类型</text>
+                    <text x="200" y="408" text-anchor="middle" fill="#eab308" font-size="10">（不同用途的AI）</text>
+                    <text x="200" y="428" text-anchor="middle" fill="#a0a0b0" font-size="10">编码 | 对话 | 研究 | 电脑操作</text>
+                    
+                    <!-- 右上：评估指标 -->
+                    <rect x="720" y="60" width="160" height="80" rx="12" fill="#1a1a24" stroke="#f97316" stroke-width="2"/>
+                    <text x="800" y="90" text-anchor="middle" fill="#f97316" font-size="13" font-weight="bold">核心指标</text>
+                    <text x="800" y="108" text-anchor="middle" fill="#eab308" font-size="10">（怎么算分数）</text>
+                    <text x="800" y="128" text-anchor="middle" fill="#a0a0b0" font-size="11">pass@k | pass^k</text>
+                    
+                    <!-- 右下：实践路线 -->
+                    <rect x="720" y="360" width="160" height="80" rx="12" fill="#1a1a24" stroke="#a855f7" stroke-width="2"/>
+                    <text x="800" y="390" text-anchor="middle" fill="#a855f7" font-size="13" font-weight="bold">落地路线图</text>
+                    <text x="800" y="408" text-anchor="middle" fill="#eab308" font-size="10">（具体怎么做）</text>
+                    <text x="800" y="428" text-anchor="middle" fill="#a0a0b0" font-size="11">8步走 · 从0到1</text>
+                    
+                    <!-- 二级节点 - 左 -->
+                    <rect x="30" y="150" width="100" height="40" rx="8" fill="#1a1a24" stroke="#00d4ff" stroke-width="1" opacity="0.8"/>
+                    <text x="80" y="175" text-anchor="middle" fill="#00d4ff" font-size="10">字符串匹配</text>
+                    
+                    <rect x="30" y="200" width="100" height="40" rx="8" fill="#1a1a24" stroke="#a855f7" stroke-width="1" opacity="0.8"/>
+                    <text x="80" y="225" text-anchor="middle" fill="#a855f7" font-size="10">LLM评判</text>
+                    
+                    <rect x="30" y="250" width="100" height="40" rx="8" fill="#1a1a24" stroke="#22c55e" stroke-width="1" opacity="0.8"/>
+                    <text x="80" y="275" text-anchor="middle" fill="#22c55e" font-size="10">专家审核</text>
+                    
+                    <!-- 二级节点 - 右 -->
+                    <rect x="870" y="150" width="100" height="40" rx="8" fill="#1a1a24" stroke="#f97316" stroke-width="1" opacity="0.8"/>
+                    <text x="920" y="175" text-anchor="middle" fill="#f97316" font-size="10">生产监控</text>
+                    
+                    <rect x="870" y="200" width="100" height="40" rx="8" fill="#1a1a24" stroke="#ec4899" stroke-width="1" opacity="0.8"/>
+                    <text x="920" y="225" text-anchor="middle" fill="#ec4899" font-size="10">A/B测试</text>
+                    
+                    <rect x="870" y="250" width="100" height="40" rx="8" fill="#1a1a24" stroke="#eab308" stroke-width="1" opacity="0.8"/>
+                    <text x="920" y="275" text-anchor="middle" fill="#eab308" font-size="10">用户反馈</text>
+                    
+                    <!-- 连接二级节点 -->
+                    <line x1="200" y1="100" x2="130" y2="170" stroke="#00d4ff" stroke-width="1" opacity="0.3"/>
+                    <line x1="200" y1="100" x2="130" y2="220" stroke="#a855f7" stroke-width="1" opacity="0.3"/>
+                    <line x1="200" y1="100" x2="130" y2="270" stroke="#22c55e" stroke-width="1" opacity="0.3"/>
+                    
+                    <line x1="800" y1="100" x2="870" y2="170" stroke="#f97316" stroke-width="1" opacity="0.3"/>
+                    <line x1="800" y1="100" x2="870" y2="220" stroke="#ec4899" stroke-width="1" opacity="0.3"/>
+                    <line x1="800" y1="100" x2="870" y2="270" stroke="#eab308" stroke-width="1" opacity="0.3"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- 三大评估器类型 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">⚙️ 评估器架构</span>
+                <h2 class="section-title">三大评估器类型详解</h2>
+                <p class="section-desc">有效评估设计的关键是为任务选择正确的"阅卷老师"</p>
+            </div>
+            
+            <div class="framework-visual">
+                <div class="framework-column col-code">
+                    <div class="framework-column-header">
+                        <div class="framework-column-icon">💻</div>
+                        <div>
+                            <h3 class="framework-column-title">代码评估器</h3>
+                            <p class="framework-column-subtitle">🗣️ 用程序自动判对错</p>
+                        </div>
+                    </div>
+                    <ul class="framework-list">
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                字符串匹配（精确、正则、模糊）
+                                <span class="list-explain">→ 看答案里有没有特定的字词</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                单元测试（失败转通过、通过保持通过）
+                                <span class="list-explain">→ 跑一下代码看能不能正常运行</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                静态分析（lint、类型检查、安全扫描）
+                                <span class="list-explain">→ 不运行代码，直接检查写得规不规范</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                结果验证
+                                <span class="list-explain">→ 检查最终效果对不对，比如数据库里有没有记录</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                工具调用验证
+                                <span class="list-explain">→ 看AI有没有用对工具、参数填得对不对</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="pros-cons">
+                        <span class="pro-tag">快速</span>
+                        <span class="pro-tag">便宜</span>
+                        <span class="pro-tag">客观</span>
+                        <span class="pro-tag">可复现</span>
+                        <span class="con-tag">太死板</span>
+                        <span class="con-tag">不够灵活</span>
+                    </div>
+                </div>
+                
+                <div class="framework-column col-model">
+                    <div class="framework-column-header">
+                        <div class="framework-column-icon">🤖</div>
+                        <div>
+                            <h3 class="framework-column-title">模型评估器</h3>
+                            <p class="framework-column-subtitle">🗣️ 用AI给AI打分</p>
+                        </div>
+                    </div>
+                    <ul class="framework-list">
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                基于评分标准的打分（Rubric）
+                                <span class="list-explain">→ 给AI一个打分规则，让它按规则评分</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                自然语言断言
+                                <span class="list-explain">→ 用人话描述"好答案应该是什么样"</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                成对比较
+                                <span class="list-explain">→ 两个答案放一起，让AI说哪个更好</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                基于参考的评估
+                                <span class="list-explain">→ 给个标准答案，让AI比对打分</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                多评审共识
+                                <span class="list-explain">→ 让多个AI评审投票，少数服从多数</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="pros-cons">
+                        <span class="pro-tag">灵活</span>
+                        <span class="pro-tag">可扩展</span>
+                        <span class="pro-tag">懂细微差别</span>
+                        <span class="con-tag">每次结果可能不同</span>
+                        <span class="con-tag">成本较高</span>
+                        <span class="con-tag">需要校准</span>
+                    </div>
+                </div>
+                
+                <div class="framework-column col-human">
+                    <div class="framework-column-header">
+                        <div class="framework-column-icon">👤</div>
+                        <div>
+                            <h3 class="framework-column-title">人工评估器</h3>
+                            <p class="framework-column-subtitle">🗣️ 真人来打分</p>
+                        </div>
+                    </div>
+                    <ul class="framework-list">
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                领域专家审核（SME Review）
+                                <span class="list-explain">→ 找行业大牛来评判</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                众包判断
+                                <span class="list-explain">→ 找很多普通人来投票打分</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                抽样检查
+                                <span class="list-explain">→ 随机抽一些答案人工复核</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                A/B测试
+                                <span class="list-explain">→ 两个版本让用户用，看哪个效果好</span>
+                            </div>
+                        </li>
+                        <li>
+                            <span class="list-bullet"></span>
+                            <div>
+                                标注者一致性评估
+                                <span class="list-explain">→ 检查不同人打分结果是否一致</span>
+                            </div>
+                        </li>
+                    </ul>
+                    <div class="pros-cons">
+                        <span class="pro-tag">最准确</span>
+                        <span class="pro-tag">金标准</span>
+                        <span class="pro-tag">校准其他评估器</span>
+                        <span class="con-tag">贵</span>
+                        <span class="con-tag">慢</span>
+                        <span class="con-tag">难规模化</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 四类智能体评估 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">🎯 智能体分类</span>
+                <h2 class="section-title">四类智能体的评估策略</h2>
+                <p class="section-desc">不同用途的AI，考试方法也不一样</p>
+            </div>
+            
+            <div class="tabs-container">
+                <div class="tabs-header">
+                    <button class="tab-btn active" onclick="switchTab(0)">💻 编码智能体</button>
+                    <button class="tab-btn" onclick="switchTab(1)">💬 对话智能体</button>
+                    <button class="tab-btn" onclick="switchTab(2)">🔬 研究智能体</button>
+                    <button class="tab-btn" onclick="switchTab(3)">🖥️ 计算机使用智能体</button>
+                </div>
+                
+                <div class="tab-content active" id="tab-0">
+                    <div class="insight-list">
+                        <div class="insight-item">
+                            <div class="insight-number">1</div>
+                            <div class="insight-content">
+                                <h4>这是什么？</h4>
+                                <p>能写代码、调试程序、浏览代码库、执行命令的AI——<span class="hl-cyan">就像一个AI程序员</span></p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">2</div>
+                            <div class="insight-content">
+                                <h4>为什么好评估？</h4>
+                                <p><span class="hl-green">代码要么能跑要么不能跑，测试要么通过要么不通过</span>——答案很明确，不用纠结</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">3</div>
+                            <div class="insight-content">
+                                <h4>业界怎么考它？</h4>
+                                <p><span class="hl-cyan">SWE-bench</span>：给AI一个GitHub上的bug，让它修，跑测试看修好没。AI一年内从40%做到了80%以上！<br><span class="hl-cyan">Terminal-Bench</span>：让AI完成真实的技术任务，比如从源码编译Linux内核</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">4</div>
+                            <div class="insight-content">
+                                <h4>实操建议</h4>
+                                <p>除了看测试能不能过，还可以检查代码写得规不规范、AI跟用户沟通得好不好</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="tab-1">
+                    <div class="insight-list">
+                        <div class="insight-item">
+                            <div class="insight-number">1</div>
+                            <div class="insight-content">
+                                <h4>这是什么？</h4>
+                                <p>能跟用户聊天的AI，用在客服、销售、教练等场景——<span class="hl-purple">就像AI客服或AI销售</span></p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">2</div>
+                            <div class="insight-content">
+                                <h4>难在哪？</h4>
+                                <p>不光要把事办成，<span class="hl-purple">聊得好不好本身也是考核内容</span>——态度、语气、效率都要评</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">3</div>
+                            <div class="insight-content">
+                                <h4>怎么全面评估？</h4>
+                                <p>多维度打分：问题解决了吗？<span class="hl-orange">（查系统状态）</span> 聊了几轮？<span class="hl-orange">（轨迹分析）</span> 态度好不好？<span class="hl-orange">（AI打分）</span></p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">4</div>
+                            <div class="insight-content">
+                                <h4>特殊技巧</h4>
+                                <p>通常需要<span class="hl-orange">另一个AI扮演用户</span>来模拟对话。τ-Bench就是这么干的——模拟零售客服、航班预订等真实场景</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="tab-2">
+                    <div class="insight-list">
+                        <div class="insight-item">
+                            <div class="insight-number">1</div>
+                            <div class="insight-content">
+                                <h4>这是什么？</h4>
+                                <p>能搜集、整理、分析信息，然后写报告或给答案的AI——<span class="hl-pink">就像AI研究员或AI分析师</span></p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">2</div>
+                            <div class="insight-content">
+                                <h4>难在哪？</h4>
+                                <p>"全面"、"可靠"、"正确"这些标准很主观。<span class="hl-pink">做市场调研和写科研报告，要求完全不一样</span></p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">3</div>
+                            <div class="insight-content">
+                                <h4>怎么评估？</h4>
+                                <p><span class="hl-green">接地性检查</span>：AI说的话有没有依据？能不能追溯到原始资料？<br>
+                                <span class="hl-cyan">覆盖度检查</span>：关键信息有没有漏掉？<br>
+                                <span class="hl-orange">来源质量检查</span>：引用的资料靠不靠谱？是权威来源还是野鸡网站？</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">4</div>
+                            <div class="insight-content">
+                                <h4>重要提醒</h4>
+                                <p>研究质量很主观，所以<span class="hl-yellow">AI评分要经常和人工评分对比校准</span>，确保AI打分靠谱</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tab-content" id="tab-3">
+                    <div class="insight-list">
+                        <div class="insight-item">
+                            <div class="insight-number">1</div>
+                            <div class="insight-content">
+                                <h4>这是什么？</h4>
+                                <p>能像人一样操作电脑的AI——看屏幕、点鼠标、打字、滚动——<span class="hl-cyan">不是调用API，而是真的"用"软件</span></p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">2</div>
+                            <div class="insight-content">
+                                <h4>怎么测试？</h4>
+                                <p>在真实或沙盒环境<span class="hl-purple">（隔离的安全测试环境，搞坏了也不影响真系统）</span>里让AI操作，然后检查最终结果对不对</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">3</div>
+                            <div class="insight-content">
+                                <h4>业界怎么考它？</h4>
+                                <p><span class="hl-cyan">WebArena</span>：测试浏览器操作，检查有没有打开对的网页、填对表单<br>
+                                <span class="hl-purple">OSWorld</span>：测试整个操作系统控制，检查文件有没有创建、软件设置对不对</p>
+                            </div>
+                        </div>
+                        <div class="insight-item">
+                            <div class="insight-number">4</div>
+                            <div class="insight-content">
+                                <h4>实操技巧</h4>
+                                <p>要平衡<span class="hl-orange">token消耗</span><span class="plain-explain">（AI处理信息的计费单位）</span>和速度。看网页代码快但费token，看截图省token但慢</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 指标对比 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">📊 核心指标</span>
+                <h2 class="section-title">pass@k vs pass^k</h2>
+                <p class="section-desc">AI每次答案可能不一样，怎么算它到底行不行？</p>
+            </div>
+            
+            <div class="metrics-compare">
+                <div class="metric-card">
+                    <h3>pass@k</h3>
+                    <p>k次尝试中至少成功1次的概率</p>
+                    <div class="metric-plain">🗣️ 大白话：做10道题，只要蒙对1道就算过</div>
+                    <div class="metric-visual">
+                        <div class="metric-bar" style="height: 80%;"></div>
+                    </div>
+                    <p class="metric-desc">
+                        k越大分数越<span class="hl-green">高</span>——机会越多越容易至少成功一次<br>
+                        <strong>适合：</strong>工具类应用，找到一个解决方案就够了
+                    </p>
+                </div>
+                
+                <div class="metric-card">
+                    <h3>pass^k</h3>
+                    <p>k次尝试全部成功的概率</p>
+                    <div class="metric-plain">🗣️ 大白话：做10道题，必须全对才算过</div>
+                    <div class="metric-visual">
+                        <div class="metric-bar" style="height: 35%;"></div>
+                    </div>
+                    <p class="metric-desc">
+                        k越大分数越<span class="hl-orange">低</span>——要求每次都成功太难了<br>
+                        <strong>适合：</strong>面向用户的产品，必须稳定可靠
+                    </p>
+                </div>
+            </div>
+            
+            <div class="summary-card" style="margin-top: 2rem;">
+                <p class="summary-text" style="text-align: left;">
+                    <strong>举个例子：</strong>假设你的AI每次做题有75%的正确率，让它做3次：<br><br>
+                    • pass@3 = 1 - (0.25)³ ≈ <span class="hl-green">98.4%</span> <span class="plain-explain">（3次里至少对1次的概率）</span><br>
+                    • pass^3 = (0.75)³ ≈ <span class="hl-orange">42.2%</span> <span class="plain-explain">（3次全对的概率）</span><br><br>
+                    如果做10次，两个指标会讲完全相反的故事：pass@10接近100%，pass^10降到接近0%。<br>
+                    <span class="hl-yellow">选哪个指标取决于你的产品需求！</span>
+                </p>
+            </div>
+        </section>
+
+        <!-- 元认知图 -->
+        <section class="section">
+            <div class="meta-cognition">
+                <h3 class="meta-title">🧭 <span>灵魂拷问：为什么需要评估？</span></h3>
+                
+                <div class="meta-grid">
+                    <div class="meta-column">
+                        <div class="meta-column-title">❌ 没有评估时</div>
+                        <div class="meta-item">蒙眼开车，不知道下个转弯会撞上什么</div>
+                        <div class="meta-item">只有用户骂了才知道AI出问题了</div>
+                        <div class="meta-item">修好一个bug，结果搞出三个新bug</div>
+                        <div class="meta-item">不知道AI是真变差了还是运气不好</div>
+                        <div class="meta-item">新模型出来了，要测好几周才敢用</div>
+                    </div>
+                    
+                    <div class="meta-column" style="display: flex; align-items: center; justify-content: center;">
+                        <div style="font-size: 4rem;">➡️</div>
+                    </div>
+                    
+                    <div class="meta-column">
+                        <div class="meta-column-title">✅ 有评估后</div>
+                        <div class="meta-item">问题在上线前就能发现</div>
+                        <div class="meta-item">每次改代码自动测几百个场景</div>
+                        <div class="meta-item">用户反馈的bug变成考题，防止再犯</div>
+                        <div class="meta-item">用数据说话，不用猜AI行不行</div>
+                        <div class="meta-item">新模型几天就能评估完、调好、上线</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 实践路线图 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">🗺️ 实践路线图</span>
+                <h2 class="section-title">从0到1：8步构建可靠评估</h2>
+                <p class="section-desc">别被吓到，其实没那么难！</p>
+            </div>
+            
+            <div class="accordion">
+                <div class="accordion-item open">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="accordion-title">
+                            <span class="accordion-icon">🚀</span>
+                            步骤 0-2：先把考题出好
+                        </span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p><strong class="hl-cyan">Step 0: 别等，现在就开始！</strong></p>
+                            <p>很多团队觉得要准备几百道题才能开始。错！<span class="hl-yellow">20-50个来自真实bug的考题就够用了</span>。早期AI变化大，少量考题就能看出效果。等到产品成熟了再建评估系统会很痛苦。</p>
+                            <br>
+                            <p><strong class="hl-purple">Step 1: 把你平时手动测的东西自动化</strong></p>
+                            <p>你每次发版前不是会手动试几个场景吗？把这些变成自动测试！已经上线的话，看看用户投诉最多的是什么，这些就是最好的考题来源。</p>
+                            <br>
+                            <p><strong class="hl-green">Step 2: 考题要写清楚，答案要明确</strong></p>
+                            <p>好考题的标准：找两个专家来评，他们应该给出一样的分数。每道题最好配一个"标准答案"，证明这题是能做对的，评分规则也是对的。</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="accordion-title">
+                            <span class="accordion-icon">🎯</span>
+                            步骤 3：正例反例都要考
+                        </span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p><strong class="hl-orange">别只考"应该做的"，也要考"不应该做的"</strong></p>
+                            <p>如果你只测AI"应该搜索"的情况，它可能学会"什么都搜索"。必须同时测试"不应该搜索"的情况！</p>
+                            <br>
+                            <p><strong>实战案例：Claude的网络搜索功能</strong></p>
+                            <p>Anthropic团队发现只测"应该搜索"会导致AI过度搜索。他们加入了两类考题：<br>
+                            ✅ 应该搜索：查天气、查新闻<br>
+                            ❌ 不应该搜索：谁创立了苹果公司<span class="plain-explain">（这种常识题不用搜）</span></p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="accordion-title">
+                            <span class="accordion-icon">🔧</span>
+                            步骤 4-5：搭好考场，选对阅卷老师
+                        </span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p><strong class="hl-cyan">Step 4: 考场要干净</strong></p>
+                            <p>每次考试从头开始，别让上一场考试的"痕迹"影响这一场。否则你分不清是AI真的变好了，还是沾了上次的光。</p>
+                            <br>
+                            <p><strong class="hl-purple">Step 5: 阅卷规则要聪明</strong></p>
+                            <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                                <li>能用程序判对错的，优先用程序<span class="plain-explain">（快、便宜、客观）</span></li>
+                                <li>需要主观判断的，用AI来打分<span class="plain-explain">（灵活、能理解细微差别）</span></li>
+                                <li>关键考题，人工复核<span class="plain-explain">（金标准，校准其他打分方式）</span></li>
+                                <li><span class="hl-pink">重要原则：只看结果对不对，别管AI怎么做到的！</span>聪明的AI经常用你想不到的方法解题</li>
+                                <li>允许部分得分——做对一半也比完全做错好</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(this)">
+                        <span class="accordion-title">
+                            <span class="accordion-icon">📈</span>
+                            步骤 6-8：持续维护，长期迭代
+                        </span>
+                        <span class="accordion-arrow">▼</span>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p><strong class="hl-green">Step 6: 一定要看AI的"草稿纸"！</strong></p>
+                            <p>轨迹<span class="plain-explain">（AI做题的完整记录）</span>会告诉你AI是真的做错了，还是你的评分规则有问题。在Anthropic，我们专门做了工具来看轨迹，而且经常看。</p>
+                            <br>
+                            <p><strong class="hl-orange">Step 7: 考题太简单了要加难度</strong></p>
+                            <p>如果AI已经考100分了，这套题就没有改进空间了<span class="plain-explain">（叫"饱和"）</span>。比如SWE-bench今年从30%涨到80%+，接近饱和了。这时候要出更难的题！</p>
+                            <br>
+                            <p><strong class="hl-yellow">Step 8: 让大家一起维护考题库</strong></p>
+                            <p>评估系统要有人持续维护才能保持有用。最佳实践：有专门的团队管基础设施，但<span class="hl-cyan">让产品经理、客服、销售都能贡献考题</span>——他们最了解用户需求！</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <section class="expert-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag">💬 专家视角</span>
+                    <h2 class="section-title">行业领袖如何看待这篇文章</h2>
+                    <p class="section-desc">（以下为AI模拟生成的评论，仅供参考）</p>
+                </div>
+                
+                <div class="expert-grid">
+                    <div class="expert-card">
+                        <div class="expert-avatar">🌟</div>
+                        <h3 class="expert-name">Sam Altman</h3>
+                        <p class="expert-title">OpenAI CEO</p>
+                        <p class="expert-quote">
+                            "Anthropic这篇文章抓住了一个关键真相：<span class="expert-highlight">评估是AI产品化的瓶颈</span>。我们在GPT-4o开发中也深刻体会到，没有可靠的评估体系，就不可能构建可靠的AI产品。特别是他们提出的'评估产出而非路径'的理念，与我们的实践不谋而合——前沿模型的创造力经常超出预设的评估边界。"
+                        </p>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-avatar">🤖</div>
+                        <h3 class="expert-name">Dario Amodei</h3>
+                        <p class="expert-title">Anthropic CEO</p>
+                        <p class="expert-quote">
+                            "这篇文章浓缩了我们团队多年的实战经验。我想强调的是：<span class="expert-highlight">评估不只是质量保证，更是产品与研究团队的高带宽沟通渠道</span>。当Claude在τ2-bench上发现航班预订政策漏洞时，它'失败'了评估但实际上找到了更好的解决方案——这提醒我们，好的评估需要与模型能力共同进化。"
+                        </p>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-avatar">🔬</div>
+                        <h3 class="expert-name">Demis Hassabis</h3>
+                        <p class="expert-title">Google DeepMind CEO</p>
+                        <p class="expert-quote">
+                            "这份指南的'瑞士奶酪模型'<span class="plain-explain">（多层防护互补）</span>比喻非常精准。在AlphaFold和Gemini的开发中，我们学到的最重要一课就是：<span class="expert-highlight">没有单一的评估层能捕获所有问题</span>。文章提出的自动评估+生产监控+人工审核的多层组合，是工业级AI系统的必备架构。"
+                        </p>
+                    </div>
+                    
+                    <div class="expert-card">
+                        <div class="expert-avatar">🎓</div>
+                        <h3 class="expert-name">姚期智</h3>
+                        <p class="expert-title">图灵奖得主，清华大学教授</p>
+                        <p class="expert-quote">
+                            "从理论计算机科学的视角看，这篇文章触及了一个深刻的问题：<span class="expert-highlight">如何在非确定性系统<span class="plain-explain">（每次结果可能不一样的系统）</span>中建立可靠的质量保证</span>。pass@k与pass^k的数学分析非常到位，它们本质上刻画了单次成功概率与一致性概率之间的张力。我认为未来需要更多形式化的工作，将这些实践经验上升为可证明的理论框架。"
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑思维图 -->
+        <section class="section">
+            <div class="section-header">
+                <span class="section-tag">🔗 逻辑链条</span>
+                <h2 class="section-title">文章核心逻辑：一图看懂</h2>
+            </div>
+            
+            <div class="timeline">
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-step">起点：AI的特点</div>
+                        <h4 class="timeline-title">AI智能体自主、聪明、灵活</h4>
+                        <p class="timeline-desc">这些优点同时也是难点——越聪明的AI越会"另辟蹊径"，可能用你想不到的方式解题，也可能犯你想不到的错</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-step">痛点：没评估很惨</div>
+                        <h4 class="timeline-title">蒙眼开车，用户骂了才知道出问题</h4>
+                        <p class="timeline-desc">只能等用户投诉才发现bug，修一个问题可能搞出新问题，分不清是真变差了还是偶然抽风</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-step">方案：多层防护</div>
+                        <h4 class="timeline-title">代码+AI+人工，三种阅卷老师配合</h4>
+                        <p class="timeline-desc">程序判对错（快且便宜）、AI评主观题（灵活）、人工抽查（金标准）——像瑞士奶酪一样，一层漏了还有下一层</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-step">方法：先出题再开发</div>
+                        <h4 class="timeline-title">评估驱动开发 + 不断迭代</h4>
+                        <p class="timeline-desc">功能还没做出来就先想好怎么考它；考得好的题目"毕业"变成回归测试<span class="plain-explain">（防止老功能坏掉）</span>；一直看AI做题过程，发现问题</p>
+                    </div>
+                </div>
+                
+                <div class="timeline-item">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-step">结果：复利效应</div>
+                        <h4 class="timeline-title">评估的价值会滚雪球</h4>
+                        <p class="timeline-desc">用户投诉变考题 → 考题防止再犯 → 数据说话不用猜 → 开发越来越快 → 新模型几天就能用上</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 总结 -->
+        <section class="section">
+            <div class="summary-card">
+                <h3 class="summary-title">📌 全文精华一句话</h3>
+                <p class="summary-text">
+                    <strong>评估不是拖后腿的额外工作，而是让你跑更快的加速器。</strong><br><br>
+                    早期投入评估的团队发现：bug变成考题 → 考题防止回退 → 数据替代猜测 → 开发反而更快了。<br><br>
+                    评估给整个团队一个<span class="hl-cyan">清晰的攀登目标</span>，把模糊的"感觉AI变差了"变成<span class="hl-green">可以追踪的数字</span>。<br><br>
+                    <strong class="hl-yellow">关键是：把评估当核心能力来建设，而不是"有空再搞"的锦上添花。</strong>
+                </p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>基于 Anthropic 官方文档 "Demystifying evals for AI agents" 制作</p>
+        <p style="margin-top: 0.5rem; opacity: 0.7;">专家评论为AI模拟生成，仅供参考</p>
+    </footer>
+
+    <button class="back-to-top" onclick="scrollToTop()">↑</button>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
+        }
+
+        // 标签页切换
+        function switchTab(index) {
+            const btns = document.querySelectorAll('.tab-btn');
+            const contents = document.querySelectorAll('.tab-content');
+            
+            btns.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            
+            contents.forEach((content, i) => {
+                content.classList.toggle('active', i === index);
+            });
+        }
+
+        // 手风琴
+        function toggleAccordion(header) {
+            const item = header.parentElement;
+            const isOpen = item.classList.contains('open');
+            
+            // 关闭所有
+            document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('open'));
+            
+            // 如果之前是关闭的，则打开
+            if (!isOpen) {
+                item.classList.add('open');
+            }
+        }
+
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 监听滚动显示返回顶部按钮
+        window.addEventListener('scroll', () => {
+            const btn = document.querySelector('.back-to-top');
+            if (window.scrollY > 500) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+
+        // 指标条动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const bars = entry.target.querySelectorAll('.metric-bar');
+                    bars.forEach((bar, i) => {
+                        setTimeout(() => {
+                            bar.style.height = bar.style.height || '0%';
+                        }, i * 200);
+                    });
+                }
+            });
+        }, { threshold: 0.5 });
+
+        document.querySelectorAll('.metrics-compare').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

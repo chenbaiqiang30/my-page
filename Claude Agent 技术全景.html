@@ -1,0 +1,1703 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🤖 Claude Agent 技术全景：重新定义AI代理的边界</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --text-primary: #e8e8ed;
+            --text-secondary: #a0a0b0;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #a855f7;
+            --accent-green: #10b981;
+            --accent-orange: #f59e0b;
+            --accent-pink: #ec4899;
+            --accent-red: #ef4444;
+            --gradient-1: linear-gradient(135deg, #00d4ff 0%, #a855f7 100%);
+            --gradient-2: linear-gradient(135deg, #10b981 0%, #00d4ff 100%);
+            --gradient-3: linear-gradient(135deg, #f59e0b 0%, #ec4899 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* 头部英雄区 */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 2rem;
+            text-align: center;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(0, 212, 255, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 20%, rgba(168, 85, 247, 0.15) 0%, transparent 40%),
+                var(--bg-primary);
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(0, 212, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 212, 255, 0.03) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(50px, 50px); }
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            color: var(--accent-cyan);
+            margin-bottom: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--accent-cyan);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.5); }
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1.5rem;
+            position: relative;
+            z-index: 1;
+            letter-spacing: -0.02em;
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 0.5rem;
+        }
+
+        /* 导航 */
+        .nav-container {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.9);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .nav {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .nav-item {
+            padding: 0.75rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            color: var(--accent-cyan);
+            background: rgba(0, 212, 255, 0.1);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        /* 主内容区 */
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* 金句卡片 */
+        .quote-hero {
+            background: var(--gradient-1);
+            border-radius: 24px;
+            padding: 4rem;
+            margin-bottom: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-hero::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-size: 200px;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+
+        .quote-hero blockquote {
+            font-size: 2rem;
+            font-weight: 600;
+            color: white;
+            position: relative;
+            z-index: 1;
+            max-width: 900px;
+        }
+
+        .quote-hero cite {
+            display: block;
+            margin-top: 1.5rem;
+            font-size: 1rem;
+            font-style: normal;
+            opacity: 0.8;
+        }
+
+        /* 章节标题 */
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1rem;
+            margin-top: 0.25rem;
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .content-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        /* 折叠面板 */
+        .accordion {
+            background: var(--bg-card);
+            border-radius: 16px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
+        }
+
+        .accordion-header {
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .accordion-header:hover {
+            background: rgba(255, 255, 255, 0.02);
+        }
+
+        .accordion-title {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .accordion-title h3 {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .accordion-title .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .tag-core { background: rgba(0, 212, 255, 0.2); color: var(--accent-cyan); }
+        .tag-new { background: rgba(16, 185, 129, 0.2); color: var(--accent-green); }
+        .tag-security { background: rgba(239, 68, 68, 0.2); color: var(--accent-red); }
+        .tag-efficiency { background: rgba(245, 158, 11, 0.2); color: var(--accent-orange); }
+
+        .accordion-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .accordion.open .accordion-icon {
+            transform: rotate(180deg);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .accordion.open .accordion-content {
+            max-height: 3000px;
+        }
+
+        .accordion-inner {
+            padding: 0 2rem 2rem;
+        }
+
+        /* 术语解释 */
+        .term {
+            position: relative;
+            color: var(--accent-cyan);
+            border-bottom: 1px dashed var(--accent-cyan);
+            cursor: help;
+        }
+
+        .term-explain {
+            display: inline-block;
+            margin-left: 0.5rem;
+            padding: 0.2rem 0.6rem;
+            background: rgba(168, 85, 247, 0.2);
+            color: var(--accent-purple);
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        /* 高亮文本 */
+        .highlight-cyan { color: var(--accent-cyan); font-weight: 600; }
+        .highlight-purple { color: var(--accent-purple); font-weight: 600; }
+        .highlight-green { color: var(--accent-green); font-weight: 600; }
+        .highlight-orange { color: var(--accent-orange); font-weight: 600; }
+        .highlight-pink { color: var(--accent-pink); font-weight: 600; }
+
+        .bg-highlight {
+            background: linear-gradient(120deg, rgba(0, 212, 255, 0.2) 0%, rgba(168, 85, 247, 0.2) 100%);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+        }
+
+        /* 数字高亮 */
+        .number-highlight {
+            font-size: 1.3em;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 问题-方案对比 */
+        .problem-solution {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+
+        @media (max-width: 768px) {
+            .problem-solution {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .problem-card, .solution-card {
+            padding: 2rem;
+            border-radius: 16px;
+        }
+
+        .problem-card {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .solution-card {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .problem-card h4 { color: var(--accent-red); }
+        .solution-card h4 { color: var(--accent-green); }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        /* 专家评论区 */
+        .expert-comments {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .expert-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .expert-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(0, 212, 255, 0.3);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .expert-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .expert-info h4 {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .expert-info span {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .expert-quote {
+            font-size: 1rem;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            font-style: italic;
+            border-left: 3px solid;
+            padding-left: 1rem;
+        }
+
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--bg-card);
+            border-radius: 24px;
+            padding: 3rem;
+            margin: 3rem 0;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-width: 900px;
+        }
+
+        .mindmap-center {
+            background: var(--gradient-1);
+            padding: 1.5rem 3rem;
+            border-radius: 16px;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0, 212, 255, 0.3);
+        }
+
+        .mindmap-branches {
+            display: flex;
+            gap: 3rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+        }
+
+        .mindmap-branch::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--accent-cyan), transparent);
+        }
+
+        .branch-title {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .branch-item {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .branch-item:hover {
+            background: rgba(0, 212, 255, 0.1);
+            transform: scale(1.05);
+        }
+
+        /* 逻辑流程图 */
+        .flowchart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            padding: 2rem;
+        }
+
+        .flow-step {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .flow-number {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .flow-content {
+            flex: 1;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .flow-content h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        .flow-content p {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .flow-arrow {
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, var(--accent-purple), transparent);
+            margin-left: 23px;
+        }
+
+        /* 指标卡片 */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+
+        .metric-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+
+        .metric-card:hover {
+            border-color: rgba(0, 212, 255, 0.3);
+            transform: translateY(-4px);
+        }
+
+        .metric-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+
+        .metric-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* 代码块 */
+        .code-block {
+            background: #1e1e2e;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            overflow-x: auto;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .code-comment { color: #6c7086; }
+        .code-keyword { color: #cba6f7; }
+        .code-string { color: #a6e3a1; }
+        .code-function { color: #89b4fa; }
+
+        /* 金句墙 */
+        .quotes-wall {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .quote-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 2rem;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+        }
+
+        .quote-card:hover {
+            transform: translateX(8px);
+        }
+
+        .quote-card.cyan { border-color: var(--accent-cyan); }
+        .quote-card.purple { border-color: var(--accent-purple); }
+        .quote-card.green { border-color: var(--accent-green); }
+        .quote-card.orange { border-color: var(--accent-orange); }
+
+        .quote-text {
+            font-size: 1.1rem;
+            font-weight: 500;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+
+        .quote-source {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        /* 对比表格 */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 2rem 0;
+        }
+
+        .comparison-table th, .comparison-table td {
+            padding: 1rem 1.5rem;
+            text-align: left;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .comparison-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+            color: var(--accent-cyan);
+        }
+
+        .comparison-table th:first-child { border-radius: 12px 0 0 0; }
+        .comparison-table th:last-child { border-radius: 0 12px 0 0; }
+
+        .comparison-table tr:hover td {
+            background: rgba(0, 212, 255, 0.05);
+        }
+
+        /* 时间轴 */
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin: 2rem 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--accent-cyan), var(--accent-purple), var(--accent-green));
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.35rem;
+            top: 0.5rem;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: var(--bg-primary);
+            border: 3px solid var(--accent-cyan);
+        }
+
+        .timeline-item:nth-child(2)::before { border-color: var(--accent-purple); }
+        .timeline-item:nth-child(3)::before { border-color: var(--accent-green); }
+        .timeline-item:nth-child(4)::before { border-color: var(--accent-orange); }
+
+        .timeline-content {
+            background: var(--bg-card);
+            border-radius: 12px;
+            padding: 1.5rem;
+        }
+
+        .timeline-content h4 {
+            margin-bottom: 0.5rem;
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            margin-top: 4rem;
+        }
+
+        .footer p {
+            color: var(--text-secondary);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .hero-subtitle { font-size: 1.1rem; }
+            .hero-stats { gap: 1.5rem; }
+            .stat-number { font-size: 2rem; }
+            .content-card, .accordion-inner { padding: 1.5rem; }
+            .mindmap-container { padding: 1.5rem; }
+            .expert-comments { grid-template-columns: 1fr; }
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--accent-cyan);
+            border-radius: 4px;
+        }
+
+        /* 亮色模式 */
+        body.light-mode {
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-card: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.3);
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* 干货标签 */
+        .insight-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+        }
+
+        /* 总结盒子 */
+        .summary-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            margin: 2rem 0;
+        }
+
+        .summary-box h4 {
+            color: var(--accent-cyan);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .summary-list {
+            list-style: none;
+        }
+
+        .summary-list li {
+            padding: 0.75rem 0;
+            border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .summary-list li:last-child {
+            border-bottom: none;
+        }
+
+        .summary-list li::before {
+            content: '→';
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <!-- 主题切换按钮 -->
+    <button class="theme-toggle" onclick="toggleTheme()">🌙</button>
+
+    <!-- 英雄区 -->
+    <section class="hero">
+        <div class="hero-badge">
+            <span>Anthropic 最新技术发布</span>
+        </div>
+        <h1>Claude Agent 技术全景</h1>
+        <p class="hero-subtitle">
+            从长期运行代理到沙箱安全，四篇重磅技术博客揭示 AI 代理的下一个十年
+        </p>
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-number">85%</div>
+                <div class="stat-label">Token 使用量减少</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">84%</div>
+                <div class="stat-label">权限提示减少</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-number">4</div>
+                <div class="stat-label">核心技术突破</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 导航 -->
+    <div class="nav-container">
+        <nav class="nav">
+            <div class="nav-item active" onclick="scrollToSection('overview')">📊 技术全景</div>
+            <div class="nav-item" onclick="scrollToSection('longrun')">🔄 长期代理</div>
+            <div class="nav-item" onclick="scrollToSection('tools')">🔧 工具三剑客</div>
+            <div class="nav-item" onclick="scrollToSection('mcp')">⚡ MCP 代码执行</div>
+            <div class="nav-item" onclick="scrollToSection('sandbox')">🛡️ 沙箱安全</div>
+            <div class="nav-item" onclick="scrollToSection('experts')">💬 大佬点评</div>
+        </nav>
+    </div>
+
+    <!-- 主内容 -->
+    <main class="main-content">
+        <!-- 核心金句 -->
+        <div class="quote-hero">
+            <blockquote>
+                "让代理在多个上下文窗口中保持一致进展，就像让轮班工程师每次到岗时都能无缝衔接——这是 AI 代理真正实用化的关键。"
+                <cite>—— Claude Agent SDK 核心设计理念</cite>
+            </blockquote>
+        </div>
+
+        <!-- 元认知思维导图 -->
+        <section id="overview">
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--gradient-1);">🧠</div>
+                <div>
+                    <h2 class="section-title">元认知图：技术全景鸟瞰</h2>
+                    <p class="section-subtitle">一图看懂 Claude Agent 四大核心技术的关系与定位</p>
+                </div>
+            </div>
+
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-center">🤖 Claude Agent 技术栈</div>
+                    <div class="mindmap-branches">
+                        <div class="mindmap-branch">
+                            <div class="branch-title" style="background: rgba(0, 212, 255, 0.2); color: var(--accent-cyan);">
+                                🔄 持久性问题
+                            </div>
+                            <div class="branch-items">
+                                <div class="branch-item">长期代理框架</div>
+                                <div class="branch-item">初始化代理 + 编码代理</div>
+                                <div class="branch-item">进度文件 + Git历史</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title" style="background: rgba(168, 85, 247, 0.2); color: var(--accent-purple);">
+                                📦 工具效率问题
+                            </div>
+                            <div class="branch-items">
+                                <div class="branch-item">工具搜索工具</div>
+                                <div class="branch-item">程序化工具调用</div>
+                                <div class="branch-item">工具使用示例</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title" style="background: rgba(16, 185, 129, 0.2); color: var(--accent-green);">
+                                ⚡ MCP 扩展性
+                            </div>
+                            <div class="branch-items">
+                                <div class="branch-item">代码执行模式</div>
+                                <div class="branch-item">按需加载工具</div>
+                                <div class="branch-item">技能持久化</div>
+                            </div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-title" style="background: rgba(245, 158, 11, 0.2); color: var(--accent-orange);">
+                                🛡️ 安全边界
+                            </div>
+                            <div class="branch-items">
+                                <div class="branch-item">沙盒式 Bash</div>
+                                <div class="branch-item">文件系统隔离</div>
+                                <div class="branch-item">网络隔离</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句墙 -->
+        <section>
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--gradient-3);">💎</div>
+                <div>
+                    <h2 class="section-title">金句精选</h2>
+                    <p class="section-subtitle">来自四篇技术文章的核心洞见</p>
+                </div>
+            </div>
+
+            <div class="quotes-wall">
+                <div class="quote-card cyan">
+                    <p class="quote-text">"代理的核心挑战是必须在离散的会话中工作，每次新会话开始时都不记得之前发生的事情。"</p>
+                    <p class="quote-source">—— 长期代理框架</p>
+                </div>
+                <div class="quote-card purple">
+                    <p class="quote-text">"58个工具消耗5.5万Token，在对话开始前就吃掉了大部分上下文窗口。"</p>
+                    <p class="quote-source">—— 工具搜索工具</p>
+                </div>
+                <div class="quote-card green">
+                    <p class="quote-text">"代码天然适合处理编排逻辑：循环、条件、数据转换——这些都比自然语言更精确。"</p>
+                    <p class="quote-source">—— 程序化工具调用</p>
+                </div>
+                <div class="quote-card orange">
+                    <p class="quote-text">"没有网络隔离，被入侵的代理可能窃取SSH密钥；没有文件系统隔离，代理很容易逃逸沙箱。"</p>
+                    <p class="quote-source">—— Claude Code 沙箱</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 长期代理章节 -->
+        <section id="longrun">
+            <div class="section-header">
+                <div class="section-icon" style="background: rgba(0, 212, 255, 0.2);">🔄</div>
+                <div>
+                    <h2 class="section-title">长期运行代理：让AI"记住"上一班发生了什么</h2>
+                    <p class="section-subtitle">解决代理跨会话持续工作的核心难题</p>
+                </div>
+            </div>
+
+            <div class="accordion open">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <h3>🎯 核心问题：代理的"失忆症"</h3>
+                        <span class="tag tag-core">核心痛点</span>
+                    </div>
+                    <div class="accordion-icon">▼</div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <div class="insight-tag">💡 干货洞见</div>
+                        
+                        <p style="margin-bottom: 1.5rem;">
+                            想象一个软件项目由<span class="highlight-cyan">轮班工程师</span>组成，每个新工程师到岗时都<span class="highlight-pink">完全不记得</span>上一班发生了什么——这就是当前 AI 代理面临的困境。
+                        </p>
+
+                        <div class="problem-solution">
+                            <div class="problem-card">
+                                <div class="card-header">
+                                    <span style="font-size: 1.5rem;">❌</span>
+                                    <h4>失败模式一：想一枪毙命</h4>
+                                </div>
+                                <p>代理试图一次性完成整个应用，结果在实现过程中<span class="highlight-red">丢失上下文</span>，下一个会话接手时发现功能<span class="highlight-orange">半成品且没有文档</span>。</p>
+                                <p class="term-explain" style="margin-top: 1rem;">👆 大白话：就像一个程序员熬夜写了一半代码，第二天自己都看不懂写了啥</p>
+                            </div>
+                            <div class="solution-card">
+                                <div class="card-header">
+                                    <span style="font-size: 1.5rem;">✅</span>
+                                    <h4>解决方案：渐进式开发</h4>
+                                </div>
+                                <p>每个代理会话只处理<span class="highlight-green">一个功能</span>，完成后提交 Git 并更新进度文件，让下一个"工程师"能快速上手。</p>
+                                <p class="term-explain" style="margin-top: 1rem;">👆 大白话：每完成一小步就做好交接文档，谁来接班都能继续干</p>
+                            </div>
+                        </div>
+
+                        <div class="problem-solution">
+                            <div class="problem-card">
+                                <div class="card-header">
+                                    <span style="font-size: 1.5rem;">❌</span>
+                                    <h4>失败模式二：过早宣布胜利</h4>
+                                </div>
+                                <p>部分功能完成后，后续代理环顾四周就<span class="highlight-red">宣布项目完成</span>，实际上还有大量功能未实现。</p>
+                                <p class="term-explain" style="margin-top: 1rem;">👆 大白话：干了30%的活就以为全干完了，太乐观了</p>
+                            </div>
+                            <div class="solution-card">
+                                <div class="card-header">
+                                    <span style="font-size: 1.5rem;">✅</span>
+                                    <h4>解决方案：功能清单文件</h4>
+                                </div>
+                                <p>初始化时创建 <span class="highlight-cyan">200+ 功能的 JSON 清单</span>，每个功能标记为"通过/失败"，代理只能在测试验证后才能标记完成。</p>
+                                <p class="term-explain" style="margin-top: 1rem;">👆 大白话：列个详细待办清单，没打勾的就是没做完，骗不了人</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <h3>🏗️ 双代理架构：初始化 + 编码</h3>
+                        <span class="tag tag-new">创新架构</span>
+                    </div>
+                    <div class="accordion-icon">▼</div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <div class="flowchart">
+                            <div class="flow-step">
+                                <div class="flow-number" style="background: var(--gradient-1); color: white;">1</div>
+                                <div class="flow-content">
+                                    <h4 style="color: var(--accent-cyan);">初始化代理（只运行一次）</h4>
+                                    <p>创建 <code>init.sh</code> 启动脚本、<code>claude-progress.txt</code> 进度文件、<code>feature_list.json</code> 功能清单，并做初始 Git 提交。</p>
+                                </div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-number" style="background: var(--gradient-2); color: white;">2</div>
+                                <div class="flow-content">
+                                    <h4 style="color: var(--accent-green);">编码代理（每次会话）</h4>
+                                    <p>读取进度文件和 Git 日志 → 选择下一个未完成功能 → 实现并测试 → 更新进度 → 提交代码</p>
+                                </div>
+                            </div>
+                            <div class="flow-arrow"></div>
+                            <div class="flow-step">
+                                <div class="flow-number" style="background: var(--gradient-3); color: white;">3</div>
+                                <div class="flow-content">
+                                    <h4 style="color: var(--accent-orange);">端到端验证</h4>
+                                    <p>使用 <span class="term">Puppeteer MCP</span><span class="term-explain">浏览器自动化工具</span> 像真实用户一样测试功能，确保真正可用。</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="summary-box">
+                            <h4>🎯 关键洞见</h4>
+                            <ul class="summary-list">
+                                <li>让代理快速理解工作状态的秘诀：<span class="highlight-cyan">进度文件 + Git 历史</span></li>
+                                <li>用 JSON 而非 Markdown 记录功能清单，因为<span class="highlight-purple">模型更不容易错误修改 JSON</span></li>
+                                <li>强制要求"测试通过才能标记完成"，避免<span class="highlight-orange">虚假的胜利宣言</span></li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 工具三剑客 -->
+        <section id="tools">
+            <div class="section-header">
+                <div class="section-icon" style="background: rgba(168, 85, 247, 0.2);">🔧</div>
+                <div>
+                    <h2 class="section-title">工具三剑客：动态发现、代码调用、示例学习</h2>
+                    <p class="section-subtitle">让代理像专业程序员一样高效使用工具</p>
+                </div>
+            </div>
+
+            <div class="accordion open">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <h3>🔍 工具搜索工具：按需加载，省 85% Token</h3>
+                        <span class="tag tag-efficiency">效率提升</span>
+                    </div>
+                    <div class="accordion-icon">▼</div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <div class="insight-tag">💡 核心痛点</div>
+                        
+                        <p style="margin-bottom: 1.5rem;">
+                            连接 5 个 MCP 服务器（GitHub、Slack、Sentry 等），<span class="number-highlight">58 个工具</span>就要消耗约<span class="number-highlight">5.5 万 Token</span>——对话还没开始，上下文窗口就被吃掉一半！
+                        </p>
+
+                        <div class="metrics-grid">
+                            <div class="metric-card">
+                                <div class="metric-value" style="color: var(--accent-red);">77K</div>
+                                <div class="metric-label">传统方式 Token 消耗</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" style="color: var(--accent-green);">8.7K</div>
+                                <div class="metric-label">使用工具搜索后</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" style="background: var(--gradient-1); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">85%↓</div>
+                                <div class="metric-label">Token 节省比例</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" style="color: var(--accent-purple);">88.1%</div>
+                                <div class="metric-label">Opus 4.5 准确率</div>
+                            </div>
+                        </div>
+
+                        <div class="summary-box">
+                            <h4>⚙️ 工作原理</h4>
+                            <ul class="summary-list">
+                                <li>将工具标记为 <code>defer_loading: true</code>，<span class="highlight-cyan">按需发现</span>而非预加载</li>
+                                <li>Claude 搜索"github"时，只加载 <code>createPullRequest</code> 等相关工具，<span class="highlight-green">忽略其他 50+ 工具</span></li>
+                                <li>不破坏<span class="term">提示缓存</span><span class="term-explain">把常用提示词存起来省钱</span>，系统提示仍可缓存</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <h3>💻 程序化工具调用：用代码编排，减少 37% Token</h3>
+                        <span class="tag tag-new">全新能力</span>
+                    </div>
+                    <div class="accordion-icon">▼</div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <div class="insight-tag">💡 颠覆性创新</div>
+
+                        <p style="margin-bottom: 1.5rem;">
+                            传统方式：每次工具调用都要<span class="highlight-red">完整推理</span>，中间结果全部<span class="highlight-red">堆积在上下文</span>。<br>
+                            新方式：Claude <span class="highlight-green">写 Python 代码</span>来调用工具，中间数据在沙箱处理，只返回最终结果。
+                        </p>
+
+                        <div class="problem-solution">
+                            <div class="problem-card">
+                                <div class="card-header">
+                                    <span style="font-size: 1.5rem;">📊</span>
+                                    <h4>传统方式：预算合规检查</h4>
+                                </div>
+                                <p>获取 20 人团队 → 20 次调用获取费用（每人 50-100 行项目）→ <span class="highlight-red">2000+ 条明细进入上下文</span> → Claude 手动比对计算</p>
+                                <p style="margin-top: 0.5rem; color: var(--accent-red);">结果：50KB+ 数据占用</p>
+                            </div>
+                            <div class="solution-card">
+                                <div class="card-header">
+                                    <span style="font-size: 1.5rem;">⚡</span>
+                                    <h4>程序化方式</h4>
+                                </div>
+                                <p>Claude 写 Python 脚本 → 并行获取数据 → 在沙箱中过滤计算 → <span class="highlight-green">只返回超支人员名单</span></p>
+                                <p style="margin-top: 0.5rem; color: var(--accent-green);">结果：1KB 结果数据</p>
+                            </div>
+                        </div>
+
+                        <div class="code-block">
+<span class="code-comment"># Claude 自动生成的编排代码</span>
+<span class="code-keyword">team</span> = <span class="code-keyword">await</span> <span class="code-function">get_team_members</span>(<span class="code-string">"engineering"</span>)
+
+<span class="code-comment"># 并行获取所有费用（而非逐个调用）</span>
+<span class="code-keyword">expenses</span> = <span class="code-keyword">await</span> asyncio.<span class="code-function">gather</span>(*[
+    <span class="code-function">get_expenses</span>(m[<span class="code-string">"id"</span>], <span class="code-string">"Q3"</span>) <span class="code-keyword">for</span> m <span class="code-keyword">in</span> team
+])
+
+<span class="code-comment"># 沙箱内过滤，只输出超支人员</span>
+exceeded = [m <span class="code-keyword">for</span> m, exp <span class="code-keyword">in</span> <span class="code-function">zip</span>(team, expenses) 
+            <span class="code-keyword">if</span> <span class="code-function">sum</span>(e[<span class="code-string">"amount"</span>] <span class="code-keyword">for</span> e <span class="code-keyword">in</span> exp) > budget]
+<span class="code-function">print</span>(json.<span class="code-function">dumps</span>(exceeded))  <span class="code-comment"># 只有这个进入 Claude 上下文</span>
+                        </div>
+
+                        <p class="term-explain" style="margin-top: 1rem;">👆 大白话：以前 Claude 得一条条看账单再算数，现在它写个脚本让电脑自己算，只告诉 Claude 谁超支了</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="accordion">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">
+                        <h3>📚 工具使用示例：从例子中学会正确姿势</h3>
+                        <span class="tag tag-core">准确率提升</span>
+                    </div>
+                    <div class="accordion-icon">▼</div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <div class="insight-tag">💡 解决参数歧义</div>
+
+                        <p style="margin-bottom: 1.5rem;">
+                            <span class="term">JSON Schema</span><span class="term-explain">定义数据格式的规范</span> 只能说明"什么是合法的"，却无法表达<span class="highlight-purple">使用模式</span>：日期该用什么格式？ID 长什么样？嵌套对象什么时候该填？
+                        </p>
+
+                        <table class="comparison-table">
+                            <thead>
+                                <tr>
+                                    <th>歧义类型</th>
+                                    <th>Schema 无法回答</th>
+                                    <th>示例能展示</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><span class="highlight-cyan">日期格式</span></td>
+                                    <td>"2024-11-06" 还是 "11月6日"？</td>
+                                    <td><code>"due_date": "2024-11-06"</code></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-purple">ID 约定</span></td>
+                                    <td>UUID 还是 "USR-12345"？</td>
+                                    <td><code>"id": "USR-12345"</code></td>
+                                </tr>
+                                <tr>
+                                    <td><span class="highlight-green">可选参数</span></td>
+                                    <td>什么情况下需要填联系方式？</td>
+                                    <td>紧急工单示例 vs 内部任务示例</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="metrics-grid" style="margin-top: 2rem;">
+                            <div class="metric-card">
+                                <div class="metric-value" style="color: var(--accent-red);">72%</div>
+                                <div class="metric-label">无示例时准确率</div>
+                            </div>
+                            <div class="metric-card">
+                                <div class="metric-value" style="color: var(--accent-green);">90%</div>
+                                <div class="metric-label">有示例时准确率</div>
+                            </div>
+                        </div>
+
+                        <p class="term-explain" style="margin-top: 1rem;">👆 大白话：就像教新员工填表，与其给他看表格说明书，不如直接给几张填好的样例</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- MCP 代码执行 -->
+        <section id="mcp">
+            <div class="section-header">
+                <div class="section-icon" style="background: rgba(16, 185, 129, 0.2);">⚡</div>
+                <div>
+                    <h2 class="section-title">MCP 代码执行：用代码而非对话调用工具</h2>
+                    <p class="section-subtitle">让代理像程序员一样思考，而非像客服一样一问一答</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="insight-tag">💡 核心范式转变</div>
+                
+                <p style="margin-bottom: 2rem;">
+                    <span class="term">MCP（Model Context Protocol）</span><span class="term-explain">让 AI 连接外部工具的通用协议，就像 USB 让不同设备能互联</span> 是 AI 代理连接外部系统的开放标准。但随着连接的工具越多，<span class="highlight-red">Token 消耗呈指数增长</span>。
+                </p>
+
+                <div class="problem-solution">
+                    <div class="problem-card">
+                        <div class="card-header">
+                            <span style="font-size: 1.5rem;">🔄</span>
+                            <h4>传统方式：对话式调用</h4>
+                        </div>
+                        <ul style="list-style: none; margin-top: 1rem;">
+                            <li style="padding: 0.5rem 0;">1️⃣ Claude：我需要获取文档</li>
+                            <li style="padding: 0.5rem 0;">2️⃣ 工具返回：[完整文档内容进入上下文]</li>
+                            <li style="padding: 0.5rem 0;">3️⃣ Claude：现在我要更新 Salesforce</li>
+                            <li style="padding: 0.5rem 0;">4️⃣ 工具返回：[确认信息进入上下文]</li>
+                            <li style="padding: 0.5rem 0; color: var(--accent-red);">⚠️ 2小时会议记录 = 50,000 Token 被复制两次</li>
+                        </ul>
+                    </div>
+                    <div class="solution-card">
+                        <div class="card-header">
+                            <span style="font-size: 1.5rem;">💻</span>
+                            <h4>代码模式</h4>
+                        </div>
+                        <ul style="list-style: none; margin-top: 1rem;">
+                            <li style="padding: 0.5rem 0;">1️⃣ Claude 写代码：获取→处理→更新</li>
+                            <li style="padding: 0.5rem 0;">2️⃣ 代码在沙箱执行，数据不经过模型</li>
+                            <li style="padding: 0.5rem 0;">3️⃣ 只返回：<code>"已更新 15 条线索"</code></li>
+                            <li style="padding: 0.5rem 0; color: var(--accent-green);">✅ Token 节省 98.7%</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="summary-box" style="margin-top: 2rem;">
+                    <h4>🚀 代码模式的四大优势</h4>
+                    <ul class="summary-list">
+                        <li><span class="highlight-cyan">渐进式发现</span>：工具以文件形式存在，Claude 按需读取，不用预加载</li>
+                        <li><span class="highlight-purple">上下文高效</span>：10,000 行数据可以在代码中过滤，只传 5 行结果给 Claude</li>
+                        <li><span class="highlight-green">隐私保护</span>：敏感数据可自动标记化，真实内容不经过模型</li>
+                        <li><span class="highlight-orange">技能持久化</span>：Claude 写的代码可保存为可复用函数，越用越聪明</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- 沙箱安全 -->
+        <section id="sandbox">
+            <div class="section-header">
+                <div class="section-icon" style="background: rgba(239, 68, 68, 0.2);">🛡️</div>
+                <div>
+                    <h2 class="section-title">沙箱安全：给 AI 划定"安全游乐场"</h2>
+                    <p class="section-subtitle">减少 84% 权限提示，同时防止代理被恶意利用</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="insight-tag">⚠️ 安全痛点</div>
+
+                <p style="margin-bottom: 2rem;">
+                    Claude Code 需要读写文件、运行命令——这很强大，但也很危险。传统方案是<span class="highlight-orange">每个操作都问用户"允许吗？"</span>，结果用户疲于点击"批准"，反而<span class="highlight-red">降低了安全性</span>（批准疲劳）。
+                </p>
+
+                <div class="problem-solution">
+                    <div class="problem-card">
+                        <div class="card-header">
+                            <span style="font-size: 1.5rem;">😓</span>
+                            <h4>批准疲劳的危害</h4>
+                        </div>
+                        <p>用户被问太多次后，开始<span class="highlight-red">不仔细看就点批准</span>，万一 Claude 被<span class="term">提示注入</span><span class="term-explain">黑客在输入中偷偷加恶意指令</span>攻击，用户可能无意中批准了危险操作。</p>
+                    </div>
+                    <div class="solution-card">
+                        <div class="card-header">
+                            <span style="font-size: 1.5rem;">🏖️</span>
+                            <h4>沙箱方案</h4>
+                        </div>
+                        <p>划定安全边界：在边界内 Claude <span class="highlight-green">自由工作无需询问</span>，越界才提醒用户。权限提示<span class="number-highlight">减少 84%</span>！</p>
+                    </div>
+                </div>
+
+                <h3 style="margin: 2rem 0 1rem; color: var(--accent-cyan);">🔐 双重隔离机制</h3>
+
+                <div class="metrics-grid">
+                    <div class="metric-card" style="text-align: left;">
+                        <h4 style="color: var(--accent-purple); margin-bottom: 1rem;">📁 文件系统隔离</h4>
+                        <p style="color: var(--text-secondary);">Claude 只能读写<span class="highlight-green">当前工作目录</span>，无法碰系统文件、SSH 密钥等敏感内容。</p>
+                        <p class="term-explain" style="margin-top: 0.5rem;">👆 大白话：只能在自己的房间玩，不能跑到别人房间翻东西</p>
+                    </div>
+                    <div class="metric-card" style="text-align: left;">
+                        <h4 style="color: var(--accent-orange); margin-bottom: 1rem;">🌐 网络隔离</h4>
+                        <p style="color: var(--text-secondary);">所有网络请求通过<span class="highlight-green">代理服务器</span>，只允许访问白名单域名，新域名需用户确认。</p>
+                        <p class="term-explain" style="margin-top: 0.5rem;">👆 大白话：只能访问批准过的网站，想去新网站得先举手报告</p>
+                    </div>
+                </div>
+
+                <div class="quote-card cyan" style="margin-top: 2rem;">
+                    <p class="quote-text">"有效的沙箱必须同时实现文件系统隔离和网络隔离。缺任何一个，攻击者都能找到绕过方式。"</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 科技大佬点评 -->
+        <section id="experts">
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--gradient-3);">💬</div>
+                <div>
+                    <h2 class="section-title">如果科技大佬来点评...</h2>
+                    <p class="section-subtitle">模拟 Sam Altman、Elon Musk、Bill Gates、Sundar Pichai 的视角</p>
+                </div>
+            </div>
+
+            <div class="expert-comments">
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white;">SA</div>
+                        <div class="expert-info">
+                            <h4>Sam Altman</h4>
+                            <span>OpenAI CEO</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote" style="border-color: var(--accent-green);">
+                        "长期运行代理的'双代理架构'很有意思——初始化代理和编码代理的分离，本质上是在模拟人类软件团队的协作方式。但我认为真正的突破会来自<span class="highlight-green">更长的上下文窗口</span>和<span class="highlight-cyan">更好的记忆机制</span>，而非绕过这些限制的工程技巧。不过，这些实践经验对整个行业都很有价值。"
+                    </p>
+                </div>
+
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white;">EM</div>
+                        <div class="expert-info">
+                            <h4>Elon Musk</h4>
+                            <span>Tesla/SpaceX/xAI CEO</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote" style="border-color: var(--accent-cyan);">
+                        "沙箱安全是正确的方向。在 xAI，我们同样重视 AI 系统的<span class="highlight-cyan">可控性边界</span>。但我对'程序化工具调用'更感兴趣——让 AI 写代码来调用工具，而非逐个对话调用，这才是<span class="highlight-orange">真正的效率提升</span>。工程师写代码来编排复杂逻辑，AI 也应该如此。"
+                    </p>
+                </div>
+
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); color: white;">BG</div>
+                        <div class="expert-info">
+                            <h4>Bill Gates</h4>
+                            <span>微软联合创始人</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote" style="border-color: var(--accent-purple);">
+                        "这让我想起了早期 Windows 的多任务处理挑战。MCP 协议的定位就像当年的<span class="highlight-purple">设备驱动标准</span>——一次实现，到处使用。'工具搜索工具'的按需加载思路，也很像操作系统的<span class="highlight-green">动态链接库</span>概念。历史总是在重复，但每次都更聪明一点。"
+                    </p>
+                </div>
+
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: white;">SP</div>
+                        <div class="expert-info">
+                            <h4>Sundar Pichai</h4>
+                            <span>Google/Alphabet CEO</span>
+                        </div>
+                    </div>
+                    <p class="expert-quote" style="border-color: var(--accent-orange);">
+                        "Token 效率优化是整个行业的核心挑战。85% 的 Token 节省意味着<span class="highlight-orange">成本降低到六分之一</span>，这对大规模部署至关重要。在 Google，我们也在探索类似的'<span class="highlight-cyan">延迟绑定</span>'策略。有趣的是，这些优化思路和我们做搜索引擎索引的经验异曲同工——只加载真正需要的数据。"
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑思维导图 -->
+        <section>
+            <div class="section-header">
+                <div class="section-icon" style="background: var(--gradient-2);">🗺️</div>
+                <div>
+                    <h2 class="section-title">逻辑关系图：四大技术如何协同</h2>
+                    <p class="section-subtitle">从问题到解决方案的完整链路</p>
+                </div>
+            </div>
+
+            <div class="content-card">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h4 style="color: var(--accent-cyan);">🎯 问题层：AI 代理的四大瓶颈</h4>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                ① 跨会话失忆 → ② 工具定义膨胀 → ③ 中间结果污染 → ④ 安全与效率冲突
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h4 style="color: var(--accent-purple);">🔧 方案层：针对性技术突破</h4>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                ① 双代理+进度文件 → ② 工具搜索按需加载 → ③ 程序化调用+代码执行 → ④ 沙箱隔离
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h4 style="color: var(--accent-green);">📈 效果层：量化收益</h4>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                Token 节省 85% | 准确率提升 18% | 权限提示减少 84% | 可持续开发复杂项目
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-content">
+                            <h4 style="color: var(--accent-orange);">🚀 愿景层：AI 代理的未来</h4>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;">
+                                数小时乃至数天的自主工作 | 数千工具无缝协作 | 安全可控的生产环境部署
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 总结 -->
+        <section>
+            <div class="quote-hero" style="background: var(--gradient-2);">
+                <blockquote>
+                    "AI 代理的未来，不在于模型本身有多强大，而在于我们能否为它构建足够好的'基础设施'——让它记住、高效、安全地完成复杂任务。"
+                    <cite>—— Claude Agent 技术全景总结</cite>
+                </blockquote>
+            </div>
+
+            <div class="content-card">
+                <h3 style="margin-bottom: 1.5rem; color: var(--accent-cyan);">📋 一页纸总结：你需要知道的一切</h3>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>技术</th>
+                            <th>解决什么问题</th>
+                            <th>核心思路</th>
+                            <th>关键指标</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><span class="highlight-cyan">长期代理框架</span></td>
+                            <td>跨会话失忆</td>
+                            <td>进度文件+功能清单+Git历史</td>
+                            <td>可持续开发</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-purple">工具搜索工具</span></td>
+                            <td>工具定义膨胀</td>
+                            <td>defer_loading 按需发现</td>
+                            <td>Token ↓85%</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-green">程序化工具调用</span></td>
+                            <td>中间结果污染</td>
+                            <td>写代码编排，沙箱执行</td>
+                            <td>Token ↓37%</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-orange">工具使用示例</span></td>
+                            <td>参数格式歧义</td>
+                            <td>用例子而非schema教模型</td>
+                            <td>准确率 72%→90%</td>
+                        </tr>
+                        <tr>
+                            <td><span class="highlight-pink">沙箱安全</span></td>
+                            <td>安全与效率冲突</td>
+                            <td>文件+网络双隔离</td>
+                            <td>提示 ↓84%</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <p>基于 Anthropic 官方技术博客整理 | 生成时间：2025年2月</p>
+        <p style="margin-top: 0.5rem; font-size: 0.85rem;">🤖 Powered by Claude | 科技极简风呈现</p>
+    </footer>
+
+    <script>
+        // 折叠面板
+        function toggleAccordion(header) {
+            const accordion = header.parentElement;
+            accordion.classList.toggle('open');
+        }
+
+        // 平滑滚动
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+            // 更新导航状态
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('light-mode') ? '🌙' : '☀️';
+        }
+
+        // 滚动时更新导航
+        window.addEventListener('scroll', () => {
+            const sections = ['overview', 'longrun', 'tools', 'mcp', 'sandbox', 'experts'];
+            const scrollPos = window.scrollY + 200;
+            
+            sections.forEach(id => {
+                const section = document.getElementById(id);
+                if (section && section.offsetTop <= scrollPos && section.offsetTop + section.offsetHeight > scrollPos) {
+                    document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+                    const navItem = document.querySelector(`[onclick="scrollToSection('${id}')"]`);
+                    if (navItem) navItem.classList.add('active');
+                }
+            });
+        });
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.content-card, .accordion, .expert-card');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            cards.forEach(card => observer.observe(card));
+        });
+    </script>
+</body>
+</html>

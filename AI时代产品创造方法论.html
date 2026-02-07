@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>从0到1：AI时代产品创造方法论 | 云舒老师实战分享</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&family=Noto+Sans+SC:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg-deep: #0a0a0f;
+            --bg-surface: #12121a;
+            --glass-bg: rgba(18, 18, 26, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f0f0f5;
+            --text-secondary: #8a8a9a;
+            --text-muted: #5a5a6a;
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-cyan: #06b6d4;
+            --accent-orange: #f97316;
+            --accent-green: #10b981;
+            --accent-red: #ef4444;
+            --gradient-main: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            --gradient-warm: linear-gradient(135deg, #f97316 0%, #ef4444 100%);
+            --gradient-cool: linear-gradient(135deg, #06b6d4 0%, #6366f1 100%);
+            --shadow-glow: 0 0 60px rgba(99, 102, 241, 0.15);
+            --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            --noise: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+        }
+
+        [data-theme="light"] {
+            --bg-deep: #f8f9fc;
+            --bg-surface: #ffffff;
+            --glass-bg: rgba(255, 255, 255, 0.9);
+            --glass-border: rgba(0, 0, 0, 0.08);
+            --text-primary: #1a1a2e;
+            --text-secondary: #4a4a5a;
+            --text-muted: #8a8a9a;
+            --shadow-glow: 0 0 60px rgba(99, 102, 241, 0.1);
+            --shadow-card: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(2deg); }
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(99, 102, 241, 0.3); }
+            50% { box-shadow: 0 0 40px rgba(99, 102, 241, 0.6); }
+        }
+
+        @keyframes gradient-shift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        @keyframes slide-up {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes slide-in-left {
+            from { opacity: 0; transform: translateX(-30px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes draw-line {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        @keyframes typing {
+            from { width: 0; }
+            to { width: 100%; }
+        }
+
+        body {
+            font-family: 'Noto Sans SC', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-deep);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--noise);
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* 背景装饰元素 */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bg-orb-1 {
+            width: 600px;
+            height: 600px;
+            background: var(--accent-primary);
+            top: -200px;
+            right: -200px;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .bg-orb-2 {
+            width: 400px;
+            height: 400px;
+            background: var(--accent-pink);
+            bottom: 10%;
+            left: -100px;
+            animation: float 15s ease-in-out infinite reverse;
+        }
+
+        .bg-orb-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent-cyan);
+            top: 50%;
+            right: 10%;
+            animation: float 18s ease-in-out infinite 2s;
+        }
+
+        /* 网格背景 */
+        .grid-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(rgba(99, 102, 241, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(99, 102, 241, 0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* 顶部导航栏 */
+        .nav-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 15px 30px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.2em;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .nav-btn {
+            padding: 10px 20px;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
+            background: transparent;
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .nav-btn:hover {
+            background: var(--glass-bg);
+            color: var(--text-primary);
+            border-color: var(--accent-primary);
+        }
+
+        .nav-btn.primary {
+            background: var(--gradient-main);
+            color: white;
+            border: none;
+        }
+
+        .nav-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+
+        /* 主标题区域 */
+        .hero {
+            margin-top: 100px;
+            margin-bottom: 60px;
+            text-align: center;
+            position: relative;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 20px;
+            background: rgba(99, 102, 241, 0.1);
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 50px;
+            font-size: 0.85em;
+            color: var(--accent-primary);
+            margin-bottom: 30px;
+            animation: slide-up 0.8s ease;
+        }
+
+        .hero-badge::before {
+            content: '🚀';
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 25px;
+            letter-spacing: -0.03em;
+            animation: slide-up 0.8s ease 0.1s both;
+        }
+
+        .hero-title .gradient-text {
+            background: var(--gradient-main);
+            background-size: 200% 200%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 5s ease infinite;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin: 0 auto 40px;
+            animation: slide-up 0.8s ease 0.2s both;
+        }
+
+        .hero-meta {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            animation: slide-up 0.8s ease 0.3s both;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 0.95em;
+        }
+
+        .meta-item i {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--glass-bg);
+            border-radius: 6px;
+        }
+
+        /* 核心洞察卡片 */
+        .insights-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 60px;
+        }
+
+        .insight-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: slide-up 0.6s ease both;
+        }
+
+        .insight-card:nth-child(1) { animation-delay: 0.1s; }
+        .insight-card:nth-child(2) { animation-delay: 0.2s; }
+        .insight-card:nth-child(3) { animation-delay: 0.3s; }
+        .insight-card:nth-child(4) { animation-delay: 0.4s; }
+
+        .insight-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--gradient-main);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.4s ease;
+        }
+
+        .insight-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .insight-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: var(--shadow-glow);
+            border-color: var(--accent-primary);
+        }
+
+        .insight-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .insight-icon.purple { background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2)); }
+        .insight-icon.pink { background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(244, 114, 182, 0.2)); }
+        .insight-icon.cyan { background: linear-gradient(135deg, rgba(6, 182, 212, 0.2), rgba(34, 211, 238, 0.2)); }
+        .insight-icon.orange { background: linear-gradient(135deg, rgba(249, 115, 22, 0.2), rgba(251, 146, 60, 0.2)); }
+
+        .insight-number {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            width: 24px;
+            height: 24px;
+            background: var(--gradient-main);
+            border-radius: 50%;
+            font-size: 0.7em;
+            font-weight: 700;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .insight-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+
+        .insight-desc {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+            line-height: 1.7;
+        }
+
+        /* 思维导图区域 */
+        .mindmap-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            padding: 50px;
+            margin-bottom: 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mindmap-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 200px;
+            background: linear-gradient(180deg, rgba(99, 102, 241, 0.05) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        .section-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: var(--accent-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 20px;
+        }
+
+        .mindmap-title {
+            font-size: 2.2em;
+            font-weight: 800;
+            margin-bottom: 50px;
+            text-align: center;
+        }
+
+        /* 元认知图 - 水平流程 */
+        .metacognition-flow {
+            display: flex;
+            justify-content: center;
+            align-items: stretch;
+            gap: 20px;
+            padding: 40px 0;
+            overflow-x: auto;
+        }
+
+        .flow-stage {
+            flex: 0 0 200px;
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-stage::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5em;
+            color: var(--accent-primary);
+            opacity: 0.5;
+        }
+
+        .flow-stage:last-child::after {
+            display: none;
+        }
+
+        .flow-node {
+            background: var(--bg-surface);
+            border: 2px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px 20px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .flow-node:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.15);
+        }
+
+        .flow-emoji {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+        }
+
+        .flow-title {
+            font-weight: 700;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            color: var(--accent-primary);
+        }
+
+        .flow-desc {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* 逻辑思维导图 - 树状结构 */
+        .logic-tree {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 40px;
+            padding: 40px 20px;
+        }
+
+        .tree-root {
+            background: var(--gradient-main);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.5em;
+            font-weight: 800;
+            box-shadow: 0 15px 40px rgba(99, 102, 241, 0.3);
+            animation: pulse-glow 3s ease-in-out infinite;
+            text-align: center;
+        }
+
+        .tree-connector {
+            width: 3px;
+            height: 40px;
+            background: linear-gradient(180deg, var(--accent-primary), transparent);
+        }
+
+        .tree-branches {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .tree-branch {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .branch-header {
+            background: var(--bg-surface);
+            border: 2px solid var(--accent-primary);
+            border-radius: 20px;
+            padding: 20px 25px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 1.15em;
+            position: relative;
+        }
+
+        .branch-header::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 20px;
+            background: var(--accent-primary);
+        }
+
+        .branch-items {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            padding-left: 20px;
+            border-left: 2px dashed var(--glass-border);
+        }
+
+        .branch-item {
+            background: rgba(99, 102, 241, 0.05);
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            color: var(--text-secondary);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .branch-item::before {
+            content: '';
+            position: absolute;
+            left: -22px;
+            top: 50%;
+            width: 20px;
+            height: 2px;
+            background: var(--glass-border);
+        }
+
+        .branch-item:hover {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--text-primary);
+            transform: translateX(5px);
+        }
+
+        /* 内容区块 */
+        .content-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 30px;
+            margin-bottom: 40px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .content-section:hover {
+            box-shadow: var(--shadow-glow);
+        }
+
+        .section-header {
+            padding: 30px 40px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .content-section:not(.collapsed) .section-header {
+            border-bottom-color: var(--glass-border);
+        }
+
+        .section-header:hover {
+            background: rgba(99, 102, 241, 0.03);
+        }
+
+        .section-header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .section-number {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-main);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+            font-size: 1.2em;
+            color: white;
+        }
+
+        .section-title-group h2 {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .section-preview-text {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            max-width: 500px;
+        }
+
+        .collapse-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .collapse-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text-secondary);
+            transition: transform 0.3s ease;
+        }
+
+        .content-section.collapsed .collapse-toggle svg {
+            transform: rotate(-90deg);
+        }
+
+        .section-body {
+            max-height: 2000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .content-section.collapsed .section-body {
+            max-height: 0;
+        }
+
+        .section-content {
+            padding: 30px 40px 40px;
+        }
+
+        /* 金句样式 */
+        .golden-quote {
+            background: linear-gradient(135deg, rgba(249, 115, 22, 0.1), rgba(236, 72, 153, 0.1));
+            border-left: 4px solid var(--accent-orange);
+            border-radius: 0 16px 16px 0;
+            padding: 25px 30px;
+            margin: 25px 0;
+            position: relative;
+            font-size: 1.15em;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+
+        .golden-quote::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 15px;
+            font-size: 4em;
+            font-family: Georgia, serif;
+            color: var(--accent-orange);
+            opacity: 0.3;
+            line-height: 1;
+        }
+
+        .golden-quote .quote-source {
+            display: block;
+            margin-top: 15px;
+            font-size: 0.8em;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* 高亮标签 */
+        .tag-key {
+            color: var(--accent-red);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(239, 68, 68, 0.1);
+            border-radius: 6px;
+        }
+
+        .tag-data {
+            color: var(--accent-cyan);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(6, 182, 212, 0.1);
+            border-radius: 6px;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .tag-tip {
+            color: var(--accent-green);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 6px;
+        }
+
+        /* 干货列表 */
+        .takeaway-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .takeaway-item {
+            display: flex;
+            gap: 15px;
+            align-items: flex-start;
+            padding: 20px;
+            background: var(--bg-surface);
+            border-radius: 16px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+
+        .takeaway-item:hover {
+            border-color: var(--accent-primary);
+            transform: translateX(10px);
+        }
+
+        .takeaway-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            flex-shrink: 0;
+        }
+
+        .takeaway-content h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .takeaway-content p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* 专家评论区 */
+        .expert-comments {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+            margin: 40px 0;
+        }
+
+        .expert-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 30px;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 24px;
+            padding: 2px;
+            background: var(--gradient-main);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .expert-card:hover::before {
+            opacity: 1;
+        }
+
+        .expert-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8em;
+        }
+
+        .expert-info h4 {
+            font-weight: 700;
+            margin-bottom: 3px;
+        }
+
+        .expert-info span {
+            font-size: 0.85em;
+            color: var(--text-muted);
+        }
+
+        .expert-content {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            position: relative;
+            padding-left: 20px;
+        }
+
+        .expert-content::before {
+            content: '"';
+            position: absolute;
+            left: 0;
+            top: 0;
+            font-size: 2em;
+            font-family: Georgia, serif;
+            color: var(--accent-primary);
+            opacity: 0.5;
+            line-height: 1;
+        }
+
+        /* 时间线 */
+        .timeline {
+            position: relative;
+            padding-left: 40px;
+            margin: 30px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: linear-gradient(180deg, var(--accent-primary), var(--accent-pink), var(--accent-cyan));
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 20px 0;
+            padding-left: 30px;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 25px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: var(--gradient-main);
+            border: 3px solid var(--bg-deep);
+        }
+
+        .timeline-date {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85em;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .timeline-content {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 20px;
+        }
+
+        .timeline-content h4 {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .timeline-content p {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+        }
+
+        /* 数据统计 */
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 25px;
+            background: var(--bg-surface);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: var(--gradient-main);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: var(--text-muted);
+            margin-top: 5px;
+        }
+
+        /* 对比框 */
+        .comparison-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin: 25px 0;
+        }
+
+        .compare-side {
+            padding: 25px;
+            border-radius: 20px;
+        }
+
+        .compare-side.do {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .compare-side.dont {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        .compare-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .compare-side.do .compare-title { color: var(--accent-green); }
+        .compare-side.dont .compare-title { color: var(--accent-red); }
+
+        .compare-list {
+            list-style: none;
+        }
+
+        .compare-list li {
+            padding: 8px 0;
+            padding-left: 25px;
+            position: relative;
+            color: var(--text-secondary);
+        }
+
+        .compare-side.do .compare-list li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: var(--accent-green);
+            font-weight: 700;
+        }
+
+        .compare-side.dont .compare-list li::before {
+            content: '✗';
+            position: absolute;
+            left: 0;
+            color: var(--accent-red);
+            font-weight: 700;
+        }
+
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-card);
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-glow);
+        }
+
+        /* 底部 */
+        .footer {
+            text-align: center;
+            padding: 60px 40px;
+            color: var(--text-muted);
+            font-size: 0.9em;
+        }
+
+        .footer-divider {
+            width: 100px;
+            height: 3px;
+            background: var(--gradient-main);
+            margin: 0 auto 30px;
+            border-radius: 2px;
+        }
+
+        /* 响应式 */
+        @media (max-width: 900px) {
+            .container { padding: 15px; }
+            .hero { margin-top: 80px; }
+            .hero-title { font-size: 2rem; }
+            .mindmap-section { padding: 30px 20px; }
+            .metacognition-flow { flex-direction: column; align-items: center; }
+            .flow-stage::after { display: none; }
+            .tree-branches { grid-template-columns: 1fr; }
+            .comparison-box { grid-template-columns: 1fr; }
+            .expert-comments { grid-template-columns: 1fr; }
+            .section-header { padding: 20px; }
+            .section-content { padding: 20px; }
+        }
+
+        /* 打印样式 */
+        @media print {
+            .nav-bar, .theme-toggle { display: none; }
+            .bg-orb, .grid-overlay { display: none; }
+            body { background: white; color: black; }
+            .content-section.collapsed .section-body { max-height: none; }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景装饰 -->
+    <div class="bg-orb bg-orb-1"></div>
+    <div class="bg-orb bg-orb-2"></div>
+    <div class="bg-orb bg-orb-3"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- 导航栏 -->
+    <nav class="nav-bar">
+        <div class="nav-logo">VIBE CODING 实战营</div>
+        <div class="nav-actions">
+            <button class="nav-btn" onclick="toggleAll()">展开/折叠全部</button>
+            <button class="nav-btn" onclick="window.print()">导出PDF</button>
+            <button class="nav-btn primary" onclick="scrollToSection('mindmap')">思维导图</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- 主标题区 -->
+        <header class="hero">
+            <div class="hero-badge">Way to AGI · 第四期训练营 · 第七课</div>
+            <h1 class="hero-title">
+                <span class="gradient-text">从0到1</span><br>
+                AI时代产品创造方法论
+            </h1>
+            <p class="hero-subtitle">
+                云舒老师以「提示词管理助手」为实战案例，深度拆解需求挖掘、MVP设计、冷启动、迭代优化的完整闭环
+            </p>
+            <div class="hero-meta">
+                <span class="meta-item"><i>👨‍🏫</i> 讲师：云舒</span>
+                <span class="meta-item"><i>📅</i> 2026年1月</span>
+                <span class="meta-item"><i>⏱️</i> 约60分钟</span>
+                <span class="meta-item"><i>👥</i> 1000-2000用户产品实战</span>
+            </div>
+        </header>
+
+        <!-- 核心洞察卡片 -->
+        <section class="insights-grid">
+            <div class="insight-card">
+                <div class="insight-icon purple">
+                    🎯
+                    <span class="insight-number">1</span>
+                </div>
+                <h3 class="insight-title">从自己的痛点出发</h3>
+                <p class="insight-desc">做产品最稳妥的起点是解决自己的真实问题。即使没人用，至少能帮到自己——这是零风险的创业姿势。</p>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon pink">
+                    ⚡
+                    <span class="insight-number">2</span>
+                </div>
+                <h3 class="insight-title">MVP要压到极致</h3>
+                <p class="insight-desc">能少做就少做，完美主义是产品的头号杀手。一个能用的产品永远胜过一个完美的PPT。</p>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon cyan">
+                    📈
+                    <span class="insight-number">3</span>
+                </div>
+                <h3 class="insight-title">种子用户是金矿</h3>
+                <p class="insight-desc">100个早期用户能帮你验证需求、发现新功能、提供迭代方向。产品会从用户反馈中「生长」出来。</p>
+            </div>
+            <div class="insight-card">
+                <div class="insight-icon orange">
+                    🎭
+                    <span class="insight-number">4</span>
+                </div>
+                <h3 class="insight-title">明确你的北极星</h3>
+                <p class="insight-desc">用户量？商业化？个人IP？没有清晰目标，产品就会「卡住」——你不知道下一步该做什么。</p>
+            </div>
+        </section>
+
+        <!-- 元认知图 -->
+        <section class="mindmap-section" id="mindmap">
+            <span class="section-label">🧠 元认知图</span>
+            <h2 class="mindmap-title">产品创造的心智模型</h2>
+            
+            <div class="metacognition-flow">
+                <div class="flow-stage">
+                    <div class="flow-node">
+                        <div class="flow-emoji">💡</div>
+                        <div class="flow-title">痛点感知</div>
+                        <div class="flow-desc">从日常工作中捕捉「这也太麻烦了」的瞬间</div>
+                    </div>
+                </div>
+                <div class="flow-stage">
+                    <div class="flow-node">
+                        <div class="flow-emoji">🔍</div>
+                        <div class="flow-title">方案推演</div>
+                        <div class="flow-desc">技术可行性、成本控制、用户体验的三角平衡</div>
+                    </div>
+                </div>
+                <div class="flow-stage">
+                    <div class="flow-node">
+                        <div class="flow-emoji">🚀</div>
+                        <div class="flow-title">快速验证</div>
+                        <div class="flow-desc">最小功能集上线，用真实用户检验假设</div>
+                    </div>
+                </div>
+                <div class="flow-stage">
+                    <div class="flow-node">
+                        <div class="flow-emoji">🔄</div>
+                        <div class="flow-title">反馈迭代</div>
+                        <div class="flow-desc">用户声音驱动功能演进，产品自然生长</div>
+                    </div>
+                </div>
+                <div class="flow-stage">
+                    <div class="flow-node">
+                        <div class="flow-emoji">🎯</div>
+                        <div class="flow-title">目标校准</div>
+                        <div class="flow-desc">定期回看北极星指标，确保不偏离航向</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑思维导图 -->
+        <section class="mindmap-section">
+            <span class="section-label">🌳 逻辑思维导图</span>
+            <h2 class="mindmap-title">产品开发全景图</h2>
+            
+            <div class="logic-tree">
+                <div class="tree-root">🎯 一个产品是怎么做出来的</div>
+                <div class="tree-connector"></div>
+                
+                <div class="tree-branches">
+                    <div class="tree-branch">
+                        <div class="branch-header">💡 需求挖掘</div>
+                        <div class="branch-items">
+                            <div class="branch-item">从自己的真实场景出发</div>
+                            <div class="branch-item">痛点越痛，动力越足</div>
+                            <div class="branch-item">自用产品零风险起步</div>
+                            <div class="branch-item">商业化产品看人群广度</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">⚙️ MVP 设计</div>
+                        <div class="branch-items">
+                            <div class="branch-item">只做最核心的一个功能</div>
+                            <div class="branch-item">能少做就少做</div>
+                            <div class="branch-item">完美主义是大敌</div>
+                            <div class="branch-item">先做出来再说好不好</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">🚀 冷启动</div>
+                        <div class="branch-items">
+                            <div class="branch-item">社群推广是精准渠道</div>
+                            <div class="branch-item">100个种子用户足够验证</div>
+                            <div class="branch-item">建立用户反馈群</div>
+                            <div class="branch-item">写详细教程降低门槛</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">🔄 迭代优化</div>
+                        <div class="branch-items">
+                            <div class="branch-item">用户反馈驱动功能</div>
+                            <div class="branch-item">小版本高频发布</div>
+                            <div class="branch-item">磨UI比后端更痛</div>
+                            <div class="branch-item">需求优先级排序</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">📈 增长策略</div>
+                        <div class="branch-items">
+                            <div class="branch-item">IP + 产品双轮驱动</div>
+                            <div class="branch-item">内容分享积累信任</div>
+                            <div class="branch-item">朋友转发口碑传播</div>
+                            <div class="branch-item">小红书/公众号矩阵</div>
+                        </div>
+                    </div>
+                    
+                    <div class="tree-branch">
+                        <div class="branch-header">⚠️ 踩坑复盘</div>
+                        <div class="branch-items">
+                            <div class="branch-item">架构重构是伪需求</div>
+                            <div class="branch-item">过度依赖AI会踩坑</div>
+                            <div class="branch-item">没有目标会卡住</div>
+                            <div class="branch-item">场景要选得足够深</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 内容区块1：需求挖掘 -->
+        <article class="content-section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <div class="section-header-left">
+                    <div class="section-number">01</div>
+                    <div class="section-title-group">
+                        <h2>需求挖掘：从自己的痛点出发</h2>
+                        <p class="section-preview-text">为什么要先做自用工具？商业化产品和自用产品的本质区别</p>
+                    </div>
+                </div>
+                <div class="collapse-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="golden-quote">
+                        如果你刚开始做产品，最好先做自己用的工具。最大的好处是：不管有没有其他人用，最起码它能帮你解决问题。所以它最起码是一定做出来对你有帮助的。
+                        <span class="quote-source">—— 云舒老师</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">🎯 云舒的真实痛点</h3>
+                    <p>当时写了很多提示词，散落在零散的飞书云文档里，而且还没有归类。每次想找一个提示词，步骤非常长：</p>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">Step 1</div>
+                            <div class="timeline-content">
+                                <h4>回忆位置</h4>
+                                <p>先要想这个提示词到底在哪个文档里</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Step 2</div>
+                            <div class="timeline-content">
+                                <h4>打开飞书</h4>
+                                <p>要等飞书加载一堆东西</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Step 3</div>
+                            <div class="timeline-content">
+                                <h4>搜索文档</h4>
+                                <p>只记得大概的文档名称，需要反复搜索</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">Step 4</div>
+                            <div class="timeline-content">
+                                <h4>复制粘贴</h4>
+                                <p>找到后还要从一个文档复制到另一个地方</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        我就想找个提示词，然后就要飞老半天劲。
+                        <span class="quote-source">—— 痛点就是这么简单直接</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">💡 技术方案的选择逻辑</h3>
+                    
+                    <div class="takeaway-list">
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">📊</div>
+                            <div class="takeaway-content">
+                                <h4>日常就用飞书</h4>
+                                <p>绝大多数数据都在飞书里，用多维表格管理省事</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🔌</div>
+                            <div class="takeaway-content">
+                                <h4>技术可行</h4>
+                                <p>飞书多维表格有API，直接拉过来就好</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">💰</div>
+                            <div class="takeaway-content">
+                                <h4>零服务器成本</h4>
+                                <p>让每个人授权自己的飞书，本地运行，一分服务器的钱都不花</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🔄</div>
+                            <div class="takeaway-content">
+                                <h4>多端同步</h4>
+                                <p>公司Mac、家里Mac、家里Windows，三台设备都能同步</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-box">
+                        <div class="compare-side do">
+                            <div class="compare-title">✅ 自用产品思维</div>
+                            <ul class="compare-list">
+                                <li>从真实痛点出发</li>
+                                <li>解决不了也能帮到自己</li>
+                                <li>零风险起步</li>
+                                <li>动力持久稳定</li>
+                            </ul>
+                        </div>
+                        <div class="compare-side dont">
+                            <div class="compare-title">❌ 纯商业化思维</div>
+                            <ul class="compare-list">
+                                <li>追热点容易跟风</li>
+                                <li>需求可能是伪需求</li>
+                                <li>前期投入风险大</li>
+                                <li>没有用户反馈很痛苦</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 内容区块2：MVP设计 -->
+        <article class="content-section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <div class="section-header-left">
+                    <div class="section-number">02</div>
+                    <div class="section-title-group">
+                        <h2>MVP设计：能少做就少做</h2>
+                        <p class="section-preview-text">完美主义是产品杀手，先做出来比什么都重要</p>
+                    </div>
+                </div>
+                <div class="collapse-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="golden-quote">
+                        MVP版本在选择上要卡那个最核心的点。一旦你有做完美产品的想法，这个产品就做不完了。你会不断拖着把这个东西无限扩大，扩大到最后你会发现这事情搞不定了。
+                        <span class="quote-source">—— 云舒老师</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">📦 1.2版本到底有什么？</h3>
+                    
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-value">3</div>
+                            <div class="stat-label">核心功能</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">1</div>
+                            <div class="stat-label">晚上</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">0</div>
+                            <div class="stat-label">服务器成本</div>
+                        </div>
+                    </div>
+
+                    <div class="takeaway-list">
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">📁</div>
+                            <div class="takeaway-content">
+                                <h4>本地+飞书存储</h4>
+                                <p>支持本地提示词和飞书多维表格提示词的存储</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">📋</div>
+                            <div class="takeaway-content">
+                                <h4>一键复制</h4>
+                                <p>能够一键复制提示词，这就是最核心的功能</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🔐</div>
+                            <div class="takeaway-content">
+                                <h4>数据授权</h4>
+                                <p>授权飞书数据读取权限</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        搜索什么的也没做，增删改查都没做，各种东西都没有做，就做了一个事情叫复制。
+                        <span class="quote-source">—— 这就是MVP的极致</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">⚠️ MVP的核心原则</h3>
+
+                    <div class="comparison-box">
+                        <div class="compare-side do">
+                            <div class="compare-title">✅ 正确的MVP思维</div>
+                            <ul class="compare-list">
+                                <li>只做最核心的一个功能</li>
+                                <li>能用就上线</li>
+                                <li>不好用可以迭代</li>
+                                <li>用真实用户验证</li>
+                                <li>做30个失败的也比不做强</li>
+                            </ul>
+                        </div>
+                        <div class="compare-side dont">
+                            <div class="compare-title">❌ 完美主义陷阱</div>
+                            <ul class="compare-list">
+                                <li>总觉得UI太丑不想上线</li>
+                                <li>功能越想越多</li>
+                                <li>一两个月还没上线</li>
+                                <li>在脑子里做产品</li>
+                                <li>等完美了再发布</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        做一个东西出来永远比不做要重要。有一个产品能交出来比没有产品重要多了。
+                        <span class="quote-source">—— 行动第一原则</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 内容区块3：冷启动 -->
+        <article class="content-section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <div class="section-header-left">
+                    <div class="section-number">03</div>
+                    <div class="section-title-group">
+                        <h2>冷启动：7天100个用户</h2>
+                        <p class="section-preview-text">社群推广的精准打法和种子用户的黄金价值</p>
+                    </div>
+                </div>
+                <div class="collapse-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <h3 style="margin: 0 0 20px; font-size: 1.2em;">📊 冷启动数据</h3>
+                    
+                    <div class="stats-row">
+                        <div class="stat-item">
+                            <div class="stat-value">7天</div>
+                            <div class="stat-label">达成时间</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">100</div>
+                            <div class="stat-label">种子用户</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">37</div>
+                            <div class="stat-label">首批试用</div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">🎯 为什么选择社群推广？</h3>
+                    
+                    <div class="takeaway-list">
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🎯</div>
+                            <div class="takeaway-content">
+                                <h4>渠道精准</h4>
+                                <p>AI社群里的人都关注AI，就是目标用户</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🤝</div>
+                            <div class="takeaway-content">
+                                <h4>信任度高</h4>
+                                <p>社群成员有基础信任，愿意尝试新工具</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">💬</div>
+                            <div class="takeaway-content">
+                                <h4>反馈即时</h4>
+                                <p>直接在群里收集反馈，沟通成本低</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        做到100个用户的目的是什么？第一个事情是说你知道这个需求是真的有人用的，除了你之外真的是有人用的。
+                        <span class="quote-source">—— 验证需求的最小单位</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">💎 种子用户的两大价值</h3>
+
+                    <div class="comparison-box">
+                        <div class="compare-side do" style="background: rgba(99, 102, 241, 0.1); border-color: rgba(99, 102, 241, 0.3);">
+                            <div class="compare-title" style="color: var(--accent-primary);">🔍 验证需求</div>
+                            <ul class="compare-list">
+                                <li style="color: var(--text-secondary);">确认痛点真实存在</li>
+                                <li style="color: var(--text-secondary);">验证解决方案可行</li>
+                                <li style="color: var(--text-secondary);">证明有人愿意用</li>
+                            </ul>
+                        </div>
+                        <div class="compare-side do" style="background: rgba(236, 72, 153, 0.1); border-color: rgba(236, 72, 153, 0.3);">
+                            <div class="compare-title" style="color: var(--accent-pink);">💡 发现新需求</div>
+                            <ul class="compare-list">
+                                <li style="color: var(--text-secondary);">深色模式——我自己不用，但用户需要</li>
+                                <li style="color: var(--text-secondary);">悬停预览——用户反馈才想到</li>
+                                <li style="color: var(--text-secondary);">排序筛选——完全是用户驱动</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        这些功能我压根都没做，都是各种用户提给我的。产品是会从用户反馈中生长出很多功能的。
+                        <span class="quote-source">—— 产品会自己生长</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">📝 为什么要写详细教程？</h3>
+                    <p>因为这个产品的安装流程太麻烦了：</p>
+                    <ul style="list-style: none; margin: 20px 0;">
+                        <li style="padding: 8px 0; padding-left: 20px; border-left: 3px solid var(--accent-orange);">读教程</li>
+                        <li style="padding: 8px 0; padding-left: 20px; border-left: 3px solid var(--accent-orange);">打开飞书开发者后台</li>
+                        <li style="padding: 8px 0; padding-left: 20px; border-left: 3px solid var(--accent-orange);">创建企业自建应用</li>
+                        <li style="padding: 8px 0; padding-left: 20px; border-left: 3px solid var(--accent-orange);">配置重定向URI</li>
+                        <li style="padding: 8px 0; padding-left: 20px; border-left: 3px solid var(--accent-orange);">复制粘贴多维表格...</li>
+                    </ul>
+                    
+                    <div class="golden-quote">
+                        这个产品挺逆人类的。这么复杂的流程还有这么些人用，说明大家真是爱折腾的极客，也说明这个需求是真实存在的。
+                        <span class="quote-source">—— 痛点足够痛，再麻烦也有人用</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 内容区块4：迭代优化 -->
+        <article class="content-section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <div class="section-header-left">
+                    <div class="section-number">04</div>
+                    <div class="section-title-group">
+                        <h2>迭代优化：用户驱动的进化</h2>
+                        <p class="section-preview-text">小版本高频发布，磨UI比做后端更痛苦</p>
+                    </div>
+                </div>
+                <div class="collapse-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <h3 style="margin: 0 0 20px; font-size: 1.2em;">📅 迭代时间线</h3>
+                    
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <div class="timeline-date">6月9日</div>
+                            <div class="timeline-content">
+                                <h4>开始密集迭代</h4>
+                                <p>提示词模型名称展示、版本更新弹窗</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">6月13日</div>
+                            <div class="timeline-content">
+                                <h4>排序功能</h4>
+                                <p>加了一些小功能，继续优化搜索</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">6月21日</div>
+                            <div class="timeline-content">
+                                <h4>持续迭代</h4>
+                                <p>做了一些比较轻量级的事情</p>
+                            </div>
+                        </div>
+                        <div class="timeline-item">
+                            <div class="timeline-date">7月15日</div>
+                            <div class="timeline-content">
+                                <h4>大版本更新</h4>
+                                <p>UI样式迭代、提示词导入导出</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        磨UI是一个很费人的过程。大家之后做产品会发现磨UI比磨后端都痛。后端只要逻辑捋清楚就行，磨UI有时候真跟抽卡一样。
+                        <span class="quote-source">—— 前端炼狱实录</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">🎨 深色模式的故事</h3>
+                    
+                    <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                        「我自己不用深色模式，所以大家给我提深色模式的需求时，给我干得一愣一愣的。我纳闷：我怎么还有深色模式？后来发现确实有些用户用深色模式。所以我重新把深色模式设计了。」
+                    </p>
+                    
+                    <div class="golden-quote">
+                        如果只用我自己一个人的逻辑来看，我不会做深色模式，因为我不用。这就是为什么要有足够多的用户来做需求反馈。
+                        <span class="quote-source">—— 打破自我认知的盲区</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em;">📋 需求优先级管理</h3>
+                    
+                    <div class="comparison-box">
+                        <div class="compare-side do">
+                            <div class="compare-title">✅ 已完成需求</div>
+                            <ul class="compare-list">
+                                <li>深色模式UI兼容</li>
+                                <li>悬停预览</li>
+                                <li>多维表格跳转</li>
+                                <li>增删改查</li>
+                                <li>排序筛选</li>
+                            </ul>
+                        </div>
+                        <div class="compare-side dont" style="background: rgba(107, 114, 128, 0.1); border-color: rgba(107, 114, 128, 0.3);">
+                            <div class="compare-title" style="color: var(--text-muted);">📋 暂未处理</div>
+                            <ul class="compare-list">
+                                <li>Wiki兼容分类</li>
+                                <li>推荐模型</li>
+                                <li>浏览器兼容</li>
+                                <li>Notion集成</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 内容区块5：踩坑复盘 -->
+        <article class="content-section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <div class="section-header-left">
+                    <div class="section-number">05</div>
+                    <div class="section-title-group">
+                        <h2>踩坑复盘：三个深刻教训</h2>
+                        <p class="section-preview-text">架构重构的陷阱、过度依赖AI、目标缺失的代价</p>
+                    </div>
+                </div>
+                <div class="collapse-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <h3 style="margin: 0 0 20px; font-size: 1.2em; color: var(--accent-red);">⚠️ 坑一：沉迷架构重构</h3>
+                    
+                    <div class="golden-quote">
+                        写代码的时候特别快乐，特别想把架构调得再好一点。作为产品经理，之前跟研发需要battle才能让他们听话，现在只要让AI来干。
+                        <span class="quote-source">—— 危险的快乐</span>
+                    </div>
+
+                    <p style="color: var(--text-secondary); margin: 20px 0;">
+                        7月15日之后，所有迭代都慢下来了。原因是：开始研究如何让代码框架更有美感，如何让整个代码架构变得非常好，每个文件不要超过500行...
+                    </p>
+
+                    <div class="golden-quote">
+                        你把产品架构改得怎么样，对用户来说毫无影响。折腾了3个月跟没折腾是一样的。用户不在乎这个，用户只在乎体验。
+                        <span class="quote-source">—— 血泪教训</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em; color: var(--accent-red);">⚠️ 坑二：过度依赖AI</h3>
+                    
+                    <p style="color: var(--text-secondary); margin: 20px 0;">
+                        飞书授权的问题：两个小时需要重新授权一次。为什么会这样？因为完全依赖AI，没有自己去调研飞书的Auth机制。
+                    </p>
+
+                    <div class="takeaway-list">
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon" style="background: var(--gradient-warm);">😵</div>
+                            <div class="takeaway-content">
+                                <h4>当时的情况</h4>
+                                <p>Claude 4也搞不明白，我自己也搞不明白，全依赖AI导致技术调研不到位</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon" style="background: var(--gradient-cool);">💡</div>
+                            <div class="takeaway-content">
+                                <h4>后来的解决</h4>
+                                <p>Claude Code直接花一个小时解决了。只能说模型差距还是比较大的。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        你自己要获得足够多的信息，因为你获得足够多的信息，AI就忽悠不了你。
+                        <span class="quote-source">—— 人机协作的边界</span>
+                    </div>
+
+                    <h3 style="margin: 30px 0 20px; font-size: 1.2em; color: var(--accent-red);">⚠️ 坑三：目标缺失</h3>
+                    
+                    <p style="color: var(--text-secondary); margin: 20px 0;">
+                        为什么脑子里有很多可以做的事情，但最终没有决定去做？
+                    </p>
+
+                    <div class="golden-quote">
+                        我没有想做的新功能了。对我自己用的角度来说，这些功能已经够了。同时我又恰好没有那么在乎用户量。这两个点导致产品「卡住」了。
+                        <span class="quote-source">—— 产品失速的根本原因</span>
+                    </div>
+
+                    <div class="comparison-box">
+                        <div class="compare-side do">
+                            <div class="compare-title">✅ 明确的北极星</div>
+                            <ul class="compare-list">
+                                <li>用户量增长为目标</li>
+                                <li>商业化变现为目标</li>
+                                <li>IP影响力为目标</li>
+                                <li>有清晰的下一步</li>
+                            </ul>
+                        </div>
+                        <div class="compare-side dont">
+                            <div class="compare-title">❌ 目标缺失</div>
+                            <ul class="compare-list">
+                                <li>不知道为谁而做</li>
+                                <li>不知道做什么功能</li>
+                                <li>脑子里想法很多</li>
+                                <li>但都没有执行动力</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        有的时候我反而觉得那些纯为了商业化做产品的逻辑还挺舒服的。因为你做产品的目标就是为了赚钱，比较纯粹，越纯粹其实越好做一点。
+                        <span class="quote-source">—— 纯粹的力量</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 内容区块6：核心建议 -->
+        <article class="content-section" id="section6">
+            <div class="section-header" onclick="toggleSection('section6')">
+                <div class="section-header-left">
+                    <div class="section-number">06</div>
+                    <div class="section-title-group">
+                        <h2>给新手的核心建议</h2>
+                        <p class="section-preview-text">先做起来、在需求中验证、目标拆解清晰</p>
+                    </div>
+                </div>
+                <div class="collapse-toggle">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                </div>
+            </div>
+            <div class="section-body">
+                <div class="section-content">
+                    <div class="takeaway-list">
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🚀</div>
+                            <div class="takeaway-content">
+                                <h4>先做起来，这比什么都重要</h4>
+                                <p>快速验证，不要过度设计。做一个东西出来永远比不做要重要。</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🧪</div>
+                            <div class="takeaway-content">
+                                <h4>在需求中验证</h4>
+                                <p>你所有的假设都只是脑子里的假设。要把它真正放到现实中去落地，才知道这个东西是不是真的存在可能性。</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🎯</div>
+                            <div class="takeaway-content">
+                                <h4>目标要拆得清晰</h4>
+                                <p>不要做特别大的目标，要把目标分解成可清晰的、可量化的节点。有清晰目标，排好优先级，你就会好做一点。</p>
+                            </div>
+                        </div>
+                        <div class="takeaway-item">
+                            <div class="takeaway-icon">🌊</div>
+                            <div class="takeaway-content">
+                                <h4>选一个能做深的场景</h4>
+                                <p>提示词管理 vs AI记忆，哪个用户需求量大？场景是分大小的，要选一个体量稍微大一点的场景去把它做深。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="golden-quote">
+                        别管别人有没有做过。你能想到的所有产品，都一堆人做过。没有「别人做没做过」的产品。不用在乎这个事情，这个不重要。
+                        <span class="quote-source">—— 关于竞争</span>
+                    </div>
+
+                    <div class="golden-quote">
+                        AI编程的门槛不是工具，是你和AI的协作。真正能把AI指挥得如履平地是一个很难很难的技能。能把话讲明白，你已经超过99%的人了。
+                        <span class="quote-source">—— 关于AI编程的本质</span>
+                    </div>
+
+                    <div class="golden-quote">
+                        不要关心学什么。学东西是解决问题的。你有问题用AI解决就好了。学东西这个事情不产生生产力。
+                        <span class="quote-source">—— 关于学习焦虑</span>
+                    </div>
+                </div>
+            </div>
+        </article>
+
+        <!-- 专家评论区 -->
+        <section class="mindmap-section">
+            <span class="section-label">💬 专家视角</span>
+            <h2 class="mindmap-title">他们怎么看这个分享</h2>
+            
+            <div class="expert-comments">
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🔧</div>
+                        <div class="expert-info">
+                            <h4>Peter Steinberger</h4>
+                            <span>Moltbot创始人（原Clawdbot）</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        云舒讲的「先做出来再说」完全印证了我的经验。Moltbot最初版本也是丑得不行，但我们还是发布了。<span class="tag-key">完美是好的敌人</span>。在AI工具领域，速度就是一切。你的第一个版本应该让你感到尴尬——如果不尴尬，说明你发布得太晚了。
+                    </div>
+                </div>
+                
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🤖</div>
+                        <div class="expert-info">
+                            <h4>Sam Altman</h4>
+                            <span>OpenAI CEO</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        「从自己的痛点出发」这个建议非常关键。最好的创业公司往往来自创始人自己遇到的问题。<span class="tag-key">Do things that don't scale</span>——先手动服务好100个用户，再考虑自动化。云舒在社群里一个个拉用户的做法，就是这个精神的体现。
+                    </div>
+                </div>
+                
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🎓</div>
+                        <div class="expert-info">
+                            <h4>姚期智</h4>
+                            <span>图灵奖得主、清华大学教授</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        从计算机科学的角度看，云舒踩的「架构重构陷阱」很有代表性。<span class="tag-key">过早优化是万恶之源</span>（Knuth）。在产品验证阶段，代码的可读性和架构优雅不是首要目标。先证明价值，再考虑工程化。这是工程思维和学术思维的重要区别。
+                    </div>
+                </div>
+                
+                <div class="expert-card">
+                    <div class="expert-header">
+                        <div class="expert-avatar">🧠</div>
+                        <div class="expert-info">
+                            <h4>姚顺雨</h4>
+                            <span>普林斯顿大学计算机系助理教授</span>
+                        </div>
+                    </div>
+                    <div class="expert-content">
+                        「过度依赖AI」的教训对当前的AI应用开发者非常重要。<span class="tag-key">AI是协作者，不是替代者</span>。你需要对底层原理有足够理解，才能判断AI的输出是否可靠。云舒后来用Claude Code解决问题的例子也说明：选择合适的模型同样关键。
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 底部 -->
+        <footer class="footer">
+            <div class="footer-divider"></div>
+            <p>Way to AGI · VIBE CODING 实战训练营 · 第四期</p>
+            <p style="margin-top: 10px; opacity: 0.6;">本文档由AI辅助整理，内容来源于云舒老师2026年1月直播分享</p>
+        </footer>
+    </div>
+
+    <!-- 主题切换 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '☀️';
+            }
+        }
+
+        // 折叠/展开区块
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // 展开/折叠所有
+        function toggleAll() {
+            const sections = document.querySelectorAll('.content-section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                   s.classList.add('collapsed');
+                }
+            });
+        }
+
+        // 滚动到指定区块
+        function scrollToSection(id) {
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // 页面加载动画
+        document.addEventListener('DOMContentLoaded', function() {
+            // 为所有内容区块添加初始折叠状态（可选）
+            // document.querySelectorAll('.content-section').forEach(s => s.classList.add('collapsed'));
+            
+            // 滚动时导航栏效果
+            window.addEventListener('scroll', function() {
+                const nav = document.querySelector('.nav-bar');
+                if (window.scrollY > 50) {
+                    nav.style.background = 'var(--glass-bg)';
+                    nav.style.boxShadow = 'var(--shadow-card)';
+                } else {
+                    nav.style.background = 'var(--glass-bg)';
+                    nav.style.boxShadow = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>

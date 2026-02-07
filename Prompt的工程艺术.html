@@ -1,0 +1,1740 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Prompt工程精华指南 | AI对话的艺术</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+        
+        :root {
+            --primary: #1a73e8;
+            --secondary: #ea4335;
+            --accent: #fbbc04;
+            --success: #34a853;
+            --dark: #0d1117;
+            --light: #f8fafc;
+            --glass: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            --gradient-google: linear-gradient(135deg, #4285f4, #ea4335, #fbbc04, #34a853);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.8;
+        }
+
+        /* 动态背景 */
+        .bg-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            width: 150vw;
+            height: 150vh;
+            top: -25%;
+            left: -25%;
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(66, 133, 244, 0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(234, 67, 53, 0.12) 0%, transparent 45%),
+                radial-gradient(ellipse at 60% 80%, rgba(251, 188, 4, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 10% 90%, rgba(52, 168, 83, 0.12) 0%, transparent 45%);
+            animation: bgFloat 20s ease-in-out infinite;
+        }
+
+        @keyframes bgFloat {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            25% { transform: translate(2%, -2%) rotate(1deg); }
+            50% { transform: translate(-1%, 2%) rotate(-1deg); }
+            75% { transform: translate(-2%, -1%) rotate(0.5deg); }
+        }
+
+        .noise-overlay {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            opacity: 0.03;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        .grid-pattern {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+
+        /* 主容器 */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* 头部区域 */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            padding: 4rem 2rem;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.6rem 1.2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            margin-bottom: 2rem;
+            backdrop-filter: blur(10px);
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .hero-badge::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.2); }
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(3rem, 8vw, 6rem);
+            font-weight: 900;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: var(--gradient-google);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 8s ease infinite, fadeInUp 1s ease-out;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-subtitle {
+            font-size: 1.4rem;
+            color: rgba(255,255,255,0.7);
+            max-width: 700px;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out 0.2s backwards;
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 3rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeInUp 1s ease-out 0.4s backwards;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.5);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* 滚动提示 */
+        .scroll-hint {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255,255,255,0.4);
+            font-size: 0.8rem;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-hint svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        /* CEO评论区 */
+        .ceo-section {
+            margin: 4rem 0;
+            position: relative;
+        }
+
+        .ceo-card {
+            background: linear-gradient(135deg, rgba(66, 133, 244, 0.1) 0%, rgba(234, 67, 53, 0.05) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 3rem;
+            backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ceo-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 30px;
+            font-family: 'Playfair Display', serif;
+            font-size: 12rem;
+            color: rgba(66, 133, 244, 0.1);
+            line-height: 1;
+        }
+
+        .ceo-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .ceo-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-google);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 8px 32px rgba(66, 133, 244, 0.3);
+        }
+
+        .ceo-info h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .ceo-info span {
+            color: rgba(255,255,255,0.5);
+            font-size: 0.9rem;
+        }
+
+        .ceo-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .ceo-content p {
+            font-size: 1.15rem;
+            line-height: 2;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 1.5rem;
+        }
+
+        .ceo-highlight {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        /* 核心公式区 */
+        .formula-section {
+            margin: 6rem 0;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 0.4rem 1rem;
+            background: rgba(251, 188, 4, 0.15);
+            border: 1px solid rgba(251, 188, 4, 0.3);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            color: var(--accent);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .section-desc {
+            color: rgba(255,255,255,0.6);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 四要素卡片 */
+        .formula-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .formula-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+
+        .formula-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            border-color: rgba(255,255,255,0.3);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .formula-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: var(--card-gradient);
+        }
+
+        .formula-card:nth-child(1) { --card-gradient: linear-gradient(90deg, #4285f4, #34a853); }
+        .formula-card:nth-child(2) { --card-gradient: linear-gradient(90deg, #ea4335, #fbbc04); }
+        .formula-card:nth-child(3) { --card-gradient: linear-gradient(90deg, #fbbc04, #34a853); }
+        .formula-card:nth-child(4) { --card-gradient: linear-gradient(90deg, #34a853, #4285f4); }
+
+        .formula-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            background: var(--card-gradient);
+        }
+
+        .formula-card h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-card .en-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.4);
+            margin-bottom: 1rem;
+        }
+
+        .formula-card p {
+            color: rgba(255,255,255,0.7);
+            font-size: 0.95rem;
+            line-height: 1.7;
+        }
+
+        .formula-example {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.8rem;
+            color: var(--accent);
+        }
+
+        /* 黄金法则 */
+        .golden-rules {
+            margin: 6rem 0;
+        }
+
+        .rules-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 900px) {
+            .rules-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .rule-item {
+            display: flex;
+            gap: 1.5rem;
+            padding: 2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .rule-item:hover {
+            background: rgba(255,255,255,0.1);
+            transform: translateX(10px);
+        }
+
+        .rule-number {
+            flex-shrink: 0;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        .rule-content h4 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--light);
+        }
+
+        .rule-content p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            margin: 6rem 0;
+            padding: 4rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08) 0%, rgba(118, 75, 162, 0.05) 100%);
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .mindmap-container {
+            margin-top: 3rem;
+            overflow-x: auto;
+            padding: 2rem 0;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 900px;
+            position: relative;
+        }
+
+        .mindmap-center {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            background: var(--gradient-google);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            box-shadow: 0 20px 60px rgba(66, 133, 244, 0.4);
+            animation: centerPulse 3s ease-in-out infinite;
+        }
+
+        @keyframes centerPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .mindmap-center h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .mindmap-center span {
+            font-size: 0.75rem;
+            opacity: 0.9;
+        }
+
+        .mindmap-branch {
+            position: absolute;
+            display: flex;
+            align-items: center;
+        }
+
+        .mindmap-branch.left {
+            right: 55%;
+            flex-direction: row-reverse;
+        }
+
+        .mindmap-branch.right {
+            left: 55%;
+        }
+
+        .branch-line {
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.3));
+        }
+
+        .branch-node {
+            padding: 1rem 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            white-space: nowrap;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            background: rgba(255,255,255,0.15);
+            transform: scale(1.05);
+        }
+
+        .branch-node h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.3rem;
+            color: var(--accent);
+        }
+
+        .branch-node span {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .mindmap-branch:nth-child(2) { top: 10%; }
+        .mindmap-branch:nth-child(3) { top: 35%; }
+        .mindmap-branch:nth-child(4) { top: 60%; }
+        .mindmap-branch:nth-child(5) { top: 85%; }
+        .mindmap-branch:nth-child(6) { top: 10%; }
+        .mindmap-branch:nth-child(7) { top: 35%; }
+        .mindmap-branch:nth-child(8) { top: 60%; }
+        .mindmap-branch:nth-child(9) { top: 85%; }
+
+        /* 元认知图 */
+        .metacognition-section {
+            margin: 6rem 0;
+        }
+
+        .meta-flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-top: 3rem;
+        }
+
+        .meta-node {
+            padding: 1.5rem 2rem;
+            background: var(--glass);
+            border: 2px solid transparent;
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.4s ease;
+            position: relative;
+        }
+
+        .meta-node::after {
+            content: '→';
+            position: absolute;
+            right: -25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.3);
+            font-size: 1.5rem;
+        }
+
+        .meta-node:last-child::after {
+            display: none;
+        }
+
+        .meta-node:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            background: rgba(66, 133, 244, 0.1);
+        }
+
+        .meta-node h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
+        .meta-node p {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        /* 场景应用 */
+        .scenarios-section {
+            margin: 6rem 0;
+        }
+
+        .scenario-tabs {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 3rem;
+        }
+
+        .scenario-tab {
+            padding: 0.8rem 1.5rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .scenario-tab:hover,
+        .scenario-tab.active {
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .scenario-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .scenario-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .scenario-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .scenario-card {
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .scenario-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .scenario-card h4 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .scenario-card .prompt-example {
+            background: rgba(0,0,0,0.3);
+            border-left: 3px solid var(--primary);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1rem 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.8);
+            line-height: 1.6;
+        }
+
+        .scenario-card .tip {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+            padding: 0.8rem;
+            background: rgba(52, 168, 83, 0.1);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--success);
+        }
+
+        /* 金句区 */
+        .quotes-section {
+            margin: 6rem 0;
+            position: relative;
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .quote-card {
+            background: linear-gradient(135deg, var(--glass) 0%, rgba(255,255,255,0.05) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 2.5rem;
+            position: relative;
+            transition: all 0.4s ease;
+        }
+
+        .quote-card:hover {
+            transform: rotate(-1deg) scale(1.02);
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-family: 'Playfair Display', serif;
+            font-size: 6rem;
+            color: var(--primary);
+            opacity: 0.2;
+            line-height: 1;
+        }
+
+        .quote-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            line-height: 1.8;
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-highlight {
+            color: var(--accent);
+        }
+
+        .quote-source {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        /* 进阶技巧 */
+        .advanced-section {
+            margin: 6rem 0;
+            padding: 4rem;
+            background: linear-gradient(180deg, rgba(234, 67, 53, 0.05) 0%, rgba(251, 188, 4, 0.03) 100%);
+            border-radius: 32px;
+            border: 1px solid var(--glass-border);
+        }
+
+        .advanced-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 1000px) {
+            .advanced-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 600px) {
+            .advanced-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .advanced-item {
+            padding: 2rem;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .advanced-item:hover {
+            transform: translateY(-8px);
+            border-color: var(--secondary);
+        }
+
+        .advanced-icon {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            background: var(--gradient-2);
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(234, 67, 53, 0.3);
+        }
+
+        .advanced-item h4 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.3rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .advanced-item p {
+            color: rgba(255,255,255,0.6);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* 可折叠板块 */
+        .collapsible {
+            margin: 1rem 0;
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .collapsible-header {
+            padding: 1.5rem;
+            background: var(--glass);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            background: rgba(255,255,255,0.1);
+        }
+
+        .collapsible-header h4 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .collapsible-icon {
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible.open .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-preview {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.5);
+            margin-top: 0.3rem;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .collapsible.open .collapsible-content {
+            max-height: 2000px;
+        }
+
+        .collapsible-inner {
+            padding: 2rem;
+            background: rgba(0,0,0,0.2);
+        }
+
+        /* 页脚 */
+        .footer {
+            margin-top: 6rem;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .footer-logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient-google);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+        }
+
+        .footer p {
+            color: rgba(255,255,255,0.4);
+            font-size: 0.9rem;
+        }
+
+        .footer-links {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .footer-links a {
+            color: rgba(255,255,255,0.5);
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--primary);
+        }
+
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--glass);
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: scale(1.1);
+            background: rgba(255,255,255,0.15);
+        }
+
+        /* 浅色模式 */
+        body.light-mode {
+            --dark: #ffffff;
+            --light: #1a1a2e;
+            --glass: rgba(0, 0, 0, 0.05);
+            --glass-border: rgba(0, 0, 0, 0.1);
+            background: #f5f7fa;
+            color: #1a1a2e;
+        }
+
+        body.light-mode .bg-gradient {
+            background: 
+                radial-gradient(ellipse at 20% 30%, rgba(66, 133, 244, 0.08) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(234, 67, 53, 0.06) 0%, transparent 45%),
+                radial-gradient(ellipse at 60% 80%, rgba(251, 188, 4, 0.05) 0%, transparent 50%),
+                radial-gradient(ellipse at 10% 90%, rgba(52, 168, 83, 0.06) 0%, transparent 45%);
+        }
+
+        body.light-mode .grid-pattern {
+            background-image: 
+                linear-gradient(rgba(0,0,0,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,0,0,0.03) 1px, transparent 1px);
+        }
+
+        body.light-mode .hero-subtitle,
+        body.light-mode .section-desc,
+        body.light-mode .ceo-content p {
+            color: rgba(0,0,0,0.7);
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+                min-height: 80vh;
+            }
+
+            .hero-stats {
+                gap: 2rem;
+            }
+
+            .ceo-card {
+                padding: 2rem;
+            }
+
+            .ceo-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .mindmap-container {
+                overflow-x: scroll;
+            }
+
+            .meta-flow {
+                flex-direction: column;
+            }
+
+            .meta-node::after {
+                content: '↓';
+                right: auto;
+                bottom: -20px;
+                top: auto;
+                transform: none;
+            }
+
+            .quotes-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 打印样式 */
+        @media print {
+            .bg-container,
+            .theme-toggle,
+            .scroll-hint {
+                display: none;
+            }
+
+            body {
+                background: white;
+                color: black;
+            }
+
+            .hero-title {
+                -webkit-text-fill-color: #4285f4;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 动态背景 -->
+    <div class="bg-container">
+        <div class="bg-gradient"></div>
+        <div class="noise-overlay"></div>
+        <div class="grid-pattern"></div>
+    </div>
+
+    <!-- 主题切换 -->
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="切换主题">
+        🌙
+    </button>
+
+    <div class="main-container">
+        <!-- Hero区域 -->
+        <section class="hero">
+            <div class="hero-badge">
+                <span>Google官方指南精华版</span>
+            </div>
+            <h1 class="hero-title">Prompt<br>工程的艺术</h1>
+            <p class="hero-subtitle">
+                从Google 71页官方指南中提炼的核心智慧，掌握与AI对话的黄金法则，释放无限可能
+            </p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">4</div>
+                    <div class="stat-label">核心要素</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">6</div>
+                    <div class="stat-label">黄金法则</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">9</div>
+                    <div class="stat-label">应用场景</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">∞</div>
+                    <div class="stat-label">无限可能</div>
+                </div>
+            </div>
+            <div class="scroll-hint">
+                <span>向下滚动探索</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+                </svg>
+            </div>
+        </section>
+
+        <!-- CEO评论区 -->
+        <section class="ceo-section">
+            <div class="ceo-card">
+                <div class="ceo-header">
+                    <div class="ceo-avatar">SP</div>
+                    <div class="ceo-info">
+                        <h3>Sundar Pichai 视角</h3>
+                        <span>Google & Alphabet CEO</span>
+                    </div>
+                </div>
+                <div class="ceo-content">
+                    <p>
+                        作为Google的掌舵者，我深知<span class="ceo-highlight">AI正在重塑人类与技术的交互方式</span>。这份指南的核心信息是：Prompt工程不是编程，而是<span class="ceo-highlight">一场对话的艺术</span>。
+                    </p>
+                    <p>
+                        我们将Gemini深度整合到Workspace中，是因为相信<span class="ceo-highlight">AI应该在你已有的工作流中无缝运行</span>，而不是成为额外的负担。当你理解了Persona-Task-Context-Format这个公式，你就掌握了与AI协作的密码。
+                    </p>
+                    <p>
+                        最重要的一点：<span class="ceo-highlight">AI是增强人类能力的工具，最终的决策权和创造力永远属于你</span>。这份指南教你的不是如何被AI取代，而是如何让AI成为你最强大的合作伙伴。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心公式 -->
+        <section class="formula-section">
+            <div class="section-header">
+                <span class="section-tag">核心框架</span>
+                <h2 class="section-title">Prompt的四大要素</h2>
+                <p class="section-desc">记住这个公式：一个有效的Prompt = 角色 + 任务 + 上下文 + 格式</p>
+            </div>
+
+            <div class="formula-grid">
+                <div class="formula-card">
+                    <div class="formula-icon">🎭</div>
+                    <h3>角色 Persona</h3>
+                    <div class="en-title">Who are you?</div>
+                    <p>定义AI应该扮演的角色，为回答设定专业视角和知识背景</p>
+                    <div class="formula-example">"我是一名产品经理..."</div>
+                </div>
+
+                <div class="formula-card">
+                    <div class="formula-icon">🎯</div>
+                    <h3>任务 Task</h3>
+                    <div class="en-title">What to do?</div>
+                    <p>明确告诉AI需要完成什么，使用动词开头是关键</p>
+                    <div class="formula-example">"撰写、分析、创建、总结..."</div>
+                </div>
+
+                <div class="formula-card">
+                    <div class="formula-icon">📋</div>
+                    <h3>上下文 Context</h3>
+                    <div class="en-title">Background info</div>
+                    <p>提供必要的背景信息，让AI理解完整的情境</p>
+                    <div class="formula-example">"我们公司正在推出新产品..."</div>
+                </div>
+
+                <div class="formula-card">
+                    <div class="formula-icon">📐</div>
+                    <h3>格式 Format</h3>
+                    <div class="en-title">Output style</div>
+                    <p>指定输出的格式、长度和风格</p>
+                    <div class="formula-example">"用5个要点列出，限制在200字以内"</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 黄金法则 -->
+        <section class="golden-rules">
+            <div class="section-header">
+                <span class="section-tag">最佳实践</span>
+                <h2 class="section-title">6条黄金法则</h2>
+                <p class="section-desc">Google工程师们总结的与AI高效对话的核心技巧</p>
+            </div>
+
+            <div class="rules-container">
+                <div class="rule-item">
+                    <div class="rule-number">01</div>
+                    <div class="rule-content">
+                        <h4>💬 使用自然语言</h4>
+                        <p>像与人交谈一样，用完整的句子表达想法</p>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">02</div>
+                    <div class="rule-content">
+                        <h4>🎯 具体且可迭代</h4>
+                        <p>使用指令（要做什么）和约束（不要做什么）来引导输出</p>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">03</div>
+                    <div class="rule-content">
+                        <h4>✂️ 简洁避免复杂</h4>
+                        <p>用简短但具体的语言表达，避免行业术语</p>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">04</div>
+                    <div class="rule-content">
+                        <h4>🔄 对话式迭代</h4>
+                        <p>如果结果不满意，继续对话调整，精炼出更好的结果</p>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">05</div>
+                    <div class="rule-content">
+                        <h4>📄 善用你的文档</h4>
+                        <p>用@file标记你的文件，让AI基于你的真实资料生成内容</p>
+                    </div>
+                </div>
+                <div class="rule-item">
+                    <div class="rule-number">06</div>
+                    <div class="rule-content">
+                        <h4>🤖 让AI帮你写Prompt</h4>
+                        <p>利用Gemini的建议功能，发现更多可能性</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section">
+            <div class="section-header">
+                <span class="section-tag">知识图谱</span>
+                <h2 class="section-title">Prompt工程思维导图</h2>
+                <p class="section-desc">可视化理解Prompt工程的核心知识结构</p>
+            </div>
+
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <!-- 左侧分支 -->
+                    <div class="mindmap-branch left" style="top: 5%;">
+                        <div class="branch-node">
+                            <h4>🎭 角色定义</h4>
+                            <span>设定AI的专业视角</span>
+                        </div>
+                        <div class="branch-line"></div>
+                    </div>
+                    <div class="mindmap-branch left" style="top: 28%;">
+                        <div class="branch-node">
+                            <h4>🎯 任务明确</h4>
+                            <span>使用动词驱动行动</span>
+                        </div>
+                        <div class="branch-line"></div>
+                    </div>
+                    <div class="mindmap-branch left" style="top: 51%;">
+                        <div class="branch-node">
+                            <h4>📋 上下文充分</h4>
+                            <span>提供背景信息</span>
+                        </div>
+                        <div class="branch-line"></div>
+                    </div>
+                    <div class="mindmap-branch left" style="top: 74%;">
+                        <div class="branch-node">
+                            <h4>📐 格式指定</h4>
+                            <span>定义输出形态</span>
+                        </div>
+                        <div class="branch-line"></div>
+                    </div>
+
+                    <!-- 中心节点 -->
+                    <div class="mindmap-center">
+                        <h3>Prompt</h3>
+                        <h3>工程</h3>
+                        <span>与AI对话的艺术</span>
+                    </div>
+
+                    <!-- 右侧分支 -->
+                    <div class="mindmap-branch right" style="top: 5%;">
+                        <div class="branch-line"></div>
+                        <div class="branch-node">
+                            <h4>💬 自然语言</h4>
+                            <span>像人一样说话</span>
+                        </div>
+                    </div>
+                    <div class="mindmap-branch right" style="top: 28%;">
+                        <div class="branch-line"></div>
+                        <div class="branch-node">
+                            <h4>🔄 持续迭代</h4>
+                            <span>对话中精炼</span>
+                        </div>
+                    </div>
+                    <div class="mindmap-branch right" style="top: 51%;">
+                        <div class="branch-line"></div>
+                        <div class="branch-node">
+                            <h4>📄 文档驱动</h4>
+                            <span>@file引用资料</span>
+                        </div>
+                    </div>
+                    <div class="mindmap-branch right" style="top: 74%;">
+                        <div class="branch-line"></div>
+                        <div class="branch-node">
+                            <h4>✅ 人工校验</h4>
+                            <span>最终决策权归你</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 元认知图 -->
+        <section class="metacognition-section">
+            <div class="section-header">
+                <span class="section-tag">认知模型</span>
+                <h2 class="section-title">Prompt工程元认知流程</h2>
+                <p class="section-desc">理解"如何思考Prompt"的思维框架</p>
+            </div>
+
+            <div class="meta-flow">
+                <div class="meta-node">
+                    <h4>🤔 识别需求</h4>
+                    <p>我要解决什么问题？</p>
+                </div>
+                <div class="meta-node">
+                    <h4>🎭 选择角色</h4>
+                    <p>AI需要什么专业视角？</p>
+                </div>
+                <div class="meta-node">
+                    <h4>📝 构建Prompt</h4>
+                    <p>组合四要素公式</p>
+                </div>
+                <div class="meta-node">
+                    <h4>🔍 评估输出</h4>
+                    <p>结果是否符合预期？</p>
+                </div>
+                <div class="meta-node">
+                    <h4>🔄 迭代优化</h4>
+                    <p>调整并重新尝试</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 场景应用 -->
+        <section class="scenarios-section">
+            <div class="section-header">
+                <span class="section-tag">实战应用</span>
+                <h2 class="section-title">9大职能场景Prompt模板</h2>
+                <p class="section-desc">Google为不同职能精心设计的Prompt实战案例</p>
+            </div>
+
+            <div class="scenario-tabs">
+                <div class="scenario-tab active" data-tab="admin">行政支持</div>
+                <div class="scenario-tab" data-tab="marketing">市场营销</div>
+                <div class="scenario-tab" data-tab="sales">销售</div>
+                <div class="scenario-tab" data-tab="hr">人力资源</div>
+                <div class="scenario-tab" data-tab="exec">高管决策</div>
+            </div>
+
+            <div id="admin" class="scenario-content active">
+                <div class="scenario-grid">
+                    <div class="scenario-card">
+                        <h4>📅 会议议程规划</h4>
+                        <div class="prompt-example">
+                            我是一名高管助理。我们新组建的团队将首次在华盛顿DC进行为期三天的外地会议。请为每天规划活动，包括团队建设和深度战略工作时间。创建一个示例议程。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：指定地点、时长和活动类型，获得更精准的规划
+                        </div>
+                    </div>
+                    <div class="scenario-card">
+                        <h4>✈️ 差旅行程安排</h4>
+                        <div class="prompt-example">
+                            我需要为一次两天的商务出差创建行程。我的经理住在[酒店名]。请推荐步行10分钟内的早餐和晚餐选择，并找一个娱乐选项。用表格形式呈现。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：给出明确的距离限制和格式要求
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="marketing" class="scenario-content">
+                <div class="scenario-grid">
+                    <div class="scenario-card">
+                        <h4>🎨 品牌视觉创意</h4>
+                        <div class="prompt-example">
+                            为我的新业务（咖啡店+电玩咖啡厅）生成创意logo概念。要求：<br>
+                            • 双重概念：清晰传达咖啡和游戏元素<br>
+                            • 目标受众：休闲和硬核玩家、咖啡爱好者<br>
+                            • 风格：现代活泼 / 复古酷炫 / 简约大气
+                        </div>
+                        <div class="tip">
+                            💡 技巧：提供多个风格选项，让AI给出对比方案
+                        </div>
+                    </div>
+                    <div class="scenario-card">
+                        <h4>📱 社媒内容创作</h4>
+                        <div class="prompt-example">
+                            撰写三条关于[产品/服务/话题]的社交媒体帖子，吸引[目标受众]。每条帖子限两句话，包含访问[网站]的行动号召。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：明确字数限制和CTA，保持内容精炼
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sales" class="scenario-content">
+                <div class="scenario-grid">
+                    <div class="scenario-card">
+                        <h4>🤝 客户研究</h4>
+                        <div class="prompt-example">
+                            我是负责新客户[公司名]的客户经理。需要进行初步研究。[公司名]的市场策略是什么？请分析他们的公司网站、新闻稿和社交媒体。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：让AI从多个渠道整合信息，获得全面洞察
+                        </div>
+                    </div>
+                    <div class="scenario-card">
+                        <h4>📞 销售电话准备</h4>
+                        <div class="prompt-example">
+                            即将与潜在客户通话。[用例]对我来说是新领域。请列出客户可能提出的反对意见，并给出应对建议。我在[行业]工作，销售[产品]。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：预判反对意见，提前准备应对话术
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="hr" class="scenario-content">
+                <div class="scenario-grid">
+                    <div class="scenario-card">
+                        <h4>📝 职位描述撰写</h4>
+                        <div class="prompt-example">
+                            我要在营销团队开放一个新职位。为内容营销经理撰写一份吸引人的职位描述。突出关键职责和要求，包括B2B和B2C内容创作经验、至少5年经验、以及作品集要求。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：明确经验要求和技能标准
+                        </div>
+                    </div>
+                    <div class="scenario-card">
+                        <h4>🎤 面试问题设计</h4>
+                        <div class="prompt-example">
+                            我是招聘人员，正在准备候选人面试。根据这份职位描述，撰写20个开放式面试问题，用于筛选候选人。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：基于JD生成问题，确保针对性
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="exec" class="scenario-content">
+                <div class="scenario-grid">
+                    <div class="scenario-card">
+                        <h4>📊 技术趋势洞察</h4>
+                        <div class="prompt-example">
+                            我是[公司]在[行业]的CTO。我想了解新兴技术趋势。总结对[行业]影响最大的前五项新兴技术。每项技术列出潜在收益和挑战，并说明未来2-3年可能如何影响[公司]。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：使用Deep Research功能进行深度分析
+                        </div>
+                    </div>
+                    <div class="scenario-card">
+                        <h4>🎯 员工沟通准备</h4>
+                        <div class="prompt-example">
+                            我是COO，即将主持全公司季度员工大会。为刚经历艰难季度的员工撰写两段鼓舞士气的开场白。承认[困难]并强调[下季度的积极因素]。语气要激励人心、乐观、促进团结。
+                        </div>
+                        <div class="tip">
+                            💡 技巧：预设语气和情感基调
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句区 -->
+        <section class="quotes-section">
+            <div class="section-header">
+                <span class="section-tag">智慧结晶</span>
+                <h2 class="section-title">Prompt工程金句</h2>
+                <p class="section-desc">来自Google官方指南的核心洞见</p>
+            </div>
+
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p class="quote-text">
+                        Prompting是我们<span class="quote-highlight">每个人都能学会的技能</span>。你不需要成为Prompt工程师才能使用生成式AI。
+                    </p>
+                    <div class="quote-source">— Google Workspace with Gemini 官方指南</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">
+                        生成式AI旨在<span class="quote-highlight">帮助人类，但最终的输出属于你</span>。在行动前，务必检查清晰度、相关性和准确性。
+                    </p>
+                    <div class="quote-source">— Google Workspace with Gemini 官方指南</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">
+                        Prompt不是编程，而是<span class="quote-highlight">与AI助手的对话启动器</span>。随着对话推进，你可能需要写多个Prompt。
+                    </p>
+                    <div class="quote-source">— Google Workspace with Gemini 官方指南</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">
+                        记住Prompt的四个关键维度：<span class="quote-highlight">角色、任务、上下文、格式</span>。不是每个Prompt都需要全部四个，但总要包含一个动词或指令。
+                    </p>
+                    <div class="quote-source">— Google Workspace with Gemini 官方指南</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">
+                        如果第一次没有得到期望的结果，<span class="quote-highlight">尝试不同的方法</span>。迭代式的审阅和精炼往往能产生更好的结果。
+                    </p>
+                    <div class="quote-source">— Google Workspace with Gemini 官方指南</div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">
+                        用你自己的文档<span class="quote-highlight">个性化Gemini的输出</span>。通过@文件名标记你的Google Drive文件。
+                    </p>
+                    <div class="quote-source">— Google Workspace with Gemini 官方指南</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 进阶技巧 -->
+        <section class="advanced-section">
+            <div class="section-header">
+                <span class="section-tag">高阶技法</span>
+                <h2 class="section-title">Prompt进阶六式</h2>
+                <p class="section-desc">从入门到精通的进阶技巧</p>
+            </div>
+
+            <div class="advanced-grid">
+                <div class="advanced-item">
+                    <div class="advanced-icon">🔪</div>
+                    <h4>任务分解</h4>
+                    <p>复杂任务拆成独立的Prompt序列，逐步推进</p>
+                </div>
+                <div class="advanced-item">
+                    <div class="advanced-icon">🚧</div>
+                    <h4>设定约束</h4>
+                    <p>用字数限制、选项数量等约束获得精准结果</p>
+                </div>
+                <div class="advanced-item">
+                    <div class="advanced-icon">🎭</div>
+                    <h4>角色扮演</h4>
+                    <p>"你是创意总监..."激发特定视角的创意</p>
+                </div>
+                <div class="advanced-item">
+                    <div class="advanced-icon">❓</div>
+                    <h4>要求反馈</h4>
+                    <p>让AI反问你："你还有什么问题能帮助我给出更好的输出？"</p>
+                </div>
+                <div class="advanced-item">
+                    <div class="advanced-icon">🎵</div>
+                    <h4>定义语气</h4>
+                    <p>正式、非正式、技术性、创意性——语气决定风格</p>
+                </div>
+                <div class="advanced-item">
+                    <div class="advanced-icon">🔄</div>
+                    <h4>换种说法</h4>
+                    <p>同一目标，不同表述，往往有惊喜效果</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 可折叠干货板块 -->
+        <section class="dry-goods-section" style="margin: 6rem 0;">
+            <div class="section-header">
+                <span class="section-tag">实用工具</span>
+                <h2 class="section-title">即用型Prompt模板库</h2>
+                <p class="section-desc">点击展开，复制即用</p>
+            </div>
+
+            <div style="margin-top: 3rem;">
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <div>
+                            <h4>📧 邮件写作模板</h4>
+                            <p class="collapsible-preview">跟进邮件、邀请邮件、道歉邮件...</p>
+                        </div>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <p style="margin-bottom:1rem;"><strong>客户跟进邮件：</strong></p>
+                            <div class="formula-example" style="margin-bottom:1.5rem;">
+                                撰写一封跟进邮件给[客户名]，感谢他们在上次[会议]的时间。提供会议摘要并确认所有讨论的痛点。请求额外时间讨论我们的[解决方案]。
+                            </div>
+                            <p style="margin-bottom:1rem;"><strong>活动邀请邮件：</strong></p>
+                            <div class="formula-example">
+                                撰写邮件邀请对[领域]感兴趣的人参加我们的酒会，时间[日期、时间]，地点[活动名]。说明我们专注于[领域]。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <div>
+                            <h4>📊 数据分析模板</h4>
+                            <p class="collapsible-preview">趋势分析、异常检测、报告生成...</p>
+                        </div>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <p style="margin-bottom:1rem;"><strong>销售数据分析：</strong></p>
+                            <div class="formula-example" style="margin-bottom:1.5rem;">
+                                分析这份电子表格中的数据，找出我们[客户反馈]按[类别]在[时间段]的趋势和模式。识别[客户联系]显著增加的领域并调查潜在原因。
+                            </div>
+                            <p style="margin-bottom:1rem;"><strong>营销漏斗分析：</strong></p>
+                            <div class="formula-example">
+                                分析这份数据，确定哪些博客文章参与度最高但转化率最低。给出3个优化这些页面CTA的建议。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="collapsible">
+                    <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                        <div>
+                            <h4>🎯 项目管理模板</h4>
+                            <p class="collapsible-preview">项目追踪、回顾报告、问题升级...</p>
+                        </div>
+                        <span class="collapsible-icon">▼</span>
+                    </div>
+                    <div class="collapsible-content">
+                        <div class="collapsible-inner">
+                            <p style="margin-bottom:1rem;"><strong>项目状态更新：</strong></p>
+                            <div class="formula-example" style="margin-bottom:1.5rem;">
+                                起草项目状态更新邮件模板发给我的经理。包括以下部分：本周主要成就摘要、面临的任何挑战、下周前三优先事项。
+                            </div>
+                            <p style="margin-bottom:1rem;"><strong>项目回顾报告：</strong></p>
+                            <div class="formula-example">
+                                我需要撰写一份报告详述[项目]的成功、失败和经验教训。起草20个问题指导跨团队流程调查。包括了解什么有效、什么无效、具体流程故障、技术问题、沟通差距等。
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-logo">Prompt Engineering</div>
+            <p>基于 Google Workspace with Gemini 官方71页指南精华提炼</p>
+            <p style="margin-top:0.5rem; font-size:0.8rem;">AI辅助你的工作，最终创造力属于你</p>
+            <div class="footer-links">
+                <a href="https://workspace.google.com" target="_blank">Google Workspace</a>
+                <a href="https://gemini.google.com" target="_blank">Gemini</a>
+                <a href="https://notebooklm.google.com" target="_blank">NotebookLM</a>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const btn = document.querySelector('.theme-toggle');
+            btn.textContent = document.body.classList.contains('light-mode') ? '☀️' : '🌙';
+        }
+
+        // 场景Tab切换
+        document.querySelectorAll('.scenario-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.scenario-content').forEach(c => c.classList.remove('active'));
+                
+                tab.classList.add('active');
+                document.getElementById(tab.dataset.tab).classList.add('active');
+            });
+        });
+
+        // 折叠面板
+        function toggleCollapsible(header) {
+            const collapsible = header.parentElement;
+            collapsible.classList.toggle('open');
+        }
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.formula-card, .rule-item, .quote-card, .advanced-item, .scenario-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(el);
+        });
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+</html>

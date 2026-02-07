@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI时代48小时极限游戏开发 | 行业大咖深度解读</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #a8e6cf;
+            --highlight-tool: #ffd93d;
+            --highlight-insight: #c44dff;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            --accent: #6366f1;
+            --accent2: #ec4899;
+            --accent3: #10b981;
+            --neon-blue: #00d4ff;
+            --neon-pink: #ff00ff;
+            --neon-green: #00ff88;
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.5);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* 粒子背景 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            opacity: 0.6;
+            animation: float 15s infinite ease-in-out;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+        
+        /* 头部区域 */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            animation: fadeInUp 0.8s ease;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--neon-blue), var(--neon-pink), var(--neon-green), var(--highlight-tool));
+            animation: shimmer 3s ease infinite;
+        }
+        @keyframes shimmer {
+            0% { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--neon-blue), var(--accent2), var(--neon-green));
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShine 4s linear infinite;
+            letter-spacing: -1px;
+        }
+        @keyframes textShine {
+            to { background-position: 200% center; }
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .meta-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(99, 102, 241, 0.15);
+            padding: 10px 18px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            border: 1px solid rgba(99, 102, 241, 0.3);
+        }
+        .meta-item span { color: var(--highlight-data); font-weight: 600; }
+        
+        /* 核心数据卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(236, 72, 153, 0.1));
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(99, 102, 241, 0.3);
+        }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-blue), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+        
+        /* 控制按钮 */
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 14px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            color: white;
+        }
+        
+        /* 金句卡片 */
+        .golden-quotes {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+        }
+        .quotes-title {
+            font-size: 1.5em;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .quote-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(78, 205, 196, 0.1));
+            border-left: 4px solid var(--highlight-key);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        .quote-card:nth-child(2) { border-left-color: var(--highlight-data); }
+        .quote-card:nth-child(3) { border-left-color: var(--neon-green); }
+        .quote-card:nth-child(4) { border-left-color: var(--highlight-tool); }
+        .quote-card:nth-child(5) { border-left-color: var(--highlight-insight); }
+        .quote-card:nth-child(6) { border-left-color: var(--accent); }
+        .quote-card:hover {
+            transform: translateX(5px);
+            box-shadow: -5px 0 20px rgba(255, 107, 107, 0.2);
+        }
+        .quote-text {
+            font-size: 1.1em;
+            font-weight: 500;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+        .quote-icon {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            font-size: 2.5em;
+            opacity: 0.3;
+        }
+        
+        /* 思维导图 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+            overflow: hidden;
+        }
+        .mindmap-title {
+            font-size: 1.8em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 20px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 700;
+            box-shadow: 0 15px 50px rgba(99, 102, 241, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+            position: relative;
+        }
+        .center-node::after {
+            content: '';
+            position: absolute;
+            width: 4px;
+            height: 40px;
+            background: linear-gradient(to bottom, var(--accent), transparent);
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            width: 100%;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.4s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch:nth-child(4) { animation-delay: 0.8s; }
+        .branch-node {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(236, 72, 153, 0.2));
+            border: 2px solid var(--accent);
+            padding: 18px 25px;
+            border-radius: 20px;
+            font-size: 1.15em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: var(--neon-blue);
+        }
+        .branch:nth-child(2) .branch-node { border-color: var(--neon-green); color: var(--neon-green); }
+        .branch:nth-child(3) .branch-node { border-color: var(--highlight-tool); color: var(--highlight-tool); }
+        .branch:nth-child(4) .branch-node { border-color: var(--accent2); color: var(--accent2); }
+        .branch-node:hover {
+            transform: translateY(-5px) scale(1.03);
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+        }
+        .sub-node {
+            background: rgba(99, 102, 241, 0.08);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border-left: 3px solid var(--accent);
+            transition: all 0.3s ease;
+            font-size: 0.95em;
+        }
+        .branch:nth-child(2) .sub-node { border-left-color: var(--neon-green); }
+        .branch:nth-child(3) .sub-node { border-left-color: var(--highlight-tool); }
+        .branch:nth-child(4) .sub-node { border-left-color: var(--accent2); }
+        .sub-node:hover {
+            background: rgba(99, 102, 241, 0.15);
+            transform: translateX(5px);
+        }
+        
+        /* 逻辑思维图 */
+        .logic-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            margin-top: 40px;
+        }
+        .logic-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .logic-box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 136, 0.1));
+            border: 2px solid var(--neon-blue);
+            padding: 15px 25px;
+            border-radius: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-width: 150px;
+        }
+        .logic-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.4);
+        }
+        .logic-arrow {
+            font-size: 1.5em;
+            color: var(--neon-green);
+            animation: bounce 1s ease infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(5px); }
+        }
+        .logic-result {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            border: none;
+            font-size: 1.1em;
+            padding: 20px 35px;
+        }
+        
+        /* 内容区块 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            position: relative;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+        .section:hover {
+            border-color: rgba(99, 102, 241, 0.5);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-icon {
+            font-size: 1.3em;
+        }
+        .collapse-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            transition: all 0.3s ease;
+            padding: 0 15px;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 100px;
+            margin-top: 15px;
+        }
+        .section-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease;
+            overflow: hidden;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+        }
+        
+        /* 高亮样式 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(78, 205, 196, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(168, 230, 207, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-tool {
+            color: var(--highlight-tool);
+            font-weight: 700;
+            padding: 2px 8px;
+            background: rgba(255, 217, 61, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-insight {
+            color: var(--highlight-insight);
+            font-weight: 600;
+            padding: 2px 8px;
+            background: rgba(196, 77, 255, 0.15);
+            border-radius: 6px;
+        }
+        
+        /* 干货卡片 */
+        .insight-card {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.1));
+            border: 1px solid rgba(99, 102, 241, 0.3);
+            border-radius: 16px;
+            padding: 25px;
+            margin: 20px 0;
+            position: relative;
+        }
+        .insight-card::before {
+            content: '💎';
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            font-size: 1.5em;
+            background: var(--glass-bg);
+            padding: 5px 12px;
+            border-radius: 10px;
+        }
+        .insight-title {
+            font-weight: 700;
+            color: var(--neon-blue);
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+        
+        /* 工具清单 */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin: 25px 0;
+        }
+        .tool-item {
+            background: rgba(255, 217, 61, 0.1);
+            border: 1px solid rgba(255, 217, 61, 0.3);
+            border-radius: 12px;
+            padding: 15px 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .tool-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(255, 217, 61, 0.2);
+        }
+        .tool-name {
+            font-weight: 700;
+            color: var(--highlight-tool);
+            font-size: 1.05em;
+        }
+        .tool-use {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-top: 5px;
+        }
+        
+        /* 专家评论 */
+        .expert-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            z-index: 1;
+        }
+        .expert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+        .expert-comment {
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(236, 72, 153, 0.05));
+            border-radius: 20px;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        .expert-comment:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(99, 102, 241, 0.2);
+        }
+        .expert-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5em;
+            color: white;
+            margin-bottom: 15px;
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.3);
+        }
+        .expert-name {
+            font-weight: 700;
+            font-size: 1.15em;
+            color: var(--neon-blue);
+            margin-bottom: 3px;
+        }
+        .expert-title {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+        .expert-quote {
+            font-size: 1em;
+            line-height: 1.7;
+            color: var(--text-primary);
+            padding-left: 15px;
+            border-left: 3px solid var(--accent);
+        }
+        .expert-comment:nth-child(2) .expert-avatar { background: linear-gradient(135deg, var(--neon-green), var(--highlight-data)); }
+        .expert-comment:nth-child(2) .expert-name { color: var(--neon-green); }
+        .expert-comment:nth-child(2) .expert-quote { border-left-color: var(--neon-green); }
+        .expert-comment:nth-child(3) .expert-avatar { background: linear-gradient(135deg, var(--highlight-tool), var(--highlight-key)); }
+        .expert-comment:nth-child(3) .expert-name { color: var(--highlight-tool); }
+        .expert-comment:nth-child(3) .expert-quote { border-left-color: var(--highlight-tool); }
+        .expert-comment:nth-child(4) .expert-avatar { background: linear-gradient(135deg, var(--highlight-insight), var(--accent2)); }
+        .expert-comment:nth-child(4) .expert-name { color: var(--highlight-insight); }
+        .expert-comment:nth-child(4) .expert-quote { border-left-color: var(--highlight-insight); }
+        
+        /* 流程图 */
+        .workflow-container {
+            margin: 30px 0;
+            overflow-x: auto;
+        }
+        .workflow {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 20px 0;
+            min-width: max-content;
+        }
+        .workflow-step {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(0, 212, 255, 0.1));
+            border: 2px solid var(--accent);
+            border-radius: 15px;
+            padding: 15px 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+            min-width: 120px;
+        }
+        .workflow-step:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(99, 102, 241, 0.4);
+        }
+        .workflow-step-icon {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+        }
+        .workflow-step-text {
+            font-weight: 600;
+            font-size: 0.95em;
+        }
+        .workflow-arrow {
+            color: var(--neon-green);
+            font-size: 1.5em;
+        }
+        
+        /* 主题切换 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        /* 返回顶部 */
+        .back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 1000;
+            opacity: 0;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+        }
+        .back-to-top:hover {
+            transform: scale(1.1) translateY(-3px);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 15px 50px rgba(99, 102, 241, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 20px 60px rgba(99, 102, 241, 0.5); }
+        }
+        
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .header { padding: 30px 20px; }
+            h1 { font-size: 2em; }
+            .stats-grid { grid-template-columns: repeat(2, 1fr); }
+            .expert-grid { grid-template-columns: 1fr; }
+            .mindmap-branches { grid-template-columns: 1fr; }
+            .logic-row { flex-direction: column; }
+            .logic-arrow { transform: rotate(90deg); }
+        }
+        
+        /* 列表样式 */
+        .content-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+        .content-list li {
+            padding: 10px 0 10px 30px;
+            position: relative;
+        }
+        .content-list li::before {
+            content: '▸';
+            position: absolute;
+            left: 8px;
+            color: var(--accent);
+            font-weight: bold;
+        }
+        
+        p {
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="container">
+        <!-- 头部 -->
+        <header class="header">
+            <div class="header-badge">
+                <span>🎮</span>
+                <span>WaytoAGI 晚8点共学</span>
+            </div>
+            <h1>AI时代48小时极限游戏开发</h1>
+            <p class="subtitle">两位00后开发者如何用AI工具链在48小时内打造3D科幻游戏《2026机械漫游》</p>
+            
+            <div class="meta-info">
+                <div class="meta-item">
+                    <span>👤</span> 嘉宾：<span>宣酱 & 周杰</span>
+                </div>
+                <div class="meta-item">
+                    <span>🏆</span> 成果：<span>环球黑客松铜奖</span>
+                </div>
+                <div class="meta-item">
+                    <span>⏱️</span> 开发周期：<span>48小时</span>
+                </div>
+                <div class="meta-item">
+                    <span>🎯</span> 引擎：<span>Unreal Engine 5</span>
+                </div>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number">48h</div>
+                    <div class="stat-label">极限开发时间</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">30+</div>
+                    <div class="stat-label">AI生成模型数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">70%</div>
+                    <div class="stat-label">开发周期缩短</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">2</div>
+                    <div class="stat-label">核心团队人数</div>
+                </div>
+            </div>
+            
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">
+                    <span>📑</span> 展开/收起全部
+                </button>
+                <button class="btn" onclick="scrollToSection('mindmap')">
+                    <span>🧠</span> 思维导图
+                </button>
+                <button class="btn" onclick="scrollToSection('experts')">
+                    <span>💡</span> 专家解读
+                </button>
+                <button class="btn" onclick="scrollToSection('tools')">
+                    <span>🛠️</span> 工具清单
+                </button>
+            </div>
+        </header>
+        
+        <!-- 金句区 -->
+        <section class="golden-quotes">
+            <h2 class="quotes-title"><span>✨</span> 核心金句</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <span class="quote-icon">💡</span>
+                    <p class="quote-text">"AI只是实现创意的工具，作品的核心依然是叙事框架和玩法巧思"</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🚀</span>
+                    <p class="quote-text">"48小时做一款3D科幻游戏，对两个人来说曾是不可能完成的任务"</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🎯</span>
+                    <p class="quote-text">"科幻题材的瑕疵不易察觉，是AI生成的最佳落地场景"</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🔮</span>
+                    <p class="quote-text">"让AI成为陪伴你的队友，一起勇往直前"</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">⚡</span>
+                    <p class="quote-text">"核心竞争力是对项目的深入理解，AI只是量大工作的替代"</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🌟</span>
+                    <p class="quote-text">"营销也是作品成功的一部分"</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 元认知思维导图 -->
+        <section class="mindmap-container" id="mindmap">
+            <h2 class="mindmap-title">🧠 元认知图：AI游戏开发认知框架</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">AI赋能游戏开发</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">🎨 美术层</div>
+                        <div class="sub-node">概念设计：即梦/MJ/Nano</div>
+                        <div class="sub-node">3D建模：Tripo AI</div>
+                        <div class="sub-node">贴图处理：Blender优化</div>
+                        <div class="sub-node">风格统一：前期设计稿锁定</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">⚙️ 技术层</div>
+                        <div class="sub-node">引擎：Unreal Engine 5</div>
+                        <div class="sub-node">编程助手：TRAE/阶跃Coder</div>
+                        <div class="sub-node">动作系统：Motion Matching</div>
+                        <div class="sub-node">语音交互：阶跃星辰API</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🎮 设计层</div>
+                        <div class="sub-node">核心玩法：意识转移机制</div>
+                        <div class="sub-node">AI陪伴：智能NPC交互</div>
+                        <div class="sub-node">指令系统：语音→行为映射</div>
+                        <div class="sub-node">协作机关：多角色联动</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">💼 商业层</div>
+                        <div class="sub-node">成本控制：70%周期缩减</div>
+                        <div class="sub-node">快速验证：48小时Demo</div>
+                        <div class="sub-node">差异化：AI陪伴新业态</div>
+                        <div class="sub-node">路演技巧：视觉展示优先</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 逻辑思维图 -->
+            <h2 class="mindmap-title" style="margin-top: 50px;">🔄 逻辑思维图：开发流程</h2>
+            <div class="logic-flow">
+                <div class="logic-row">
+                    <div class="logic-box">📝 选题定位<br/><small>科幻 = AI友好</small></div>
+                    <span class="logic-arrow">→</span>
+                    <div class="logic-box">🎨 概念设计<br/><small>MJ/即梦出图</small></div>
+                    <span class="logic-arrow">→</span>
+                    <div class="logic-box">🧊 3D建模<br/><small>Tripo批量生成</small></div>
+                    <span class="logic-arrow">→</span>
+                    <div class="logic-box">🔧 模型处理<br/><small>拓扑/绑骨/蒙皮</small></div>
+                </div>
+                <div class="logic-row">
+                    <div class="logic-box">🏗️ 场景搭建<br/><small>UE5组装</small></div>
+                    <span class="logic-arrow">→</span>
+                    <div class="logic-box">🤖 AI接入<br/><small>语音/多模态</small></div>
+                    <span class="logic-arrow">→</span>
+                    <div class="logic-box">🎬 动作系统<br/><small>Motion Matching</small></div>
+                    <span class="logic-arrow">→</span>
+                    <div class="logic-result">🎮 可玩Demo</div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 专家解读 -->
+        <section class="expert-section" id="experts">
+            <h2 class="mindmap-title">💡 行业大咖视角解读</h2>
+            <div class="expert-grid">
+                <div class="expert-comment">
+                    <div class="expert-avatar">🎮</div>
+                    <div class="expert-name">Tim Sweeney</div>
+                    <div class="expert-title">Epic Games 创始人兼CEO</div>
+                    <p class="expert-quote">"这正是我们推动Unreal Engine民主化的愿景体现。两位年轻开发者用UE5配合AI工具链，<span class="highlight-data">48小时内实现了传统团队数周的工作量</span>。Motion Matching技术的应用尤其专业——这是《黑神话：悟空》同款技术。<span class="highlight-key">未来的游戏开发不再是大厂特权</span>，创意才是唯一门槛。我们将持续降低引擎使用门槛，让全球创作者释放想象力。"</p>
+                </div>
+                <div class="expert-comment">
+                    <div class="expert-avatar">🔥</div>
+                    <div class="expert-name">Jensen Huang 黄仁勋</div>
+                    <div class="expert-title">NVIDIA CEO</div>
+                    <p class="expert-quote">"AI正在重新定义内容创作的经济学。这个案例展示了<span class="highlight-data">30+个3D模型在两天内生成</span>的惊人效率。算力成本是他们提到的关键挑战——这正是NVIDIA努力的方向。<span class="highlight-key">当本地大模型足够强大，实时AI交互将彻底改变游戏体验</span>。我相信在不久的将来，每个玩家都将拥有独一无二的AI伙伴，这是游戏行业的'ChatGPT时刻'。"</p>
+                </div>
+                <div class="expert-comment">
+                    <div class="expert-avatar">🤖</div>
+                    <div class="expert-name">Purnendu Mukherjee</div>
+                    <div class="expert-title">Convai 创始人兼CEO</div>
+                    <p class="expert-quote">"他们构建的<span class="highlight-key">语音指令系统</span>体现了NPC智能交互的核心理念：不是简单的对话，而是<span class="highlight-data">意图识别→指令映射→行为执行</span>的完整链路。'跟着我'、'站在这里'这些自然语言被转化为游戏行为，这正是我们在Convai探索的方向。<span class="highlight-insight">AI NPC的价值不在于模仿人类对话，而在于成为真正的游戏伙伴</span>。"</p>
+                </div>
+                <div class="expert-comment">
+                    <div class="expert-avatar">🌟</div>
+                    <div class="expert-name">Kylan Gibbs</div>
+                    <div class="expert-title">Inworld AI 首席产品官</div>
+                    <p class="expert-quote">"'意识转移'玩法设计极具创意——<span class="highlight-key">打破了传统3C(角色-相机-控制器)设计范式</span>。玩家不再绑定单一角色，而是以'意识'为载体在不同机器人间流转。结合AI陪伴系统，<span class="highlight-insight">这创造了一种全新的情感连接模式</span>。单身群体、独立玩家将在这类游戏中获得真正的陪伴感。这不只是技术创新，更是游戏设计哲学的进化。"</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 核心干货：工具清单 -->
+        <section class="section" id="tools">
+            <div class="section-header" onclick="toggleSection('tools-content')">
+                <h2 class="section-title"><span class="section-icon">🛠️</span> 核心干货：完整工具链</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">AI美术、3D建模、编程、语音交互全套工具清单...</div>
+            <div class="section-content" id="tools-content">
+                <div class="insight-card">
+                    <div class="insight-title">选择科幻题材的战略意义</div>
+                    <p>科幻场景对细节瑕疵容忍度高，AI生成的棱角分明、金属质感恰好契合机械美学。相比历史、写实题材需要严格考究，<span class="highlight-key">科幻是AI生成落地的最佳切入点</span>。</p>
+                </div>
+                
+                <h3 style="color: var(--neon-blue); margin: 25px 0 15px;">🎨 美术设计工具</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <div class="tool-name">Midjourney</div>
+                        <div class="tool-use">概念图生成</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">即梦 AI</div>
+                        <div class="tool-use">角色设计</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">Nano/Banana</div>
+                        <div class="tool-use">设计稿迭代</div>
+                    </div>
+                </div>
+                
+                <h3 style="color: var(--neon-green); margin: 25px 0 15px;">🧊 3D建模工具</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <div class="tool-name">Tripo AI</div>
+                        <div class="tool-use">图生3D模型（主力）</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">腾讯混元3D</div>
+                        <div class="tool-use">备选3D生成</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">Blender</div>
+                        <div class="tool-use">面数优化/贴图处理</div>
+                    </div>
+                </div>
+                
+                <h3 style="color: var(--highlight-tool); margin: 25px 0 15px;">⚙️ 开发工具</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <div class="tool-name">Unreal Engine 5</div>
+                        <div class="tool-use">游戏引擎</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">TRAE</div>
+                        <div class="tool-use">AI编程助手</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">阶跃 Coder</div>
+                        <div class="tool-use">代码生成</div>
+                    </div>
+                </div>
+                
+                <h3 style="color: var(--highlight-insight); margin: 25px 0 15px;">🤖 AI交互</h3>
+                <div class="tools-grid">
+                    <div class="tool-item">
+                        <div class="tool-name">阶跃星辰 API</div>
+                        <div class="tool-use">语音交互（核心）</div>
+                    </div>
+                    <div class="tool-item">
+                        <div class="tool-name">多模态模型</div>
+                        <div class="tool-use">图像识别+文本</div>
+                    </div>
+                </div>
+                
+                <div class="insight-card" style="margin-top: 30px;">
+                    <div class="insight-title">⚡ 阶跃星辰API的惊喜</div>
+                    <p>"语音反馈特别快，我一直以为是写错了bug，没想到是真的很快。" —— <span class="highlight-data">语音交互响应速度超出预期</span>，这是实现流畅游戏体验的关键。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 技术架构 -->
+        <section class="section">
+            <div class="section-header" onclick="toggleSection('tech-content')">
+                <h2 class="section-title"><span class="section-icon">🔧</span> 技术架构深度解析</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">智能NPC系统、Motion Matching、意识转移机制详解...</div>
+            <div class="section-content" id="tech-content">
+                <div class="insight-card">
+                    <div class="insight-title">智能NPC指令系统架构</div>
+                    <p>不同于简单的数字人对话，他们构建了<span class="highlight-key">意图识别→指令映射→行为执行</span>的完整链路：</p>
+                    <ul class="content-list">
+                        <li><span class="highlight-data">语音输入</span>：玩家说"跟着我"、"站在这里"、"别跟着我了"</li>
+                        <li><span class="highlight-data">意图识别</span>：大模型解析语义，识别为"跟随"、"停留"等指令类别</li>
+                        <li><span class="highlight-data">行为执行</span>：触发游戏内预设的行为脚本</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><span class="highlight-insight">"这套指令系统AI可能不会告诉你，但你自己得有这个想法去跟AI交流"</span></p>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">Motion Matching 动作系统</div>
+                    <p>采用《黑神话：悟空》同款技术：</p>
+                    <ul class="content-list">
+                        <li>海量动作数据库 → <span class="highlight-data">实时匹配最佳动作</span></li>
+                        <li>物理补帧技术 → 动作过渡更丝滑</li>
+                        <li>AI生成 + 物理补帧 = <span class="highlight-key">最终效果流畅自然</span></li>
+                    </ul>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">3D模型参数规范</div>
+                    <ul class="content-list">
+                        <li>场景模型：<span class="highlight-data">约2万面</span></li>
+                        <li>角色模型：<span class="highlight-data">约5万面</span></li>
+                        <li>导出格式：FBX → 适配UE5人形骨骼</li>
+                        <li>后处理：权重绘制 + 蒙皮处理</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 核心玩法 -->
+        <section class="section">
+            <div class="section-header" onclick="toggleSection('gameplay-content')">
+                <h2 class="section-title"><span class="section-icon">🎮</span> 核心玩法：意识转移</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">打破传统3C设计，以意识为驱动的创新机制...</div>
+            <div class="section-content" id="gameplay-content">
+                <div class="insight-card">
+                    <div class="insight-title">玩法设计突破：超越传统3C</div>
+                    <p>传统游戏的3C设计（Character-Camera-Controller）将玩家绑定单一角色。而<span class="highlight-key">《2026机械漫游》以"意识"为核心</span>：</p>
+                </div>
+                
+                <p><span class="highlight-key">世界观设定</span>：在AI工厂中，所有机器人都没有意识。你是唯一觉醒的机器人，需要带着意识逃离囚禁。</p>
+                
+                <p><span class="highlight-data">意识转移机制</span>：</p>
+                <ul class="content-list">
+                    <li>玩家可以将意识转移到不同类型的机器人身上</li>
+                    <li>每种机器人拥有<span class="highlight-tool">独特能力</span>（有些能开门，有些能攀爬）</li>
+                    <li>通过语音指挥"空壳"机器人协作，解开机关</li>
+                    <li>本质上<span class="highlight-insight">没有固定主角</span>，意识才是玩家的化身</li>
+                </ul>
+                
+                <p><span class="highlight-key">协作机关设计</span>：</p>
+                <ul class="content-list">
+                    <li>场景示例：一扇门需要有人站在压力板上才能保持开启</li>
+                    <li>玩家通过语音命令AI队友"停在这里"</li>
+                    <li>然后转移意识到另一个机器人身上通过门</li>
+                    <li><span class="highlight-insight">AI NPC不再是工具，而是真正的队友</span></li>
+                </ul>
+                
+                <div class="insight-card">
+                    <div class="insight-title">未来构想：AI觉醒的不确定性</div>
+                    <p>"当你把意识传递给下一个机器人，它觉醒后<span class="highlight-key">可能会反叛你或服从你，这是不可预测的</span>。" —— 这种AI带来的随机性正是游戏魅力所在。</p>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 开发经验 -->
+        <section class="section">
+            <div class="section-header" onclick="toggleSection('experience-content')">
+                <h2 class="section-title"><span class="section-icon">📚</span> 开发经验与避坑指南</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">比赛复盘、风格统一技巧、小白入门建议...</div>
+            <div class="section-content" id="experience-content">
+                <div class="insight-card">
+                    <div class="insight-title">🚨 比赛复盘：路演的教训</div>
+                    <p>最终获得铜奖而非更高名次的原因：</p>
+                    <ul class="content-list">
+                        <li>PPT<span class="highlight-key">不能添加视频</span>，只能靠语言描述</li>
+                        <li>缺乏视觉支撑，评委无法直观感受沉浸感</li>
+                        <li>路演经验不足，表达不清晰</li>
+                    </ul>
+                    <p style="margin-top: 15px;"><span class="highlight-insight">"营销也是作品成功的一部分"</span> —— 技术再好也需要有效展示</p>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">🎨 AI生成风格统一技巧</div>
+                    <p>"批量生成风格稳定吗？"</p>
+                    <ul class="content-list">
+                        <li><span class="highlight-key">前期锁定</span>：先用AI出设计稿，统一色调和风格</li>
+                        <li>后期生成：基于统一设计稿生成3D模型</li>
+                        <li>关键：<span class="highlight-data">风格统一在概念设计阶段解决</span>，而非建模阶段</li>
+                    </ul>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">🎓 给小白的建议</div>
+                    <p>"小白做这样的东西，哪些部分不能让AI来做？"</p>
+                    <ul class="content-list">
+                        <li><span class="highlight-key">主导权在自己手里</span>，AI只是辅助</li>
+                        <li>需要有<span class="highlight-data">特定的需求和想法</span>再让AI执行</li>
+                        <li>比如指令系统的设计思路，AI不会主动告诉你</li>
+                        <li>必须先有想法，然后用AI去实现</li>
+                    </ul>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">💰 成本与收益</div>
+                    <ul class="content-list">
+                        <li>3D AI工具会员<span class="highlight-data">不贵</span>，相比手工建模大大降低成本</li>
+                        <li>首款游戏（非AI辅助）三个月完成，<span class="highlight-key">已实现回本</span></li>
+                        <li>关键瓶颈：算力成本（API在线调用 vs 本地大模型）</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 行业洞察 -->
+        <section class="section">
+            <div class="section-header" onclick="toggleSection('industry-content')">
+                <h2 class="section-title"><span class="section-icon">🔮</span> 行业洞察与未来趋势</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">AI陪伴新业态、算力挑战、00后开发者观点...</div>
+            <div class="section-content" id="industry-content">
+                <div class="insight-card">
+                    <div class="insight-title">🌟 AI陪伴：游戏的新业态</div>
+                    <p>当前数字人陪伴只是"站着跟你对话"，而<span class="highlight-key">3D场景中的AI伙伴是全新体验</span>：</p>
+                    <ul class="content-list">
+                        <li>AI队友有自己的想法和操作</li>
+                        <li>可以在虚拟世界中真正互动</li>
+                        <li>适合单身群体、独立玩家的<span class="highlight-data">深度陪伴需求</span></li>
+                    </ul>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">⚡ 当前挑战：算力与成本</div>
+                    <ul class="content-list">
+                        <li>实时AI交互<span class="highlight-key">算力需求极高</span></li>
+                        <li>目前依赖在线API，探索本地大模型方案</li>
+                        <li>成本由谁承担？开发者/玩家/商业合作分摊？</li>
+                    </ul>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">👤 关于"三艘号远征队AI争议"的观点</div>
+                    <p>"如果做游戏是为了评奖，那就没必要做游戏了。"</p>
+                    <ul class="content-list">
+                        <li>做游戏是为了<span class="highlight-data">探索想要实现的内容</span></li>
+                        <li>大厂对AI有敌意，因为动了传统岗位蛋糕</li>
+                        <li>实际上AI已渗透各方各面，<span class="highlight-insight">只是行业的一个小插曲</span></li>
+                    </ul>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">🚀 00后全能开发者之路</div>
+                    <p>周杰的成长路径：美术 → 建模 → 编程，6年游戏开发经验</p>
+                    <ul class="content-list">
+                        <li>传统岗位正在被AI替代，<span class="highlight-key">全能型人才更具竞争力</span></li>
+                        <li>核心能力：项目理解、系统设计、工具组合</li>
+                        <li>AI降低了执行门槛，<span class="highlight-data">创意和整合能力成为关键</span></li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 开发流程图 -->
+        <section class="section">
+            <div class="section-header" onclick="toggleSection('workflow-content')">
+                <h2 class="section-title"><span class="section-icon">🔄</span> 48小时开发流程复盘</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从选题到成品的完整时间线...</div>
+            <div class="section-content" id="workflow-content">
+                <div class="workflow-container">
+                    <div class="workflow">
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">💡</div>
+                            <div class="workflow-step-text">选题定位</div>
+                        </div>
+                        <span class="workflow-arrow">→</span>
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">🎨</div>
+                            <div class="workflow-step-text">概念设计</div>
+                        </div>
+                        <span class="workflow-arrow">→</span>
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">🧊</div>
+                            <div class="workflow-step-text">批量建模</div>
+                        </div>
+                        <span class="workflow-arrow">→</span>
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">🔧</div>
+                            <div class="workflow-step-text">模型处理</div>
+                        </div>
+                        <span class="workflow-arrow">→</span>
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">🏗️</div>
+                            <div class="workflow-step-text">场景搭建</div>
+                        </div>
+                        <span class="workflow-arrow">→</span>
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">🤖</div>
+                            <div class="workflow-step-text">AI接入</div>
+                        </div>
+                        <span class="workflow-arrow">→</span>
+                        <div class="workflow-step">
+                            <div class="workflow-step-icon">🎮</div>
+                            <div class="workflow-step-text">Demo完成</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="insight-card">
+                    <div class="insight-title">⏰ 时间节点</div>
+                    <ul class="content-list">
+                        <li>比赛日期：2026年1月16-18日</li>
+                        <li>凌晨2点仍在搭建场景（周杰）</li>
+                        <li>两天内生成<span class="highlight-data">30+场景模型</span>，含人形共约<span class="highlight-data">40-50个</span></li>
+                        <li>模型复用率高，通过组合拼接形成丰富场景</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        
+        <!-- 团队介绍 -->
+        <section class="section">
+            <div class="section-header" onclick="toggleSection('team-content')">
+                <h2 class="section-title"><span class="section-icon">👥</span> 团队与后续计划</h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">阴阳鱼工作室、《道谓何》项目...</div>
+            <div class="section-content" id="team-content">
+                <p><span class="highlight-key">阴阳鱼工作室</span>：专注AI赋能游戏开发的工作室</p>
+                
+                <p><span class="highlight-data">《道谓何》</span>：正在开发的另一款游戏</p>
+                <ul class="content-list">
+                    <li>中式驱魔主题 + 开放探索 + 养成元素</li>
+                    <li>基于Unreal Engine 5</li>
+                    <li>结合AI开发约3个月</li>
+                    <li>同样集成智能NPC系统</li>
+                </ul>
+                
+                <p><span class="highlight-insight">后续计划</span>：</p>
+                <ul class="content-list">
+                    <li>《2026机械漫游》将持续优化直到落地</li>
+                    <li>开发更多AI指令功能（不只是位置移动）</li>
+                    <li>探索太空、地下城等更多场景</li>
+                    <li>欢迎有想法的开发者合作</li>
+                </ul>
+                
+                <div class="insight-card" style="margin-top: 25px;">
+                    <div class="insight-title">📱 关注渠道</div>
+                    <p>小红书：<span class="highlight-tool">宣酱AIGC</span></p>
+                </div>
+            </div>
+        </section>
+    </div>
+    
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+    
+    <!-- 返回顶部 -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+    
+    <script>
+        // 生成粒子
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 30; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                const colors = ['#00d4ff', '#ff00ff', '#00ff88', '#ffd93d'];
+                particle.style.background = colors[Math.floor(Math.random() * colors.length)];
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+        
+        // 主题切换
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+        
+        // 展开/收起全部
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = Array.from(sections).every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+        
+        // 切换单个区块
+        function toggleSection(id) {
+            const content = document.getElementById(id);
+            content.parentElement.classList.toggle('collapsed');
+        }
+        
+        // 滚动到指定区块
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        // 返回顶部
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // 监听滚动显示返回顶部按钮
+        window.addEventListener('scroll', function() {
+            const btn = document.getElementById('backToTop');
+            if (window.scrollY > 500) {
+                btn.classList.add('visible');
+            } else {
+                btn.classList.remove('visible');
+            }
+        });
+    </script>
+</body>
+</html>

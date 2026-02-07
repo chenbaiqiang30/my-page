@@ -1,0 +1,1690 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI编程训练营 · 实战精华笔记</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-light: #818cf8;
+            --secondary: #ec4899;
+            --accent: #06b6d4;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --glass-bg: rgba(255, 255, 255, 0.25);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        [data-theme="dark"] {
+            --glass-bg: rgba(30, 27, 75, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --light: #0f172a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 80%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(236, 72, 153, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 40%, rgba(6, 182, 212, 0.1) 0%, transparent 40%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        /* 浮动粒子 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 头部导航 */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            background: var(--glass-bg);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: var(--gradient-1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-controls {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .theme-toggle {
+            width: 50px;
+            height: 26px;
+            background: var(--glass-bg);
+            border-radius: 13px;
+            border: 1px solid var(--glass-border);
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle::after {
+            content: '🌙';
+            position: absolute;
+            left: 3px;
+            top: 2px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            transition: all 0.3s ease;
+        }
+
+        [data-theme="dark"] .theme-toggle::after {
+            content: '☀️';
+            left: 25px;
+        }
+
+        /* 主容器 */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 100px 2rem 4rem;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .hero h1 {
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-weight: 900;
+            background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 1rem;
+            line-height: 1.2;
+        }
+
+        .hero .subtitle {
+            font-size: 1.25rem;
+            color: #94a3b8;
+            margin-bottom: 2rem;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: var(--gradient-3);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        /* 思维导图 */
+        .mindmap-section {
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-title .icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-1);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+            overflow-x: auto;
+        }
+
+        .mindmap {
+            display: flex;
+            justify-content: center;
+            min-width: 800px;
+            padding: 2rem 0;
+        }
+
+        .mindmap-center {
+            background: var(--gradient-1);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.4);
+            position: relative;
+            z-index: 10;
+        }
+
+        .mindmap-branches {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            position: relative;
+        }
+
+        .mindmap-branch {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .branch-line {
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(90deg, rgba(99, 102, 241, 0.8), rgba(99, 102, 241, 0.2));
+            border-radius: 2px;
+        }
+
+        .branch-node {
+            background: rgba(99, 102, 241, 0.2);
+            border: 2px solid rgba(99, 102, 241, 0.5);
+            padding: 0.75rem 1.25rem;
+            border-radius: 12px;
+            color: #c7d2fe;
+            font-weight: 600;
+            font-size: 0.9rem;
+            white-space: nowrap;
+            transition: all 0.3s ease;
+        }
+
+        .branch-node:hover {
+            background: rgba(99, 102, 241, 0.4);
+            transform: translateX(5px);
+        }
+
+        .branch-node.highlight {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(99, 102, 241, 0.3));
+            border-color: rgba(236, 72, 153, 0.6);
+        }
+
+        /* 金句卡片 */
+        .quotes-section {
+            margin-bottom: 3rem;
+        }
+
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .quote-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 10px;
+            font-size: 8rem;
+            font-family: Georgia, serif;
+            background: var(--gradient-2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            opacity: 0.15;
+            line-height: 1;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .quote-text {
+            font-size: 1.1rem;
+            color: #e2e8f0;
+            position: relative;
+            z-index: 1;
+            font-weight: 500;
+            line-height: 1.8;
+        }
+
+        .quote-author {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--glass-border);
+            font-size: 0.875rem;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .quote-author .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gradient-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        /* 内容卡片 */
+        .content-section {
+            margin-bottom: 2rem;
+        }
+
+        .content-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .content-card:hover {
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-header {
+            padding: 1.25rem 1.5rem;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, rgba(236, 72, 153, 0.1) 100%);
+            border-bottom: 1px solid var(--glass-border);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .card-header:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3) 0%, rgba(236, 72, 153, 0.2) 100%);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .card-title .emoji {
+            font-size: 1.5rem;
+        }
+
+        .card-title h3 {
+            font-size: 1.125rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .card-title .badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-weight: 600;
+        }
+
+        .badge-core {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+            color: white;
+        }
+
+        .badge-method {
+            background: linear-gradient(135deg, #10b981, #06b6d4);
+            color: white;
+        }
+
+        .badge-tip {
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: white;
+        }
+
+        .card-toggle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .card-toggle::before {
+            content: '▼';
+            font-size: 0.75rem;
+            color: #94a3b8;
+            transition: transform 0.3s ease;
+        }
+
+        .content-card.collapsed .card-toggle::before {
+            transform: rotate(-90deg);
+        }
+
+        .card-preview {
+            padding: 0 1.5rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .content-card.collapsed .card-preview {
+            max-height: 60px;
+            padding: 0.75rem 1.5rem;
+        }
+
+        .card-body {
+            padding: 1.5rem;
+            max-height: 2000px;
+            overflow: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .content-card.collapsed .card-body {
+            max-height: 0;
+            padding: 0 1.5rem;
+        }
+
+        /* 内容样式 */
+        .key-point {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .key-point .number {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+
+        .key-point .text {
+            color: #e2e8f0;
+        }
+
+        .highlight-red {
+            color: #f87171;
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: #60a5fa;
+            font-weight: 600;
+        }
+
+        .highlight-green {
+            color: #4ade80;
+            font-weight: 600;
+        }
+
+        .highlight-purple {
+            color: #c084fc;
+            font-weight: 600;
+        }
+
+        .highlight-orange {
+            color: #fb923c;
+            font-weight: 600;
+        }
+
+        .highlight-cyan {
+            color: #22d3ee;
+            font-weight: 600;
+        }
+
+        .data-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(6, 182, 212, 0.2);
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.875rem;
+            color: #22d3ee;
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(6, 182, 212, 0.15));
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .tip-box .tip-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: #4ade80;
+            margin-bottom: 0.5rem;
+        }
+
+        .tip-box p {
+            color: #a7f3d0;
+            font-size: 0.9rem;
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(239, 68, 68, 0.15));
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 12px;
+            padding: 1rem 1.25rem;
+            margin: 1rem 0;
+        }
+
+        .warning-box .warning-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 0.5rem;
+        }
+
+        .warning-box p {
+            color: #fde68a;
+            font-size: 0.9rem;
+        }
+
+        /* 专家评论 */
+        .expert-section {
+            margin-bottom: 3rem;
+        }
+
+        .expert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .expert-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+        }
+
+        .expert-card.github::before {
+            background: linear-gradient(90deg, #24292f, #6e7681);
+        }
+
+        .expert-card.cursor::before {
+            background: linear-gradient(90deg, #8b5cf6, #ec4899);
+        }
+
+        .expert-card.cognition::before {
+            background: linear-gradient(90deg, #3b82f6, #06b6d4);
+        }
+
+        .expert-card.minimax::before {
+            background: linear-gradient(90deg, #ef4444, #f97316);
+        }
+
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .expert-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+        }
+
+        .expert-card.github .expert-avatar {
+            background: linear-gradient(135deg, #24292f, #6e7681);
+        }
+
+        .expert-card.cursor .expert-avatar {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+        }
+
+        .expert-card.cognition .expert-avatar {
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+        }
+
+        .expert-card.minimax .expert-avatar {
+            background: linear-gradient(135deg, #ef4444, #f97316);
+        }
+
+        .expert-info h4 {
+            color: #fff;
+            font-size: 1rem;
+            font-weight: 700;
+        }
+
+        .expert-info .title {
+            color: #94a3b8;
+            font-size: 0.8rem;
+        }
+
+        .expert-comment {
+            color: #cbd5e1;
+            font-size: 0.95rem;
+            line-height: 1.8;
+            position: relative;
+            padding-left: 1rem;
+            border-left: 3px solid rgba(99, 102, 241, 0.5);
+        }
+
+        .expert-tags {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .expert-tag {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.625rem;
+            border-radius: 20px;
+            background: rgba(99, 102, 241, 0.2);
+            color: #a5b4fc;
+        }
+
+        /* 逻辑思维图 */
+        .logic-map {
+            margin-bottom: 3rem;
+        }
+
+        .logic-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        .logic-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .logic-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .logic-step::before {
+            content: '';
+            position: absolute;
+            left: 24px;
+            top: 50px;
+            bottom: -20px;
+            width: 2px;
+            background: linear-gradient(180deg, var(--primary), transparent);
+        }
+
+        .logic-step:last-child::before {
+            display: none;
+        }
+
+        .step-number {
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: white;
+            flex-shrink: 0;
+            box-shadow: 0 5px 20px rgba(99, 102, 241, 0.4);
+        }
+
+        .step-content {
+            flex: 1;
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 16px;
+            padding: 1.25rem;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+        }
+
+        .step-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-desc {
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* 干货清单 */
+        .actionable-section {
+            margin-bottom: 3rem;
+        }
+
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.25rem;
+        }
+
+        .action-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1.25rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .action-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), transparent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .action-card:hover::before {
+            opacity: 1;
+        }
+
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .action-icon {
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .action-icon.code {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
+        }
+
+        .action-icon.debug {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(249, 115, 22, 0.3));
+        }
+
+        .action-icon.tool {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.3));
+        }
+
+        .action-icon.learn {
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.3), rgba(168, 85, 247, 0.3));
+        }
+
+        .action-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.5rem;
+        }
+
+        .action-desc {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            line-height: 1.6;
+        }
+
+        .action-code {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            padding: 0.75rem;
+            margin-top: 0.75rem;
+            font-family: 'SF Mono', Monaco, monospace;
+            font-size: 0.8rem;
+            color: #4ade80;
+            overflow-x: auto;
+        }
+
+        /* 元认知图 */
+        .metacognition-section {
+            margin-bottom: 3rem;
+        }
+
+        .meta-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2rem;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .meta-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .meta-column {
+            text-align: center;
+        }
+
+        .meta-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .meta-column:nth-child(1) .meta-icon {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(249, 115, 22, 0.3));
+        }
+
+        .meta-column:nth-child(2) .meta-icon {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(139, 92, 246, 0.3));
+        }
+
+        .meta-column:nth-child(3) .meta-icon {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(6, 182, 212, 0.3));
+        }
+
+        .meta-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        .meta-items {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .meta-item {
+            background: rgba(99, 102, 241, 0.1);
+            border-radius: 12px;
+            padding: 0.875rem 1rem;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .meta-item:hover {
+            background: rgba(99, 102, 241, 0.2);
+            transform: translateX(5px);
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .footer a {
+            color: var(--primary-light);
+            text-decoration: none;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-in {
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 80px 1rem 2rem;
+            }
+
+            .hero {
+                padding: 2rem 1rem;
+            }
+
+            .hero-stats {
+                gap: 1.5rem;
+            }
+
+            .mindmap {
+                min-width: 600px;
+            }
+
+            .expert-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 粒子背景 -->
+    <div class="particles">
+        <div class="particle" style="left: 10%; animation-delay: 0s;"></div>
+        <div class="particle" style="left: 20%; animation-delay: 2s;"></div>
+        <div class="particle" style="left: 30%; animation-delay: 4s;"></div>
+        <div class="particle" style="left: 40%; animation-delay: 1s;"></div>
+        <div class="particle" style="left: 50%; animation-delay: 3s;"></div>
+        <div class="particle" style="left: 60%; animation-delay: 5s;"></div>
+        <div class="particle" style="left: 70%; animation-delay: 2.5s;"></div>
+        <div class="particle" style="left: 80%; animation-delay: 4.5s;"></div>
+        <div class="particle" style="left: 90%; animation-delay: 1.5s;"></div>
+    </div>
+
+    <!-- 头部 -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">🚀 AI编程训练营</div>
+            <div class="nav-controls">
+                <div class="theme-toggle" onclick="toggleTheme()"></div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- 英雄区域 -->
+        <section class="hero animate-in">
+            <h1>自习室答疑精华笔记</h1>
+            <p class="subtitle">从零到一的AI编程实战指南 · 小白进阶必修课</p>
+            <div class="hero-stats">
+                <div class="stat-item">
+                    <div class="stat-number">4h</div>
+                    <div class="stat-label">答疑时长</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">15+</div>
+                    <div class="stat-label">核心问题</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">100+</div>
+                    <div class="stat-label">在线学员</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section class="mindmap-section animate-in delay-1">
+            <div class="section-title">
+                <div class="icon">🧠</div>
+                <span>核心知识图谱</span>
+            </div>
+            <div class="mindmap-container">
+                <div class="mindmap">
+                    <div class="mindmap-branches" style="align-items: flex-end; padding-right: 20px;">
+                        <div class="mindmap-branch">
+                            <div class="branch-node">🎯 MVP思维</div>
+                            <div class="branch-line"></div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-node highlight">📝 需求文档</div>
+                            <div class="branch-line"></div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-node">🐛 错误调试</div>
+                            <div class="branch-line"></div>
+                        </div>
+                    </div>
+                    <div class="mindmap-center">
+                        AI编程<br>实战核心
+                    </div>
+                    <div class="mindmap-branches" style="padding-left: 20px;">
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node">🛠️ 工具选择</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node highlight">🔗 API接入</div>
+                        </div>
+                        <div class="mindmap-branch">
+                            <div class="branch-line"></div>
+                            <div class="branch-node">💾 数据库配置</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 金句集锦 -->
+        <section class="quotes-section animate-in delay-2">
+            <div class="section-title">
+                <div class="icon">💎</div>
+                <span>金句集锦</span>
+            </div>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <p class="quote-text">用 Web Coding 的<span class="highlight-red">核心资产不是代码</span>，而是你的<span class="highlight-blue">需求文档</span>。代码可能给你改坏，但需求文档在，你就可以重现它。</p>
+                    <div class="quote-author">
+                        <div class="avatar">白</div>
+                        <span>白志雄老师 · 资产思维</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">MVP的核心就是<span class="highlight-green">三个字</span>：输入是什么？处理逻辑是什么？输出是什么？把这三点想清楚就够了。</p>
+                    <div class="quote-author">
+                        <div class="avatar">白</div>
+                        <span>白志雄老师 · MVP方法论</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text"><span class="highlight-purple">工具不重要</span>，我们的<span class="highlight-orange">idea才是最宝贵的</span>。不要在工具里倒腾来倒腾去，到时候倒腾不出成果，自己又很灰心。</p>
+                    <div class="quote-author">
+                        <div class="avatar">大</div>
+                        <span>大熊老师 · 工具观</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">描述问题时<span class="highlight-cyan">不要描述自己处理后的结果</span>，要描述<span class="highlight-red">客观现象</span>：你做了什么操作，页面给了你什么响应。</p>
+                    <div class="quote-author">
+                        <div class="avatar">白</div>
+                        <span>白志雄老师 · 调试心法</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text"><span class="highlight-blue">先可行，再优化</span>。先搞定能用，能用了之后再考虑性能和安全性。通道都没调通，就不要考虑安全性。</p>
+                    <div class="quote-author">
+                        <div class="avatar">白</div>
+                        <span>白志雄老师 · 开发优先级</span>
+                    </div>
+                </div>
+                <div class="quote-card">
+                    <p class="quote-text">程序报错有<span class="highlight-green">两层含义</span>：一是代码逻辑是否正确，二是运行结果是否符合预期。就像让人买酱油，他去了，但酱油卖没了。</p>
+                    <div class="quote-author">
+                        <div class="avatar">白</div>
+                        <span>白志雄老师 · 认知升级</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 元认知图 -->
+        <section class="metacognition-section animate-in delay-2">
+            <div class="section-title">
+                <div class="icon">🔮</div>
+                <span>元认知框架</span>
+            </div>
+            <div class="meta-container">
+                <div class="meta-grid">
+                    <div class="meta-column">
+                        <div class="meta-header">
+                            <div class="meta-icon">❌</div>
+                            <div class="meta-title">常见误区</div>
+                        </div>
+                        <div class="meta-items">
+                            <div class="meta-item">一上来就想做完整产品</div>
+                            <div class="meta-item">过度纠结工具选择</div>
+                            <div class="meta-item">自己加工错误信息后再描述</div>
+                            <div class="meta-item">一次想改多个bug</div>
+                            <div class="meta-item">不理解调试和运行的区别</div>
+                        </div>
+                    </div>
+                    <div class="meta-column">
+                        <div class="meta-header">
+                            <div class="meta-icon">💡</div>
+                            <div class="meta-title">核心认知</div>
+                        </div>
+                        <div class="meta-items">
+                            <div class="meta-item">MVP = 最小可用方案</div>
+                            <div class="meta-item">需求文档 > 代码</div>
+                            <div class="meta-item">先能用，再好用</div>
+                            <div class="meta-item">描述客观现象</div>
+                            <div class="meta-item">一次只改一个问题</div>
+                        </div>
+                    </div>
+                    <div class="meta-column">
+                        <div class="meta-header">
+                            <div class="meta-icon">✅</div>
+                            <div class="meta-title">正确做法</div>
+                        </div>
+                        <div class="meta-items">
+                            <div class="meta-item">从最小功能点开始验证</div>
+                            <div class="meta-item">保护好需求文档</div>
+                            <div class="meta-item">复制原始错误信息</div>
+                            <div class="meta-item">先手动跑通再自动化</div>
+                            <div class="meta-item">小白直接用Enter/秒搭</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 逻辑思维图 -->
+        <section class="logic-map animate-in delay-2">
+            <div class="section-title">
+                <div class="icon">🎯</div>
+                <span>MVP开发流程</span>
+            </div>
+            <div class="logic-container">
+                <div class="logic-flow">
+                    <div class="logic-step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <div class="step-title">🎯 明确三要素</div>
+                            <div class="step-desc"><span class="highlight-blue">输入</span>是什么 → <span class="highlight-purple">处理逻辑</span>是什么 → <span class="highlight-green">输出</span>是什么</div>
+                        </div>
+                    </div>
+                    <div class="logic-step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <div class="step-title">📝 编写需求文档</div>
+                            <div class="step-desc">这是你的<span class="highlight-red">核心资产</span>，代码可以重写，需求文档要保护好</div>
+                        </div>
+                    </div>
+                    <div class="logic-step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <div class="step-title">🔬 验证核心链路 (POC)</div>
+                            <div class="step-desc">先验证最关键的那个节点，能通就说明<span class="highlight-cyan">关键技术点打通了</span></div>
+                        </div>
+                    </div>
+                    <div class="logic-step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <div class="step-title">🚀 迭代扩展</div>
+                            <div class="step-desc">核心链路通了，再逐步扩展：<span class="highlight-orange">更多数据 → 更多功能 → 更好体验</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 核心内容 -->
+        <section class="content-section animate-in delay-3">
+            <div class="section-title">
+                <div class="icon">📚</div>
+                <span>实战干货详解</span>
+            </div>
+
+            <!-- MVP思维 -->
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <span class="emoji">🎯</span>
+                        <h3>MVP思维：小之又小的艺术</h3>
+                        <span class="badge badge-core">核心</span>
+                    </div>
+                    <div class="card-toggle"></div>
+                </div>
+                <div class="card-preview">MVP最小可用方案，不需要一次到位，只要把关键节点打通就行...</div>
+                <div class="card-body">
+                    <div class="key-point">
+                        <div class="number">1</div>
+                        <div class="text">
+                            <strong class="highlight-red">MVP的核心</strong>：只解决暂时用其他工具解决不了的那个关键节点。就像做工作流，核心可能只有一个节点，把那个节点搞定就行。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">2</div>
+                        <div class="text">
+                            <strong class="highlight-blue">爬虫案例</strong>：MVP就是从目标网站爬一条数据保存到本地，不管是文本、Excel还是JSON。能做到这一步就算成功，剩下的都是扩展。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">3</div>
+                        <div class="text">
+                            <strong class="highlight-green">扩展维度</strong>：① 更多数据 ② 指定数据筛选 ③ 更多输出格式（Excel、飞书） ④ 更多网站（性能扩展）
+                        </div>
+                    </div>
+                    
+                    <div class="tip-box">
+                        <div class="tip-title">💡 实战技巧</div>
+                        <p>如果爬取有障碍（如小红书反爬），可以<span class="highlight-cyan">先手动下载数据</span>，验证后续处理流程。等流程跑通后，再考虑自动化爬取的需求。</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-title">⚠️ 避坑提醒</div>
+                        <p>小红书、微信小程序这类平台反爬机制很强，<span class="highlight-orange">不建议新手一上来就挑战</span>。建议从公开的新闻网站开始练习。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 错误调试 -->
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <span class="emoji">🐛</span>
+                        <h3>错误调试：与AI有效沟通</h3>
+                        <span class="badge badge-method">方法</span>
+                    </div>
+                    <div class="card-toggle"></div>
+                </div>
+                <div class="card-preview">描述问题时不要自己加工，要复制原始错误信息，描述客观现象...</div>
+                <div class="card-body">
+                    <div class="key-point">
+                        <div class="number">1</div>
+                        <div class="text">
+                            <strong class="highlight-red">黄金法则</strong>：一次只改一个Bug！连着描述多个问题，AI可能会理解歧义，以为它们之间有关联。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">2</div>
+                        <div class="text">
+                            <strong class="highlight-blue">正确描述模板</strong>：「当我点击【XX按钮】后，页面【具体响应】，但我预期应该是【期望结果】」
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">3</div>
+                        <div class="text">
+                            <strong class="highlight-green">差异对比法</strong>：描述「预期情况」和「实际情况」的差异，AI能更快定位问题
+                        </div>
+                    </div>
+
+                    <div class="action-code">
+// ❌ 错误示范
+"页面报错了，不知道为什么"
+
+// ✅ 正确示范  
+"当我点击上传文件按钮并成功上传文件后，
+页面弹出错误提示：'当前处于离线模式，AI分析不可用'
+请修复此问题"</div>
+
+                    <div class="tip-box">
+                        <div class="tip-title">💡 进阶技巧</div>
+                        <p>可以让AI主动添加日志：「为了修复当前问题，请适当添加日志，我会在运行后把F12的输出告诉你」</p>
+                    </div>
+
+                    <div class="warning-box">
+                        <div class="warning-title">⚠️ 多次修改失败怎么办</div>
+                        <p>如果多次尝试都改不出来，说明代码可能已经<span class="highlight-red">逻辑混乱</span>了。这时候建议：让AI<span class="highlight-green">重写该功能模块</span>，或根据需求文档重新生成。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 工具选择 -->
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <span class="emoji">🛠️</span>
+                        <h3>工具选择：适合的才是最好的</h3>
+                        <span class="badge badge-tip">建议</span>
+                    </div>
+                    <div class="card-toggle"></div>
+                </div>
+                <div class="card-preview">纯小白建议直接用Enter或秒搭，不需要写一行代码，打开网站就能用...</div>
+                <div class="card-body">
+                    <div class="key-point">
+                        <div class="number">1</div>
+                        <div class="text">
+                            <strong class="highlight-purple">纯小白首选</strong>：<span class="highlight-green">Enter</span> 或 <span class="highlight-green">秒搭</span>。不需要写代码，打开网站就能用，能实现大部分需求。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">2</div>
+                        <div class="text">
+                            <strong class="highlight-blue">进阶工具</strong>：Claude Code、Cursor、Trae等IDE。需要一定的环境配置能力，但功能更强大。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">3</div>
+                        <div class="text">
+                            <strong class="highlight-orange">产品形式建议</strong>：优先做<span class="highlight-cyan">Web应用</span>，不要一上来就做小程序。Web应用不依赖任何平台，打开浏览器就能访问。
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <div class="tip-title">💡 工具选择原则</div>
+                        <p><span class="highlight-red">工具不重要，idea才最宝贵</span>。不要在工具选择上耗费太多精力，能实现需求就是好工具。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- API接入 -->
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <span class="emoji">🔗</span>
+                        <h3>API接入：Token与授权的那些坑</h3>
+                        <span class="badge badge-method">方法</span>
+                    </div>
+                    <div class="card-toggle"></div>
+                </div>
+                <div class="card-preview">注意区分临时Token和长期Token，调试页面生成的是临时授权码...</div>
+                <div class="card-body">
+                    <div class="key-point">
+                        <div class="number">1</div>
+                        <div class="text">
+                            <strong class="highlight-red">授权码类型</strong>：<span class="highlight-blue">SAT开头</span> = 服务访问令牌（长期有效）；调试页面生成的是<span class="highlight-orange">临时授权码</span>（会过期）
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">2</div>
+                        <div class="text">
+                            <strong class="highlight-green">国内模型不需要中转</strong>：智谱、Minimax等国内模型可以直接调用，不需要Cloudflare中转
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">3</div>
+                        <div class="text">
+                            <strong class="highlight-purple">调试策略</strong>：先用<span class="highlight-cyan">明文API Key</span>跑通流程，确认没问题后再迁移到环境变量或数据库
+                        </div>
+                    </div>
+
+                    <div class="action-code">
+// Supabase Edge Function 常见问题
+// 需要关闭 JWT 验证才能正常调用
+// 位置：Supabase → Functions → 选择函数 → Details → 关闭 Verify JWT</div>
+
+                    <div class="warning-box">
+                        <div class="warning-title">⚠️ 常见踩坑</div>
+                        <p>每次从调试页面复制的Token都是<span class="highlight-red">临时的</span>，看起来能用但第二天就失效。要去「服务访问令牌」处生成<span class="highlight-green">长期令牌</span>。</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 数据库配置 -->
+            <div class="content-card">
+                <div class="card-header" onclick="toggleCard(this)">
+                    <div class="card-title">
+                        <span class="emoji">💾</span>
+                        <h3>数据库与后端：知识库 vs 数据库</h3>
+                        <span class="badge badge-tip">建议</span>
+                    </div>
+                    <div class="card-toggle"></div>
+                </div>
+                <div class="card-preview">知识库只能做切片召回，不能拿出完整的用户档案；需要完整数据就用数据库...</div>
+                <div class="card-body">
+                    <div class="key-point">
+                        <div class="number">1</div>
+                        <div class="text">
+                            <strong class="highlight-blue">知识库</strong>：适合做<span class="highlight-cyan">语义检索</span>，通过关键词召回相关片段。但只能返回切片，不能返回完整档案。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">2</div>
+                        <div class="text">
+                            <strong class="highlight-green">数据库</strong>：适合存储<span class="highlight-purple">结构化数据</span>，可以查询完整的用户信息。适合做用户画像、个人档案。
+                        </div>
+                    </div>
+                    <div class="key-point">
+                        <div class="number">3</div>
+                        <div class="text">
+                            <strong class="highlight-orange">混合策略</strong>：<span class="highlight-red">个人档案</span>存数据库（用于上下文），<span class="highlight-green">详细记录</span>存知识库（用于细节召回）
+                        </div>
+                    </div>
+
+                    <div class="tip-box">
+                        <div class="tip-title">💡 数据分层策略</div>
+                        <p>用户原始数据 → 提取特征 → 生成<span class="highlight-cyan">个人档案</span>（压缩版）。后续对话基于档案，需要细节时再召回原始数据。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论 -->
+        <section class="expert-section animate-in delay-3">
+            <div class="section-title">
+                <div class="icon">💬</div>
+                <span>专家视角</span>
+            </div>
+            <div class="expert-grid">
+                <div class="expert-card github">
+                    <div class="expert-header">
+                        <div class="expert-avatar">TD</div>
+                        <div class="expert-info">
+                            <h4>Thomas Dohmke</h4>
+                            <div class="title">GitHub CEO</div>
+                        </div>
+                    </div>
+                    <p class="expert-comment">
+                        这场答疑完美诠释了<span class="highlight-blue">「开发者体验优先」</span>的理念。MVP思维、迭代开发、错误调试——这些都是GitHub Copilot背后的设计哲学。AI不是要取代开发者，而是要<span class="highlight-green">赋能每一个想要创造的人</span>。
+                    </p>
+                    <div class="expert-tags">
+                        <span class="expert-tag">开发者体验</span>
+                        <span class="expert-tag">AI赋能</span>
+                        <span class="expert-tag">迭代开发</span>
+                    </div>
+                </div>
+
+                <div class="expert-card cursor">
+                    <div class="expert-header">
+                        <div class="expert-avatar">AS</div>
+                        <div class="expert-info">
+                            <h4>Aman Sanger</h4>
+                            <div class="title">Cursor 创始人</div>
+                        </div>
+                    </div>
+                    <p class="expert-comment">
+                        「需求文档是核心资产」这个观点非常深刻。在AI编程时代，<span class="highlight-purple">代码的确可以重写</span>，但清晰的需求表达能力是稀缺的。Cursor的设计理念就是让开发者专注于<span class="highlight-orange">「想做什么」</span>，而非「怎么做」。
+                    </p>
+                    <div class="expert-tags">
+                        <span class="expert-tag">需求表达</span>
+                        <span class="expert-tag">人机协作</span>
+                        <span class="expert-tag">代码生成</span>
+                    </div>
+                </div>
+
+                <div class="expert-card cognition">
+                    <div class="expert-header">
+                        <div class="expert-avatar">MH</div>
+                        <div class="expert-info">
+                            <h4>Michael Hull</h4>
+                            <div class="title">Cognition AI CEO</div>
+                        </div>
+                    </div>
+                    <p class="expert-comment">
+                        错误调试的技巧揭示了一个重要事实：<span class="highlight-cyan">人类如何与AI沟通</span>将成为核心技能。「描述客观现象」「一次改一个问题」——这些都是<span class="highlight-red">高效协作的关键</span>。Devin的设计也在解决同样的问题。
+                    </p>
+                    <div class="expert-tags">
+                        <span class="expert-tag">人机对话</span>
+                        <span class="expert-tag">AI Agent</span>
+                        <span class="expert-tag">协作效率</span>
+                    </div>
+                </div>
+
+                <div class="expert-card minimax">
+                    <div class="expert-header">
+                        <div class="expert-avatar">曾</div>
+                        <div class="expert-info">
+                            <h4>曾国洋</h4>
+                            <div class="title">面壁智能联合创始人</div>
+                        </div>
+                    </div>
+                    <p class="expert-comment">
+                        国内开发者面临的环境配置、API接入等问题，恰恰是<span class="highlight-green">本土化AI工具</span>需要解决的痛点。「国内模型不需要中转」这样的经验分享，能帮助更多开发者<span class="highlight-blue">降低入门门槛</span>。
+                    </p>
+                    <div class="expert-tags">
+                        <span class="expert-tag">本土化</span>
+                        <span class="expert-tag">降低门槛</span>
+                        <span class="expert-tag">开发者生态</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干货清单 -->
+        <section class="actionable-section animate-in delay-4">
+            <div class="section-title">
+                <div class="icon">🚀</div>
+                <span>即刻行动清单</span>
+            </div>
+            <div class="action-grid">
+                <div class="action-card">
+                    <div class="action-icon code">📝</div>
+                    <div class="action-title">保护你的需求文档</div>
+                    <div class="action-desc">每次修改需求都要同步更新文档，这是你的核心资产，代码可以重来，需求不能丢</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon debug">🐛</div>
+                    <div class="action-title">学会正确描述Bug</div>
+                    <div class="action-desc">复制原始错误信息，描述「做了什么→看到什么→期望什么」，一次只改一个问题</div>
+                    <div class="action-code">当我[操作]后，[实际结果]，但预期应该[期望结果]</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon tool">🛠️</div>
+                    <div class="action-title">选择适合的工具</div>
+                    <div class="action-desc">小白用Enter/秒搭，进阶用Claude Code/Cursor，先能用再好用</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon learn">🎯</div>
+                    <div class="action-title">牢记MVP三要素</div>
+                    <div class="action-desc">输入是什么？处理什么？输出什么？想清楚这三点，再开始动手</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon code">🔑</div>
+                    <div class="action-title">区分Token类型</div>
+                    <div class="action-desc">SAT开头是长期令牌，调试页面的是临时令牌。要用长期的才稳定</div>
+                </div>
+                <div class="action-card">
+                    <div class="action-icon debug">🌐</div>
+                    <div class="action-title">优先做Web应用</div>
+                    <div class="action-desc">不依赖平台，打开浏览器就能用。小程序、App等复杂形式后面再考虑</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <p>📅 2026年1月26日 自习室答疑 · 精华笔记</p>
+            <p style="margin-top: 0.5rem;">由 Claude AI 智能整理 · 感谢白志雄、大熊等老师的精彩分享</p>
+        </footer>
+    </div>
+
+    <script>
+        // 主题切换
+        function toggleTheme() {
+            const body = document.body;
+            const currentTheme = body.getAttribute('data-theme');
+            body.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+        }
+
+        // 卡片折叠
+        function toggleCard(header) {
+            const card = header.closest('.content-card');
+            card.classList.toggle('collapsed');
+        }
+
+        // 初始化：部分卡片默认折叠
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.content-card');
+            cards.forEach((card, index) => {
+                if (index > 1) {
+                    card.classList.add('collapsed');
+                }
+            });
+        });
+
+        // 滚动动画
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.animate-in').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            el.style.transition = 'all 0.6s ease';
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

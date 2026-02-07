@@ -1,0 +1,1432 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>对话微软CTO Kevin Scott | AI时代的深度思考</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-gradient: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            --accent-gold: #f4a261;
+            --accent-coral: #e76f51;
+            --accent-teal: #2a9d8f;
+            --accent-blue: #3a86ff;
+            --accent-purple: #8338ec;
+            --text-primary: #e8e8e8;
+            --text-secondary: #a0a0a0;
+            --card-bg: rgba(255,255,255,0.05);
+            --border-glow: rgba(244,162,97,0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            color: var(--text-primary);
+            line-height: 1.8;
+            overflow-x: hidden;
+        }
+
+        /* 粒子背景 */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            opacity: 0.3;
+            animation: float 15s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        /* 头部英雄区 */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+            z-index: 1;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.5) 100%);
+            z-index: -1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-coral));
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #1a1a2e;
+            margin-bottom: 2rem;
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0%, 100% { box-shadow: 0 0 20px rgba(244,162,97,0.5); }
+            50% { box-shadow: 0 0 40px rgba(244,162,97,0.8); }
+        }
+
+        .hero-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: clamp(2.5rem, 8vw, 5rem);
+            font-weight: 900;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-gold) 50%, var(--accent-coral) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3rem;
+            color: var(--text-secondary);
+            max-width: 700px;
+            margin-bottom: 3rem;
+        }
+
+        .hero-meta {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--accent-teal);
+            font-size: 0.95rem;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 3rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(10px); }
+        }
+
+        .scroll-indicator svg {
+            width: 30px;
+            height: 30px;
+            stroke: var(--accent-gold);
+        }
+
+        /* 主容器 */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 金句横幅 */
+        .quote-banner {
+            background: linear-gradient(135deg, rgba(244,162,97,0.1) 0%, rgba(231,111,81,0.1) 100%);
+            border-left: 4px solid var(--accent-gold);
+            border-radius: 0 20px 20px 0;
+            padding: 2.5rem 3rem;
+            margin: 4rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quote-banner::before {
+            content: '"';
+            position: absolute;
+            top: -20px;
+            left: 20px;
+            font-size: 150px;
+            font-family: 'Noto Serif SC', serif;
+            color: rgba(244,162,97,0.1);
+            line-height: 1;
+        }
+
+        .quote-text {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--accent-gold);
+            position: relative;
+            z-index: 1;
+        }
+
+        .quote-author {
+            margin-top: 1rem;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        /* 章节标题 */
+        .section-header {
+            text-align: center;
+            margin: 6rem 0 3rem;
+        }
+
+        .section-number {
+            display: inline-block;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+            border-radius: 50%;
+            font-family: 'Noto Serif SC', serif;
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .section-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, #fff, var(--accent-teal));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* 内容卡片 */
+        .content-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin: 2rem 0;
+            backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-coral), var(--accent-teal));
+        }
+
+        .content-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--border-glow);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--accent-purple), var(--accent-blue));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: #fff;
+        }
+
+        .card-content {
+            color: var(--text-secondary);
+            line-height: 2;
+        }
+
+        .card-content p {
+            margin-bottom: 1rem;
+        }
+
+        /* 高亮文字 */
+        .highlight-gold {
+            color: var(--accent-gold);
+            font-weight: 600;
+        }
+
+        .highlight-teal {
+            color: var(--accent-teal);
+            font-weight: 600;
+        }
+
+        .highlight-coral {
+            color: var(--accent-coral);
+            font-weight: 600;
+        }
+
+        .highlight-blue {
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        .highlight-purple {
+            color: var(--accent-purple);
+            font-weight: 600;
+        }
+
+        /* 数据卡片 */
+        .data-highlight {
+            display: inline-block;
+            background: linear-gradient(135deg, rgba(58,134,255,0.2), rgba(131,56,236,0.2));
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            border: 1px solid rgba(58,134,255,0.3);
+            font-weight: 600;
+            color: var(--accent-blue);
+        }
+
+        /* 专家评论区 */
+        .expert-section {
+            margin: 5rem 0;
+        }
+
+        .expert-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .expert-card {
+            background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.02));
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .expert-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: conic-gradient(from 0deg, transparent, var(--card-accent), transparent 30%);
+            animation: rotate 8s linear infinite;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .expert-card:hover::before {
+            opacity: 0.3;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .expert-card:nth-child(1) { --card-accent: var(--accent-gold); }
+        .expert-card:nth-child(2) { --card-accent: var(--accent-teal); }
+        .expert-card:nth-child(3) { --card-accent: var(--accent-coral); }
+        .expert-card:nth-child(4) { --card-accent: var(--accent-purple); }
+
+        .expert-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 30px 60px rgba(0,0,0,0.4);
+        }
+
+        .expert-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .expert-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--card-accent), transparent);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+            border: 3px solid var(--card-accent);
+        }
+
+        .expert-name {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--card-accent);
+            margin-bottom: 0.3rem;
+        }
+
+        .expert-title {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .expert-comment {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1rem;
+            line-height: 1.9;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        /* 思维导图区 */
+        .mindmap-section {
+            margin: 5rem 0;
+            padding: 3rem;
+            background: linear-gradient(135deg, rgba(42,157,143,0.1), rgba(58,134,255,0.1));
+            border-radius: 30px;
+            border: 1px solid rgba(42,157,143,0.2);
+        }
+
+        .mindmap-title {
+            text-align: center;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 2rem;
+            margin-bottom: 3rem;
+            color: var(--accent-teal);
+        }
+
+        .mindmap-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mindmap-center {
+            background: linear-gradient(135deg, var(--accent-teal), var(--accent-blue));
+            padding: 1.5rem 3rem;
+            border-radius: 50px;
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            box-shadow: 0 10px 40px rgba(42,157,143,0.4);
+        }
+
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            width: 100%;
+            margin-top: 2rem;
+        }
+
+        .mindmap-branch {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .mindmap-branch:hover {
+            transform: scale(1.03);
+            border-color: var(--accent-teal);
+        }
+
+        .branch-title {
+            font-weight: 700;
+            color: var(--accent-gold);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .branch-items {
+            list-style: none;
+        }
+
+        .branch-items li {
+            padding: 0.5rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .branch-items li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-teal);
+        }
+
+        /* 时间轴 */
+        .timeline-section {
+            margin: 5rem 0;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(180deg, var(--accent-gold), var(--accent-teal), var(--accent-purple));
+            border-radius: 3px;
+        }
+
+        .timeline-item {
+            position: relative;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .timeline-item:hover {
+            border-color: var(--accent-gold);
+            transform: translateX(10px);
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -2.4rem;
+            top: 2.5rem;
+            width: 16px;
+            height: 16px;
+            background: var(--accent-gold);
+            border-radius: 50%;
+            border: 3px solid #1a1a2e;
+            box-shadow: 0 0 20px rgba(244,162,97,0.5);
+        }
+
+        .timeline-date {
+            font-size: 0.85rem;
+            color: var(--accent-gold);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 0.8rem;
+        }
+
+        .timeline-content {
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* 关键词云 */
+        .keywords-cloud {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin: 3rem 0;
+        }
+
+        .keyword-tag {
+            padding: 0.6rem 1.5rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            cursor: default;
+        }
+
+        .keyword-tag:hover {
+            transform: scale(1.1);
+        }
+
+        .keyword-tag.size-lg {
+            font-size: 1.2rem;
+            padding: 0.8rem 2rem;
+        }
+
+        .keyword-tag.size-sm {
+            font-size: 0.8rem;
+            padding: 0.4rem 1rem;
+        }
+
+        .keyword-tag.gold { border-color: var(--accent-gold); color: var(--accent-gold); }
+        .keyword-tag.teal { border-color: var(--accent-teal); color: var(--accent-teal); }
+        .keyword-tag.coral { border-color: var(--accent-coral); color: var(--accent-coral); }
+        .keyword-tag.blue { border-color: var(--accent-blue); color: var(--accent-blue); }
+        .keyword-tag.purple { border-color: var(--accent-purple); color: var(--accent-purple); }
+
+        /* 统计卡片 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 3rem 0;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 2rem;
+            background: var(--card-bg);
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--accent-gold);
+        }
+
+        .stat-number {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 3rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--accent-gold), var(--accent-coral));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+        }
+
+        /* 可折叠板块 */
+        .collapsible {
+            margin: 1.5rem 0;
+        }
+
+        .collapsible-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem 2rem;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .collapsible-header:hover {
+            border-color: var(--accent-gold);
+        }
+
+        .collapsible-header.active {
+            border-radius: 16px 16px 0 0;
+            border-bottom: none;
+            background: linear-gradient(135deg, rgba(244,162,97,0.1), rgba(231,111,81,0.1));
+        }
+
+        .collapsible-title {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .collapsible-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s ease;
+        }
+
+        .collapsible-header.active .collapsible-icon {
+            transform: rotate(180deg);
+        }
+
+        .collapsible-preview {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-left: auto;
+            margin-right: 1rem;
+            max-width: 300px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .collapsible-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-top: none;
+            border-radius: 0 0 16px 16px;
+        }
+
+        .collapsible-content.active {
+            max-height: 2000px;
+        }
+
+        .collapsible-inner {
+            padding: 2rem;
+        }
+
+        /* 深浅模式切换 */
+        .theme-toggle {
+            position: fixed;
+            top: 2rem;
+            right: 2rem;
+            z-index: 1000;
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 50px;
+            padding: 0.8rem 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.9rem;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-gold);
+            transform: scale(1.05);
+        }
+
+        /* 浅色模式 */
+        body.light-mode {
+            --primary-gradient: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 50%, #dee2e6 100%);
+            --text-primary: #212529;
+            --text-secondary: #6c757d;
+            --card-bg: rgba(255,255,255,0.8);
+        }
+
+        body.light-mode .hero-title {
+            background: linear-gradient(135deg, #1a1a2e 0%, var(--accent-coral) 50%, var(--accent-gold) 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+        }
+
+        body.light-mode .content-card,
+        body.light-mode .expert-card,
+        body.light-mode .mindmap-branch,
+        body.light-mode .timeline-item,
+        body.light-mode .stat-card,
+        body.light-mode .collapsible-header,
+        body.light-mode .collapsible-content {
+            border-color: rgba(0,0,0,0.1);
+        }
+
+        /* 页脚 */
+        .footer {
+            text-align: center;
+            padding: 4rem 2rem;
+            margin-top: 5rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .footer-text {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .footer-brand {
+            font-family: 'Noto Serif SC', serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-coral));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* 响应式 */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+
+            .hero-meta {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .collapsible-preview {
+                display: none;
+            }
+
+            .expert-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .timeline {
+                padding-left: 2rem;
+            }
+
+            .mindmap-branches {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 动画类 */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 进度条 */
+        .reading-progress {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 0%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-gold), var(--accent-coral));
+            z-index: 1001;
+            transition: width 0.1s ease;
+        }
+
+        /* 导航目录 */
+        .toc-nav {
+            position: fixed;
+            left: 2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .toc-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .toc-dot:hover,
+        .toc-dot.active {
+            background: var(--accent-gold);
+            border-color: var(--accent-gold);
+            transform: scale(1.3);
+        }
+
+        .toc-dot::after {
+            content: attr(data-label);
+            position: absolute;
+            left: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .toc-dot:hover::after {
+            opacity: 1;
+        }
+
+        @media (max-width: 1200px) {
+            .toc-nav {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 阅读进度条 -->
+    <div class="reading-progress" id="progressBar"></div>
+
+    <!-- 主题切换 -->
+    <button class="theme-toggle" onclick="toggleTheme()">
+        <span id="themeIcon">🌙</span>
+        <span id="themeText">深色模式</span>
+    </button>
+
+    <!-- 导航目录 -->
+    <nav class="toc-nav">
+        <div class="toc-dot active" data-label="开篇" onclick="scrollToSection('hero')"></div>
+        <div class="toc-dot" data-label="AI加速" onclick="scrollToSection('section1')"></div>
+        <div class="toc-dot" data-label="编程革命" onclick="scrollToSection('section2')"></div>
+        <div class="toc-dot" data-label="人口挑战" onclick="scrollToSection('section3')"></div>
+        <div class="toc-dot" data-label="微软DNA" onclick="scrollToSection('section4')"></div>
+        <div class="toc-dot" data-label="专家点评" onclick="scrollToSection('experts')"></div>
+        <div class="toc-dot" data-label="思维导图" onclick="scrollToSection('mindmap')"></div>
+    </nav>
+
+    <!-- 粒子背景 -->
+    <div class="particles" id="particles"></div>
+
+    <!-- 英雄区 -->
+    <header class="hero" id="hero">
+        <span class="hero-badge">🎤 深度访谈</span>
+        <h1 class="hero-title">对话微软CTO<br>Kevin Scott</h1>
+        <p class="hero-subtitle">AI时代的深度思考：从技术变革到人类命运，一位科技领袖的前瞻洞察与务实哲学</p>
+        <div class="hero-meta">
+            <span class="meta-item">👤 Kevin Scott · 微软首席技术官</span>
+            <span class="meta-item">🏢 Microsoft · 10年深耕</span>
+            <span class="meta-item">🤝 OpenAI合作架构师</span>
+        </div>
+        <div class="scroll-indicator">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <path d="M7 13l5 5 5-5M7 6l5 5 5-5"/>
+            </svg>
+        </div>
+    </header>
+
+    <!-- 主内容 -->
+    <main class="main-container">
+        <!-- 金句横幅 -->
+        <div class="quote-banner fade-in">
+            <p class="quote-text">「模型的能力已经远超人们实际使用的程度。你能看到真正充分利用模型能力的最接近场景，就是编程领域——那里正在经历一场绝对的狂潮。」</p>
+            <p class="quote-author">—— Kevin Scott, 微软CTO</p>
+        </div>
+
+        <!-- 关键词云 -->
+        <div class="keywords-cloud fade-in">
+            <span class="keyword-tag gold size-lg">AI平台</span>
+            <span class="keyword-tag teal">Scaling Laws</span>
+            <span class="keyword-tag coral size-lg">编程革命</span>
+            <span class="keyword-tag blue">人口危机</span>
+            <span class="keyword-tag purple">OpenAI合作</span>
+            <span class="keyword-tag gold">零和博弈</span>
+            <span class="keyword-tag teal size-sm">代码审查</span>
+            <span class="keyword-tag coral">计算机科学</span>
+            <span class="keyword-tag blue size-lg">工具哲学</span>
+            <span class="keyword-tag purple size-sm">平台思维</span>
+            <span class="keyword-tag gold">推理成本</span>
+            <span class="keyword-tag teal size-sm">职业教育</span>
+        </div>
+
+        <!-- 统计数据 -->
+        <div class="stats-grid fade-in">
+            <div class="stat-card">
+                <div class="stat-number">7</div>
+                <div class="stat-label">年前的预言时刻</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">10</div>
+                <div class="stat-label">年微软深耕</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">$15万</div>
+                <div class="stat-label">年推理成本/团队</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">25</div>
+                <div class="stat-label">年工程管理经验</div>
+            </div>
+        </div>
+
+        <!-- 第一部分：AI加速 -->
+        <section id="section1">
+            <div class="section-header fade-in">
+                <div class="section-number">01</div>
+                <h2 class="section-title">AI加速超乎想象</h2>
+                <p class="section-subtitle">七年前的预言正在以超预期的速度成为现实</p>
+            </div>
+
+            <div class="content-card fade-in">
+                <div class="card-icon">⚡</div>
+                <h3 class="card-title">从预见到验证：Scaling Laws的胜利</h3>
+                <div class="card-content">
+                    <p>早在七年前，Kevin Scott就向业界发出警告：<span class="highlight-gold">「AI将彻底颠覆一切，人们对此毫无准备。」</span>这个预言的基础是他对<span class="highlight-teal">Scaling Laws（规模定律）</span>的深刻理解。</p>
+                    <p>令人惊讶的是，即便作为最早的洞察者之一，Scott仍然承认：<span class="highlight-coral">「事情发展得比我预期的还要快。」</span>这不是技术走向的惊讶，而是<span class="data-highlight">加速度</span>的惊讶。</p>
+                    <p>核心判断：我们尚未触及<span class="highlight-purple">能力边际递减</span>的拐点——这意味着当前的AI能力曲线仍在陡峭上升。</p>
+                </div>
+            </div>
+
+            <div class="quote-banner fade-in">
+                <p class="quote-text">「发生的事情并不让我意外，让我意外的是它发生得如此之快。Scaling Laws确实在起作用，模型和围绕它们构建的系统将变得非常非常强大。」</p>
+                <p class="quote-author">—— Kevin Scott</p>
+            </div>
+
+            <div class="collapsible fade-in">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">
+                        <span>📊</span>
+                        能力过剩悖论：模型能力 vs 实际应用
+                    </span>
+                    <span class="collapsible-preview">现有模型能力远超使用程度...</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Kevin Scott 提出了一个关键洞察：<span class="highlight-gold">「能力过剩」（Capability Overhang）</span>——当前AI模型的能力远远超过人们实际使用的程度。</p>
+                        <p>这意味着什么？意味着即便AI能力明天停止进步，我们仍需要数年时间才能真正挖掘出现有模型的全部潜力。而事实是，能力曲线还在持续攀升。</p>
+                        <p>这是一个<span class="highlight-teal">双重加速</span>的局面：技术本身在加速，同时应用场景的挖掘也在加速。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第二部分：编程革命 -->
+        <section id="section2">
+            <div class="section-header fade-in">
+                <div class="section-number">02</div>
+                <h2 class="section-title">软件工程的范式转移</h2>
+                <p class="section-subtitle">从「码农」到「思想家」的职业进化</p>
+            </div>
+
+            <div class="content-card fade-in">
+                <div class="card-icon">💻</div>
+                <h3 class="card-title">编程领域的「绝对狂潮」</h3>
+                <div class="card-content">
+                    <p>Scott 描述了一个惊人的现实：<span class="highlight-coral">「你认识的最优秀的程序员——那些你见过的最好的编码者——正在被技术进步的速度所淹没。」</span></p>
+                    <p>这不是夸张，而是前线的真实写照。AI编程助手正在重新定义「生产力」的含义。</p>
+                    <p><span class="highlight-gold">最雄心勃勃的微软团队</span>，那些全面使用编程代理的团队，每年的推理成本约为<span class="data-highlight">$150,000</span>。而限制他们的不是预算，是<span class="highlight-teal">人类注意力的带宽</span>——管理AI代理复杂性的能力。</p>
+                </div>
+            </div>
+
+            <div class="quote-banner fade-in">
+                <p class="quote-text">「你可以用这些编程代理生产大量代码。但没有什么能保证它是好代码。人们真的需要确保不要把活动（Activity）和进步（Progress）混淆。」</p>
+                <p class="quote-author">—— Kevin Scott</p>
+            </div>
+
+            <div class="content-card fade-in">
+                <div class="card-icon">🎯</div>
+                <h3 class="card-title">从「职业教育」回归「计算机科学」</h3>
+                <div class="card-content">
+                    <p>Scott 表达了一个尖锐的观点——他对此感到「老派且不满」：</p>
+                    <p><span class="highlight-coral">「我们已经把计算机科学教育变成了职业培训。学生们为了学习当程序员而去读CS学位。但我希望人们回归学习如何成为计算机科学家。」</span></p>
+                    <p>真正重要的能力是什么？</p>
+                    <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+                        <li><span class="highlight-teal">算法思维</span>：你能否进行算法化思考？</li>
+                        <li><span class="highlight-gold">问题分解</span>：你知道如何拆解问题吗？</li>
+                        <li><span class="highlight-purple">价值判断</span>：你如何选择值得投入时间的正确问题？</li>
+                        <li><span class="highlight-blue">深度调试</span>：当机器不给你想要的结果时，你有能力和好奇心穿透抽象层去调试吗？</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="collapsible fade-in">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">
+                        <span>🔍</span>
+                        代码审查成为新瓶颈
+                    </span>
+                    <span class="collapsible-preview">生产不是问题，判断才是...</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>当AI可以快速生成海量代码时，<span class="highlight-coral">代码审查</span>成为了新的瓶颈。</p>
+                        <p>这揭示了一个更深层的真相：未来软件工程师的核心价值不在于「写代码的速度」，而在于：</p>
+                        <ul style="margin-left: 1.5rem; color: var(--text-secondary);">
+                            <li><span class="highlight-gold">选择与品味</span>：选择做什么，如何判断好坏</li>
+                            <li><span class="highlight-teal">领域理解</span>：真正理解你在构建什么以及为什么</li>
+                            <li><span class="highlight-purple">价值感知</span>：如何创造价值、如何加速价值创造</li>
+                        </ul>
+                        <p>这些恰恰是<span class="highlight-blue">「最好的软件工程师一直以来的能力」</span>。AI没有改变什么是好工程师，只是让这些特质变得更加重要。</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第三部分：人口危机 -->
+        <section id="section3">
+            <div class="section-header fade-in">
+                <div class="section-number">03</div>
+                <h2 class="section-title">人口悬崖与AI的历史使命</h2>
+                <p class="section-subtitle">一个被严重低估的全球性挑战</p>
+            </div>
+
+            <div class="content-card fade-in">
+                <div class="card-icon">📉</div>
+                <h3 class="card-title">日本的「高中毕业峰值年」</h3>
+                <div class="card-content">
+                    <p>Scott 分享了一个令人震惊的数据点，来自他与一位日本顶级教育机构负责人的对话：</p>
+                    <p><span class="highlight-coral">「今年是日本高中毕业生的峰值年。日本将在今年毕业有史以来最多的高中生。」</span></p>
+                    <p>这意味着什么？从今往后，日本的高中毕业生数量将<span class="highlight-gold">逐年递减</span>，永不回升。这不是预测，是人口统计学的确定性。</p>
+                    <p>这不仅仅是日本的问题。<span class="highlight-teal">中国、韩国、西欧多国，甚至美国</span>（如果没有移民）都将面临同样的人口下降趋势。</p>
+                </div>
+            </div>
+
+            <div class="quote-banner fade-in">
+                <p class="quote-text">「如果你没有足够的人来做这些工作，而又有越来越多的人——这些老龄化人口——将为社会创造新的工作需求......某些事情必须改变，关于工作如何完成、生产力如何定义。」</p>
+                <p class="quote-author">—— Kevin Scott</p>
+            </div>
+
+            <div class="content-card fade-in">
+                <div class="card-icon">🌟</div>
+                <h3 class="card-title">乐观的必然性：AI来得正是时候</h3>
+                <div class="card-content">
+                    <p>面对这个人口悬崖，Scott 给出了一个<span class="highlight-gold">「不得不乐观」</span>的论述：</p>
+                    <p><span class="highlight-teal">「感谢上帝AI在这个时候出现了。」</span>我们有了这项技术，以及其他一些正在发生的技术突破，它们将为我们提供<span class="highlight-coral">部分答案</span>——当你在未来几十年内没有和以往相同的劳动力结构时该怎么办。</p>
+                    <p>这是人类历史上首次面临<span class="highlight-purple">全球性的人口结构转变</span>，而AI恰好提供了一个潜在的解决方案。</p>
+                    <p>乐观的理由不是「AI很酷」，而是「AI是必需品」。</p>
+                </div>
+            </div>
+
+            <div class="collapsible fade-in">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span class="collapsible-title">
+                        <span>⚖️</span>
+                        悲观场景：分心与肤浅
+                    </span>
+                    <span class="collapsible-preview">技术被滥用于无意义的事物...</span>
+                    <span class="collapsible-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="collapsible-inner">
+                        <p>Scott 的悲观场景不是科幻式的「终结者」——而是更加<span class="highlight-coral">平庸的失败</span>：</p>
+                        <p><span class="highlight-gold">「我的悲观场景是：我们进入了关于AI的某种肤浅模式。」</span></p>
+                        <p>他用自己孩子举例：一半时间，他们用AI做惊人的事情——生物医学工程项目、技术探索；另一半时间？</p>
+                        <p><span class="highlight-teal">「制作大屁股绿色羊驼的图片，然后把别人的脸P上去。」</span></p>
+                        <p>这是一个关于<span class="highlight-purple">集体注意力分配</span>的问题。技术的价值取决于我们选择用它做什么。我们会用它解决真正的问题，还是用它无限放大娱乐消遣？</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 第四部分：微软DNA -->
+        <section id="section4">
+            <div class="section-header fade-in">
+                <div class="section-number">04</div>
+                <h2 class="section-title">微软的平台基因与OpenAI往事</h2>
+                <p class="section-subtitle">五十年的耐心与混乱中的定力</p>
+            </div>
+
+            <div class="content-card fade-in">
+                <div class="card-icon">🏗️</div>
+                <h3 class="card-title">平台公司的DNA</h3>
+                <div class="card-content">
+                    <p>Scott 揭示了理解微软的关键：<span class="highlight-gold">「微软是一家平台公司。」</span></p>
+                    <p>这意味着什么？<span class="highlight-teal">「除非是在构建别人可以用来再构建其他东西的基础设施，否则我们基本不会考虑做。」</span></p>
+                    <p>作为一家有<span class="data-highlight">50年</span>平台经验的公司——有成功也有失败——微软对技术变革中的「混乱」有着<span class="highlight-coral">无限的耐心</span>。</p>
+                    <p><span class="highlight-purple">「我们不会等到理想条件出现才行动。我们会早期切入，会犯一堆错，也会做对一堆，然后处理现实世界——而不是我们希望的世界。」</span></p>
+                </div>
+            </div>
+
+            <div class="quote-banner fade-in">
+                <p class="quote-text">「你有客户必须拥有的东西。这不是关于改变别人的想法，而是在特定情境下做必要的事情。」</p>
+                <p class="quote-author">—— Kevin Scott 论企业软件的本质</p>
+            </div>
+
+            <div class="content-card fade-in">
+                <div class="card-icon">🤝</div>
+                <h3 class="card-title">OpenAI合作的深层意义</h3>
+                <div class="card-content">
+                    <p>Scott 是微软与OpenAI合作的<span class="highlight-gold">最初架构师</span>。但他最自豪的不仅仅是商业合作本身：</p>
+                    <p><span class="highlight-teal">「我特别自豪的是：AI的能力被公开化了。」</span></p>
+                    <p>这意味着：不是只有一家硅谷公司用自己的基础设施、自己的聪明人在构建这个东西，然后由他们决定怎么用——而是<span class="highlight-coral">任何人都可以注册一个API密钥，开始在上面构建东西</span>。</p>
+                    <p>强大AI能力的<span class="highlight-purple">民主化</span>——无论他在其中扮演了多么小的角色——这是让他感到骄傲的事情。</p>
+                </div>
+            </div>
+
+            <!-- 时间轴 -->
+            <div class="timeline-section fade-in">
+                <h3 style="text-align: center; font-family: 'Noto Serif SC', serif; font-size: 1.5rem; margin-bottom: 2rem; color: var(--accent-gold);">Kevin Scott 的关键时间线</h3>
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-date">~7年前</div>
+                        <div class="timeline-title">预见AI变革</div>
+                        <div class="timeline-content">向业界发出警告：「一切都将被AI颠覆，人们毫无准备」——基于对Scaling Laws的深刻理解</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">~2016年</div>
+                        <div class="timeline-title">加入微软</div>
+                        <div class="timeline-content">开始在微软的第10年，成为他职业生涯中最长的一段工作经历</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">合作初期</div>
+                        <div class="timeline-title">架构OpenAI合作</div>
+                        <div class="timeline-content">作为最初架构师，推动微软与OpenAI的历史性合作，将AI能力民主化</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">25年+</div>
+                        <div class="timeline-title">工程管理积淀</div>
+                        <div class="timeline-content">25年的软件工程团队管理经验，深谙「活动vs进步」的区别</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-date">当下</div>
+                        <div class="timeline-title">AI能力过剩时代</div>
+                        <div class="timeline-content">带领微软最雄心勃勃的团队探索编程代理的极限，年推理成本$15万</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 专家评论区 -->
+        <section id="experts" class="expert-section fade-in">
+            <div class="section-header">
+                <div class="section-number">💬</div>
+                <h2 class="section-title">科技先驱的跨时空对话</h2>
+                <p class="section-subtitle">四位传奇人物如何看待Kevin Scott的观点</p>
+            </div>
+
+            <div class="expert-grid">
+                <div class="expert-card">
+                    <div class="expert-inner">
+                        <div class="expert-avatar">🦁</div>
+                        <h4 class="expert-name">桑德拉·勒纳</h4>
+                        <p class="expert-title">思科(Cisco)联合创始人</p>
+                        <p class="expert-comment">「Kevin说得对——平台公司的DNA是处理混乱。当年我们创立思科时，网络协议混乱不堪，每个厂商都有自己的标准。我们没有等待完美条件，而是直接跳进去创造标准。但他对计算机科学教育'职业化'的批评让我深感共鸣——我们需要的是能思考'为什么'的人，而不是只会操作工具的人。AI时代更是如此。」</p>
+                    </div>
+                </div>
+
+                <div class="expert-card">
+                    <div class="expert-inner">
+                        <div class="expert-avatar">📈</div>
+                        <h4 class="expert-name">戈登·摩尔</h4>
+                        <p class="expert-title">英特尔(Intel)联合创始人 · 摩尔定律之父</p>
+                        <p class="expert-comment">「Scaling Laws的持续有效让我想起摩尔定律早期的日子——人们总是预测它会终结，但它持续了比任何人预期更久。Kevin关于'能力过剩'的观察非常精准。历史上，每次计算能力跃升后，真正的应用创新都滞后3-5年。但人口危机的视角是新颖的——这赋予了AI一种历史必然性，而不仅仅是技术可能性。」</p>
+                    </div>
+                </div>
+
+                <div class="expert-card">
+                    <div class="expert-inner">
+                        <div class="expert-avatar">🐺</div>
+                        <h4 class="expert-name">任正非</h4>
+                        <p class="expert-title">华为创始人</p>
+                        <p class="expert-comment">「Kevin对'零和博弈'的警惕说到了点子上。华为在最困难的时候，我们坚持认为：技术进步不是零和游戏。他说'把零和问题转化为非零和问题'——这正是我们做基础研究的哲学。但我要补充：真正的能力在于能否在最不利条件下坚持长期主义。AI是工具，人的意志才是决定性因素。」</p>
+                    </div>
+                </div>
+
+                <div class="expert-card">
+                    <div class="expert-inner">
+                        <div class="expert-avatar">💡</div>
+                        <h4 class="expert-name">罗伯特·诺伊斯</h4>
+                        <p class="expert-title">英特尔联合创始人 · 集成电路发明人</p>
+                        <p class="expert-comment">「Kevin强调'技术始终是工具'这一点至关重要。当年集成电路被发明出来时，没人能预见它会改变一切。但工具本身是中性的——关键在于人类选择用它做什么。他关于孩子'一半时间做伟大的事，一半时间做愚蠢的事'的观察，其实是人类本性的写照。我们的任务是设计激励结构，让'伟大'那一半占上风。」</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 思维导图 -->
+        <section id="mindmap" class="mindmap-section fade-in">
+            <h2 class="mindmap-title">🧠 核心洞察思维导图</h2>
+            <div class="mindmap-container">
+                <div class="mindmap-center">Kevin Scott 的AI世界观</div>
+                <div class="mindmap-branches">
+                    <div class="mindmap-branch">
+                        <div class="branch-title">⚡ 技术加速</div>
+                        <ul class="branch-items">
+                            <li>Scaling Laws 持续有效</li>
+                            <li>尚未触及能力递减拐点</li>
+                            <li>速度超过预期</li>
+                            <li>能力过剩现象普遍</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="branch-title">💻 编程革命</div>
+                        <ul class="branch-items">
+                            <li>顶级程序员被进步淹没</li>
+                            <li>代码审查成为新瓶颈</li>
+                            <li>活动 ≠ 进步</li>
+                            <li>回归计算机科学本质</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="branch-title">📉 人口挑战</div>
+                        <ul class="branch-items">
+                            <li>日本高中毕业峰值年</li>
+                            <li>全球人口结构转变</li>
+                            <li>劳动力与需求的错配</li>
+                            <li>AI成为必需品而非选项</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="branch-title">🏗️ 平台哲学</div>
+                        <ul class="branch-items">
+                            <li>为他人构建基础设施</li>
+                            <li>50年的耐心与经验</li>
+                            <li>处理现实而非理想</li>
+                            <li>AI能力民主化</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="branch-title">⚖️ 乐观与警惕</div>
+                        <ul class="branch-items">
+                            <li>乐观源于历史必然性</li>
+                            <li>悲观源于肤浅化倾向</li>
+                            <li>技术中立，选择决定结果</li>
+                            <li>零和→非零和的转化</li>
+                        </ul>
+                    </div>
+                    <div class="mindmap-branch">
+                        <div class="branch-title">🎯 工具哲学</div>
+                        <ul class="branch-items">
+                            <li>技术始终只是工具</li>
+                            <li>没有不可逆的趋势线</li>
+                            <li>选择决定路径</li>
+                            <li>服务人类是最终目的</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 结语金句 -->
+        <div class="quote-banner fade-in" style="margin-top: 5rem;">
+            <p class="quote-text">「我希望每天我们都能走进工作岗位，思考：我即将做的事情，是否真正服务于我的同胞人类？如果我们中足够多的人能做到这一点，我们就会没事的。」</p>
+            <p class="quote-author">—— Kevin Scott</p>
+        </div>
+
+        <!-- 页脚 -->
+        <footer class="footer">
+            <div class="footer-brand">深度访谈 · 思想精华</div>
+            <p class="footer-text">基于Kevin Scott访谈内容整理 | 科技洞察 · 人文思考</p>
+            <p class="footer-text" style="margin-top: 0.5rem; opacity: 0.6;">© 2024 Premium Content Design</p>
+        </footer>
+    </main>
+
+    <script>
+        // 创建粒子
+        function createParticles() {
+            const container = document.getElementById('particles');
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.animationDuration = (15 + Math.random() * 10) + 's';
+                container.appendChild(particle);
+            }
+        }
+        createParticles();
+
+        // 主题切换
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.getElementById('themeIcon');
+            const text = document.getElementById('themeText');
+            if (document.body.classList.contains('light-mode')) {
+                icon.textContent = '☀️';
+                text.textContent = '浅色模式';
+            } else {
+                icon.textContent = '🌙';
+                text.textContent = '深色模式';
+            }
+        }
+
+        // 折叠面板
+        function toggleCollapsible(header) {
+            header.classList.toggle('active');
+            const content = header.nextElementSibling;
+            content.classList.toggle('active');
+        }
+
+        // 滚动到章节
+        function scrollToSection(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 阅读进度条
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // 更新导航点
+            const sections = ['hero', 'section1', 'section2', 'section3', 'section4', 'experts', 'mindmap'];
+            const dots = document.querySelectorAll('.toc-dot');
+            
+            sections.forEach((section, index) => {
+                const el = document.getElementById(section);
+                if (el) {
+                    const rect = el.getBoundingClientRect();
+                    if (rect.top <= 200 && rect.bottom >= 200) {
+                        dots.forEach(dot => dot.classList.remove('active'));
+                        dots[index].classList.add('active');
+                    }
+                }
+            });
+        });
+
+        // 淡入动画
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>

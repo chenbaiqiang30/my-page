@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Co-work 深度解析 | AI协作革命</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.15);
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #ffe66d;
+            --highlight-action: #a855f7;
+            --highlight-insight: #22d3ee;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            --accent: #8b5cf6;
+            --accent2: #ec4899;
+            --accent3: #06b6d4;
+            --card-gradient: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.05));
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(139, 92, 246, 0.2);
+            --text-primary: #1e293b;
+            --text-secondary: #475569;
+            --shadow: 0 8px 32px rgba(139, 92, 246, 0.15);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        
+        /* Header */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #ffe66d, #a855f7, #22d3ee);
+            animation: shimmer 3s ease infinite;
+        }
+        @keyframes shimmer {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        .header-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 8px 20px;
+            border-radius: 50px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-bottom: 20px;
+            animation: pulse 2s ease infinite;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #fff 0%, #a855f7 50%, #ec4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        .meta-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+        .meta-item span { color: var(--accent); }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 16px;
+            font-size: 0.95em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
+            border-color: var(--accent);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border: none;
+            color: white;
+        }
+
+        /* Quick Stats */
+        .quick-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 25px;
+            text-align: center;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), var(--accent3));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .stat-label { color: var(--text-secondary); margin-top: 8px; }
+
+        /* Expert Comment - Sam Altman */
+        .expert-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 40px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .expert-panel::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(135deg, rgba(34, 211, 238, 0.1), rgba(168, 85, 247, 0.05));
+            pointer-events: none;
+        }
+        .expert-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .expert-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent3), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2em;
+            box-shadow: 0 8px 24px rgba(34, 211, 238, 0.3);
+        }
+        .expert-info h3 {
+            font-size: 1.5em;
+            color: var(--highlight-insight);
+        }
+        .expert-info p { color: var(--text-secondary); }
+        .expert-content {
+            position: relative;
+            z-index: 1;
+        }
+        .expert-quote {
+            font-size: 1.2em;
+            line-height: 1.9;
+            color: var(--text-primary);
+            padding-left: 25px;
+            border-left: 4px solid var(--accent3);
+            margin-bottom: 25px;
+        }
+        .expert-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 25px;
+        }
+        .expert-point {
+            background: rgba(34, 211, 238, 0.08);
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 3px solid var(--accent3);
+        }
+        .expert-point h4 {
+            color: var(--highlight-insight);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Mindmap */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--accent);
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.6em;
+            font-weight: 700;
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+            animation: pulse 2.5s ease-in-out infinite;
+            text-align: center;
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            width: 100%;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.3s; }
+        .branch:nth-child(3) { animation-delay: 0.4s; }
+        .branch:nth-child(4) { animation-delay: 0.5s; }
+        .branch-node {
+            background: var(--card-gradient);
+            border: 2px solid;
+            padding: 18px 28px;
+            border-radius: 20px;
+            font-size: 1.15em;
+            font-weight: 600;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .branch:nth-child(1) .branch-node { border-color: #ff6b6b; color: #ff6b6b; }
+        .branch:nth-child(2) .branch-node { border-color: #4ecdc4; color: #4ecdc4; }
+        .branch:nth-child(3) .branch-node { border-color: #ffe66d; color: #ffe66d; }
+        .branch:nth-child(4) .branch-node { border-color: #a855f7; color: #a855f7; }
+        .branch-node:hover { transform: translateY(-5px) scale(1.02); }
+        .sub-nodes { display: flex; flex-direction: column; gap: 10px; }
+        .sub-node {
+            background: rgba(139, 92, 246, 0.05);
+            padding: 12px 20px;
+            border-radius: 12px;
+            border-left: 3px solid var(--accent);
+            font-size: 0.95em;
+            transition: all 0.3s ease;
+        }
+        .sub-node:hover {
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateX(5px);
+        }
+
+        /* Logic Flow */
+        .logic-flow {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px 40px;
+            margin-bottom: 30px;
+        }
+        .logic-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--accent2);
+        }
+        .flow-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+        .flow-step {
+            background: var(--card-gradient);
+            border: 2px solid var(--accent);
+            border-radius: 20px;
+            padding: 25px;
+            min-width: 200px;
+            text-align: center;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .flow-step:nth-child(1) { animation-delay: 0.1s; border-color: #ff6b6b; }
+        .flow-step:nth-child(3) { animation-delay: 0.3s; border-color: #4ecdc4; }
+        .flow-step:nth-child(5) { animation-delay: 0.5s; border-color: #ffe66d; }
+        .flow-step:nth-child(7) { animation-delay: 0.7s; border-color: #a855f7; }
+        .flow-step:nth-child(9) { animation-delay: 0.9s; border-color: #22d3ee; }
+        .flow-step:hover { transform: translateY(-5px); }
+        .flow-step-num {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin: 0 auto 15px;
+        }
+        .flow-arrow {
+            font-size: 2em;
+            color: var(--accent);
+            animation: arrowPulse 1.5s ease infinite;
+        }
+        @keyframes arrowPulse {
+            0%, 100% { opacity: 1; transform: translateX(0); }
+            50% { opacity: 0.5; transform: translateX(5px); }
+        }
+
+        /* Golden Quotes */
+        .quotes-section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 50px 40px;
+            margin-bottom: 30px;
+        }
+        .quotes-title {
+            text-align: center;
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-bottom: 40px;
+            color: var(--highlight-quote);
+        }
+        .quotes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+        }
+        .quote-card {
+            background: linear-gradient(135deg, rgba(255, 230, 109, 0.1), rgba(255, 107, 107, 0.05));
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
+            border-left: 4px solid var(--highlight-quote);
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .quote-card:nth-child(1) { animation-delay: 0.1s; }
+        .quote-card:nth-child(2) { animation-delay: 0.2s; }
+        .quote-card:nth-child(3) { animation-delay: 0.3s; }
+        .quote-card:nth-child(4) { animation-delay: 0.4s; }
+        .quote-icon {
+            position: absolute;
+            top: -15px;
+            left: 25px;
+            font-size: 2.5em;
+            background: var(--glass-bg);
+            padding: 5px 10px;
+            border-radius: 10px;
+        }
+        .quote-text {
+            font-size: 1.15em;
+            font-weight: 600;
+            color: var(--highlight-quote);
+            margin-bottom: 15px;
+            padding-top: 10px;
+        }
+        .quote-context {
+            font-size: 0.95em;
+            color: var(--text-secondary);
+        }
+
+        /* Section */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 32px;
+            padding: 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            transition: all 0.3s ease;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .section-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3em;
+        }
+        .section:nth-child(odd) .section-icon { background: linear-gradient(135deg, #ff6b6b, #ff8e8e); }
+        .section:nth-child(even) .section-icon { background: linear-gradient(135deg, #4ecdc4, #44a3aa); }
+        .collapse-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+            background: var(--card-gradient);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 100px;
+            margin-top: 15px;
+        }
+        .section-content {
+            max-height: 5000px;
+            transition: max-height 0.5s ease, opacity 0.3s ease;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+            overflow: hidden;
+            opacity: 0;
+        }
+
+        /* Content Styles */
+        .content-block {
+            margin-bottom: 25px;
+        }
+        .content-block h4 {
+            font-size: 1.2em;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .content-block p {
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        /* Highlights */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 600;
+            padding: 3px 8px;
+            background: rgba(255, 107, 107, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 600;
+            padding: 3px 8px;
+            background: rgba(78, 205, 196, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 600;
+            padding: 3px 8px;
+            background: rgba(255, 230, 109, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-action {
+            color: var(--highlight-action);
+            font-weight: 600;
+            padding: 3px 8px;
+            background: rgba(168, 85, 247, 0.15);
+            border-radius: 6px;
+        }
+        .highlight-insight {
+            color: var(--highlight-insight);
+            font-weight: 600;
+            padding: 3px 8px;
+            background: rgba(34, 211, 238, 0.15);
+            border-radius: 6px;
+        }
+
+        /* Key Points Grid */
+        .key-points {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        .key-point {
+            background: var(--card-gradient);
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 3px solid var(--accent);
+            transition: all 0.3s ease;
+        }
+        .key-point:hover {
+            transform: translateX(5px);
+            border-left-width: 5px;
+        }
+        .key-point h5 {
+            color: var(--accent);
+            margin-bottom: 10px;
+            font-size: 1.05em;
+        }
+        .key-point p {
+            color: var(--text-secondary);
+            font-size: 0.95em;
+        }
+
+        /* Feature List */
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 15px;
+        }
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 15px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+        }
+        .feature-item:hover {
+            background: rgba(139, 92, 246, 0.1);
+            transform: translateX(5px);
+        }
+        .feature-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .feature-text { flex: 1; }
+        .feature-text strong { color: var(--text-primary); }
+        .feature-text span { color: var(--text-secondary); font-size: 0.95em; }
+
+        /* Comparison Table */
+        .comparison-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 20px;
+            overflow: hidden;
+            border-radius: 16px;
+        }
+        .comparison-table th,
+        .comparison-table td {
+            padding: 16px 20px;
+            text-align: left;
+            border-bottom: 1px solid var(--glass-border);
+        }
+        .comparison-table th {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            font-weight: 600;
+        }
+        .comparison-table td {
+            background: rgba(139, 92, 246, 0.03);
+        }
+        .comparison-table tr:hover td {
+            background: rgba(139, 92, 246, 0.08);
+        }
+
+        /* Tips Box */
+        .tips-box {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(34, 211, 238, 0.05));
+            border: 1px solid rgba(78, 205, 196, 0.3);
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 25px;
+        }
+        .tips-box h4 {
+            color: var(--highlight-data);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tips-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .tip-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            color: var(--text-secondary);
+        }
+        .tip-num {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: var(--highlight-data);
+            color: #0f0c29;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.5em;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        /* Back to Top */
+        .back-to-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.2em;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+        }
+        .back-to-top:hover { transform: translateY(-3px); }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4); }
+            50% { transform: scale(1.03); box-shadow: 0 16px 50px rgba(139, 92, 246, 0.5); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .header, .section, .mindmap-container, .logic-flow, .quotes-section { padding: 25px; }
+            .mindmap-branches { grid-template-columns: 1fr; }
+            .flow-container { flex-direction: column; }
+            .flow-arrow { transform: rotate(90deg); }
+            .expert-header { flex-direction: column; text-align: center; }
+        }
+
+        /* Print */
+        @media print {
+            body { background: white; }
+            .theme-toggle, .back-to-top { display: none; }
+            .section { break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-badge">🚀 AI 协作革命 | 2026年1月</div>
+            <h1>Claude Co-work 深度解析</h1>
+            <p class="subtitle">从 Claude Code 创作者 Boris 的私人课程中提炼的核心洞察</p>
+            <div class="meta-info">
+                <div class="meta-item">👤 <span>Boris</span> Claude Code 创作者</div>
+                <div class="meta-item">🎯 <span>Co-work</span> AI协作新范式</div>
+                <div class="meta-item">⚡ <span>Agent</span> 真正的行动力</div>
+            </div>
+            <div class="controls">
+                <button class="btn btn-primary" onclick="toggleAll()">📑 展开/折叠全部</button>
+                <button class="btn" onclick="scrollToMindmap()">🧠 思维导图</button>
+                <button class="btn" onclick="scrollToQuotes()">💎 金句精选</button>
+            </div>
+        </header>
+
+        <!-- Quick Stats -->
+        <div class="quick-stats">
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Boris 近两月代码由 Claude 编写</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">5-10</div>
+                <div class="stat-label">并行运行的 Claude 实例数</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">200-300</div>
+                <div class="stat-label">Boris 每月提交的 PR 数量</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">99K</div>
+                <div class="stat-label">Twitter 帖子收藏数</div>
+            </div>
+        </div>
+
+        <!-- Sam Altman Expert Panel -->
+        <div class="expert-panel">
+            <div class="expert-header">
+                <div class="expert-avatar">🤖</div>
+                <div class="expert-info">
+                    <h3>Sam Altman 视角分析</h3>
+                    <p>OpenAI CEO | AI 行业领袖</p>
+                </div>
+            </div>
+            <div class="expert-content">
+                <div class="expert-quote">
+                    "Anthropic 的 Co-work 产品代表了一个我们都在追逐的方向 —— <span class="highlight-key">将 AI 的能力从对话延伸到行动</span>。这不是简单的 UI 包装，而是在重新定义人机协作的边界。当 Boris 说 '过去两个月 100% 的代码都由 Claude 编写' 时，这印证了我们一直在说的：<span class="highlight-insight">AI 正在从助手进化为真正的协作者</span>。"
+                </div>
+                
+                <div class="expert-points">
+                    <div class="expert-point">
+                        <h4>🎯 战略洞察</h4>
+                        <p>Co-work 的核心创新在于<span class="highlight-action">降低 Agent 使用门槛</span>。Claude Code 对工程师很友好，但 Co-work 让普通人也能驾驭 AI Agent。这是 AI 民主化的关键一步。</p>
+                    </div>
+                    <div class="expert-point">
+                        <h4>⚠️ 竞争警示</h4>
+                        <p>他们在<span class="highlight-key">安全性设计</span>上投入的资源令人印象深刻 —— 虚拟机隔离、删除保护、prompt injection 防护。这是我们需要加速追赶的领域。</p>
+                    </div>
+                    <div class="expert-point">
+                        <h4>🔮 趋势预判</h4>
+                        <p>"<span class="highlight-quote">并行运行多个 AI 实例</span>"将成为新的工作范式。Boris 同时运行 5-10 个 Claude，这预示着未来的知识工作者都会成为"AI 管理者"。</p>
+                    </div>
+                    <div class="expert-point">
+                        <h4>💡 启发借鉴</h4>
+                        <p>Skills 系统 + MCP 连接器的组合是可扩展性的关键。<span class="highlight-data">允许用户自定义工作流</span>，而不是强制标准化流程，这是产品设计的智慧。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Meta-Cognitive Mindmap -->
+        <div class="mindmap-container" id="mindmap">
+            <h2 class="mindmap-title">🧠 元认知图：理解 Co-work 的本质</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">Claude Co-work<br><small>AI Agent 的民主化</small></div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">🎯 What 是什么</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">Claude Code 的 GUI 封装</div>
+                            <div class="sub-node">底层使用 Claude Agent SDK</div>
+                            <div class="sub-node">面向非技术用户的 Agent 入口</div>
+                            <div class="sub-node">"爸妈都能用的 Claude Code"</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">⚡ Why 为什么重要</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">Agent ≠ 聊天机器人，能执行动作</div>
+                            <div class="sub-node">打破 AI 只能"说"不能"做"的限制</div>
+                            <div class="sub-node">从工具变为真正的协作者</div>
+                            <div class="sub-node">解放人类的重复性劳动</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🛠️ How 怎么运作</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">挂载文件夹授权访问</div>
+                            <div class="sub-node">浏览器控制（Chrome 扩展）</div>
+                            <div class="sub-node">MCP 连接各类工具</div>
+                            <div class="sub-node">Skills 扩展特定能力</div>
+                        </div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🔒 Safety 安全保障</div>
+                        <div class="sub-nodes">
+                            <div class="sub-node">虚拟机隔离执行环境</div>
+                            <div class="sub-node">删除操作需确认保护</div>
+                            <div class="sub-node">Prompt Injection 防护</div>
+                            <div class="sub-node">模型层面的对齐训练</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logic Flow -->
+        <div class="logic-flow">
+            <h2 class="logic-title">📊 逻辑思维图：Co-work 使用流程</h2>
+            <div class="flow-container">
+                <div class="flow-step">
+                    <div class="flow-step-num">1</div>
+                    <strong>授权访问</strong>
+                    <p style="font-size:0.9em;color:var(--text-secondary)">挂载文件夹<br>安装 Chrome 扩展</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">2</div>
+                    <strong>描述任务</strong>
+                    <p style="font-size:0.9em;color:var(--text-secondary)">自然语言<br>清晰的目标</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">3</div>
+                    <strong>Claude 规划</strong>
+                    <p style="font-size:0.9em;color:var(--text-secondary)">反向求证<br>确认不确定项</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">4</div>
+                    <strong>自主执行</strong>
+                    <p style="font-size:0.9em;color:var(--text-secondary)">操作文件<br>控制浏览器</p>
+                </div>
+                <div class="flow-arrow">→</div>
+                <div class="flow-step">
+                    <div class="flow-step-num">5</div>
+                    <strong>并行管理</strong>
+                    <p style="font-size:0.9em;color:var(--text-secondary)">多任务同时<br>照看你的 Claudes</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Golden Quotes -->
+        <div class="quotes-section" id="quotes">
+            <h2 class="quotes-title">💎 金句精选</h2>
+            <div class="quotes-grid">
+                <div class="quote-card">
+                    <span class="quote-icon">💡</span>
+                    <p class="quote-text">"Once the plan is good, the code is good."</p>
+                    <p class="quote-context">计划好了，代码就好了。Opus 4.5 的执行力让"先规划再实现"成为最佳实践。</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🚀</span>
+                    <p class="quote-text">"In the last two months, Claude has written 100% of my code."</p>
+                    <p class="quote-context">过去两个月，Claude 写了我 100% 的代码。这不是未来，这是现在。</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🎯</span>
+                    <p class="quote-text">"You should think about all the tedious stuff you do every day."</p>
+                    <p class="quote-context">想想你每天做的那些繁琐事务 —— 然后全部交给 Co-work。</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🌟</span>
+                    <p class="quote-text">"Tend to your Claudes — make sure they're unblocked."</p>
+                    <p class="quote-context">照看好你的 Claudes，确保它们不被卡住。新时代的工作方式是管理 AI 团队。</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">🔮</span>
+                    <p class="quote-text">"It's like a choose-your-own-adventure book."</p>
+                    <p class="quote-context">Claude Code 就像一本"选择你的冒险"书籍，没有唯一正确的使用方式。</p>
+                </div>
+                <div class="quote-card">
+                    <span class="quote-icon">⚡</span>
+                    <p class="quote-text">"Opus is smarter, so it actually uses less tokens in the end."</p>
+                    <p class="quote-context">更聪明的模型用更少的 token —— 反直觉但真实。用 Opus 反而更便宜。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 1: Core Concepts -->
+        <section class="section" id="section-1">
+            <div class="section-header" onclick="toggleSection('section-1')">
+                <h2 class="section-title">
+                    <span class="section-icon">🎯</span>
+                    Co-work 核心概念
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">"真正的 Agent 能采取行动、与世界互动"——这是 Co-work 的本质...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>📌 什么是真正的 Agent？</h4>
+                    <p>Boris 指出，<span class="highlight-key">"Agentic"这个词已经被滥用到失去意义</span>。真正的 Agent 与普通聊天 AI 的核心区别是：</p>
+                    <div class="key-points">
+                        <div class="key-point">
+                            <h5>💬 普通 AI</h5>
+                            <p>只能生成文本回复、搜索网页——本质上是"说"</p>
+                        </div>
+                        <div class="key-point">
+                            <h5>⚡ Agent AI</h5>
+                            <p>能使用工具、操作电脑、与真实世界交互——能"做"</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>🏗️ Co-work 的技术架构</h4>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">📦</div>
+                            <div class="feature-text">
+                                <strong>底层引擎：Claude Agent SDK</strong><br>
+                                <span>与 Claude Code 完全相同的核心能力，同一套最强 Agent 能力</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🖥️</div>
+                            <div class="feature-text">
+                                <strong>UI 层：简化的桌面应用</strong><br>
+                                <span>macOS 桌面端（Windows 即将推出），无需终端操作</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔌</div>
+                            <div class="feature-text">
+                                <strong>扩展能力：MCP + Skills</strong><br>
+                                <span>连接任意工具，自定义特定领域能力</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tips-box">
+                    <h4>💡 使用心智模型转变</h4>
+                    <div class="tips-list">
+                        <div class="tip-item">
+                            <span class="tip-num">1</span>
+                            <span><strong>操作系统思维</strong>：Co-work 直接操作你的文件系统，而不只是生成建议</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-num">2</span>
+                            <span><strong>并行处理</strong>：不要深入单一任务，而是同时启动多个任务</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-num">3</span>
+                            <span><strong>管理者角色</strong>：你的工作是"照看"Claude，确保它们不被卡住</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Practical Use Cases -->
+        <section class="section" id="section-2">
+            <div class="section-header" onclick="toggleSection('section-2')">
+                <h2 class="section-title">
+                    <span class="section-icon">🛠️</span>
+                    实战应用场景
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从收据整理到自动发邮件，Boris 演示了 Co-work 的真实威力...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>📁 文件管理自动化</h4>
+                    <p>Boris 的演示从最基础场景开始：</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">📝</div>
+                            <div class="feature-text">
+                                <strong>收据自动重命名</strong><br>
+                                <span>挂载文件夹 → Claude 读取收据内容 → 按日期自动重命名</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📊</div>
+                            <div class="feature-text">
+                                <strong>生成 Excel 表格</strong><br>
+                                <span>从收据提取数据 → 自动创建结构化电子表格</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📧</div>
+                            <div class="feature-text">
+                                <strong>直接发送邮件</strong><br>
+                                <span>打开 Gmail → 搜索联系人 → 附加文件 → 发送</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>🌐 浏览器控制能力</h4>
+                    <p>通过 Chrome 扩展，Co-work 能<span class="highlight-action">直接控制浏览器</span>完成复杂操作：</p>
+                    <div class="key-points">
+                        <div class="key-point">
+                            <h5>📋 Google Sheets</h5>
+                            <p>创建新表格、输入数据、调整格式——全程自动化</p>
+                        </div>
+                        <div class="key-point">
+                            <h5>💬 Slack 自动化</h5>
+                            <p>Boris 每周用它检查未填表格，自动 @ 提醒工程师</p>
+                        </div>
+                        <div class="key-point">
+                            <h5>🔍 网页搜索</h5>
+                            <p>自动搜索、整理信息、多来源验证</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tips-box">
+                    <h4>⚡ Boris 的工作流启示</h4>
+                    <div class="tips-list">
+                        <div class="tip-item">
+                            <span class="tip-num">1</span>
+                            <span><strong>团队状态追踪</strong>：让 Co-work 检查表格，自动提醒未完成的同事</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-num">2</span>
+                            <span><strong>信息整理</strong>：批量处理文件、整理数据、生成报告</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-num">3</span>
+                            <span><strong>重复性沟通</strong>：定时消息、批量邮件、状态更新</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Safety Architecture -->
+        <section class="section" id="section-3">
+            <div class="section-header" onclick="toggleSection('section-3')">
+                <h2 class="section-title">
+                    <span class="section-icon">🔒</span>
+                    安全架构设计
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">从模型对齐到虚拟机隔离，Anthropic 在安全上的投入超乎想象...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>🛡️ 多层安全防护体系</h4>
+                    <p>Boris 强调 Anthropic 作为<span class="highlight-key">"AI 安全实验室"</span>，在 Co-work 上投入了大量安全研究：</p>
+                </div>
+
+                <table class="comparison-table">
+                    <tr>
+                        <th>安全层级</th>
+                        <th>具体措施</th>
+                        <th>作用</th>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-action">模型层</span></td>
+                        <td>对齐训练 + 机械可解释性研究</td>
+                        <td>确保模型行为符合用户意图</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-data">执行层</span></td>
+                        <td>虚拟机隔离运行环境</td>
+                        <td>操作不影响主系统</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-key">交互层</span></td>
+                        <td>删除保护确认机制</td>
+                        <td>防止误删关键文件</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-insight">网络层</span></td>
+                        <td>Prompt Injection 防护</td>
+                        <td>防止恶意网页操控 Agent</td>
+                    </tr>
+                    <tr>
+                        <td><span class="highlight-quote">权限层</span></td>
+                        <td>显式文件夹授权机制</td>
+                        <td>默认无法访问任何文件</td>
+                    </tr>
+                </table>
+
+                <div class="content-block" style="margin-top: 25px;">
+                    <h4>🔬 机械可解释性研究</h4>
+                    <p>Boris 提到的一个关键点：Anthropic 研究 AI 神经元的方式<span class="highlight-insight">"就像研究人类大脑一样"</span>——识别结构、以科学方法研究模型的"黑盒"。这是当前 AI 安全领域最前沿的研究方向。</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Claude Code Best Practices -->
+        <section class="section" id="section-4">
+            <div class="section-header" onclick="toggleSection('section-4')">
+                <h2 class="section-title">
+                    <span class="section-icon">⚡</span>
+                    Claude Code 最佳实践
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">99K 收藏的推文精华：Boris 的私人工作流完全解密...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>🎯 核心三原则</h4>
+                    <div class="key-points">
+                        <div class="key-point">
+                            <h5>1️⃣ 使用 Opus 4.5 + Thinking</h5>
+                            <p>虽然更大更慢，但<span class="highlight-data">需要更少的 token，实际更快更便宜</span></p>
+                        </div>
+                        <div class="key-point">
+                            <h5>2️⃣ 维护好 Claude.md</h5>
+                            <p>团队共享知识库，每次 Claude 犯错就更新，<span class="highlight-key">不重复犯同样的错</span></p>
+                        </div>
+                        <div class="key-point">
+                            <h5>3️⃣ 让 Claude 验证输出</h5>
+                            <p>用 Chrome 扩展让它看到结果，<span class="highlight-action">就像画家不能蒙眼作画</span></p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>📱 多终端并行工作流</h4>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">💻</div>
+                            <div class="feature-text">
+                                <strong>终端：核心开发</strong><br>
+                                <span>多标签页，每个独立 Git checkout，随时跳转</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📱</div>
+                            <div class="feature-text">
+                                <strong>手机：早晨启动</strong><br>
+                                <span>醒来就用 iOS 应用启动 3-5 个任务，稍后检查</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🌐</div>
+                            <div class="feature-text">
+                                <strong>Web：溢出任务</strong><br>
+                                <span>终端标签不够时，在网页版继续开新任务</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>📝 Plan Mode 的正确打开方式</h4>
+                    <p>Boris 最常用但他认为仍被低估的功能：</p>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">1️⃣</div>
+                            <div class="feature-text">
+                                <strong>启动时默认 Plan Mode</strong><br>
+                                <span>让 Claude 先理解目标，生成执行计划</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">2️⃣</div>
+                            <div class="feature-text">
+                                <strong>反复迭代直到计划满意</strong><br>
+                                <span>这是你投入时间的地方，不是代码</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">3️⃣</div>
+                            <div class="feature-text">
+                                <strong>然后切换到 Auto Accept</strong><br>
+                                <span>Opus 4.5 的执行力：好计划 = 好代码</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tips-box">
+                    <h4>🔧 GitHub Action 集成技巧</h4>
+                    <div class="tips-list">
+                        <div class="tip-item">
+                            <span class="tip-num">1</span>
+                            <span>运行 <code>/install-github-action</code> 安装 Claude App</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-num">2</span>
+                            <span>在 PR 中 @claude 让它修改代码或更新 Claude.md</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-num">3</span>
+                            <span>在 Issue 中 @claude 让它自动处理 bug report</span>
+                        </div>
+                        <div class="tip-item">
+                            <span class="tip-num">4</span>
+                            <span><strong>核心理念</strong>：不应该对同一件事评论两次</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 5: Future Vision -->
+        <section class="section" id="section-5">
+            <div class="section-header" onclick="toggleSection('section-5')">
+                <h2 class="section-title">
+                    <span class="section-icon">🔮</span>
+                    未来展望与启示
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">AI 的指数级发展让线性思维失效，Boris 对未来的预判...</div>
+            <div class="section-content">
+                <div class="content-block">
+                    <h4>📈 指数思维 vs 线性思维</h4>
+                    <p>Boris 分享了一个关键洞察：</p>
+                    <div class="expert-quote" style="background: linear-gradient(135deg, rgba(255, 107, 107, 0.1), rgba(168, 85, 247, 0.05)); border-color: var(--highlight-key); margin: 0;">
+                        "去年年中，Dario 和我都预测到年底人们不会再手写代码了。当时看起来不可能，但只有相信指数曲线、真正画出那条线的人，才能预见到这一点。<span class="highlight-key">我们的肉脑是线性的，而 AI 是指数级的。</span>"
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>🚀 Co-work 的进化路径</h4>
+                    <div class="key-points">
+                        <div class="key-point">
+                            <h5>📱 当前阶段</h5>
+                            <p>简单优先，不过度定制。装好 Chrome 扩展就足够了。</p>
+                        </div>
+                        <div class="key-point">
+                            <h5>🔧 中期发展</h5>
+                            <p>Skills 系统成熟，用户可定义垂直领域能力（AutoCAD、Salesforce 等）</p>
+                        </div>
+                        <div class="key-point">
+                            <h5>🌍 远期愿景</h5>
+                            <p>类似 App Store 时代——当年谁能预见 Uber 和 TikTok？</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-block">
+                    <h4>💼 对普通人的启示</h4>
+                    <div class="feature-list">
+                        <div class="feature-item">
+                            <div class="feature-icon">🔍</div>
+                            <div class="feature-text">
+                                <strong>审视你的日常工作</strong><br>
+                                <span>列出所有重复性任务：文件整理、数据搬运、格式转换、例行沟通</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🎯</div>
+                            <div class="feature-text">
+                                <strong>从简单场景开始</strong><br>
+                                <span>不要想着一步到位，先让 Co-work 处理一个文件夹</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">🔄</div>
+                            <div class="feature-text">
+                                <strong>建立并行工作思维</strong><br>
+                                <span>学会同时"照看"多个 AI，而不是死盯一个任务</span>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">📚</div>
+                            <div class="feature-text">
+                                <strong>投资你的知识库</strong><br>
+                                <span>无论是 Claude.md 还是 Skills，这是长期复利的关键</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Final Takeaway -->
+        <div class="expert-panel" style="background: linear-gradient(135deg, rgba(168, 85, 247, 0.1), rgba(236, 72, 153, 0.05));">
+            <div class="expert-header">
+                <div class="expert-avatar" style="background: linear-gradient(135deg, var(--accent2), var(--accent));">🎯</div>
+                <div class="expert-info">
+                    <h3>核心收获</h3>
+                    <p>一句话总结这次深度解析</p>
+                </div>
+            </div>
+            <div class="expert-content">
+                <div class="expert-quote" style="font-size: 1.4em; border-color: var(--accent2);">
+                    Co-work 不只是一个工具，它代表了<span class="highlight-action">工作方式的范式转移</span>：从"我做事"到"我管理 AI 做事"。当 Boris 说他早上醒来第一件事是用手机启动几个 Claude 任务时，这不是科幻，<span class="highlight-key">这是 2026 年的现实</span>。
+                </div>
+                <div style="text-align: center; margin-top: 30px;">
+                    <a href="https://claude.ai" target="_blank" class="btn btn-primary" style="display: inline-flex; text-decoration: none;">
+                        🚀 立即体验 Claude Co-work
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <!-- Back to Top -->
+    <div class="back-to-top" id="backToTop" onclick="scrollToTop()">↑</div>
+
+    <script>
+        // Theme Toggle
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+
+        // Toggle All Sections
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const anyExpanded = Array.from(sections).some(s => !s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (anyExpanded) {
+                    s.classList.add('collapsed');
+                } else {
+                    s.classList.remove('collapsed');
+                }
+            });
+        }
+
+        // Toggle Individual Section
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // Scroll Functions
+        function scrollToMindmap() {
+            document.getElementById('mindmap').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToQuotes() {
+            document.getElementById('quotes').scrollIntoView({ behavior: 'smooth' });
+        }
+        function scrollToTop() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Back to Top Button Visibility
+        window.addEventListener('scroll', function() {
+            const backToTop = document.getElementById('backToTop');
+            if (window.pageYOffset > 500) {
+                backToTop.classList.add('visible');
+            } else {
+                backToTop.classList.remove('visible');
+            }
+        });
+
+        // Intersection Observer for Animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section, .stat-card, .quote-card, .branch, .flow-step').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+</html>

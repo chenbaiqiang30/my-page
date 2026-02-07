@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SCEPA模型：AI驱动的五步场景拆解法 | 圆桌会精华</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+            --glass-bg: rgba(255, 255, 255, 0.08);
+            --glass-border: rgba(255, 255, 255, 0.12);
+            --text-primary: #e8e6f0;
+            --text-secondary: #a8a4b8;
+            --highlight-key: #ff6b6b;
+            --highlight-data: #4ecdc4;
+            --highlight-quote: #ffe66d;
+            --highlight-method: #a29bfe;
+            --highlight-action: #fd79a8;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+            --accent: #6c5ce7;
+            --accent2: #e17055;
+            --accent3: #00b894;
+            --card-bg: rgba(255,255,255,0.06);
+        }
+        [data-theme="light"] {
+            --bg-primary: linear-gradient(135deg, #f5f7fa 0%, #e8ecf1 50%, #dfe6ed 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(200, 200, 220, 0.4);
+            --text-primary: #2d3436;
+            --text-secondary: #636e72;
+            --shadow: 0 8px 32px rgba(100, 100, 140, 0.12);
+            --card-bg: rgba(255,255,255,0.7);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, "PingFang SC", "Hiragino Sans GB", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.9;
+            min-height: 100vh;
+            padding: 20px;
+            background-attachment: fixed;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+
+        /* ===== HEADER ===== */
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 50px 45px 40px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            animation: fadeInUp 0.8s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6c5ce7, #e17055, #00b894, #fdcb6e, #e84393);
+        }
+        .header-badge {
+            display: inline-block;
+            padding: 6px 18px;
+            background: linear-gradient(135deg, rgba(108,92,231,0.25), rgba(225,112,85,0.2));
+            border: 1px solid rgba(108,92,231,0.3);
+            border-radius: 30px;
+            font-size: 0.82em;
+            color: #a29bfe;
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 18px;
+        }
+        h1 {
+            font-size: 2.6em;
+            font-weight: 800;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #6c5ce7, #e17055, #fd79a8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.3;
+        }
+        .header-subtitle {
+            font-size: 1.15em;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+            line-height: 1.7;
+        }
+        .header-meta {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            font-size: 0.88em;
+            color: var(--text-secondary);
+        }
+        .header-meta span {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .controls {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 10px 22px;
+            border: none;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 24px rgba(108,92,231,0.25);
+            border-color: var(--accent);
+        }
+
+        /* ===== GOLDEN QUOTES BAR ===== */
+        .golden-bar {
+            background: linear-gradient(135deg, rgba(253,203,110,0.12), rgba(225,112,85,0.1));
+            border: 1px solid rgba(253,203,110,0.25);
+            border-radius: 20px;
+            padding: 30px 35px;
+            margin-bottom: 30px;
+            animation: fadeInUp 0.8s ease 0.15s both;
+        }
+        .golden-bar h2 {
+            font-size: 1.2em;
+            color: #fdcb6e;
+            margin-bottom: 18px;
+        }
+        .quote-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 14px;
+        }
+        .quote-card {
+            padding: 16px 20px;
+            background: rgba(253,203,110,0.06);
+            border-left: 3px solid #fdcb6e;
+            border-radius: 0 12px 12px 0;
+            font-size: 0.95em;
+            line-height: 1.7;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+        .quote-card:hover {
+            background: rgba(253,203,110,0.12);
+            transform: translateX(4px);
+        }
+        .quote-card .quote-author {
+            display: block;
+            margin-top: 6px;
+            font-size: 0.82em;
+            color: #fdcb6e;
+            font-weight: 600;
+        }
+
+        /* ===== MINDMAP ===== */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.8s ease 0.3s both;
+        }
+        .mindmap-title {
+            text-align: center;
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 35px;
+            color: var(--accent);
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 35px;
+            padding: 30px 10px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, #6c5ce7, #e17055);
+            color: white;
+            padding: 22px 45px;
+            border-radius: 50px;
+            font-size: 1.5em;
+            font-weight: 800;
+            box-shadow: 0 8px 35px rgba(108,92,231,0.35);
+            animation: pulse 3s ease-in-out infinite;
+            text-align: center;
+        }
+        .connector-line {
+            width: 3px;
+            height: 30px;
+            background: linear-gradient(180deg, var(--accent), transparent);
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            width: 100%;
+        }
+        @media (max-width: 900px) {
+            .mindmap-branches { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 520px) {
+            .mindmap-branches { grid-template-columns: 1fr; }
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.3s; }
+        .branch:nth-child(2) { animation-delay: 0.45s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch:nth-child(4) { animation-delay: 0.75s; }
+        .branch:nth-child(5) { animation-delay: 0.9s; }
+        .branch-node {
+            padding: 14px 18px;
+            border-radius: 18px;
+            font-size: 1em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: white;
+        }
+        .branch:nth-child(1) .branch-node { background: linear-gradient(135deg, #6c5ce7, #a29bfe); }
+        .branch:nth-child(2) .branch-node { background: linear-gradient(135deg, #e17055, #fab1a0); }
+        .branch:nth-child(3) .branch-node { background: linear-gradient(135deg, #00b894, #55efc4); }
+        .branch:nth-child(4) .branch-node { background: linear-gradient(135deg, #fdcb6e, #f39c12); }
+        .branch:nth-child(5) .branch-node { background: linear-gradient(135deg, #e84393, #fd79a8); }
+        .branch-node:hover { transform: translateY(-4px); box-shadow: 0 8px 25px rgba(0,0,0,0.2); }
+        .sub-node {
+            padding: 10px 14px;
+            border-radius: 10px;
+            font-size: 0.85em;
+            line-height: 1.6;
+            transition: all 0.3s ease;
+            background: var(--card-bg);
+            border-left: 3px solid transparent;
+        }
+        .branch:nth-child(1) .sub-node { border-left-color: #6c5ce7; }
+        .branch:nth-child(2) .sub-node { border-left-color: #e17055; }
+        .branch:nth-child(3) .sub-node { border-left-color: #00b894; }
+        .branch:nth-child(4) .sub-node { border-left-color: #fdcb6e; }
+        .branch:nth-child(5) .sub-node { border-left-color: #e84393; }
+
+        /* ===== SECTIONS ===== */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 28px;
+            padding: 40px 42px;
+            margin-bottom: 26px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.7s ease;
+            transition: all 0.3s ease;
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+            user-select: none;
+        }
+        .section-title {
+            font-size: 1.6em;
+            font-weight: 800;
+        }
+        .st-purple { background: linear-gradient(135deg, #6c5ce7, #a29bfe); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .st-orange { background: linear-gradient(135deg, #e17055, #fab1a0); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .st-green { background: linear-gradient(135deg, #00b894, #55efc4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .st-yellow { background: linear-gradient(135deg, #f39c12, #fdcb6e); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .st-pink { background: linear-gradient(135deg, #e84393, #fd79a8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .st-blue { background: linear-gradient(135deg, #0984e3, #74b9ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .st-red { background: linear-gradient(135deg, #d63031, #ff7675); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .collapse-icon {
+            font-size: 1.4em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+            flex-shrink: 0;
+        }
+        .collapsed .collapse-icon { transform: rotate(-90deg); }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: all 0.35s ease;
+            font-size: 0.92em;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 80px;
+            margin-top: 10px;
+        }
+        .section-content {
+            max-height: 8000px;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+        }
+        .content-text {
+            font-size: 1em;
+            line-height: 2;
+            color: var(--text-primary);
+            margin-bottom: 16px;
+        }
+        .content-text p {
+            margin-bottom: 14px;
+        }
+
+        /* ===== HIGHLIGHTS ===== */
+        .hk { color: var(--highlight-key); font-weight: 700; padding: 1px 5px; background: rgba(255,107,107,0.12); border-radius: 4px; }
+        .hd { color: var(--highlight-data); font-weight: 700; padding: 1px 5px; background: rgba(78,205,196,0.12); border-radius: 4px; }
+        .hq { color: var(--highlight-quote); font-weight: 700; padding: 1px 5px; background: rgba(255,230,109,0.12); border-radius: 4px; }
+        .hm { color: var(--highlight-method); font-weight: 700; padding: 1px 5px; background: rgba(162,155,254,0.12); border-radius: 4px; }
+        .ha { color: var(--highlight-action); font-weight: 700; padding: 1px 5px; background: rgba(253,121,168,0.12); border-radius: 4px; }
+
+        /* ===== STEP CARDS ===== */
+        .step-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .step-card {
+            padding: 22px;
+            border-radius: 18px;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .step-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+        .step-card .step-num {
+            display: inline-block;
+            width: 36px;
+            height: 36px;
+            line-height: 36px;
+            text-align: center;
+            border-radius: 50%;
+            font-weight: 800;
+            font-size: 0.9em;
+            color: white;
+            margin-bottom: 12px;
+        }
+        .step-card:nth-child(1) .step-num { background: #6c5ce7; }
+        .step-card:nth-child(2) .step-num { background: #e17055; }
+        .step-card:nth-child(3) .step-num { background: #00b894; }
+        .step-card:nth-child(4) .step-num { background: #fdcb6e; color: #333; }
+        .step-card:nth-child(5) .step-num { background: #e84393; }
+        .step-card h4 {
+            font-size: 1.05em;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        .step-card p {
+            font-size: 0.88em;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* ===== INSIGHT BOX ===== */
+        .insight-box {
+            margin: 24px 0;
+            padding: 26px 28px;
+            border-radius: 18px;
+            position: relative;
+        }
+        .insight-box.purple {
+            background: linear-gradient(135deg, rgba(108,92,231,0.12), rgba(162,155,254,0.08));
+            border-left: 4px solid #6c5ce7;
+        }
+        .insight-box.orange {
+            background: linear-gradient(135deg, rgba(225,112,85,0.12), rgba(250,177,160,0.08));
+            border-left: 4px solid #e17055;
+        }
+        .insight-box.green {
+            background: linear-gradient(135deg, rgba(0,184,148,0.12), rgba(85,239,196,0.08));
+            border-left: 4px solid #00b894;
+        }
+        .insight-box.pink {
+            background: linear-gradient(135deg, rgba(232,67,147,0.12), rgba(253,121,168,0.08));
+            border-left: 4px solid #e84393;
+        }
+        .insight-box.gold {
+            background: linear-gradient(135deg, rgba(243,156,18,0.12), rgba(253,203,110,0.08));
+            border-left: 4px solid #f39c12;
+        }
+        .insight-box .insight-icon {
+            position: absolute;
+            top: -14px;
+            left: 20px;
+            font-size: 1.6em;
+            background: var(--glass-bg);
+            padding: 4px 12px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        .insight-box h4 {
+            font-size: 1.05em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .insight-box p, .insight-box li {
+            font-size: 0.93em;
+            line-height: 1.85;
+            color: var(--text-secondary);
+        }
+        .insight-box ul {
+            list-style: none;
+            padding: 0;
+        }
+        .insight-box ul li::before {
+            content: '▸ ';
+            color: var(--accent);
+            font-weight: 700;
+        }
+
+        /* ===== EXPERT COMMENT ===== */
+        .expert-comment {
+            margin: 28px 0;
+            padding: 28px 30px;
+            background: linear-gradient(135deg, rgba(108,92,231,0.1), rgba(232,67,147,0.08));
+            border-left: 4px solid var(--accent);
+            border-radius: 18px;
+            position: relative;
+        }
+        .expert-comment::before {
+            content: '💡';
+            position: absolute;
+            top: -14px;
+            left: 22px;
+            font-size: 1.8em;
+            background: var(--glass-bg);
+            padding: 4px 14px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        .expert-comment .expert-label {
+            font-size: 0.82em;
+            color: var(--accent);
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+        .expert-comment p {
+            font-size: 0.95em;
+            line-height: 1.9;
+            color: var(--text-primary);
+        }
+
+        /* ===== FORMULA BAR ===== */
+        .formula-bar {
+            background: linear-gradient(135deg, rgba(108,92,231,0.15), rgba(0,184,148,0.1));
+            border: 1px solid rgba(108,92,231,0.2);
+            border-radius: 16px;
+            padding: 22px 28px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .formula-bar .formula {
+            font-size: 1.3em;
+            font-weight: 800;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #6c5ce7, #e17055);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .formula-bar .formula-desc {
+            font-size: 0.88em;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        /* ===== LEVEL METER ===== */
+        .level-meter {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .level-item {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 12px 18px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        .level-item:hover { transform: translateX(6px); }
+        .level-tag {
+            display: inline-block;
+            min-width: 38px;
+            height: 38px;
+            line-height: 38px;
+            text-align: center;
+            border-radius: 10px;
+            font-weight: 800;
+            font-size: 0.85em;
+            color: white;
+            flex-shrink: 0;
+        }
+        .level-item:nth-child(1) .level-tag { background: #b2bec3; }
+        .level-item:nth-child(2) .level-tag { background: #74b9ff; }
+        .level-item:nth-child(3) .level-tag { background: #a29bfe; }
+        .level-item:nth-child(4) .level-tag { background: #e17055; }
+        .level-item:nth-child(5) .level-tag { background: #6c5ce7; }
+        .level-item .level-text {
+            font-size: 0.92em;
+            line-height: 1.6;
+        }
+        .level-item .level-text strong {
+            color: var(--text-primary);
+        }
+
+        /* ===== FAQ SECTION ===== */
+        .faq-item {
+            margin-bottom: 18px;
+            padding: 22px;
+            border-radius: 16px;
+            background: var(--card-bg);
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        .faq-item:hover { border-color: var(--accent); }
+        .faq-q {
+            font-weight: 700;
+            font-size: 1em;
+            color: var(--highlight-action);
+            margin-bottom: 10px;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .faq-a {
+            font-size: 0.93em;
+            line-height: 1.85;
+            color: var(--text-secondary);
+            padding-left: 28px;
+        }
+
+        /* ===== ROLE CARDS ===== */
+        .role-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 18px;
+            margin: 20px 0;
+        }
+        .role-card {
+            padding: 26px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .role-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 3px;
+        }
+        .role-card.r1 { background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.2); }
+        .role-card.r1::before { background: #6c5ce7; }
+        .role-card.r2 { background: rgba(225,112,85,0.1); border: 1px solid rgba(225,112,85,0.2); }
+        .role-card.r2::before { background: #e17055; }
+        .role-card.r3 { background: rgba(0,184,148,0.1); border: 1px solid rgba(0,184,148,0.2); }
+        .role-card.r3::before { background: #00b894; }
+        .role-card:hover { transform: translateY(-4px); }
+        .role-card h4 {
+            font-size: 1.05em;
+            margin-bottom: 10px;
+        }
+        .role-card p {
+            font-size: 0.88em;
+            color: var(--text-secondary);
+            line-height: 1.75;
+        }
+
+        /* ===== FINAL VERDICT ===== */
+        .final-verdict {
+            background: linear-gradient(135deg, rgba(108,92,231,0.15), rgba(232,67,147,0.1), rgba(0,184,148,0.08));
+            border: 1px solid rgba(108,92,231,0.25);
+            border-radius: 28px;
+            padding: 45px;
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+        .final-verdict::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6c5ce7, #e84393, #00b894);
+        }
+        .final-verdict h2 {
+            font-size: 1.7em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #6c5ce7, #e84393);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .final-verdict p {
+            font-size: 1em;
+            line-height: 2;
+            margin-bottom: 14px;
+        }
+        .verdict-list {
+            list-style: none;
+            padding: 0;
+            margin: 16px 0;
+        }
+        .verdict-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid var(--glass-border);
+            font-size: 0.95em;
+            line-height: 1.8;
+        }
+        .verdict-list li:last-child { border-bottom: none; }
+        .verdict-list li::before {
+            content: '⚡ ';
+        }
+
+        /* ===== THEME TOGGLE ===== */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.4em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+        .theme-toggle:hover { transform: scale(1.1); }
+
+        /* ===== SCROLL TOP ===== */
+        .scroll-top {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.3em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            opacity: 0;
+            pointer-events: none;
+        }
+        .scroll-top.visible { opacity: 1; pointer-events: auto; }
+        .scroll-top:hover { transform: scale(1.1); }
+
+        /* ===== NAV TOC ===== */
+        .toc-float {
+            position: fixed;
+            top: 50%;
+            left: 16px;
+            transform: translateY(-50%);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .toc-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--glass-border);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .toc-dot:hover, .toc-dot.active {
+            background: var(--accent);
+            transform: scale(1.3);
+        }
+        .toc-dot .toc-label {
+            position: absolute;
+            left: 22px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 0.75em;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            border: 1px solid var(--glass-border);
+        }
+        .toc-dot:hover .toc-label { opacity: 1; }
+        @media (max-width: 1400px) { .toc-float { display: none; } }
+
+        /* ===== ANIMATIONS ===== */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(25px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            body { padding: 12px; }
+            .header { padding: 30px 22px 28px; border-radius: 20px; }
+            h1 { font-size: 1.7em; }
+            .section { padding: 28px 22px; border-radius: 20px; }
+            .section-title { font-size: 1.3em; }
+            .mindmap-container { padding: 28px 18px; }
+            .center-node { font-size: 1.1em; padding: 16px 28px; }
+            .step-cards { grid-template-columns: 1fr; }
+            .quote-grid { grid-template-columns: 1fr; }
+            .role-grid { grid-template-columns: 1fr; }
+            .final-verdict { padding: 30px 22px; }
+        }
+
+        /* ===== PRINT ===== */
+        @media print {
+            body { background: white; color: #333; }
+            .theme-toggle, .scroll-top, .toc-float, .controls { display: none; }
+            .section, .header, .mindmap-container, .golden-bar, .final-verdict {
+                break-inside: avoid;
+                box-shadow: none;
+                border: 1px solid #ddd;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating TOC -->
+    <nav class="toc-float">
+        <div class="toc-dot" onclick="scrollTo_('header')"><span class="toc-label">开篇</span></div>
+        <div class="toc-dot" onclick="scrollTo_('sec1')"><span class="toc-label">SCEPA模型</span></div>
+        <div class="toc-dot" onclick="scrollTo_('sec2')"><span class="toc-label">S-场景理解</span></div>
+        <div class="toc-dot" onclick="scrollTo_('sec3')"><span class="toc-label">C-流程拆解</span></div>
+        <div class="toc-dot" onclick="scrollTo_('sec4')"><span class="toc-label">E-执行细化</span></div>
+        <div class="toc-dot" onclick="scrollTo_('sec5')"><span class="toc-label">P&A-前置与可行性</span></div>
+        <div class="toc-dot" onclick="scrollTo_('sec6')"><span class="toc-label">实战工具</span></div>
+        <div class="toc-dot" onclick="scrollTo_('sec7')"><span class="toc-label">高频问答</span></div>
+        <div class="toc-dot" onclick="scrollTo_('verdict')"><span class="toc-label">专家点评</span></div>
+    </nav>
+
+    <div class="container">
+        <!-- ========== HEADER ========== -->
+        <div class="header" id="header">
+            <div class="header-badge">🔥 AI知声圆桌会 · 精华提炼</div>
+            <h1>SCEPA模型：AI驱动的五步场景拆解法</h1>
+            <div class="header-subtitle">
+                将模糊的商业需求变成AI能看懂的作战地图——一套原创的颗粒化任务拆解方法论
+            </div>
+            <div class="header-meta">
+                <span>🎙️ 主讲人：孙小强</span>
+                <span>📅 2026年2月6日</span>
+                <span>⏱️ ~100分钟精华浓缩</span>
+                <span>🏷️ AI商业落地 · 场景拆解 · 方法论</span>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="toggleAll()">📑 全部展开/折叠</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印</button>
+            </div>
+        </div>
+
+        <!-- ========== GOLDEN QUOTES ========== -->
+        <div class="golden-bar">
+            <h2>✨ 全场金句</h2>
+            <div class="quote-grid">
+                <div class="quote-card">
+                    「用AI是为了拯救业务——但这个业务，<strong style="color:#ff6b6b">真的需要拯救吗？</strong>」
+                    <span class="quote-author">—— 孙小强·论把手段当目的</span>
+                </div>
+                <div class="quote-card">
+                    「<strong style="color:#4ecdc4">SOP在先，Agent在后</strong>；与AI交朋友，只造船不挖池。」
+                    <span class="quote-author">—— 孙小强·论AI落地姿势</span>
+                </div>
+                <div class="quote-card">
+                    「判断一个AI项目能否成功落地的<strong style="color:#a29bfe">第一标准</strong>：你能不能拿出一个原子任务清单表格。」
+                    <span class="quote-author">—— 孙小强·论执行力</span>
+                </div>
+                <div class="quote-card">
+                    「技术都是手段，<strong style="color:#ffe66d">故事才是改变世界的力量</strong>。产品是载体，共鸣是灵魂，人才是目的。」
+                    <span class="quote-author">—— 孙小强·论终局思维</span>
+                </div>
+                <div class="quote-card">
+                    「未来真正的AI能力，不再是代码能力，而是<strong style="color:#fd79a8">场景拆解力</strong>与<strong style="color:#fd79a8">智能体调度力</strong>。」
+                    <span class="quote-author">—— 孙小强·论核心竞争力</span>
+                </div>
+                <div class="quote-card">
+                    「我们创业做了很多工作，只不过都是在<strong style="color:#e17055">验证行业的常识</strong>。」
+                    <span class="quote-author">—— 孙小强·论认知深度</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== MINDMAP ========== -->
+        <div class="mindmap-container" id="sec1">
+            <div class="mindmap-title">🧠 SCEPA模型 · 全景思维导图</div>
+            <div class="mindmap-pure-css">
+                <div class="center-node">SCEPA 五步拆解法</div>
+                <div class="connector-line"></div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">S 场景理解</div>
+                        <div class="sub-node">明确业务目标</div>
+                        <div class="sub-node">挖掘核心痛点</div>
+                        <div class="sub-node">识别利益相关方</div>
+                        <div class="sub-node">🎯 确保做正确的事</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">C 流程拆解</div>
+                        <div class="sub-node">按时间线/逻辑链拆分</div>
+                        <div class="sub-node">4个识别点</div>
+                        <div class="sub-node">画出商业地图</div>
+                        <div class="sub-node">🗺️ 确保正确做事</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">E 执行细化</div>
+                        <div class="sub-node">提取原子任务</div>
+                        <div class="sub-node">单一职责原则</div>
+                        <div class="sub-node">可交付可委派</div>
+                        <div class="sub-node">📋 确保正确做事</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">P 前置条件</div>
+                        <div class="sub-node">数据可获得性</div>
+                        <div class="sub-node">技术栈评估</div>
+                        <div class="sub-node">组织准备度 + ROI</div>
+                        <div class="sub-node">⚖️ 评估能不能做</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">A AI可行性</div>
+                        <div class="sub-node">人机最优分工</div>
+                        <div class="sub-node">AI处理颗粒化任务</div>
+                        <div class="sub-node">人类负责创造决策</div>
+                        <div class="sub-node">🤖 判断该谁来做</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 1: 核心概念 ========== -->
+        <div class="section" id="sec2">
+            <div class="section-header" onclick="toggleSection('sec2')">
+                <span class="section-title st-purple">🎯 S — 场景理解：挖掘真正的商业问题</span>
+                <span class="collapse-icon">▾</span>
+            </div>
+            <div class="section-preview">本节核心：别把手段当目的，用第一性原理找到真需求……</div>
+            <div class="section-content">
+                <div class="content-text">
+                    <p>场景理解是整个SCEPA模型中<span class="hk">最容易被忽略、却最关键和致命</span>的一步。它的核心使命是：<span class="hm">确保你在做正确的事</span>——方向大于努力。</p>
+                    <p>孙小强提出了一个尖锐的观察：绝大多数人说「我要用AI做XX」，但从未真正思考<span class="hk">为什么要用AI</span>、<span class="hk">核心要解决什么问题</span>、<span class="hk">效率到底如何</span>。这种「把手段当目的」的误区，让大量AI项目从起点就注定失败。</p>
+                </div>
+
+                <div class="insight-box purple">
+                    <span class="insight-icon">🎯</span>
+                    <h4 style="color:#a29bfe">价值挖掘三问</h4>
+                    <ul>
+                        <li><strong>商业目标是什么？</strong> —— 用户是谁？需求是什么？要提升什么指标？降本增效体现在哪里？</li>
+                        <li><strong>为什么现在必须解决？</strong> —— 是真需求还是伪需求？紧迫性如何论证？</li>
+                        <li><strong>不解决的代价有多大？</strong> —— 能否量化损失？涉及哪些利益相关方？</li>
+                    </ul>
+                </div>
+
+                <p class="content-text">他还给出了一个极具实操价值的<span class="hm">「思考深度五层级模型」</span>，帮助大家自我诊断决策质量：</p>
+
+                <div class="level-meter">
+                    <div class="level-item">
+                        <span class="level-tag">L0</span>
+                        <span class="level-text"><strong>盲目创新</strong> —— 基于自我想象和伟大愿景，「AI好像能干个什么事」</span>
+                    </div>
+                    <div class="level-item">
+                        <span class="level-tag">L1</span>
+                        <span class="level-text"><strong>事实与经验</strong> —— 基于对标案例、最佳实践、专家经验做可行性判断</span>
+                    </div>
+                    <div class="level-item">
+                        <span class="level-tag">L2</span>
+                        <span class="level-text"><strong>行业常识</strong> —— 很多创业者花大量精力，却只是在验证行业的基本常识</span>
+                    </div>
+                    <div class="level-item">
+                        <span class="level-tag">L3</span>
+                        <span class="level-text"><strong>方法与模型</strong> —— 基于底层原理和方法论来指导行动</span>
+                    </div>
+                    <div class="level-item">
+                        <span class="level-tag">L4</span>
+                        <span class="level-text"><strong>本质与学科经典</strong> —— 基于基础定义、基础要素、学科经典来做底层认知</span>
+                    </div>
+                </div>
+
+                <div class="formula-bar">
+                    <div class="formula">至少从 L2 出发 → 用常识 + 方法论 + 本质 驱动决策</div>
+                    <div class="formula-desc">越靠近底层的思考模型，商业决策的抗风险能力越强</div>
+                </div>
+
+                <p class="content-text" style="margin-top: 20px;">那对于小白如何快速提升认知？孙小强给出了一个极其实用的「<span class="hm">AI赋能经典管理学</span>」方法：</p>
+
+                <div class="insight-box green">
+                    <span class="insight-icon">🚀</span>
+                    <h4 style="color:#00b894">快速拉齐商业认知的四步法</h4>
+                    <ul>
+                        <li><strong>① 选择业务问题</strong> —— 增长/产品/组织/营销</li>
+                        <li><strong>② 匹配理论框架</strong> —— 找到对应领域的经典管理理论和方法论</li>
+                        <li><strong>③ AI数据化验证</strong> —— 用AI做评分、纠偏、方案设计</li>
+                        <li><strong>④ 形成验证闭环</strong> —— 输出最小可执行方案</li>
+                    </ul>
+                </div>
+
+                <p class="content-text">他推荐了三种AI辅助思考工具：</p>
+
+                <div class="step-cards">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <h4 style="color:#6c5ce7">第一性原理提问</h4>
+                        <p>挑战假设 → 分解要素 → 重新构建 → 应用验证。将模糊需求转化为可执行场景任务。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <h4 style="color:#e17055">U型思考模型</h4>
+                        <p>问 → 挖 → 破 → 立。特别适用于商业增长和商业模式创新场景。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <h4 style="color:#00b894">苏格拉底式提问</h4>
+                        <p>让AI扮演专家角色，不给答案只追问，帮你独立思考底层逻辑、潜在假设和边界条件。</p>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">🧠 专家评论</div>
+                    <p>S阶段的核心价值在于<span class="hk">防止方向性错误</span>。在AI商业落地领域，80%的项目失败不是技术问题，而是需求定义问题。「用AI做智能客服」是伪命题，「将30%重复性咨询自动化，预计降低成本40%」才是真命题。这种从模糊到精确的转化能力，才是AI时代最稀缺的商业技能。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 2: C 流程拆解 ========== -->
+        <div class="section" id="sec3">
+            <div class="section-header" onclick="toggleSection('sec3')">
+                <span class="section-title st-orange">🗺️ C — 流程拆解：画出你的商业地图</span>
+                <span class="collapse-icon">▾</span>
+            </div>
+            <div class="section-preview">解决做不快、执行效率低、数据处理慢的问题……</div>
+            <div class="section-content">
+                <div class="content-text">
+                    <p>流程拆解的核心问题是：解决企业<span class="hk">做不快、执行效率低、数据处理慢、落地协同难</span>的问题。方法是用商业流程图识别价值点和痛点。</p>
+                    <p>将整个业务流程按<span class="hm">时间线或逻辑链</span>拆分为关键环节，形成完整的流程链。</p>
+                </div>
+
+                <div class="insight-box orange">
+                    <span class="insight-icon">🔍</span>
+                    <h4 style="color:#e17055">四个关键识别点（核心干货）</h4>
+                    <ul>
+                        <li><strong style="color:#ff6b6b">决策节点</strong> —— 需要人或系统做出选择的关键时刻（如主题选择、邀约策略、转化策略）</li>
+                        <li><strong style="color:#4ecdc4">等待延迟点</strong> —— 流程中产生停滞的环节（如嘉宾确认、场地预订、学员跟进）</li>
+                        <li><strong style="color:#ffe66d">信息断点</strong> —— 数据缺失或信息不连通的地方（如缺精准联系方式、缺效果评估机制）</li>
+                        <li><strong style="color:#a29bfe">人工密集点</strong> —— 需要大量人力投入的环节（如人工电话邀约、现场组织、人工跟进）</li>
+                    </ul>
+                </div>
+
+                <p class="content-text">以「山东财经大学MBA高级研修班招生」为例，完整流程链为：<span class="hd">目标设定 → 受众分析 → 主题策划 → 活动筹备 → 精准邀约 → 线下沙龙 → 转化跟进 → 效果评估</span>。在每个环节中都可以找到上述四种识别点，它们直接决定了后续哪些环节需要AI介入。</p>
+
+                <div class="expert-comment">
+                    <div class="expert-label">🧠 专家评论</div>
+                    <p>这四个识别点的框架非常实用。在我的实践中，<span class="hk">信息断点</span>往往是AI能创造最大价值的地方——因为AI天然擅长数据整合和信息连接。而<span class="hk">人工密集点</span>则是ROI最容易计算的切入点。建议优先从这两个维度找AI落地的「第一支点」。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 3: E 执行细化 ========== -->
+        <div class="section" id="sec4">
+            <div class="section-header" onclick="toggleSection('sec4')">
+                <span class="section-title st-green">📋 E — 执行层细化：从流程到原子任务</span>
+                <span class="collapse-icon">▾</span>
+            </div>
+            <div class="section-preview">将商业流程图变成可执行的任务清单……</div>
+            <div class="section-content">
+                <div class="content-text">
+                    <p>E阶段的使命：把商业流程图变成一个<span class="hk">可执行的任务清单</span>。流程图告诉你「发生了什么」，但没说「怎么做」——E阶段就是要告诉每个人和每个AI「应该做什么」。</p>
+                </div>
+
+                <div class="formula-bar">
+                    <div class="formula">原子任务 = 单一职责 + 可交付 + 可委派</div>
+                    <div class="formula-desc">一个任务只做一件事 · 有明确产出物 · 能指派给某人或某AI</div>
+                </div>
+
+                <div class="insight-box green">
+                    <span class="insight-icon">⚡</span>
+                    <h4 style="color:#00b894">判断AI项目能否成功落地的第一标准</h4>
+                    <p>看你能不能拿出一个<strong style="color:#ff6b6b">原子任务清单表格</strong>。如果已有成熟SOP，先找最合适的支点完成单点突破，再上下游延伸——这才是撬动整个业务的正确姿势。</p>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">🧠 专家评论</div>
+                    <p>E阶段体现了「<span class="hm">颗粒度即执行力</span>」的原则。很多团队AI落地失败，就是卡在了「知道要做什么，但拆不清该让AI做哪件具体的事」。原子任务清单是连接商业思维和技术实现的桥梁——没有这张表，工程师和业务方永远对不齐。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 4: P & A ========== -->
+        <div class="section" id="sec5">
+            <div class="section-header" onclick="toggleSection('sec5')">
+                <span class="section-title st-yellow">⚖️ P & A — 前置条件 + AI可行性判断</span>
+                <span class="collapse-icon">▾</span>
+            </div>
+            <div class="section-preview">给每个子任务标注技术栈、数据、算力和ROI预估……</div>
+            <div class="section-content">
+                <div class="content-text">
+                    <p><strong>P阶段</strong>是给每一个子任务标注它的<span class="hd">数据、权限、工具、技能需求和ROI预估</span>——这是避免项目卡壳的关键。四个评估维度：</p>
+                </div>
+
+                <div class="step-cards">
+                    <div class="step-card">
+                        <div class="step-num">1</div>
+                        <h4>数据可获得性</h4>
+                        <p>所需数据是否可采集？质量如何？隐私合规如何处理？</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">2</div>
+                        <h4>技术栈评估</h4>
+                        <p>现有技术能否支撑？需要哪些API、模型或工具？</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">3</div>
+                        <h4>组织准备度</h4>
+                        <p>团队是否具备执行能力？流程是否就绪？</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">4</div>
+                        <h4>ROI预估</h4>
+                        <p>投入产出比是否划算？回收周期多长？</p>
+                    </div>
+                </div>
+
+                <div class="content-text" style="margin-top: 20px;">
+                    <p><strong>A阶段</strong>则是技术与人的最优分工判断。核心洞察：<span class="hk">最好的AI应用 = AI高效处理颗粒化任务 + 人类负责创造与决策</span>。</p>
+                </div>
+
+                <div class="insight-box gold">
+                    <span class="insight-icon">📊</span>
+                    <h4 style="color:#f39c12">AI适用性矩阵（建议配比）</h4>
+                    <ul>
+                        <li><strong style="color:#4ecdc4">AI承担 60%-80%</strong> 的原子任务（数据处理、信息整合、重复执行、预警记录）</li>
+                        <li><strong style="color:#ff6b6b">人类保留</strong>：直觉判断、创造力决策、品牌战略、审美、法律伦理、人际信任</li>
+                        <li><strong>混合协同</strong>：人工设定框架 → AI生成草案 → 人工校验关键数据和逻辑</li>
+                    </ul>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">🧠 专家评论</div>
+                    <p>P和A阶段是SCEPA中最被低估的两步。很多企业跳过P直接上AI，结果发现数据不通、权限受限、团队不配合——这些「前置条件」不解决，再好的AI方案也是空中楼阁。建议每个原子任务都做一次「红绿灯评估」：绿灯直接推进、黄灯需要预处理、红灯暂缓或替代方案。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 5: 实战工具 ========== -->
+        <div class="section" id="sec6">
+            <div class="section-header" onclick="toggleSection('sec6')">
+                <span class="section-title st-pink">🛠️ 实战工具：快速生成AI作战地图</span>
+                <span class="collapse-icon">▾</span>
+            </div>
+            <div class="section-preview">飞书多维表格 + 扣子Bot + 三角色提示词……</div>
+            <div class="section-content">
+                <div class="content-text">
+                    <p>孙小强给出了三种快速落地工具，让即使是小白也能在<span class="hd">30分钟内</span>生成一版AI施工图：</p>
+                </div>
+
+                <div class="step-cards">
+                    <div class="step-card">
+                        <div class="step-num">A</div>
+                        <h4 style="color:#6c5ce7">飞书多维表格</h4>
+                        <p>将SCEPA五步做成表格模板，每一步由AI自动填充，场景描述 → 流程拆解 → 执行细化 → 前置标注 → 可行性判断，一气呵成。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">B</div>
+                        <h4 style="color:#e17055">扣子（Coze）Bot</h4>
+                        <p>将SCEPA模型封装为对话技能（Skill），随时调用。输入模糊需求，输出结构化拆解方案。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">C</div>
+                        <h4 style="color:#00b894">三角色提示词法</h4>
+                        <p>分三轮对话，每轮一个专家角色，逐步深入生成完整方案。</p>
+                    </div>
+                </div>
+
+                <p class="content-text" style="margin-top: 20px;"><span class="hm">三角色提示词法</span>的具体打法：</p>
+
+                <div class="role-grid">
+                    <div class="role-card r1">
+                        <h4 style="color:#6c5ce7">👔 角色一：商业顾问</h4>
+                        <p>对应 <strong>S层</strong>。聚焦商业端的需求和价值挖掘，识别商业价值点。<br><br>提示词核心：「你是一个资深商业价值发现顾问，针对[需求]进行分析……」</p>
+                    </div>
+                    <div class="role-card r2">
+                        <h4 style="color:#e17055">🏗️ 角色二：产品架构师</h4>
+                        <p>对应 <strong>C和E层</strong>。进行流程拆解和执行层细化，输出原子任务清单。<br><br>提示词核心：「你是产品架构师，将上述业务目标拆解为完整流程和可执行任务……」</p>
+                    </div>
+                    <div class="role-card r3">
+                        <h4 style="color:#00b894">📊 角色三：项目经理</h4>
+                        <p>对应 <strong>P和A层</strong>。进行风险和资源评估，完善前置条件映射与AI可行性判断。<br><br>提示词核心：「你是严谨的项目经理，评估数据、技术、组织和成本……」</p>
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-label">🧠 专家评论</div>
+                    <p>三角色法的巧妙之处在于：它不是让AI一次性解决所有问题，而是<span class="hk">分层聚焦</span>——每轮对话只处理一个认知维度。这恰好符合大模型「深度优于广度」的特点。建议在实操中，每轮结束后人工审核再进入下一轮，而不是自动串联。</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 6: 高频问答 ========== -->
+        <div class="section" id="sec7">
+            <div class="section-header" onclick="toggleSection('sec7')">
+                <span class="section-title st-blue">❓ 高频问答：六大实操痛点解决方案</span>
+                <span class="collapse-icon">▾</span>
+            </div>
+            <div class="section-preview">刚起步没数据怎么办？拆太细管理成本高？AI输出不稳定？……</div>
+            <div class="section-content">
+
+                <div class="faq-item">
+                    <div class="faq-q">❶ 刚起步没有数据基础，怎么评估ROI？</div>
+                    <div class="faq-a">使用<span class="hm">最小可验证单元法</span>：先选1-2个高置信度任务进行小范围试点，用试点数据推算整体，配合敏感性分析给出不同假设下的ROI范围。核心原则：<span class="hk">先印证后扩大</span>。</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">❷ C与E阶段拆太细，管理成本剧增怎么办？</div>
+                    <div class="faq-a">引入<span class="hm">最小商业闭环</span>概念：以「能否独立评估商业价值」「能否独立实现或外包」为判断标准。<span class="hd">初创企业不宜拆太细</span>，核心先验证需求；成熟企业再用精细颗粒度做系统优化。</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">❸ 任务归属到人或AI后，出问题责任怎么界定？</div>
+                    <div class="faq-a">在A阶段建立<span class="hm">人机协同协议</span>：人工负责审核关键决策和异常处理，AI负责执行、预警和记录。在E阶段就要定义<span class="hd">交接点、审核节点和问题上报路径</span>。</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">❹ AI输出质量不稳定，如何迭代？</div>
+                    <div class="faq-a"><span class="hm">三明治式协作流程</span>：① 人工设定核心框架与指标 → ② AI生成草案 → ③ 人工校验数据、逻辑漏洞和ROI合理性。把背景、任务、标准越细化，输出越稳定。</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">❺ 初创公司和大企业侧重点有何不同？</div>
+                    <div class="faq-a"><span class="hd">初创公司</span>：聚焦A（人机配比）和P（资源审计），追求最小可行验证（MVP），但<span class="hk">不要忽略S阶段</span>——方向不对，努力翻倍。<br><span class="hd">成熟企业</span>：深入S（商业目标对齐）和C/E（流程优化），追求系统性提效与创新。</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-q">❻ 已有AI项目效果不达预期，怎么用SCEPA诊断？</div>
+                    <div class="faq-a">进行<span class="hm">逆向拆解与对标</span>：用现有功能列表反推其原设计的S和C，检查是否存在偏差；再用P和A标准评估现实可行性。重点检查：<span class="hk">数据闭环是否形成、价值度量是否清晰</span>。</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== SECTION 7: 一页纸报告模板 ========== -->
+        <div class="section">
+            <div class="section-header" onclick="toggleSection(this.parentElement.id)" id="sec8">
+                <span class="section-title st-red">📄 实战输出：一页纸AI拆解报告模板</span>
+                <span class="collapse-icon">▾</span>
+            </div>
+            <div class="section-preview">商业目标摘要 + 核心指标 + 任务清单 + ROI预估……</div>
+            <div class="section-content">
+                <div class="content-text">
+                    <p>一份完整的AI商业化拆解报告，至少包含以下<span class="hd">五个模块</span>：</p>
+                </div>
+
+                <div class="step-cards">
+                    <div class="step-card">
+                        <div class="step-num">①</div>
+                        <h4>商业目标摘要</h4>
+                        <p>服务于谁？提供什么差异化价值？客户痛点和解决方案各是什么？</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">②</div>
+                        <h4>核心指标（3-5个）</h4>
+                        <p>符合SMART原则的可量化指标，让成功有清晰的衡量标准。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">③</div>
+                        <h4>颗粒化任务清单</h4>
+                        <p>8-12个原子任务，表格化呈现，从流程到子任务全覆盖。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">④</div>
+                        <h4>资源需求与风险</h4>
+                        <p>P阶段输出：数据、技术、组织和成本四维度评估。</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-num">⑤</div>
+                        <h4>ROI预估时间线</h4>
+                        <p>投入产出比预测、里程碑节点、验证周期规划。</p>
+                    </div>
+                </div>
+
+                <div class="formula-bar" style="margin-top: 24px;">
+                    <div class="formula">场景选择精准度 × 任务拆解颗粒度 × 人机协同配比 × 数据闭环完整度 × ROI验证及时性</div>
+                    <div class="formula-desc">AI落地成功的五个核心要素</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ========== FINAL VERDICT ========== -->
+        <div class="final-verdict" id="verdict">
+            <h2>🏆 AI商业落地顶级专家点评</h2>
+
+            <div class="content-text">
+                <p style="font-size:1.05em;line-height:2.1;">作为一个长期关注AI商业化落地的从业者，我对这场圆桌分享的整体评价是：<span class="hk">思路扎实、方法论完整、可操作性强</span>，是当前AI应用领域难得的「实战派」内容。以下是我的深度评析和补充建议：</p>
+            </div>
+
+            <div class="insight-box purple" style="margin-top:28px;">
+                <span class="insight-icon">🎯</span>
+                <h4 style="color:#a29bfe">一、SCEPA模型的价值定位</h4>
+                <p>SCEPA模型最大的贡献在于解决了AI落地的「最后一公里」问题——<strong>不是技术能不能做，而是业务该怎么拆</strong>。它把「场景拆解」从一种依赖经验的隐性能力，变成了可标准化传授的显性方法论。对于中小企业和非技术背景的创业者，这是真正的降维赋能。</p>
+            </div>
+
+            <div class="insight-box orange" style="margin-top:28px;">
+                <span class="insight-icon">💰</span>
+                <h4 style="color:#e17055">二、关于AI商业变现的七条建议</h4>
+                <ul style="margin-top:10px;">
+                    <li><strong style="color:#ff6b6b">先卖方案，再卖系统。</strong>用SCEPA为客户做一次付费咨询（轻量化诊断），比直接卖SaaS产品的转化率高3-5倍。先建信任，再做交付。</li>
+                    <li><strong style="color:#4ecdc4">聚焦「信息断点」做产品。</strong>四个识别点中，信息断点最容易用AI填补——做一个垂直行业的「数据桥接」工具，比通用AI助手更有付费意愿。</li>
+                    <li><strong style="color:#a29bfe">将SCEPA拆解本身产品化。</strong>把这套方法论封装成SaaS工具或智能体，向企业收取「AI战略规划」的订阅费——这是一个尚未被充分开发的市场。</li>
+                    <li><strong style="color:#ffe66d">ROI前置，不要后置。</strong>在S阶段就给客户算清楚「不用AI的成本」和「用AI的预期回报」，让决策者在签约前就看到数字。</li>
+                    <li><strong style="color:#fd79a8">用「试点-扩展」模式做项目。</strong>第一个原子任务免费做，用实际效果驱动后续付费——这是ToB市场验证最快的方式。</li>
+                    <li><strong style="color:#00b894">构建行业knowhow数据库。</strong>每做一个项目，就沉淀一套该行业的SCEPA模板。10个行业模板就是一个高壁垒的资产。</li>
+                    <li><strong style="color:#e17055">不要迷恋技术酷炫度。</strong>正如孙小强所说——「只造船不挖池」。客户为结果付费，不为技术买单。一个用飞书+扣子搭建的解决方案，如果能解决问题，就比自研系统更有商业价值。</li>
+                </ul>
+            </div>
+
+            <div class="insight-box green" style="margin-top:28px;">
+                <span class="insight-icon">⚠️</span>
+                <h4 style="color:#00b894">三、值得注意的风险与不足</h4>
+                <ul style="margin-top:10px;">
+                    <li><strong>幻觉风险被低估。</strong>AI生成的SCEPA方案看起来「像那么回事」，但在行业深度上可能有系统性偏差。建议每份方案都标注「AI生成，需人工校验」，并建立行业专家审核机制。</li>
+                    <li><strong>方法论的普适性边界。</strong>SCEPA更适合流程型、重复型业务场景（如客服、营销、运营），对于高创造性场景（如品牌策略、产品创新）可能需要额外补充创意激发工具。</li>
+                    <li><strong>数据闭环的现实难度。</strong>很多中小企业连基础数据采集都没做好，直接谈「数据闭环」为时过早。建议增加一个「数据基建评估」前置步骤。</li>
+                </ul>
+            </div>
+
+            <div class="insight-box pink" style="margin-top:28px;">
+                <span class="insight-icon">🚀</span>
+                <h4 style="color:#e84393">四、终局判断</h4>
+                <p style="font-size:1.02em;">AI商业化时代的三大核心竞争力——<strong style="color:#6c5ce7">场景拆解力</strong>、<strong style="color:#e17055">技术集成力</strong>、<strong style="color:#00b894">商业验证力</strong>——这个判断我完全认同。在大模型能力趋同的未来，<span class="hk">谁能把模糊需求翻译成精确的AI任务，谁就掌握了商业化的入场券</span>。SCEPA模型提供了一个可靠的翻译框架，值得每一个AI从业者认真研究和实践。</p>
+            </div>
+
+            <div class="formula-bar" style="margin-top: 30px;">
+                <div class="formula">AI商业变现 = 真需求 × 精拆解 × 快验证 × 数据飞轮</div>
+                <div class="formula-desc">缺一不可，顺序不可颠倒</div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Theme Toggle -->
+    <div class="theme-toggle" onclick="toggleTheme()" title="切换深色/浅色模式">
+        <span id="theme-icon">☀️</span>
+    </div>
+
+    <!-- Scroll Top -->
+    <div class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="回到顶部">⬆</div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'light') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '☀️';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                icon.textContent = '🌙';
+            }
+        }
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const allCollapsed = [...sections].every(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (allCollapsed) s.classList.remove('collapsed');
+                else s.classList.add('collapsed');
+            });
+        }
+        function toggleSection(id) {
+            const el = typeof id === 'string' ? document.getElementById(id) : id;
+            if (el && el.classList.contains('section')) {
+                el.classList.toggle('collapsed');
+            } else {
+                const section = el?.closest?.('.section') || document.getElementById(id)?.closest?.('.section');
+                if (section) section.classList.toggle('collapsed');
+            }
+        }
+        // Fix section toggle
+        document.querySelectorAll('.section-header').forEach(header => {
+            header.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const section = header.parentElement;
+                section.classList.toggle('collapsed');
+            });
+        });
+        function scrollTo_(id) {
+            const el = document.getElementById(id);
+            if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+        // Scroll top button
+        window.addEventListener('scroll', () => {
+            const btn = document.getElementById('scrollTop');
+            if (window.scrollY > 600) btn.classList.add('visible');
+            else btn.classList.remove('visible');
+        });
+        // Intersection observer for TOC dots
+        if (window.IntersectionObserver) {
+            const dots = document.querySelectorAll('.toc-dot');
+            const ids = ['header','sec1','sec2','sec3','sec4','sec5','sec6','sec7','verdict'];
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const idx = ids.indexOf(entry.target.id);
+                        dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+                    }
+                });
+            }, { threshold: 0.3 });
+            ids.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) observer.observe(el);
+            });
+        }
+    </script>
+</body>
+</html>

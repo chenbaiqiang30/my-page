@@ -1,0 +1,1070 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vibe Coding实战训练营 - AI编程的产品化思维</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --bg-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --glass-bg: rgba(255, 255, 255, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.3);
+            --text-primary: #2d3748;
+            --text-secondary: #4a5568;
+            --highlight-key: #ef4444;
+            --highlight-data: #3b82f6;
+            --highlight-quote: #10b981;
+            --highlight-warning: #f59e0b;
+            --highlight-success: #8b5cf6;
+            --shadow: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --accent: #8b5cf6;
+        }
+        [data-theme="dark"] {
+            --bg-primary: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            --glass-bg: rgba(30, 30, 60, 0.85);
+            --glass-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #e2e8f0;
+            --text-secondary: #cbd5e0;
+            --shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.8;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1400px; margin: 0 auto; }
+        .header {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            position: relative;
+            animation: fadeInUp 0.6s ease;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #ef4444, #3b82f6, #10b981, #f59e0b, #8b5cf6);
+            border-radius: 24px 24px 0 0;
+        }
+        h1 {
+            font-size: 3em;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #8b5cf6, #ec4899, #ef4444);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1.2;
+        }
+        .subtitle {
+            font-size: 1.3em;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            font-weight: 500;
+        }
+        .meta-info {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 20px;
+            background: rgba(139, 92, 246, 0.1);
+            border-radius: 12px;
+            font-size: 0.95em;
+        }
+        .controls {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+            color: var(--text-primary);
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(139, 92, 246, 0.3);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(236, 72, 153, 0.2));
+        }
+        
+        /* 思维导图样式 */
+        .mindmap-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.7s ease;
+        }
+        .mindmap-title {
+            font-size: 2em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, var(--accent), #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .mindmap-pure-css {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 50px;
+            padding: 40px 20px;
+        }
+        .center-node {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899);
+            color: white;
+            padding: 25px 50px;
+            border-radius: 60px;
+            font-size: 1.8em;
+            font-weight: 800;
+            box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+            text-align: center;
+        }
+        .mindmap-branches {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            width: 100%;
+            max-width: 1200px;
+        }
+        .branch {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+            animation: fadeInUp 0.8s ease forwards;
+            opacity: 0;
+        }
+        .branch:nth-child(1) { animation-delay: 0.2s; }
+        .branch:nth-child(2) { animation-delay: 0.4s; }
+        .branch:nth-child(3) { animation-delay: 0.6s; }
+        .branch:nth-child(4) { animation-delay: 0.8s; }
+        .branch-node {
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.15), rgba(236, 72, 153, 0.15));
+            border: 3px solid var(--accent);
+            padding: 18px 30px;
+            border-radius: 20px;
+            font-size: 1.3em;
+            font-weight: 700;
+            text-align: center;
+            transition: all 0.3s ease;
+            color: var(--accent);
+        }
+        .branch-node:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 12px 30px rgba(139, 92, 246, 0.3);
+        }
+        .sub-node {
+            background: rgba(139, 92, 246, 0.08);
+            padding: 12px 22px;
+            border-radius: 14px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+        }
+        .sub-node:hover {
+            background: rgba(139, 92, 246, 0.15);
+            transform: translateX(8px);
+        }
+
+        /* 数据流图样式 */
+        .dataflow-container {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 50px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.8s ease;
+        }
+        .dataflow-title {
+            font-size: 2em;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 40px;
+            background: linear-gradient(135deg, #3b82f6, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .flow-diagram {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            align-items: center;
+        }
+        .flow-row {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .flow-box {
+            background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(16, 185, 129, 0.1));
+            border: 2px solid #3b82f6;
+            padding: 20px 30px;
+            border-radius: 16px;
+            min-width: 200px;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .flow-box:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 24px rgba(59, 130, 246, 0.3);
+        }
+        .flow-arrow {
+            font-size: 2em;
+            color: #3b82f6;
+        }
+        
+        /* 内容板块样式 */
+        .section {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 45px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease;
+            transition: all 0.3s ease;
+        }
+        .section:hover {
+            box-shadow: 0 12px 40px rgba(31, 38, 135, 0.2);
+        }
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            margin-bottom: 25px;
+            user-select: none;
+        }
+        .section-title {
+            font-size: 2em;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent), #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .section-icon {
+            font-size: 1.2em;
+        }
+        .collapse-icon {
+            font-size: 1.5em;
+            transition: transform 0.3s ease;
+            color: var(--accent);
+        }
+        .collapsed .collapse-icon { 
+            transform: rotate(-90deg); 
+        }
+        .section-preview {
+            color: var(--text-secondary);
+            font-style: italic;
+            opacity: 0;
+            max-height: 0;
+            transition: all 0.3s ease;
+            overflow: hidden;
+        }
+        .collapsed .section-preview {
+            opacity: 1;
+            max-height: 100px;
+            margin-top: 15px;
+        }
+        .section-content {
+            max-height: 8000px;
+            transition: max-height 0.5s ease;
+            overflow: hidden;
+        }
+        .collapsed .section-content {
+            max-height: 0;
+        }
+        .content-paragraph {
+            margin-bottom: 20px;
+            font-size: 1.1em;
+            line-height: 1.9;
+        }
+        
+        /* 高亮样式 */
+        .highlight-key {
+            color: var(--highlight-key);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(239, 68, 68, 0.15);
+            border-radius: 6px;
+            font-size: 1.05em;
+        }
+        .highlight-data {
+            color: var(--highlight-data);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(59, 130, 246, 0.15);
+            border-radius: 6px;
+            font-size: 1.05em;
+        }
+        .highlight-quote {
+            color: var(--highlight-quote);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(16, 185, 129, 0.15);
+            border-radius: 6px;
+            font-size: 1.05em;
+        }
+        .highlight-warning {
+            color: var(--highlight-warning);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(245, 158, 11, 0.15);
+            border-radius: 6px;
+            font-size: 1.05em;
+        }
+        .highlight-success {
+            color: var(--highlight-success);
+            font-weight: 700;
+            padding: 3px 8px;
+            background: rgba(139, 92, 246, 0.15);
+            border-radius: 6px;
+            font-size: 1.05em;
+        }
+        
+        /* 金句卡片 */
+        .quote-card {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(236, 72, 153, 0.1));
+            border-left: 5px solid #ef4444;
+            padding: 25px 30px;
+            margin: 25px 0;
+            border-radius: 16px;
+            font-size: 1.2em;
+            font-weight: 600;
+            font-style: italic;
+            color: var(--highlight-key);
+            position: relative;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.1);
+        }
+        .quote-card::before {
+            content: '"';
+            position: absolute;
+            top: -10px;
+            left: 20px;
+            font-size: 4em;
+            color: rgba(239, 68, 68, 0.2);
+            font-family: Georgia, serif;
+        }
+        
+        /* 专家评论 */
+        .expert-comment {
+            margin-top: 35px;
+            padding: 30px;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(236, 72, 153, 0.12));
+            border-left: 5px solid var(--accent);
+            border-radius: 18px;
+            position: relative;
+            box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);
+        }
+        .expert-comment::before {
+            content: '💡';
+            position: absolute;
+            top: -18px;
+            left: 25px;
+            font-size: 2.2em;
+            background: var(--glass-bg);
+            padding: 8px 18px;
+            border-radius: 14px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .expert-name {
+            font-weight: 800;
+            font-size: 1.2em;
+            color: var(--accent);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .expert-role {
+            font-size: 0.85em;
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        .expert-text {
+            font-size: 1.05em;
+            line-height: 1.8;
+            color: var(--text-primary);
+        }
+        
+        /* 列表样式 */
+        .insight-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .insight-list li {
+            padding: 15px 20px;
+            margin-bottom: 15px;
+            background: rgba(139, 92, 246, 0.05);
+            border-radius: 12px;
+            border-left: 4px solid var(--accent);
+            transition: all 0.3s ease;
+            font-size: 1.05em;
+        }
+        .insight-list li:hover {
+            background: rgba(139, 92, 246, 0.12);
+            transform: translateX(10px);
+        }
+        .insight-list li::before {
+            content: '▸';
+            color: var(--accent);
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 1.2em;
+        }
+        
+        /* 主题切换按钮 */
+        .theme-toggle {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 1.8em;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+            border: 2px solid var(--glass-border);
+        }
+        .theme-toggle:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 8px 32px rgba(139, 92, 246, 0.3);
+        }
+        
+        /* 动画 */
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 12px 40px rgba(139, 92, 246, 0.4);
+            }
+            50% { 
+                transform: scale(1.05); 
+                box-shadow: 0 16px 50px rgba(139, 92, 246, 0.6);
+            }
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            h1 { font-size: 2em; }
+            .subtitle { font-size: 1.1em; }
+            .section { padding: 30px 25px; }
+            .mindmap-container, .dataflow-container { padding: 30px 20px; }
+            .mindmap-branches { grid-template-columns: 1fr; }
+            .flow-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 页面头部 -->
+        <div class="header">
+            <h1>🚀 Vibe Coding 实战训练营</h1>
+            <div class="subtitle">AI编程的产品化思维 - 从工具到产品的完整路径</div>
+            <div class="meta-info">
+                <div class="meta-item">📅 2026年1月31日</div>
+                <div class="meta-item">⏱️ 2小时精华</div>
+                <div class="meta-item">👨‍🏫 讲师：云舒</div>
+                <div class="meta-item">🎓 第四期训练营</div>
+            </div>
+            <div class="controls">
+                <button class="btn" onclick="toggleAll()">📑 展开/收起全部</button>
+                <button class="btn" onclick="window.print()">🖨️ 打印页面</button>
+            </div>
+        </div>
+
+        <!-- 核心思维导图 -->
+        <div class="mindmap-container">
+            <h2 class="mindmap-title">🧠 AI编程核心思维导图</h2>
+            <div class="mindmap-pure-css">
+                <div class="center-node">AI编程三层价值</div>
+                <div class="mindmap-branches">
+                    <div class="branch">
+                        <div class="branch-node">🛠️ 工具层</div>
+                        <div class="sub-node">高频小工具快速开发</div>
+                        <div class="sub-node">解决即时问题</div>
+                        <div class="sub-node">低成本快速迭代</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">📦 产品层</div>
+                        <div class="sub-node">完整应用部署交付</div>
+                        <div class="sub-node">版本管理与迭代</div>
+                        <div class="sub-node">用户价值最大化</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">🤖 Agent层</div>
+                        <div class="sub-node">知识库对话</div>
+                        <div class="sub-node">智能文案生成</div>
+                        <div class="sub-node">复杂场景自动化</div>
+                    </div>
+                    <div class="branch">
+                        <div class="branch-node">💰 成本控制</div>
+                        <div class="sub-node">Claude Code: 20-30元/2-3小时</div>
+                        <div class="sub-node">Skills熟练度平衡</div>
+                        <div class="sub-node">ROI精准计算</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产品开发数据流图 -->
+        <div class="dataflow-container">
+            <h2 class="dataflow-title">📊 AI产品开发数据流</h2>
+            <div class="flow-diagram">
+                <div class="flow-row">
+                    <div class="flow-box" style="border-color: #ef4444;">🎯 痛点挖掘</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="border-color: #3b82f6;">📝 需求分析</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="border-color: #10b981;">🎨 MVP设计</div>
+                </div>
+                <div class="flow-arrow" style="transform: rotate(90deg);">↓</div>
+                <div class="flow-row">
+                    <div class="flow-box" style="border-color: #8b5cf6;">🚀 快速部署</div>
+                    <div class="flow-arrow">←</div>
+                    <div class="flow-box" style="border-color: #f59e0b;">💻 AI开发</div>
+                    <div class="flow-arrow">←</div>
+                    <div class="flow-box" style="border-color: #ec4899;">🎭 UI打磨</div>
+                </div>
+                <div class="flow-arrow" style="transform: rotate(90deg);">↓</div>
+                <div class="flow-row">
+                    <div class="flow-box" style="border-color: #06b6d4;">📊 数据反馈</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="border-color: #84cc16;">🔄 迭代优化</div>
+                    <div class="flow-arrow">→</div>
+                    <div class="flow-box" style="border-color: #f97316;">💎 价值交付</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 核心金句 -->
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">
+                    <span class="section-icon">💎</span>
+                    核心金句
+                </h2>
+            </div>
+            <div class="section-content">
+                <div class="quote-card">
+                    AI的价值是解决问题，不是说非要做产品。做产品只是用产品去解决问题的一个环节。
+                </div>
+                <div class="quote-card">
+                    编程不存在标准化教程。每一次的反馈都有不确定性，到你那就完全不同了。
+                </div>
+                <div class="quote-card">
+                    把用户当成一个傻子来对待，这是最好的产品设计思路。否则会有无穷无尽要设计的内容。
+                </div>
+                <div class="quote-card">
+                    用户只关心好不好用，不关心你长得怎么样、用什么架构。那些东西一点都不重要。
+                </div>
+                <div class="quote-card">
+                    做产品跟赚钱没有直接关系。赚钱是解决需求，用什么技能都行，无非是ROI怎么算的问题。
+                </div>
+            </div>
+        </div>
+
+        <!-- 第一部分：AI编程的三大应用场景 -->
+        <div class="section" id="section1">
+            <div class="section-header" onclick="toggleSection('section1')">
+                <h2 class="section-title">
+                    <span class="section-icon">🎯</span>
+                    AI编程的三大应用场景
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">小工具、产品开发、Agent应用 - 从高频场景到完整交付...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    AI编程工具能干<span class="highlight-key">三层事情</span>：
+                </div>
+                
+                <ul class="insight-list">
+                    <li><span class="highlight-success">小工具层</span>：高频场景快速开发，比如截图美化、表情包制作等即用即走的工具</li>
+                    <li><span class="highlight-data">产品层</span>：完整的应用部署和交付，包含前后端、数据库、部署流程的完整产品</li>
+                    <li><span class="highlight-quote">Agent层</span>：智能代理应用，如知识库对话、文案改写、PPT生成等复杂场景</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 25px;">
+                    云舒老师分享了一个实际案例：使用<span class="highlight-data">Claude Code + Skills</span>完整制作课程大纲和课件。整个过程体现了AI编程的核心价值 - <span class="highlight-key">不是为了做产品而做产品，而是用工具解决实际问题</span>。
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sam Altman <span class="expert-role">OpenAI CEO</span></div>
+                    <div class="expert-text">
+                        这三层架构很有洞察力。我们在OpenAI看到最成功的应用往往是从小工具开始，逐步演化成产品。关键是<span class="highlight-key">找到真实痛点</span>，而不是追求技术炫技。GPT-4的Turbo模式就是为了降低这种小工具开发的成本。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Dario Amodei <span class="expert-role">Anthropic CEO</span></div>
+                    <div class="expert-text">
+                        Claude Code的成本控制（20-30元/2-3小时）是我们深思熟虑的定价策略。我们希望让开发者能够<span class="highlight-data">以可承受的成本进行深度探索</span>。Skills系统的设计初衷就是让AI能够持续学习开发者的偏好和最佳实践。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第二部分：产品开发方法论 -->
+        <div class="section" id="section2">
+            <div class="section-header" onclick="toggleSection('section2')">
+                <h2 class="section-title">
+                    <span class="section-icon">🏗️</span>
+                    产品开发方法论
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">需求挖掘、MVP设计、版本管理 - 完整的产品开发流程...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    <span class="highlight-key">核心前提</span>：产品开发必须想清楚<span class="highlight-warning">用户是谁</span>、<span class="highlight-warning">问题是什么</span>、<span class="highlight-warning">用什么解决</span>。
+                </div>
+
+                <ul class="insight-list">
+                    <li><span class="highlight-key">痛点挖掘</span>：不要一个人闭门造车。多去群里看大家的卡点，锚定真实痛点。信息摄入量不够会导致找不到好需求。</li>
+                    <li><span class="highlight-data">快速Demo验证</span>：1-2个晚上，4-5小时搞定。扔到社群、朋友圈、即刻、推特，让别人看。当很多人都说需要时，赶紧开发。</li>
+                    <li><span class="highlight-success">版本规划</span>：每次做一个小版本，不要一次做巨大版本。通过版本管理倒逼自己把需求想清楚。</li>
+                    <li><span class="highlight-warning">MVP原则</span>：只做最核心功能。很多功能要在开发环节少做点，一层层像积木垒起来，系统质量才好。</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 25px;">
+                    <span class="highlight-quote">PRD要写得详细</span>：用AI和人在开发前对齐需求的细颗粒度。用提示词或Skills，基本上跟AI讲清楚了，开发不会有问题。
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sundar Pichai <span class="expert-role">Google CEO</span></div>
+                    <div class="expert-text">
+                        Google内部推崇的<span class="highlight-data">OKR体系</span>和这里的版本管理思路不谋而合。我们发现最成功的产品都是从<span class="highlight-key">最小可用版本</span>开始，通过快速迭代找到product-market fit。AI工具的加入让这个循环可以从几个月缩短到几天。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Elon Musk <span class="expert-role">Tesla & SpaceX CEO</span></div>
+                    <div class="expert-text">
+                        "把用户当傻子"这个说法我完全同意。特斯拉的UI设计哲学就是<span class="highlight-warning">极简到极致</span>。如果一个功能需要说明书，那就是失败的设计。AI编程让我们可以快速测试不同的交互方案，这在以前需要几周的工程师时间。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第三部分：ToB vs ToC产品的差异 -->
+        <div class="section" id="section3">
+            <div class="section-header" onclick="toggleSection('section3')">
+                <h2 class="section-title">
+                    <span class="section-icon">🎭</span>
+                    ToB vs ToC产品的本质差异
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">内部产品难推的真相 - KPI才是核心驱动力...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    内部产品做完后<span class="highlight-key">难推的核心原因</span>：产品对使用方的<span class="highlight-warning">核心利益没有影响</span>。
+                </div>
+
+                <ul class="insight-list">
+                    <li><span class="highlight-data">ToC产品</span>：看具象的需求。用户学AI可能有10件事，只有一件叫"管理提示词"，所以提示词管理工具用户量小。AI编程的需求聚合更大，所以能做大产品。</li>
+                    <li><span class="highlight-warning">ToB产品</span>：必须找到使用方的KPI。公司体量没超过1000人时，好的工具可能100-200人用，差的只有10-50人。人量小反而更不好推。</li>
+                    <li><span class="highlight-key">核心方法</span>：无论ToB还是ToC，都要看使用方的KPI是什么。找到KPI核心点，他就会自然用你的工具。</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 25px;">
+                    实战案例：如果只有<span class="highlight-data">5-10个人</span>用你的内部工具，更难推广。但这不代表产品不好，而是<span class="highlight-quote">没有对准使用方的利益锚点</span>。
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Dario Amodei <span class="expert-role">Anthropic CEO</span></div>
+                    <div class="expert-text">
+                        这个分析触及了B2B SaaS的本质。在Anthropic，我们发现企业客户采用Claude的关键不是技术有多先进，而是<span class="highlight-key">能否直接影响他们的核心指标</span> - 比如客服团队的响应时间、研发团队的迭代速度。单纯的"提效"概念太抽象了。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sam Altman <span class="expert-role">OpenAI CEO</span></div>
+                    <div class="expert-text">
+                        我们在推广ChatGPT Enterprise时遇到同样的挑战。最终发现成功的部署都有一个共同点：<span class="highlight-data">先从能直接看到ROI的小团队试点</span>，当他们的KPI明显改善时，自然会在组织内扩散。强推往往适得其反。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第四部分：UI设计的价值权衡 -->
+        <div class="section" id="section4">
+            <div class="section-header" onclick="toggleSection('section4')">
+                <h2 class="section-title">
+                    <span class="section-icon">🎨</span>
+                    UI设计的价值权衡
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">什么时候UI重要？什么时候不重要？取决于产品价值...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    <span class="highlight-key">核心原则</span>：UI的重要性取决于<span class="highlight-warning">产品给用户提供的价值是什么</span>。
+                </div>
+
+                <ul class="insight-list">
+                    <li><span class="highlight-success">UI很重要的场景</span>：陪伴类产品、游戏化产品、以情绪价值为主的产品。如果是草台聊天界面，用户不会用。</li>
+                    <li><span class="highlight-data">UI次要的场景</span>：翻译、提示词润色、工具类产品。只要UI别太丑就行，核心是功能好用。</li>
+                    <li><span class="highlight-quote">真相</span>：很少听说过产品因为UI做得不好而活不下去。大多数产品UI不影响最后结果，甚至有些公司产品一年卖几个亿，UI都挺丑的。</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 25px;">
+                    <span class="highlight-warning">ROI权衡</span>：作为开发者可能愿意花5天打磨UI，但要接受可能上线后没多少用户的成本。如果追求商业化和速度，就不要付这个成本。<span class="highlight-key">尽可能少做一点、快一点</span>。
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sundar Pichai <span class="expert-role">Google CEO</span></div>
+                    <div class="expert-text">
+                        Google搜索的UI二十多年几乎没变，但这不妨碍它成为最有价值的产品之一。关键是<span class="highlight-data">用户体验</span>而非视觉设计。不过对于像Google Photos这样的产品，精美的UI就是核心价值的一部分。要看产品定位。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Elon Musk <span class="expert-role">Tesla & X CEO</span></div>
+                    <div class="expert-text">
+                        X(Twitter)的UI经常被吐槽，但月活用户持续增长。<span class="highlight-warning">功能>设计>美观</span>，这是优先级。当然，如果能三者兼顾最好，但资源有限时必须做选择。特斯拉内饰极简也是这个逻辑。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第五部分：成本控制与ROI -->
+        <div class="section" id="section5">
+            <div class="section-header" onclick="toggleSection('section5')">
+                <h2 class="section-title">
+                    <span class="section-icon">💰</span>
+                    成本控制与ROI计算
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">Claude Code成本分析 - 如何在Token消耗和效率间平衡...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    <span class="highlight-key">实际数据</span>：Claude Code让AI工作2-3小时，需要花费<span class="highlight-data">20-30元</span>的API成本。
+                </div>
+
+                <ul class="insight-list">
+                    <li><span class="highlight-warning">成本考量</span>：虽然贵，但云舒老师在磨Skills熟练度，暂时没算成本。这是投资未来的协作深度。</li>
+                    <li><span class="highlight-data">省钱策略</span>：用GPT做前端开发可以省钱，但质量会差一些，需要更多时间修bug。权衡时间成本vs金钱成本。</li>
+                    <li><span class="highlight-success">长期价值</span>：与AI协作的深度能复用到之后所有项目上。虽然提示词重构4个月没出产品结果，但在其他业务上的收益是正反馈。</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 25px;">
+                    <span class="highlight-quote">ROI思维</span>：做事情要算好ROI。愿意承担几个月成本吗？能接受失败率吗？所有事情摊到台面上算成ROI，就很清晰了。
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Dario Amodei <span class="expert-role">Anthropic CEO</span></div>
+                    <div class="expert-text">
+                        20-30元/2-3小时的成本实际上<span class="highlight-data">低于一个初级工程师的时薪</span>。关键是这个成本会随着我们模型效率提升而下降。我们的目标是让AI辅助编程的成本降到可以"挥霍"的程度，那时创新速度会指数级提升。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sam Altman <span class="expert-role">OpenAI CEO</span></div>
+                    <div class="expert-text">
+                        很多人只看到短期Token成本，忽视了<span class="highlight-key">学习曲线的价值</span>。与AI深度协作的经验是你的核心竞争力。我们内部统计，熟练使用Codex的工程师生产力是不使用的3-5倍，这个倍数还在持续增长。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第六部分：技术细节与最佳实践 -->
+        <div class="section" id="section6">
+            <div class="section-header" onclick="toggleSection('section6')">
+                <h2 class="section-title">
+                    <span class="section-icon">⚙️</span>
+                    技术细节与最佳实践
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">ASCII原型图、PRD编写、Debug技巧 - 实战干货...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    <span class="highlight-key">ASCII原型图</span>：在让AI做设计前，先用ASCII图输出布局。这样能清晰确定左右布局、交互方式，再按布局做细节设计。<span class="highlight-warning">开发中不要老往里加东西</span>。
+                </div>
+
+                <ul class="insight-list">
+                    <li><span class="highlight-data">磨UI技巧</span>：两种方法 - ①告诉AI哪里不满意（设计风格/样式/字体），给参考让它生成下一版；②直接让AI出更多版本直到满意（费Token但能发现意想不到的思路）</li>
+                    <li><span class="highlight-success">Debug方法</span>：指挥AI打日志。看不懂就打日志，通过日志缩小排查范围。AI没法拿到浏览器前端和后端的很多反馈，必须靠日志。</li>
+                    <li><span class="highlight-quote">版本回退</span>：保存历史版本用GitHub。如果改坏了，直接回退到历史版本。如果在一个上下文里，让AI自己把改的东西回退。</li>
+                    <li><span class="highlight-warning">Skills使用</span>：不要把所有Skills全局加载，会占上下文。只在需要时调用特定Skills。工具装多了都会影响Agent的上下文。</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 25px;">
+                    <span class="highlight-key">核心理念</span>：遇到不懂的先问AI。技术性问题问AI比问人强多了，标准化流程AI绝对好用。
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sundar Pichai <span class="expert-role">Google CEO</span></div>
+                    <div class="expert-text">
+                        ASCII原型图这个方法很聪明。Google内部也在推广类似的<span class="highlight-data">"text-first design"</span>理念。在视觉设计前先用文字和符号确定信息架构，能大幅减少后期返工。AI特别擅长这种结构化思考。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Elon Musk <span class="expert-role">Tesla & SpaceX CEO</span></div>
+                    <div class="expert-text">
+                        Debug打日志是工程基本功，但很多人忽视。SpaceX的火箭软件有<span class="highlight-warning">数百万行日志代码</span>。AI能自动化这个过程是巨大进步。不过要警惕过度依赖 - 理解底层原理仍然重要。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第七部分：预期管理与沟通 -->
+        <div class="section" id="section7">
+            <div class="section-header" onclick="toggleSection('section7')">
+                <h2 class="section-title">
+                    <span class="section-icon">🤝</span>
+                    预期管理与沟通艺术
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">如何应对老板不合理的AI期待 - 方案设计比执行更重要...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    一个学员提问：<span class="highlight-warning">老板觉得AI很简单，希望我做很多解决不了的问题</span>（如用n8n造Manus系统）。
+                </div>
+
+                <div class="content-paragraph">
+                    <span class="highlight-key">云舒的解答</span>：这不是技术问题，是<span class="highlight-data">预期管理</span>问题。
+                </div>
+
+                <ul class="insight-list">
+                    <li><span class="highlight-success">拆解方案</span>：拿出几套思路 - ①用Claude Code SDK，成本X；②用另一个方案，成本Y；③用别的API，成本Z。每套思路对应需要的资源、复杂度、违法风险都列清楚。</li>
+                    <li><span class="highlight-data">实验验证</span>：通过验证告诉老板这个东西能做到什么地步，每个流程节点的细节都讲清楚。</li>
+                    <li><span class="highlight-quote">举证说明</span>：比如n8n造Manus，没有人能做出来。把市面上的例子举全，讲清楚系统复杂度和成本投入。</li>
+                    <li><span class="highlight-warning">核心逻辑</span>：做方案本身不重要，重要的是让老板清楚知道这个事情的全局是什么样。用事实、证据管理好他的预期。</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 25px;">
+                    <span class="highlight-key">反问思考</span>：站在老板视角 - 你花了成本，你告诉我不行，但你还说不清理由，老板怎么知道你不是在忽悠他？
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Dario Amodei <span class="expert-role">Anthropic CEO</span></div>
+                    <div class="expert-text">
+                        这个场景我太熟悉了。很多企业领导看到演示后会<span class="highlight-data">高估AI的当前能力</span>。我们现在要求售前团队必须做"能力边界演示" - 不仅展示能做什么，更要展示做不到什么。透明度建立信任。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sam Altman <span class="expert-role">OpenAI CEO</span></div>
+                    <div class="expert-text">
+                        预期管理是AI时代最重要的软技能之一。我建议采用<span class="highlight-success">"三明治沟通法"</span>：先展示AI能轻松做到的（建立信心）→ 再说明当前限制（管理预期）→ 最后描绘未来可能性（保持热情）。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 第八部分：课程与作业要求 -->
+        <div class="section" id="section8">
+            <div class="section-header" onclick="toggleSection('section8')">
+                <h2 class="section-title">
+                    <span class="section-icon">📚</span>
+                    课程安排与作业要求
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">毕业作业、Demo Day、未来规划...</div>
+            <div class="section-content">
+                <div class="content-paragraph">
+                    <span class="highlight-key">基础作业</span>：发布学习成果展示页，包含：
+                </div>
+
+                <ul class="insight-list">
+                    <li>发现的痛点是什么</li>
+                    <li>MVP产品是什么</li>
+                    <li>开发思路</li>
+                    <li>学习心得</li>
+                </ul>
+
+                <div class="content-paragraph" style="margin-top: 20px;">
+                    <span class="highlight-success">进阶作业</span>：在基础上加入<span class="highlight-data">AI数字分身</span>，能够代替你回答项目路演和学习复盘的内容。需要编写提示词、调用模型API、配置环境变量。
+                </div>
+
+                <div class="content-paragraph">
+                    <span class="highlight-warning">Demo Day</span>：2月8日线下见面会，覆盖北京、上海、广州、深圳、杭州、成都、武汉7座城市。
+                </div>
+
+                <div class="content-paragraph">
+                    <span class="highlight-quote">未来规划</span>：
+                </div>
+
+                <ul class="insight-list">
+                    <li>第五期训练营计划3月开启（春节后）</li>
+                    <li>考虑分<span class="highlight-data">初级课和进阶课</span>，涉及传统软件工程知识</li>
+                    <li>将做前四期综合调研，了解学员真实需求</li>
+                    <li>保持课程的<span class="highlight-success">科普和普惠</span>定位</li>
+                </ul>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sam Altman <span class="expert-role">OpenAI CEO</span></div>
+                    <div class="expert-text">
+                        AI数字分身作为作业很有创意。这实际上是在训练学员<span class="highlight-data">如何清晰表达自己的思考</span> - 因为只有当你能教会AI表达你的观点，才说明你真正理解了。这是苏格拉底式学习的AI版本。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Sundar Pichai <span class="expert-role">Google CEO</span></div>
+                    <div class="expert-text">
+                        线下Demo Day非常重要。Google内部也有类似的<span class="highlight-success">"20% time showcase"</span>。面对面交流能产生意想不到的化学反应 - 很多最好的产品创意都来自走廊对话，而非正式会议。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 总结洞察 -->
+        <div class="section" id="section9">
+            <div class="section-header" onclick="toggleSection('section9')">
+                <h2 class="section-title">
+                    <span class="section-icon">🎯</span>
+                    核心洞察与行动建议
+                </h2>
+                <span class="collapse-icon">▼</span>
+            </div>
+            <div class="section-preview">提炼最重要的10条启示...</div>
+            <div class="section-content">
+                <ul class="insight-list">
+                    <li><span class="highlight-key">价值导向</span>：AI编程的价值是解决问题，不是为了做产品而做产品。做产品只是解决问题的一个环节。</li>
+                    <li><span class="highlight-data">小步快跑</span>：从小工具开始，验证需求后再做完整产品。版本管理能倒逼你把需求想清楚。</li>
+                    <li><span class="highlight-success">用户视角</span>：把用户当傻子来设计交互。用户只关心好不好用，不关心技术架构和视觉设计（除非产品定位就是视觉）。</li>
+                    <li><span class="highlight-warning">成本意识</span>：算清楚ROI。时间成本、金钱成本、机会成本都要考虑。愿意承担的成本决定了你的选择。</li>
+                    <li><span class="highlight-quote">预期管理</span>：技术问题用方案说话。拆解多套方案，列清成本和风险，用事实管理老板/客户期待。</li>
+                    <li><span class="highlight-data">持续学习</span>：与AI协作的深度是可复用的核心能力。短期看可能没产出，长期看是指数级回报。</li>
+                    <li><span class="highlight-success">需求挖掘</span>：多交流、多观察。一个人闭门造车信息摄入量不够，很难找到真痛点。</li>
+                    <li><span class="highlight-key">KPI驱动</span>：ToB产品必须对准使用方的KPI。找到核心利益锚点，推广会自然发生。</li>
+                    <li><span class="highlight-warning">技术选型</span>：根据场景选工具。Claude Code质量好但贵，GPT省钱但需要更多调试。没有绝对最优，只有最合适。</li>
+                    <li><span class="highlight-quote">迭代思维</span>：接受失败、快速试错。编程没有标准教程，每次都有不确定性。熟练度来自重复和总结。</li>
+                </ul>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Elon Musk <span class="expert-role">Tesla & SpaceX CEO</span></div>
+                    <div class="expert-text">
+                        这10条建议总结得很好。我补充一条：<span class="highlight-key">Delete, delete, delete</span>。最好的代码是不用写的代码，最好的功能是不需要的功能。AI让我们能快速开发，但更重要的是快速<span class="highlight-warning">删除不必要的东西</span>。简化是最难的工作。
+                    </div>
+                </div>
+
+                <div class="expert-comment">
+                    <div class="expert-name">Dario Amodei <span class="expert-role">Anthropic CEO</span></div>
+                    <div class="expert-text">
+                        看完这次训练营的内容，我最大的感受是：AI工具真正改变的不是<span class="highlight-data">能做什么</span>，而是<span class="highlight-success">试错的成本</span>。当一个想法从概念到原型只需要几小时，创新的瓶颈就从"技术实现"转移到了"想象力和判断力"。这是个好消息。
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- 主题切换按钮 -->
+    <div class="theme-toggle" onclick="toggleTheme()">
+        <span id="theme-icon">🌙</span>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const icon = document.getElementById('theme-icon');
+            if (html.getAttribute('data-theme') === 'dark') {
+                html.removeAttribute('data-theme');
+                icon.textContent = '🌙';
+            } else {
+                html.setAttribute('data-theme', 'dark');
+                icon.textContent = '☀️';
+            }
+        }
+        
+        function toggleAll() {
+            const sections = document.querySelectorAll('.section');
+            const isAnyCollapsed = Array.from(sections).some(s => s.classList.contains('collapsed'));
+            sections.forEach(s => {
+                if (isAnyCollapsed) {
+                    s.classList.remove('collapsed');
+                } else {
+                    s.classList.add('collapsed');
+                }
+            });
+        }
+        
+        function toggleSection(id) {
+            document.getElementById(id).classList.toggle('collapsed');
+        }
+
+        // 添加滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.section').forEach(section => {
+            observer.observe(section);
+        });
+    </script>
+</body>
+</html>
